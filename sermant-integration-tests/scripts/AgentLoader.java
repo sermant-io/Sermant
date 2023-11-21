@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package com.huaweicloud.sermant.script;
+
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
@@ -22,6 +24,8 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * AgentLoader mainClass
@@ -30,6 +34,8 @@ import java.util.List;
  * @since 2023-09-26
  */
 public class AgentLoader {
+    private static Logger logger = Logger.getLogger("com.huaweicloud.sermant.script.AgentLoader");
+
     private AgentLoader() {
     }
 
@@ -58,8 +64,8 @@ public class AgentLoader {
                     virtualMachine.detach();
                 }
             }
-        } catch (AgentInitializationException | IOException | AgentLoadException | AttachNotSupportedException ignore) {
-            // ignore
+        } catch (AgentInitializationException | IOException | AgentLoadException | AttachNotSupportedException e) {
+            logger.log(Level.WARNING, "Load sermant agent fail, exception", e);
         }
     }
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,7 +40,6 @@ import java.util.logging.Logger;
  * @since 2022-08-02
  */
 public class CommandExecutor {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final Runtime RUNTIME = Runtime.getRuntime();
@@ -54,7 +54,7 @@ public class CommandExecutor {
      * 命令执行
      *
      * @param command 命令
-     * @param <T>     结果信息
+     * @param <T> 结果信息
      * @return 执行结果
      */
     public static <T> Optional<T> execute(final MonitorCommand<T> command) {
@@ -93,16 +93,16 @@ public class CommandExecutor {
         try {
             inputStream.close();
         } catch (IOException e) {
-            // ignored
+            LOGGER.log(Level.WARNING, "Fail to close stream, exception", e);
         }
     }
 
     /**
      * 结果解析
      *
-     * @param command     命令
+     * @param command 命令
      * @param inputStream 读流
-     * @param <T>         结果信息
+     * @param <T> 结果信息
      * @return 执行结果
      */
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
@@ -112,13 +112,13 @@ public class CommandExecutor {
     /**
      * 错误解析
      *
-     * @param command     命令
+     * @param command 命令
      * @param errorStream 错误流
-     * @param latch       定时任务
-     * @param <T>         结果
+     * @param latch 定时任务
+     * @param <T> 结果
      */
     private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream,
-                                              final CountDownLatch latch) {
+            final CountDownLatch latch) {
         POOL.execute(new ErrorHandleTask(inputStream -> {
             command.handleError(inputStream);
             latch.countDown();
@@ -132,7 +132,6 @@ public class CommandExecutor {
      * @since 2022-08-02
      */
     private static class InputHandleTask<T> implements Callable<T> {
-
         private final StreamHandler<T> handler;
 
         private final InputStream inputStream;
@@ -140,7 +139,7 @@ public class CommandExecutor {
         /**
          * 构造
          *
-         * @param handler     前置处理
+         * @param handler 前置处理
          * @param inputStream 读入
          */
         InputHandleTask(StreamHandler<T> handler, InputStream inputStream) {
@@ -160,7 +159,6 @@ public class CommandExecutor {
      * @since 2022-08-02
      */
     private static class ErrorHandleTask implements Runnable {
-
         private final VoidStreamHandler handler;
 
         private final InputStream inputStream;
@@ -168,7 +166,7 @@ public class CommandExecutor {
         /**
          * 构造方法
          *
-         * @param handler     前置处理
+         * @param handler 前置处理
          * @param inputStream 流
          */
         ErrorHandleTask(VoidStreamHandler handler, InputStream inputStream) {
@@ -198,7 +196,6 @@ public class CommandExecutor {
      * @since 2022-08-02
      */
     private interface VoidStreamHandler {
-
         /**
          * 前置处理
          *

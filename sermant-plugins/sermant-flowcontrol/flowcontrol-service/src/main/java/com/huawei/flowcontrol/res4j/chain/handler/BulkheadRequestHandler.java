@@ -68,6 +68,7 @@ public class BulkheadRequestHandler extends FlowControlHandler<Bulkhead> {
     /**
      * 是否触发隔离仓策略
      *
+     * @param sourceName 线程变量的名称
      * @return 若触发隔离仓则无需释放资源
      */
     private boolean isOccurBulkheadLimit(String sourceName) {

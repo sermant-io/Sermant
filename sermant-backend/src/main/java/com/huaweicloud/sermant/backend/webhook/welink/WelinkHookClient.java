@@ -45,7 +45,7 @@ public class WelinkHookClient implements WebHookClient {
      * webhook 事件推送
      *
      * @param events 事件信息
-     * @return
+     * @return 推送是否成功
      */
     @Override
     public boolean doNotify(List<QueryResultEventInfoEntity> events) {

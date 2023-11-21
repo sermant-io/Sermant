@@ -42,7 +42,7 @@ import java.util.Set;
  * @since 2022-07-21
  */
 public class MatchedCache {
-    private Cache<RequestEntity, Set<String>> cache;
+    private volatile Cache<RequestEntity, Set<String>> cache;
 
     /**
      * 构造器

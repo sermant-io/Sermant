@@ -71,6 +71,7 @@ public abstract class AbstractFault implements Fault {
     /**
      * 朴素贝叶斯概率模型
      *
+     * @param curReqCount 当前请求数量
      * @return 核对触发概率
      */
     private boolean checkPercent(long curReqCount) {

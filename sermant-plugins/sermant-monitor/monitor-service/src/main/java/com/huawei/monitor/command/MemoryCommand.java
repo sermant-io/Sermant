@@ -45,6 +45,9 @@ public class MemoryCommand extends CommonMonitorCommand<MemoryCommand.MemInfo> {
 
     /**
      * 原泛PaaS类：com.huawei.sermant.plugin.collection.util.MemoryParser parse方法
+     *
+     * @param inputStream 外部进程输出流
+     * @return 解析后的结果
      */
     @Override
     public MemInfo parseResult(InputStream inputStream) {

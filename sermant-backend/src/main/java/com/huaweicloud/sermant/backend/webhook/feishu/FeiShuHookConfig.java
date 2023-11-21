@@ -32,6 +32,11 @@ public class FeiShuHookConfig extends WebhookConfigImpl {
     private FeiShuHookConfig() {
     }
 
+    /**
+     * 获取飞书的webhook配置
+     *
+     * @return 飞书的webhook配置
+     */
     public static WebHookConfig getInstance() {
         return CONFIG;
     }

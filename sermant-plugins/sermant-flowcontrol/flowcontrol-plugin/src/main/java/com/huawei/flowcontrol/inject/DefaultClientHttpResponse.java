@@ -20,6 +20,8 @@ package com.huawei.flowcontrol.inject;
 import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -28,6 +30,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 默认响应, 在接管RestTemplate请求，触发治理策略后的默认响应
@@ -36,6 +40,8 @@ import java.nio.charset.StandardCharsets;
  * @since 2022-07-21
  */
 public class DefaultClientHttpResponse implements ClientHttpResponse {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private final FlowControlResult flowControlResult;
 
     private final String contentType;
@@ -80,8 +86,8 @@ public class DefaultClientHttpResponse implements ClientHttpResponse {
         if (responseStream != null) {
             try {
                 responseStream.close();
-            } catch (IOException ignored) {
-                // ignored
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "Close exception: ", e.getMessage());
             }
         }
     }

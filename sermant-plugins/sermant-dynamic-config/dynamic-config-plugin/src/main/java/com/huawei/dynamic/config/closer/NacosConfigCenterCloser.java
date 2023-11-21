@@ -83,6 +83,6 @@ public class NacosConfigCenterCloser implements ConfigCenterCloser {
             return;
         }
         final Optional<Object> configService = ReflectUtils.getFieldValue(nacosContextRefresher, "configService");
-        configService.ifPresent(o -> ReflectUtils.invokeMethod(o, "shutDown", null, null));
+        configService.ifPresent(object -> ReflectUtils.invokeMethod(object, "shutDown", null, null));
     }
 }

@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -85,8 +86,8 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                     .setMethod(request.method())
                     .setServiceName(url.getHost())
                     .build());
-        } catch (MalformedURLException ignored) {
-            // ignored
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.WARNING, "Fail to convert Request to HttpRequestEntity, exception", e);
         }
         return Optional.of(new HttpRequestEntity());
     }

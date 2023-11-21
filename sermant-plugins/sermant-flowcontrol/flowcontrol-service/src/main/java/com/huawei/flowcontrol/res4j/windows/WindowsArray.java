@@ -51,8 +51,8 @@ public enum WindowsArray {
      */
     public void initWindowsArray() {
         windowsArray = new AtomicReferenceArray<>(DEFAULT_WINDOWS_SIZE);
-        Stream.iterate(0, n -> n + 1).limit(DEFAULT_WINDOWS_SIZE)
-                .forEach(a -> windowsArray.set(a, new WindowsBucket()));
+        Stream.iterate(0, num -> num + 1).limit(DEFAULT_WINDOWS_SIZE)
+                .forEach(index -> windowsArray.set(index, new WindowsBucket()));
     }
 
     /**

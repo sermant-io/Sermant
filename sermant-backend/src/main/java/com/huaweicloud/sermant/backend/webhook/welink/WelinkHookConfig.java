@@ -32,6 +32,11 @@ public class WelinkHookConfig extends WebhookConfigImpl {
     private WelinkHookConfig() {
     }
 
+    /**
+     * 获取Welink的webhook配置
+     *
+     * @return Welink的webhook配置
+     */
     public static WebHookConfig getInstance() {
         return CONFIG;
     }

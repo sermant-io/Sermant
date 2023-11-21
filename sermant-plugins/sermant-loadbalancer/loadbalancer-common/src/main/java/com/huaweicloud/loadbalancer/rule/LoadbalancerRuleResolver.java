@@ -144,6 +144,8 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
 
     /**
      * 组合matchGroup serviceName与loadbalancer rule,并返回变更的规则
+     *
+     * @return 负载均衡规则
      */
     private Optional<LoadbalancerRule> combine() {
         final Map<String, LoadbalancerRule> newRules = new ConcurrentHashMap<>(ruleCache.size());
