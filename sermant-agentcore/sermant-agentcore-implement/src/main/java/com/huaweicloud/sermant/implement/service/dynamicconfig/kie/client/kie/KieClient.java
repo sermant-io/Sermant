@@ -41,9 +41,9 @@ public class KieClient extends AbstractClient {
      */
     private static final String ABSENT_REVISION = "0";
 
-    private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
+    private static final String KIE_API_TEMPLATE = "/v1/%s/kie/kv?";
 
-    private final String kieApiTemplate = "/v1/%s/kie/kv?";
+    private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
 
     private String kieApi;
 
@@ -51,7 +51,7 @@ public class KieClient extends AbstractClient {
      * kei客户端构造器
      *
      * @param clientUrlManager kie url管理器
-     * @param timeout          超时时间
+     * @param timeout 超时时间
      */
     public KieClient(ClientUrlManager clientUrlManager, int timeout) {
         this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject(), timeout);
@@ -61,8 +61,8 @@ public class KieClient extends AbstractClient {
      * kei客户端构造器
      *
      * @param clientUrlManager kie url管理器
-     * @param project          命名空间
-     * @param timeout          超时时间
+     * @param project 命名空间
+     * @param timeout 超时时间
      */
     public KieClient(ClientUrlManager clientUrlManager, String project, int timeout) {
         this(clientUrlManager, null, project, timeout);
@@ -72,17 +72,22 @@ public class KieClient extends AbstractClient {
      * kei客户端构造器
      *
      * @param clientUrlManager kie url管理器
-     * @param httpClient       指定请求器
-     * @param project          命名空间
-     * @param timeout          超时时间
+     * @param httpClient 指定请求器
+     * @param project 命名空间
+     * @param timeout 超时时间
      */
     public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project, int timeout) {
         super(clientUrlManager, httpClient, timeout);
-        kieApi = String.format(kieApiTemplate, project);
+        kieApi = String.format(KIE_API_TEMPLATE, project);
     }
 
+    /**
+     * 设置kieApi为命名空间
+     *
+     * @param project 命名空间
+     */
     public void setProject(String project) {
-        this.kieApi = String.format(kieApiTemplate, project);
+        this.kieApi = String.format(KIE_API_TEMPLATE, project);
     }
 
     /**
@@ -98,9 +103,9 @@ public class KieClient extends AbstractClient {
     /**
      * 查询Kie配置
      *
-     * @param request         请求体
+     * @param request 请求体
      * @param responseHandler http结果处理器
-     * @param <T>             转换后的目标类型
+     * @param <T> 转换后的目标类型
      * @return 响应结果
      */
     public <T> T queryConfigurations(KieRequest request, ResultHandler<T> responseHandler) {
@@ -109,8 +114,8 @@ public class KieClient extends AbstractClient {
         }
         final StringBuilder requestUrl = new StringBuilder().append(clientUrlManager.getUrl()).append(kieApi);
         requestUrl.append(formatNullString(request.getLabelCondition()))
-            .append("&revision=")
-            .append(formatNullString(request.getRevision()));
+                .append("&revision=")
+                .append(formatNullString(request.getRevision()));
         if (request.isAccurateMatchLabel()) {
             requestUrl.append("&match=exact");
         }
@@ -124,9 +129,10 @@ public class KieClient extends AbstractClient {
     /**
      * 发布配置
      *
-     * @param key     请求键
-     * @param labels  标签
+     * @param key 请求键
+     * @param labels 标签
      * @param content 配置
+     * @param enabled 配置的状态开关
      * @return 是否发布成功
      */
     public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {
@@ -142,7 +148,7 @@ public class KieClient extends AbstractClient {
     /**
      * 更新配置
      *
-     * @param keyId   key-id
+     * @param keyId key-id
      * @param content 更新内容
      * @param enabled 是否开启
      * @return 是否更新成功
@@ -157,7 +163,7 @@ public class KieClient extends AbstractClient {
 
     private String buildKeyIdUrl(String keyId) {
         return String.format(Locale.ENGLISH, "%s/%s",
-            clientUrlManager.getUrl() + kieApi.substring(0, kieApi.length() - 1), keyId);
+                clientUrlManager.getUrl() + kieApi.substring(0, kieApi.length() - 1), keyId);
     }
 
     /**

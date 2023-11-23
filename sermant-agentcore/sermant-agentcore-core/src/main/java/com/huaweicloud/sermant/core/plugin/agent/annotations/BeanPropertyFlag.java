@@ -16,8 +16,6 @@
 
 package com.huaweicloud.sermant.core.plugin.agent.annotations;
 
-import com.huaweicloud.sermant.core.plugin.agent.declarer.SuperTypeDeclarer;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
@@ -26,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Java Bean标记，被该注解修饰的接口，将根据该注解定义的属性在被增强类中实现get、set方法
- * <p>见{@link SuperTypeDeclarer.ForBeanProperty}
+ * <p>见SuperTypeDeclarer.ForBeanProperty
  *
  * @author HapThorin
  * @version 1.0.0

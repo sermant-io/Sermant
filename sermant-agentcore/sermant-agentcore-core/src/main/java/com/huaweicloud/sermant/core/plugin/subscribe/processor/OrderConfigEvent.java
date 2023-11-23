@@ -36,14 +36,14 @@ public class OrderConfigEvent extends DynamicConfigEvent {
     /**
      * 构造器
      *
-     * @param key       配置键
-     * @param group     组
-     * @param content   配置内容
+     * @param key 配置键
+     * @param group 组
+     * @param content 配置内容
      * @param eventType 事件类型
-     * @param allData   所有数据
+     * @param allData 所有数据
      */
     public OrderConfigEvent(String key, String group, String content, DynamicConfigEventType eventType, Map<String,
-        Object> allData) {
+            Object> allData) {
         super(key, group, content, eventType);
         this.allData = allData;
     }
@@ -55,5 +55,20 @@ public class OrderConfigEvent extends DynamicConfigEvent {
      */
     public Map<String, Object> getAllData() {
         return this.allData;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
+    public boolean equals(Object target) {
+        return super.equals(target);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

@@ -106,7 +106,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @param key 用户密钥
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout, String userName,
-                                   String password, String key) {
+            String password, String key) {
         String authInfo = userName + ZK_AUTH_SEPARATOR + AesUtil.decrypt(key, password).orElse(null);
         zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
             @Override

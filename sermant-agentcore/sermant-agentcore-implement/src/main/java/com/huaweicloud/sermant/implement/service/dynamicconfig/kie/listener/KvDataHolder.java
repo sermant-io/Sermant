@@ -23,8 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 监听键响应数据
- * 用于对比新旧数据并保留旧数据
+ * 监听键响应数据 用于对比新旧数据并保留旧数据
  *
  * @author zhouss
  * @since 2021-11-18
@@ -180,6 +179,11 @@ public class KvDataHolder {
             this.added = added;
         }
 
+        /**
+         * 通过操作不为空判断是否有行为变化
+         *
+         * @return boolean
+         */
         public boolean isChanged() {
             return !added.isEmpty() || !deleted.isEmpty() || !modified.isEmpty();
         }

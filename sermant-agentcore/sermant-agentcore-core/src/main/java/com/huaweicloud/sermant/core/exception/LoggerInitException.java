@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.backend.webhook.dingding;
-
-import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
-import com.huaweicloud.sermant.backend.webhook.WebhookConfigImpl;
+package com.huaweicloud.sermant.core.exception;
 
 /**
- * 钉钉webhook 配置
+ * 日志初始化异常
  *
- * @author xuezechao
- * @since 2023-03-02
+ * @author tangle
+ * @since 2023-11-08
  */
-public class DingDingHookConfig extends WebhookConfigImpl {
-    private static final WebHookConfig CONFIG = new WebhookConfigImpl();
-
-    private DingDingHookConfig() {
-    }
+public class LoggerInitException extends RuntimeException {
+    private static final long serialVersionUID = 4472931852795263687L;
 
     /**
-     * 获取webhook配置单例
+     * 日志初始化异常
      *
-     * @return webhook配置单例
+     * @param message 异常信息
      */
-    public static WebHookConfig getInstance() {
-        return CONFIG;
+    public LoggerInitException(String message) {
+        super(message);
     }
 }

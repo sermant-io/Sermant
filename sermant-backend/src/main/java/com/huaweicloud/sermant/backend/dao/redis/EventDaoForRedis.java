@@ -39,7 +39,6 @@ import java.util.List;
  * @since 2023-03-02
  */
 public class EventDaoForRedis implements EventDao {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDaoForRedis.class);
 
     private EventDao jedis;
@@ -93,6 +92,7 @@ public class EventDaoForRedis implements EventDao {
     /**
      * 获取某一页数据
      *
+     * @param sessionId 会话ID
      * @param page 页码
      * @return 查询数据
      */
@@ -104,6 +104,7 @@ public class EventDaoForRedis implements EventDao {
     /**
      * 获取查询数据类型数量
      *
+     * @param eventsRequestEntity 事件请求体
      * @return 查询结果数量
      */
     @Override

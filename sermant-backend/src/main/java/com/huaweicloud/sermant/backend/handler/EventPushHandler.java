@@ -60,13 +60,13 @@ public class EventPushHandler {
      * 构造函数
      */
     public EventPushHandler() {
-        init();
+        this.init();
     }
 
     /**
      * 初始化webhook
      */
-    public void init() {
+    private void init() {
         ServiceLoader<WebHookClient> loader = ServiceLoader.load(WebHookClient.class);
         for (WebHookClient webHookClient : loader) {
             webHookClients.add(webHookClient);

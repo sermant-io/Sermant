@@ -71,12 +71,6 @@ public class ServerHandler extends BaseHandler {
     private EventServer eventServer;
 
     /**
-     * ServerHandler
-     */
-    public ServerHandler() {
-    }
-
-    /**
      * 初始化事件推送服务
      */
     @PostConstruct
@@ -165,6 +159,8 @@ public class ServerHandler extends BaseHandler {
 
     /**
      * 配置服务可见性数据有效时间
+     *
+     * @param instanceId 实例ID
      */
     private void setServiceValidityPeriod(String instanceId) {
         ServerInfo serverInfo = new ServerInfo();

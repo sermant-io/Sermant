@@ -42,6 +42,11 @@ import java.util.Map;
 public class HeartBeatInfoController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartBeatInfoController.class);
 
+    /**
+     * 返回插件信息
+     *
+     * @return 插件信息
+     */
     @GetMapping("/getPluginsInfo")
     public String getPluginsInfo() {
         return JSONObject.toJSONString(getHeartbeatMessageCache());

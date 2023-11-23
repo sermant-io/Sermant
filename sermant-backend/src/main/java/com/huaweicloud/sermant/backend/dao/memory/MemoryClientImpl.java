@@ -47,11 +47,17 @@ import java.util.stream.Collectors;
 @Component
 public class MemoryClientImpl implements EventDao {
     private ExpiringMap<String, QueryResultEventInfoEntity> eventMap;
+
     private ExpiringMap<String, InstanceMeta> agentInstanceMap;
+
     private ExpiringMap<String, Long> eventTimeKeyMap;
+
     private ExpiringMap<String, List<String>> sessionMap;
+
     private ExpiringMap<String, String> emergency;
+
     private ExpiringMap<String, String> important;
+
     private ExpiringMap<String, String> normal;
 
     /**
@@ -61,7 +67,7 @@ public class MemoryClientImpl implements EventDao {
      */
     public MemoryClientImpl(BackendConfig backendConfig) {
         this.eventMap = ExpiringMap.builder().expiration(
-                backendConfig.getEventExpire(), TimeUnit.DAYS)
+                        backendConfig.getEventExpire(), TimeUnit.DAYS)
                 .expirationPolicy(ExpirationPolicy.CREATED).build();
         this.agentInstanceMap = ExpiringMap.builder()
                 .expiration(backendConfig.getEventExpire(), TimeUnit.DAYS)
@@ -163,7 +169,9 @@ public class MemoryClientImpl implements EventDao {
      */
     public List<String> getQueryEventKey(long startTime, long endTime, String pattern) {
         List<Map.Entry<String, Long>> queryResultByTime = eventTimeKeyMap.entrySet().stream().filter(
-                s -> s.getValue() >= startTime && s.getValue() <= endTime && s.getKey().matches(pattern))
+                        ent -> ent.getValue() >= startTime
+                                && ent.getValue() <= endTime
+                                && ent.getKey().matches(pattern))
                 .collect(Collectors.toList());
         return queryResultByTime.stream().sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey).collect(Collectors.toList());

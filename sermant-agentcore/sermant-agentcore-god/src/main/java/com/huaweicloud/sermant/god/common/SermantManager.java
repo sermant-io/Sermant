@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.god.common;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,7 +48,13 @@ public class SermantManager {
         if (hasSermant(artifact)) {
             return SERMANT_MANAGE_MAP.get(artifact);
         }
-        SermantClassLoader sermantClassLoader = new SermantClassLoader(urls);
+        SermantClassLoader sermantClassLoader =
+                AccessController.doPrivileged(new PrivilegedAction<SermantClassLoader>() {
+                    @Override
+                    public SermantClassLoader run() {
+                        return new SermantClassLoader(urls);
+                    }
+                });
         SERMANT_MANAGE_MAP.put(artifact, sermantClassLoader);
         return sermantClassLoader;
     }
@@ -65,14 +73,14 @@ public class SermantManager {
      * 移除Sermant
      *
      * @param artifact 需要移除的Sermant的命名空间
-     * @throws RuntimeException RuntimeException
+     * @throws RemoveSermantException RemoveSermantException
      */
     public static void removeSermant(String artifact) {
         SermantClassLoader sermantClassLoader = SERMANT_MANAGE_MAP.get(artifact);
         try {
             sermantClassLoader.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RemoveSermantException(e);
         }
         SERMANT_MANAGE_MAP.remove(artifact);
     }

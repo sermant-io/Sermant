@@ -19,8 +19,6 @@ package com.huaweicloud.sermant.implement.config;
 import com.huaweicloud.sermant.core.common.CommonConstant;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
-import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
-import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.config.strategy.LoadConfigStrategy;
 import com.huaweicloud.sermant.core.config.utils.ConfigFieldUtil;
 import com.huaweicloud.sermant.core.config.utils.ConfigKeyUtil;
@@ -84,7 +82,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * <p>要求配置文件必须存放在当前jar包的同级目录中
      * <p>最终的配置信息将被{@code argsMap}覆盖，{@code argsMap}拥有最高优先级
      *
-     * @param config      配置文件
+     * @param config 配置文件
      * @param bootArgsMap 启动时设定的参数
      * @return 配置信息承载对象
      */
@@ -96,14 +94,14 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
 
     /**
      * 加载配置对象
-     * <p>通过{@link ConfigTypeKey}和{@link ConfigFieldKey}注解定位到properties的配置信息
-     * <p>如果{@link ConfigFieldKey}不存在，则直接使用配置对象的属性名拼接
+     * <p>通过ConfigTypeKey和ConfigFieldKey注解定位到properties的配置信息
+     * <p>如果ConfigFieldKey不存在，则直接使用配置对象的属性名拼接
      * <p>设置配置对象属性值时，优先查找{@code setter}调用，不存在时尝试直接赋值
      * <p>因此，要求配置对象的属性值需要拥有相应的{@code setter}，或者要求改属性值是公有的
      *
      * @param holder 配置信息主要承载对象
      * @param config 配置对象
-     * @param <R>    配置对象泛型
+     * @return 配置对象泛型
      */
     @Override
     public <R extends BaseConfig> R loadConfig(Properties holder, R config) {
@@ -133,6 +131,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * 读取配置文件
      *
      * @param config 配置文件对象
+     * @return 配置内容
      */
     private Properties readConfig(File config) {
         final Properties properties = new Properties();
@@ -159,8 +158,8 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * 获取配置信息内容
      *
      * @param config 配置主要承载对象{@link Properties}
-     * @param key    配置键
-     * @param field  属性
+     * @param key 配置键
+     * @param field 属性
      * @return 配置信息
      */
     private Object getConfig(Properties config, String key, Field field) {
@@ -172,7 +171,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * 获取配置值，通过{@link ConfigValueUtil#fixValue}方法，修正形如"${}"的配置
      *
      * @param config 配置
-     * @param key    配置键
+     * @param key 配置键
      * @return 配置值
      */
     private String getConfigStr(Properties config, String key) {
@@ -181,7 +180,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
         if (arg == null) {
             configVal = config.getProperty(key);
             if (configVal == null) {
-                configVal = readMapOrCollection(configVal, config, key);
+                configVal = readMapOrCollection(null, config, key);
             }
         } else {
             configVal = arg.toString();
@@ -196,13 +195,11 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 匹配Map/List/Set
-     * (1) 支持xxx.mapName.key1=value1配置Map
-     * (2) 支持xxx.xxx.listName[0]=elem1配置List或Set
+     * 匹配Map/List/Set (1) 支持xxx.mapName.key1=value1配置Map (2) 支持xxx.xxx.listName[0]=elem1配置List或Set
      *
      * @param configVal 配置值
-     * @param config    配置
-     * @param key       配置键
+     * @param config 配置
+     * @param key 配置键
      * @return 配置值
      */
     public String readMapOrCollection(String configVal, Properties config, String key) {
@@ -210,12 +207,12 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
         StringBuilder sb = new StringBuilder();
         for (String propertyName : config.stringPropertyNames()) {
             if (propertyName.startsWith(key)) {
-                // xxx.xxx.listName[0]=elem1 方式匹配List和Set
+                // 匹配List和Set
                 if (propertyName.matches("(.*)\\[[0-9]*]$")) {
                     sb.append(config.getProperty(propertyName))
                             .append(CommonConstant.COMMA);
                 } else {
-                    // xxx.mapName.key1=value1 方式匹配Map
+                    // 匹配Map
                     sb.append(propertyName.replace(key + CommonConstant.DOT, ""))
                             .append(CommonConstant.COLON)
                             .append(config.getProperty(propertyName))
@@ -234,7 +231,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * <p>支持int、short、long、float、double、枚举、String和Object类型，以及他们构成的数组、List和Map
      *
      * @param configStr 配置值
-     * @param field     属性字段
+     * @param field 属性字段
      * @return 转换后的类型
      */
     private Object transType(String configStr, Field field) {
