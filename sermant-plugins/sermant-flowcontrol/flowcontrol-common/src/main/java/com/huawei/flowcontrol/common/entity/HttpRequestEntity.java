@@ -39,12 +39,6 @@ public class HttpRequestEntity extends AbstractRequestEntity {
 
     private String method;
 
-    /**
-     * 空请求构造
-     */
-    public HttpRequestEntity() {
-    }
-
     private void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
     }

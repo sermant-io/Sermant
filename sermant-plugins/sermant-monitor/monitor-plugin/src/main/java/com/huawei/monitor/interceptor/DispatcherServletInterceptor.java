@@ -51,8 +51,8 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
             LogUtils.printHttpRequestAfterPoint(context);
             return context;
         }
-        HttpServletRequest request = (HttpServletRequest) context.getArguments()[0];
-        MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(request.getRequestURI());
+        String uri = ((HttpServletRequest) context.getArguments()[0]).getRequestURI();
+        MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(uri);
         metricCalEntity.getReqNum().incrementAndGet();
         long startTime = (Long) context.getExtMemberFieldValue(START_TIME);
         metricCalEntity.getConsumeReqTimeNum().addAndGet(System.currentTimeMillis() - startTime);
@@ -71,8 +71,8 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
             LogUtils.printHttpRequestOnThrowPoint(context);
             return context;
         }
-        HttpServletRequest request = (HttpServletRequest) context.getArguments()[0];
-        MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(request.getRequestURI());
+        String uri = ((HttpServletRequest) context.getArguments()[0]).getRequestURI();
+        MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(uri);
         metricCalEntity.getReqNum().incrementAndGet();
         metricCalEntity.getFailedReqNum().incrementAndGet();
         LogUtils.printHttpRequestOnThrowPoint(context);

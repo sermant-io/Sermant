@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,16 @@ public abstract class AbstractRule extends Configurable implements Rule, Compara
     protected int order = 0;
 
     @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public int compareTo(AbstractRule target) {
         return order - target.order;
     }
@@ -69,7 +79,7 @@ public abstract class AbstractRule extends Configurable implements Rule, Compara
     /**
      * 字符串转long类型毫秒
      *
-     * @param time         时间字符串 1000   -> 1000毫秒 -1000  -> 负1000毫秒 1000S(s) 1000秒   -> 1000000毫秒
+     * @param time 时间字符串 1000->1000毫秒 -1000->负1000毫秒 1000S(s) 1000秒->1000000毫秒
      * @param defaultValue 默认值
      * @return 转换值
      * @throws IllegalArgumentException 参数不合法抛出
@@ -100,7 +110,7 @@ public abstract class AbstractRule extends Configurable implements Rule, Compara
             return Optional.of(Duration.parse(DURATION_PREFIX + time));
         } catch (DateTimeException ex) {
             LoggerFactory.getLogger().warning(String.format(Locale.ENGLISH,
-                "Parsed time [%s] to duration failed!", time));
+                    "Parsed time [%s] to duration failed!", time));
         }
         return Optional.empty();
     }

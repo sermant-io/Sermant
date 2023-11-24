@@ -45,6 +45,9 @@ public class DiskCommand extends CommonMonitorCommand<List<DiskCommand.DiskStats
 
     /**
      * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.DiskParser parse方法
+     *
+     * @param inputStream 外部进程输出流
+     * @return 解析后的结果
      */
     @Override
     public List<DiskStats> parseResult(InputStream inputStream) {

@@ -42,6 +42,11 @@ public enum RetryContext {
 
     private final ThreadLocal<RetryPolicy> policyThreadLocal = new ThreadLocal<>();
 
+    /**
+     * 获取当前线程的重试机制
+     *
+     * @return 当前线程的重试机制
+     */
     public Retry getRetry() {
         return retryThreadLocal.get();
     }
@@ -85,6 +90,11 @@ public enum RetryContext {
         return retryPolicy.isRetry() && retryPolicy.needRetry();
     }
 
+    /**
+     * 获取当前线程的重试策略
+     *
+     * @return 当前线程的重试策略
+     */
     public RetryPolicy getRetryPolicy() {
         return policyThreadLocal.get();
     }

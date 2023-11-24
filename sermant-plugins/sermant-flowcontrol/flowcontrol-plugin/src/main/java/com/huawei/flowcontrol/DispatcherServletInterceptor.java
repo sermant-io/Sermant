@@ -53,10 +53,11 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
         if (request == null) {
             return Optional.empty();
         }
+        String uri = request.getRequestURI();
         return Optional.of(new HttpRequestEntity.Builder()
                 .setRequestType(RequestType.SERVER)
                 .setPathInfo(request.getPathInfo())
-                .setServletPath(request.getRequestURI())
+                .setServletPath(uri)
                 .setHeaders(getHeaders(request))
                 .setMethod(request.getMethod())
                 .setServiceName(request.getHeader(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY))

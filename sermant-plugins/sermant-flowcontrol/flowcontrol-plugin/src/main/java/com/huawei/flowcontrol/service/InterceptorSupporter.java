@@ -56,16 +56,28 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      */
     protected static final String RETRY_KEY = "$$$$RETRY$$$";
 
+    /**
+     * 标记当前请求重试中
+     */
     protected static final String RETRY_VALUE = "$$$$RETRY_VALUE$$$";
 
+    /**
+     * Apache Dubbo的Cluster类名
+     */
     protected static final String APACHE_DUBBO_CLUSTER_CLASS_NAME = "org.apache.dubbo.rpc.cluster.Cluster";
 
+    /**
+     * Alibaba Dubbo的Cluster类名
+     */
     protected static final String ALIBABA_DUBBO_CLUSTER_CLASS_NAME = "com.alibaba.dubbo.rpc.cluster.Cluster";
 
     private static final String REFUSE_REPLACE_INVOKER = "close";
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * 流控配置
+     */
     protected final FlowControlConfig flowControlConfig;
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -150,6 +162,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      * @param allArguments 方法参数
      * @param result 默认结果
      * @return 方法
+     * @throws InvokerWrapperException 调用包装异常
      */
     protected final Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
         return () -> {
@@ -182,8 +195,8 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
             try {
                 // 按照第一次等待时间等待
                 Thread.sleep(interval);
-            } catch (InterruptedException ignored) {
-                // ignored
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "Interruption error:", e);
             }
         }
         return isNeedRetry;

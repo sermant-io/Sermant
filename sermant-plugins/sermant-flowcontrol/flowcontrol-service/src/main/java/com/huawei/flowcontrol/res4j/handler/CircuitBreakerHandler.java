@@ -68,7 +68,7 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
      */
     private static void addEventConsumers(CircuitBreaker circuitBreaker) {
         Map<String, MetricEntity> monitors = ServiceCollectorService.MONITORS;
-        MetricEntity metricEntity = monitors.computeIfAbsent(circuitBreaker.getName(), s -> new MetricEntity());
+        MetricEntity metricEntity = monitors.computeIfAbsent(circuitBreaker.getName(), str -> new MetricEntity());
         metricEntity.setName(circuitBreaker.getName());
         circuitBreaker.getEventPublisher().onError(event -> {
             metricEntity.getFailedFuseRequest().getAndIncrement();

@@ -295,7 +295,10 @@ public class SermantInjectorController {
      *       env.sermant.io/[key2]：[value2]
      *    则在环境变量map中添加 key1:value1 和 key2:value2，共两个环境变量
      *    本函数本真不强制是否使用labels还是annotations，只需要srcMap代表label/annotations下的map即可。
-      */
+     *
+     * @param srcMap 源环境变量kv
+     * @param tgtEnv 处理后的环境变量kv
+     */
     private void setEnvByMap(JsonNode srcMap, Map<String, String> tgtEnv) {
         Iterator<String> labelIter = srcMap.fieldNames();
         int prefixLength = SERMANT_ENV_PREFIX.length();
@@ -363,7 +366,7 @@ public class SermantInjectorController {
     }
 
     private void injectLifecycle(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
-                                 String containerPath) {
+            String containerPath) {
         boolean enableSpring = getNotEmptyValue(env, ENABLE_SPRING_KEY, true, Boolean::parseBoolean);
         boolean enableGraceShutDown = getNotEmptyValue(env, ENABLE_GRACE_SHUTDOWN_KEY, true,
                 Boolean::parseBoolean);
@@ -401,7 +404,7 @@ public class SermantInjectorController {
     }
 
     private void injectReadinessProbe(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
-                                      String containerPath) {
+            String containerPath) {
         int periodSeconds = getNotEmptyValue(env, K8S_READINESS_WAIT_TIME_KEY, 1, Integer::parseInt);
         boolean enableSpring = getNotEmptyValue(env, ENABLE_SPRING_KEY, true, Boolean::parseBoolean);
         boolean enableHealthCheck = getNotEmptyValue(env, ENABLE_HEALTH_CHECK_KEY, false, Boolean::parseBoolean);
@@ -428,7 +431,7 @@ public class SermantInjectorController {
     }
 
     private void injectEnvFrom(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
-                               String containerPath) {
+            String containerPath) {
         String configMap = getNotEmptyValue(env, ENV_CONFIG_MAP_REF_KEY, envFrom, value -> value);
         if (!StringUtils.hasText(configMap)) {
             return;
@@ -444,7 +447,7 @@ public class SermantInjectorController {
     }
 
     private void injectEnv(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode, String containerPath,
-                           Map<String, String> annotationEnv) {
+            Map<String, String> annotationEnv) {
         // 覆盖容器的env节点
         ObjectNode envNode = arrayNode.addObject();
         envNode.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
@@ -508,7 +511,7 @@ public class SermantInjectorController {
     }
 
     private void injectVolumeMounts(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
-                                    String containerPath) {
+            String containerPath) {
         // 向容器新增volumeMounts节点
         ObjectNode containerVolumeNode = putOrAddObject(arrayNode, containerNode, VOLUME_MOUNTS_PATH,
                 containerPath + VOLUME_MOUNTS_PATH);

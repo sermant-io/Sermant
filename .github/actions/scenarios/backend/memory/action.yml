@@ -65,7 +65,7 @@ runs:
     - name: start test
       shell: bash
       run: |
-        python -m unittest ./sermant-integration-tests/scripts/testBackend.py
+        python -m unittest ./sermant-integration-tests/scripts/test_backend.py
     - name: stop backend
       shell: bash
       run: |

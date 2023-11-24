@@ -34,6 +34,7 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
 
     private AbstractChainHandler next;
 
+
     @Override
     public void onBefore(RequestContext context, Set<String> businessNames) {
         AbstractChainHandler cur = getNextHandler(context, businessNames);
@@ -89,7 +90,7 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
 
         // 初始化StringBuilder的长度是为了性能
         StringBuilder sb =
-            new StringBuilder(className.length() + direct.name().length() + EXTRA_LENGTH_FOR_METHOD_CACHE_KEY);
+                new StringBuilder(className.length() + direct.name().length() + EXTRA_LENGTH_FOR_METHOD_CACHE_KEY);
         sb.append(direct).append("_").append(className).append("_skip_flag");
         return sb.toString();
     }
@@ -117,6 +118,16 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
     @Override
     public int compareTo(AbstractChainHandler handler) {
         return getOrder() - handler.getOrder();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     public void setNext(AbstractChainHandler processor) {
