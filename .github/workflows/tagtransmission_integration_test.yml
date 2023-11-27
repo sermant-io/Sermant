@@ -341,6 +341,7 @@ jobs:
           - kafkaVersion: "2.3.1"
           - kafkaVersion: "1.1.1"
           - kafkaVersion: "2.7.2"
+          - kafkaVersion: "3.4.0"
       fail-fast: false
     steps:
       - uses: actions/checkout@v3

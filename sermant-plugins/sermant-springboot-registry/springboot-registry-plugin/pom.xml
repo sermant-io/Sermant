@@ -23,7 +23,7 @@
         <okhttp.sq.version>2.7.5</okhttp.sq.version>
         <httpclient.version>4.5.12</httpclient.version>
         <httpclient5.version>5.1.1</httpclient5.version>
-        <jetty.client.version>9.4.11.v20180605</jetty.client.version>
+        <jetty.client.version>9.4.53.v20231009</jetty.client.version>
         <feign.version>10.2.3</feign.version>
         <reactor.netty.version>0.9.0.RELEASE</reactor.netty.version>
     </properties>

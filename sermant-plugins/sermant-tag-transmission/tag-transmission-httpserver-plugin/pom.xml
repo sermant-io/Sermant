@@ -17,7 +17,7 @@
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
         <javax-servlet-api.version>3.0.1</javax-servlet-api.version>
-        <tomcat-embed-core.version>9.0.38</tomcat-embed-core.version>
+        <tomcat-embed-core.version>9.0.81</tomcat-embed-core.version>
     </properties>
 
     <dependencies>
