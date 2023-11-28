@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <io.netty.version>4.1.86.Final</io.netty.version>
         <spring-boot.version>2.6.1</spring-boot.version>
-        <protobuf-java.version>3.9.1</protobuf-java.version>
+        <protobuf-java.version>3.19.6</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -29,7 +29,7 @@
         <jedis.version>4.3.1</jedis.version>
         <powermock.version>2.0.9</powermock.version>
         <expiringmap.version>0.5.8</expiringmap.version>
-        <jackson-databind.version>2.13.4.1</jackson-databind.version>
+        <jackson-databind.version>2.13.4.2</jackson-databind.version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
 
