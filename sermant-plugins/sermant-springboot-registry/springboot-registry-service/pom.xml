@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <package.plugin.type>service</package.plugin.type>
         <cloud.zk.version>3.1.0</cloud.zk.version>
-        <jackson.version>2.13.4.1</jackson.version>
+        <jackson.version>2.13.4.2</jackson.version>
         <guava.version>31.1-jre</guava.version>
         <!--Curator 2.x.x兼容Zookeeper的3.4.x和3.5.x
             Curator 3.x.x只兼容Zookeeper 3.5.x-->

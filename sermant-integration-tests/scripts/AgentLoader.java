@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.script;
-
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
