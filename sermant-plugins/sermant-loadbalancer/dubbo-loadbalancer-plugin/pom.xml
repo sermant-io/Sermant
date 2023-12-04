@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <package.plugin.type>plugin</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>
+        <spring-beans.version>5.3.20</spring-beans.version>
     </properties>
 
     <dependencies>
@@ -53,6 +54,18 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring-beans.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

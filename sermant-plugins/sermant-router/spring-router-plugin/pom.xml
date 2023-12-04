@@ -26,6 +26,7 @@
         <okhttp.sq.version>2.7.5</okhttp.sq.version>
         <apache-httpclient.version>4.3</apache-httpclient.version>
         <http.client.async.verion>4.1.5</http.client.async.verion>
+        <jakarta.el.version>3.0.4</jakarta.el.version>
     </properties>
 
     <dependencies>
@@ -44,6 +45,18 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-loadbalancer</artifactId>
             <version>${spring.cloud.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish</groupId>
+                    <artifactId>jakarta.el</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>${jakarta.el.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
