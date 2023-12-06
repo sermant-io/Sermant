@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.exception;
 
 /**
- * ÍøÂç½Ó¿Ú¼ì²éÒì³£
+ * ç½‘ç»œæ¥å£æ£€æŸ¥å¼‚å¸¸
  *
  * @author tangle
  * @since 2023-11-21
@@ -26,9 +26,9 @@ public class NetInterfacesCheckException extends RuntimeException {
     private static final long serialVersionUID = -5485122231044249395L;
 
     /**
-     * ÍøÂç½Ó¿Ú¼ì²éÒì³£
+     * ç½‘ç»œæ¥å£æ£€æŸ¥å¼‚å¸¸
      *
-     * @param message Òì³£ĞÅÏ¢
+     * @param message å¼‚å¸¸ä¿¡æ¯
      */
     public NetInterfacesCheckException(String message) {
         super(message);

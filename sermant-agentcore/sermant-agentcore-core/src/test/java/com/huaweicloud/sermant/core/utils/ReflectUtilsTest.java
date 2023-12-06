@@ -83,7 +83,6 @@ public class ReflectUtilsTest {
         final Optional<Object> test = ReflectUtils.invokeMethod(TestReflect.class, "test", new Class[]{int.class},
                 new Object[]{params});
         Assert.assertFalse(test.isPresent());
-
     }
 
     @Test
@@ -116,7 +115,7 @@ public class ReflectUtilsTest {
         final Optional<Object> result = ReflectUtils.buildWithConstructor(TestReflect.class.getName(), null, null);
         Assert.assertTrue(result.isPresent() && result.get() instanceof TestReflect);
         final Optional<Object> paramsResult = ReflectUtils.buildWithConstructor(TestReflect.class.getName(),
-                new Class[] {int.class, int.class},new Object[] {1, 2});
+                new Class[]{int.class, int.class}, new Object[]{1, 2});
         Assert.assertTrue(paramsResult.isPresent() && paramsResult.get() instanceof TestReflect);
         final TestReflect reflect = (TestReflect) paramsResult.get();
         Assert.assertEquals(reflect.x + reflect.y, 3);
@@ -127,7 +126,7 @@ public class ReflectUtilsTest {
         final Optional<Object> result = ReflectUtils.buildWithConstructor(TestReflect.class, null, null);
         Assert.assertTrue(result.isPresent() && result.get() instanceof TestReflect);
         final Optional<Object> paramsResult = ReflectUtils.buildWithConstructor(TestReflect.class,
-                new Class[] {int.class, int.class},new Object[] {1, 2});
+                new Class[]{int.class, int.class}, new Object[]{1, 2});
         Assert.assertTrue(paramsResult.isPresent() && paramsResult.get() instanceof TestReflect);
         final TestReflect reflect = (TestReflect) paramsResult.get();
         Assert.assertEquals(reflect.x + reflect.y, 3);
@@ -138,10 +137,10 @@ public class ReflectUtilsTest {
         final Optional<Constructor<?>> constructor = ReflectUtils.findConstructor(TestReflect.class, null);
         Assert.assertTrue(constructor.isPresent());
         final Optional<Constructor<?>> paramsCons = ReflectUtils.findConstructor(TestReflect.class,
-                new Class[] {int.class, int.class});
+                new Class[]{int.class, int.class});
         Assert.assertTrue(paramsCons.isPresent());
         final Optional<Constructor<?>> noFoundCons = ReflectUtils.findConstructor(TestReflect.class,
-                new Class[] {Integer.class, Integer.class});
+                new Class[]{Integer.class, Integer.class});
         Assert.assertFalse(noFoundCons.isPresent());
     }
 
@@ -191,7 +190,8 @@ public class ReflectUtilsTest {
 
     @Test
     public void getClazzFieldValue() {
-        final Optional<Object> staticField = ReflectUtils.getFieldValue(TestReflect.class.getName(), null, "staticField");
+        final Optional<Object> staticField = ReflectUtils.getFieldValue(TestReflect.class.getName(), null,
+                "staticField");
         Assert.assertTrue(staticField.isPresent());
         Assert.assertEquals(staticField.get(), TestReflect.staticField);
         final Optional<Object> fieldValue = ReflectUtils.getFieldValue("com.test", null, null);
@@ -213,7 +213,8 @@ public class ReflectUtilsTest {
         Optional<Object> testNullFieldOptional = ReflectUtils.getStaticFieldValue(ReflectUtilsTest.class, null);
         Assert.assertNotNull(testNullFieldOptional);
         Assert.assertFalse(testNullFieldOptional.isPresent());
-        Optional<Object> testNotExistOptional = ReflectUtils.getStaticFieldValue(ReflectUtilsTest.class, NOT_EXIST_FIELD_NAME);
+        Optional<Object> testNotExistOptional = ReflectUtils.getStaticFieldValue(ReflectUtilsTest.class,
+                NOT_EXIST_FIELD_NAME);
         Assert.assertNotNull(testNotExistOptional);
         Assert.assertFalse(testNotExistOptional.isPresent());
         Optional<Object> testNotStaticOptional = ReflectUtils.getStaticFieldValue(ReflectUtilsTest.class,
@@ -231,13 +232,15 @@ public class ReflectUtilsTest {
     }
 
     static class Child extends Parent {
-
     }
 
     static class TestReflect {
         private static final String staticField = "staticField";
+
         private final String finalField = "test";
+
         int x;
+
         int y;
 
         TestReflect() {
@@ -248,6 +251,7 @@ public class ReflectUtilsTest {
             this.x = x;
             this.y = y;
         }
+
         private String noParams() {
             return "noParams";
         }

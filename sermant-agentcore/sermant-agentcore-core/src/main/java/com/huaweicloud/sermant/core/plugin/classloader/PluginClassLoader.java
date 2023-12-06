@@ -104,8 +104,7 @@ public class PluginClassLoader extends URLClassLoader {
                     clazz = super.loadClass(name, resolve);
                 } catch (ClassNotFoundException e) {
                     // 捕获类找不到的异常，下一步会进入localLoader中去加载类
-                    // ignored
-                    LOGGER.log(Level.WARNING, "load class failed, msg is {0}", e.getMessage());
+                    LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
                 }
             }
 
@@ -123,7 +122,7 @@ public class PluginClassLoader extends URLClassLoader {
                         clazz = loader.loadClass(name);
                     } catch (ClassNotFoundException e) {
                         // 无法找到类，忽略，后续抛出异常
-                        LOGGER.log(Level.WARNING, "load class failed, msg is {0}", e.getMessage());
+                        LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
                     }
                 }
             }
@@ -157,7 +156,7 @@ public class PluginClassLoader extends URLClassLoader {
                     clazz = super.loadClass(name, false);
                 } catch (ClassNotFoundException e) {
                     // 无法找到类，忽略，后续抛出异常
-                    LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
+                    LOGGER.log(Level.FINE, "Load sermant class failed, msg is {0}", e.getMessage());
                 }
             }
 

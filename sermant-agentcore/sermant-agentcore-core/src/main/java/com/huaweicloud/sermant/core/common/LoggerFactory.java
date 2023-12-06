@@ -44,6 +44,16 @@ public class LoggerFactory {
     }
 
     /**
+     * 初始化默认日志
+     *
+     * @param artifact 归属产品
+     */
+    public static void initDefaultLogger(String artifact) {
+        // defaultLogger的name必须为sermant.artifact，需和sermantLogger保持一致
+        defaultLogger = java.util.logging.Logger.getLogger("sermant." + artifact);
+    }
+
+    /**
      * 初始化logback配置文件路径
      *
      * @param artifact 归属产品

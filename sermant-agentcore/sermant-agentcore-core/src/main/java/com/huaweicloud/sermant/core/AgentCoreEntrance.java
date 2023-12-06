@@ -87,6 +87,9 @@ public class AgentCoreEntrance {
         artifactCache = artifact;
         adviserCache = new DefaultAdviser();
 
+        // 初始化默认日志
+        LoggerFactory.initDefaultLogger(artifact);
+
         // 初始化框架类加载器
         ClassLoaderManager.init(argsMap);
 
