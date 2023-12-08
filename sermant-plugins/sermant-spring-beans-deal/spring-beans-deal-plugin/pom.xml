@@ -14,7 +14,7 @@
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
-        <spring-components.version>5.3.14</spring-components.version>
+        <spring-components.version>5.3.20</spring-components.version>
     </properties>
 
     <dependencies>
