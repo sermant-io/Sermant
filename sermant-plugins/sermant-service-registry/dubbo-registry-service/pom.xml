@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dubbo.version>2.7.15</dubbo.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
-        <jackson.databind.version>2.13.4.1</jackson.databind.version>
+        <jackson.databind.version>2.13.4.2</jackson.databind.version>
         <surefire.plugin.version>2.22.2</surefire.plugin.version>
         <package.plugin.type>service</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>

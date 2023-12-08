@@ -19,9 +19,9 @@
         <package.plugin.type>plugin</package.plugin.type>
         <spring.version>5.2.9.RELEASE</spring.version>
         <http.client.async.verion>4.1.5</http.client.async.verion>
-        <okhttp.version>4.1.0</okhttp.version>
+        <okhttp.version>4.11.0</okhttp.version>
         <okhttp.sq.version>2.7.5</okhttp.sq.version>
-        <httpclient.version>4.5.12</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpclient5.version>5.1.1</httpclient5.version>
         <jetty.client.version>9.4.53.v20231009</jetty.client.version>
         <feign.version>10.2.3</feign.version>

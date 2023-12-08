@@ -34,9 +34,9 @@
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
-        <spring-components.version>5.3.14</spring-components.version>
+        <spring-components.version>5.3.20</spring-components.version>
         <spring-cloud.version>3.0.0</spring-cloud.version>
-        <zk-config.version>3.0.0</zk-config.version>
+        <zk-config.version>3.0.5</zk-config.version>
         <nacos-config.version>2.2.0.RELEASE</nacos-config.version>
     </properties>
 

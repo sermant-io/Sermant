@@ -17,7 +17,7 @@
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>plugin</package.plugin.type>
-        <spring.boot.version>2.5.2</spring.boot.version>
+        <spring.boot.version>2.6.8</spring.boot.version>
         <resilience4j.version>1.7.1</resilience4j.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <alibaba.dubbo.version>2.5.7</alibaba.dubbo.version>

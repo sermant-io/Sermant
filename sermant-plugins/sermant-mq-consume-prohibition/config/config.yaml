@@ -1,0 +1,7 @@
+kafka:
+  enableProhibition: true
+  topic:
+    - test1
+    - test2
+  rocketMq:
+    enableProhibition: true
