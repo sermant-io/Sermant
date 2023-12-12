@@ -16,7 +16,7 @@
         <spring.boot.version>2.5.3</spring.boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <io.netty.version>4.1.86.Final</io.netty.version>
-        <spring-boot.version>2.6.1</spring-boot.version>
+        <spring-boot.version>2.7.17</spring-boot.version>
         <protobuf-java.version>3.19.6</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
