@@ -23,6 +23,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
@@ -47,7 +48,7 @@ public class TagConfigListener implements DynamicConfigListener {
      * 构造方法
      */
     public TagConfigListener() {
-        Representer representer = new Representer();
+        Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
         this.yaml = new Yaml(representer);
         this.tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);

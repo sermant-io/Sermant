@@ -28,6 +28,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
@@ -116,7 +117,7 @@ public class RuleManagerTest {
          * 构造器
          */
         public YamlRuleConverter() {
-            Representer representer = new Representer();
+            Representer representer = new Representer(new DumperOptions());
             representer.getPropertyUtils().setSkipMissingProperties(true);
             yaml = new Yaml(representer);
         }
