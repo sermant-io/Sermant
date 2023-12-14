@@ -9,11 +9,41 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>config-service</artifactId>
-
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <config.skip.flag>false</config.skip.flag>
+        <package.plugin.type>service</package.plugin.type>
+        <snakeyaml.version>2.0</snakeyaml.version>
     </properties>
+
+    <artifactId>config-service</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-agentcore-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>consumer-controller</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

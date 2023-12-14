@@ -30,9 +30,19 @@ import java.util.Map;
 @ConfigTypeKey("service.meta")
 public class ServiceMeta implements BaseConfig {
     /**
+     * 默认配置值
+     */
+    public static final String DEFAULT = "default";
+
+    /**
+     * 服务名
+     */
+    private String service = DEFAULT;
+
+    /**
      * app名称 服务分组
      */
-    private String application = "default";
+    private String application = DEFAULT;
 
     /**
      * 当前版本
@@ -47,7 +57,7 @@ public class ServiceMeta implements BaseConfig {
     /**
      * 命名空间
      */
-    private String project = "default";
+    private String project = DEFAULT;
 
     /**
      * 环境
@@ -62,7 +72,7 @@ public class ServiceMeta implements BaseConfig {
     /**
      * 自定义标签值
      */
-    private String customLabelValue = "default";
+    private String customLabelValue = DEFAULT;
 
     private Map<String, String> parameters;
 
@@ -128,5 +138,13 @@ public class ServiceMeta implements BaseConfig {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 }

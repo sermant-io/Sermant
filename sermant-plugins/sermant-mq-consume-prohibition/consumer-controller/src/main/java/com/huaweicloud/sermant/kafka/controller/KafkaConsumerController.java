@@ -59,4 +59,13 @@ public class KafkaConsumerController {
     public static void updateConsumerCache(KafkaConsumer<?, ?> kafkaConsumer) {
         KafkaConsumerCache.INSTANCE.updateCache(kafkaConsumer);
     }
+
+    /**
+     * 获取消费者缓存
+     *
+     * @return 消费者缓存
+     */
+    public static Set<KafkaConsumerWrapper> getConsumerCache() {
+        return KafkaConsumerCache.INSTANCE.getCache();
+    }
 }
