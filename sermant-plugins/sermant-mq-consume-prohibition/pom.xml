@@ -15,6 +15,7 @@
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
         <package.plugin.name>mq-consume-prohibition</package.plugin.name>
+        <rocketmq-client.version>4.9.7</rocketmq-client.version>
     </properties>
 
     <dependencyManagement>
@@ -23,6 +24,11 @@
                 <groupId>com.huaweicloud.sermant</groupId>
                 <artifactId>message-common</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq-client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -37,6 +43,7 @@
                 <module>kafka-1.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
+                <module>rocketmq-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -45,6 +52,7 @@
                 <module>kafka-1.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
+                <module>rocketmq-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -53,6 +61,7 @@
                 <module>kafka-1.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
+                <module>rocketmq-plugin</module>
             </modules>
         </profile>
     </profiles>
