@@ -21,39 +21,49 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.kafka.controller.KafkaConsumerController;
 import com.huaweicloud.sermant.kafka.extension.KafkaConsumerHandler;
+import com.huaweicloud.sermant.kafka.utils.MarkUtils;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.Deserializer;
 
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
  * KafkaConsumer构造方法的拦截器
+ * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Properties, Deserializer, Deserializer)}
+ * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
  *
  * @author lilai
  * @since 2023-12-05
  */
-public class KafkaConsumerConstructorInterceptor extends AbstractInterceptor {
+public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方案
+     * 带有KafkaConsumerHandler的构造方法
      *
-     * @param handler
+     * @param handler 构造方法拦截点处理器
      */
-    public KafkaConsumerConstructorInterceptor(KafkaConsumerHandler handler) {
+    public KafkaConsumerMapConstructorInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
      * 无参数构造方法
      */
-    public KafkaConsumerConstructorInterceptor() {
+    public KafkaConsumerMapConstructorInterceptor() {
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        // 高版本Properties会调用Map方式，避免重复进入
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
         if (handler != null) {
             handler.doBefore(context);
         }
@@ -62,13 +72,27 @@ public class KafkaConsumerConstructorInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        // 高版本Properties会调用Map方式，避免重复进入
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
         if (handler != null) {
             handler.doAfter(context);
-        } else {
-            processStartUpConsumption();
         }
 
         cacheKafkaConsumer(context);
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        // 高版本Properties会调用Map方式，避免重复进入
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
+        if (handler != null) {
+            handler.doOnThrow(context);
+        }
         return context;
     }
 
@@ -81,14 +105,8 @@ public class KafkaConsumerConstructorInterceptor extends AbstractInterceptor {
         Object kafkaConsumerObject = context.getObject();
         if (kafkaConsumerObject instanceof KafkaConsumer) {
             KafkaConsumer<?, ?> consumer = (KafkaConsumer<?, ?>) kafkaConsumerObject;
-            KafkaConsumerController.updateConsumerCache(consumer);
-            LOGGER.info("KafkaConsumer has been cached by Sermant");
+            KafkaConsumerController.addKafkaConsumerCache(consumer);
+            LOGGER.info("KafkaConsumer has been cached by Sermant.");
         }
-    }
-
-    /**
-     * 处理启动过程中的禁止消费
-     */
-    private void processStartUpConsumption() {
     }
 }

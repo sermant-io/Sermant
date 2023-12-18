@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.kafka.extension;
-
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+package com.huaweicloud.sermant.kafka.utils;
 
 /**
- * KafkaConsumer拦截点处理器接口，供外部实现在KafkaConsumer的拦截点执行相应操作
+ * 线程变量标记类，用于兼容kafka不同版本不重复进入构造函数
  *
  * @author lilai
- * @since 2023-12-05
+ * @since 2023-12-09
  */
-public interface KafkaConsumerHandler {
-    /**
-     * 拦截点之前的处理
-     *
-     * @param context 拦截点上下文
-     */
-    void doBefore(ExecuteContext context);
+public class MarkUtils {
+    private static final ThreadLocal<Boolean> MARK = new ThreadLocal<>();
+
+    private MarkUtils() {
+    }
 
     /**
-     * 拦截点之后的处理
+     * 获取线程变量
      *
-     * @param context 拦截点上下文
+     * @return 线程变量
      */
-    void doAfter(ExecuteContext context);
+    public static Boolean getMark() {
+        return MARK.get();
+    }
 
     /**
-     * 拦截点异常时的处理
+     * 存入线程变量
      *
-     * @param context 拦截点上下文
+     * @param value 线程变量
      */
-    void doOnThrow(ExecuteContext context);
+    public static void setMark(Boolean value) {
+        MARK.set(value);
+    }
 }

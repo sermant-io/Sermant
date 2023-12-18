@@ -18,8 +18,8 @@ package com.huaweicloud.sermant.kafka.cache;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * KafkaConsumer缓存
@@ -36,14 +36,9 @@ public enum KafkaConsumerCache {
     /**
      * 消费者缓存
      */
-    private final Set<KafkaConsumerWrapper> kafkaConsumerCache = new CopyOnWriteArraySet<>();
+    private final Map<Integer, KafkaConsumerWrapper> kafkaConsumerCache = new ConcurrentHashMap<>();
 
     KafkaConsumerCache() {
-        init();
-    }
-
-    private void init() {
-
     }
 
     /**
@@ -51,7 +46,7 @@ public enum KafkaConsumerCache {
      *
      * @return 消费者缓存
      */
-    public Set<KafkaConsumerWrapper> getCache() {
+    public Map<Integer, KafkaConsumerWrapper> getCache() {
         return kafkaConsumerCache;
     }
 
@@ -60,8 +55,8 @@ public enum KafkaConsumerCache {
      *
      * @param kafkaConsumer 消费者实例
      */
-    public void updateCache(KafkaConsumer<?, ?> kafkaConsumer) {
-        kafkaConsumerCache.add(convert(kafkaConsumer));
+    public void addKafkaConsumer(KafkaConsumer<?, ?> kafkaConsumer) {
+        kafkaConsumerCache.put(kafkaConsumer.hashCode(), convert(kafkaConsumer));
     }
 
     /**
@@ -71,6 +66,6 @@ public enum KafkaConsumerCache {
      * @return 消费者包装实例
      */
     private KafkaConsumerWrapper convert(KafkaConsumer<?, ?> kafkaConsumer) {
-        return new KafkaConsumerWrapper();
+        return new KafkaConsumerWrapper(kafkaConsumer);
     }
 }

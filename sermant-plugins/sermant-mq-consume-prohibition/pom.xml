@@ -40,7 +40,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>kafka-1.x-plugin</module>
+                <module>kafka-1.x-2.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
                 <module>rocketmq-plugin</module>
@@ -49,7 +49,7 @@
         <profile>
             <id>test</id>
             <modules>
-                <module>kafka-1.x-plugin</module>
+                <module>kafka-1.x-2.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
                 <module>rocketmq-plugin</module>
@@ -58,7 +58,7 @@
         <profile>
             <id>release</id>
             <modules>
-                <module>kafka-1.x-plugin</module>
+                <module>kafka-1.x-2.x-plugin</module>
                 <module>consumer-controller</module>
                 <module>config-service</module>
                 <module>rocketmq-plugin</module>

@@ -33,7 +33,13 @@ public class KafkaConsumerDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                KafkaEnhancementHelper.getConstructorInterceptDeclarers(),
-                KafkaEnhancementHelper.getPollInterceptDeclarers()};
+                KafkaEnhancementHelper.getPropertiesConstructorInterceptDeclarers(),
+                KafkaEnhancementHelper.getMapConstructorInterceptDeclarers(),
+                KafkaEnhancementHelper.getSubscribeInterceptDeclarers(),
+                KafkaEnhancementHelper.getAssignInterceptDeclarers(),
+                KafkaEnhancementHelper.getUnsubscribeInterceptDeclarers(),
+                KafkaEnhancementHelper.getPollInterceptDeclarers(),
+                KafkaEnhancementHelper.getCloseInterceptDeclarers()
+        };
     }
 }
