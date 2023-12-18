@@ -195,10 +195,10 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
             + DubboReflectUtils.getMethodName(invocation) + ":" + getVersion(queryMap);
         List<Rule> rules = RuleUtils
             .getRules(configuration, targetService, interfaceName, DubboCache.INSTANCE.getAppName());
-        List<Route> routes = RouteUtils.getRoutes(rules, DubboReflectUtils.getArguments(invocation),
+        Optional<Rule> matchRuleOptional = RouteUtils.getRule(rules, DubboReflectUtils.getArguments(invocation),
             parseAttachments(invocation));
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
+        if (matchRuleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, matchRuleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
             .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules, true), true);

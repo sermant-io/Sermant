@@ -101,6 +101,8 @@ public class ScClient {
 
     private static final int FLAG = -1;
 
+    private static final int MAX_HOST_NAME_LENGTH = 64;
+
     private final AtomicBoolean isDelayed = new AtomicBoolean();
 
     private ServiceCenterConfiguration serviceCenterConfiguration;
@@ -418,7 +420,10 @@ public class ScClient {
     private void buildMicroServiceInstance() {
         microserviceInstance = new MicroserviceInstance();
         microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
-        microserviceInstance.setHostName(RegisterContext.INSTANCE.getClientInfo().getHost());
+        String hostName = RegisterContext.INSTANCE.getClientInfo().getHost();
+        microserviceInstance.setHostName(
+            hostName != null && hostName.length() > MAX_HOST_NAME_LENGTH ? hostName.substring(0,
+                MAX_HOST_NAME_LENGTH) : hostName);
         microserviceInstance.setEndpoints(buildEndpoints());
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setMode(HealthCheckMode.push);

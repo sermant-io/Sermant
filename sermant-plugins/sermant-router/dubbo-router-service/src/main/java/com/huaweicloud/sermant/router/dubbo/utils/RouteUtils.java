@@ -50,11 +50,11 @@ public class RouteUtils {
      * @param attachments dubbo的attachments参数
      * @return 匹配的路由
      */
-    public static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
+    public static Optional<Rule> getRule(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
-                return rule.getRoute();
+                return Optional.of(rule);
             }
             List<Route> routeList;
             if (!CollectionUtils.isEmpty(match.getAttachments()) && !CollectionUtils.isEmpty(attachments)) {
@@ -65,10 +65,10 @@ public class RouteUtils {
                 routeList = Collections.emptyList();
             }
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     /**

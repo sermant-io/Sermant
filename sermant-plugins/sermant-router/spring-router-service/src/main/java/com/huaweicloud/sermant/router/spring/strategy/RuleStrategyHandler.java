@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.spring.strategy;
 
 import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.strategy.AbstractRuleStrategy;
 import com.huaweicloud.sermant.router.spring.strategy.mapper.AbstractMetadataMapper;
 import com.huaweicloud.sermant.router.spring.strategy.mapper.DefaultMetadataMapper;
@@ -64,11 +65,11 @@ public enum RuleStrategyHandler {
      *
      * @param serviceName 服务名
      * @param instances 实例列表
-     * @param routes 路由规则
+     * @param rule 路由规则
      * @return 路由匹配的实例
      */
-    public List<Object> getMatchInstances(String serviceName, List<Object> instances, List<Route> routes) {
-        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, routes, false);
+    public List<Object> getMatchInstances(String serviceName, List<Object> instances, Rule rule) {
+        return getRuleStrategy(instances).getMatchInstances(serviceName, instances, rule, false);
     }
 
     /**
