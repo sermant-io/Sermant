@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.utils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.exception.NetInterfacesCheckException;
+import com.huaweicloud.sermant.core.exception.NetworkInterfacesCheckException;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -61,7 +61,7 @@ public class NetworkUtils {
         try {
             Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             if (netInterfaces == null) {
-                throw new NetInterfacesCheckException("netInterfaces is null");
+                throw new NetworkInterfacesCheckException("netInterfaces is null");
             }
             InetAddress ip;
             while (netInterfaces.hasMoreElements()) {
@@ -100,6 +100,5 @@ public class NetworkUtils {
         } catch (UnknownHostException e) {
             return Optional.empty();
         }
-
     }
 }
