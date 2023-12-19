@@ -23,7 +23,6 @@ import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EnabledStrategy;
-import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
@@ -35,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * BaseLoadBalancerInterceptor服务
@@ -96,9 +96,9 @@ public class LoadBalancerServiceImpl implements LoadBalancerService {
             return instances;
         }
         List<Rule> rules = RuleUtils.getRules(configuration, targetName, path, AppCache.INSTANCE.getAppName());
-        List<Route> routes = RouteUtils.getRoutes(rules, header);
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
+        Optional<Rule> ruleOptional = RouteUtils.getRoutes(rules, header);
+        if (ruleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, ruleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
             .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules, false), true);

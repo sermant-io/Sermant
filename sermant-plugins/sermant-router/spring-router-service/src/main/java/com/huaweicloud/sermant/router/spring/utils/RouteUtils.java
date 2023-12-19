@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * 路由插件工具类
@@ -46,14 +47,14 @@ public class RouteUtils {
      * @param header header
      * @return 匹配的路由
      */
-    public static List<Route> getRoutes(List<Rule> list, Map<String, List<String>> header) {
+    public static Optional<Rule> getRoutes(List<Rule> list, Map<String, List<String>> header) {
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(header, rule);
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private static List<Route> getRoutes(Map<String, List<String>> header, Rule rule) {
