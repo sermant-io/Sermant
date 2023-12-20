@@ -19,8 +19,8 @@ package com.huaweicloud.sermant.rocketmq.cache;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * rocketmq消费者缓存
@@ -32,14 +32,14 @@ public class RocketMqConsumerCache {
     /**
      * push消费者wrapper缓存
      */
-    public static final Set<DefaultMqPushConsumerWrapper> PUSH_CONSUMERS_CACHE =
-            new CopyOnWriteArraySet<>();
+    public static final Map<Integer, DefaultMqPushConsumerWrapper> PUSH_CONSUMERS_CACHE =
+            new ConcurrentHashMap<>();
 
     /**
      * pull消费者wrapper缓存
      */
-    public static final Set<DefaultLitePullConsumerWrapper> PULL_CONSUMERS_CACHE =
-            new CopyOnWriteArraySet<>();
+    public static final Map<Integer, DefaultLitePullConsumerWrapper> PULL_CONSUMERS_CACHE =
+            new ConcurrentHashMap<>();
 
     private RocketMqConsumerCache() {
     }

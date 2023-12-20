@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.rocketmq.constant.SubscriptionType;
 
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
+import org.apache.rocketmq.client.impl.consumer.AssignedMessageQueue;
 import org.apache.rocketmq.client.impl.consumer.DefaultLitePullConsumerImpl;
 import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
@@ -40,9 +41,11 @@ public class DefaultLitePullConsumerWrapper extends AbstractConsumerWrapper {
 
     private final RebalanceImpl rebalanceImpl;
 
-    private Collection<MessageQueue> assignedMessageQueues;
+    private Collection<MessageQueue> messageQueues;
 
     private SubscriptionType subscriptionType = SubscriptionType.NONE;
+
+    private AssignedMessageQueue assignedMessageQueue;
 
     /**
      * 有参构造方法
@@ -71,9 +74,9 @@ public class DefaultLitePullConsumerWrapper extends AbstractConsumerWrapper {
         consumerGroup = pullConsumer.getConsumerGroup();
     }
 
-    public void setAssignedMessageQueues(
-            Collection<MessageQueue> assignedMessageQueues) {
-        this.assignedMessageQueues = assignedMessageQueues;
+    public void setMessageQueues(
+            Collection<MessageQueue> messageQueues) {
+        this.messageQueues = messageQueues;
     }
 
     public void setSubscriptionType(SubscriptionType subscriptionType) {
@@ -92,11 +95,19 @@ public class DefaultLitePullConsumerWrapper extends AbstractConsumerWrapper {
         return rebalanceImpl;
     }
 
-    public Collection<MessageQueue> getAssignedMessageQueues() {
-        return assignedMessageQueues;
+    public Collection<MessageQueue> getMessageQueues() {
+        return messageQueues;
     }
 
     public SubscriptionType getSubscriptionType() {
         return subscriptionType;
+    }
+
+    public AssignedMessageQueue getAssignedMessageQueue() {
+        return assignedMessageQueue;
+    }
+
+    public void setAssignedMessageQueue(AssignedMessageQueue assignedMessageQueue) {
+        this.assignedMessageQueue = assignedMessageQueue;
     }
 }
