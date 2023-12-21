@@ -69,6 +69,16 @@ public class LoggerFactory {
     }
 
     /**
+     * 初始化默认日志
+     *
+     * @param artifact 归属产品
+     */
+    public static void initDefaultLogger(String artifact) {
+        // 初始化默认日志，默认日志名必须为 sermant.<artifact>，通过这种方式，才能添加上SermantBridgeHandler
+        defaultLogger = java.util.logging.Logger.getLogger("sermant." + artifact);
+    }
+
+    /**
      * 获取jul日志
      *
      * @return jul日志
