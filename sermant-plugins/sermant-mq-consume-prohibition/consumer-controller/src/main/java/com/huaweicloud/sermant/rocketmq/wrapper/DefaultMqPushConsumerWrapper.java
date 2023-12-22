@@ -44,6 +44,7 @@ public class DefaultMqPushConsumerWrapper extends AbstractConsumerWrapper {
         super(clientFactory);
         this.pushConsumer = consumer;
         this.pushConsumerImpl = pushConsumerImpl;
+        initClientInfo();
     }
 
     @Override

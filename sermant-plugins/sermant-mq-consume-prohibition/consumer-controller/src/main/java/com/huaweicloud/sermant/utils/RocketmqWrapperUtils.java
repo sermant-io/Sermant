@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.utils;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.rocketmq.wrapper.AbstractConsumerWrapper;
@@ -25,6 +26,7 @@ import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.impl.consumer.AssignedMessageQueue;
 import org.apache.rocketmq.client.impl.consumer.DefaultLitePullConsumerImpl;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
@@ -92,6 +94,29 @@ public class RocketmqWrapperUtils {
             initWrapperServiceMeta(wrapper);
             return Optional.of(wrapper);
         }
+        return Optional.empty();
+    }
+
+    /**
+     * 获取pull消费者的assignedMessageQueue属性值
+     *
+     * @param pullConsumerImpl
+     * @return assignedMessageQueue属性值
+     */
+    public static Optional<AssignedMessageQueue> getAssignedMessageQueue(DefaultLitePullConsumerImpl pullConsumerImpl) {
+        // 设置插件类加载器的局部类加载器为宿主类加载器
+        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).setLocalLoader(
+                pullConsumerImpl.getClass().getClassLoader());
+
+        Optional<Object> assignedMessageQueueOptional = ReflectUtils
+                .getFieldValue(pullConsumerImpl, "assignedMessageQueue");
+        if (assignedMessageQueueOptional.isPresent()
+                && assignedMessageQueueOptional.get() instanceof AssignedMessageQueue) {
+            return Optional.of((AssignedMessageQueue) assignedMessageQueueOptional.get());
+        }
+
+        // 移除插件类加载器的局部类加载器
+        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).removeTmpLoader();
         return Optional.empty();
     }
 
