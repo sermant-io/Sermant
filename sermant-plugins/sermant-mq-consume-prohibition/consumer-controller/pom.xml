@@ -10,9 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>consumer-controller</artifactId>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <kafka.client.version>2.7.0</kafka.client.version>
+        <collections4.version>4.4</collections4.version>
     </properties>
 
     <dependencies>
@@ -24,13 +27,18 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>1.1.0</version>
+            <version>${kafka.client.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${collections4.version}</version>
         </dependency>
     </dependencies>
 </project>

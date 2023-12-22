@@ -19,9 +19,14 @@ package com.huaweicloud.sermant.kafka.controller;
 import com.huaweicloud.sermant.kafka.cache.KafkaConsumerCache;
 import com.huaweicloud.sermant.kafka.cache.KafkaConsumerWrapper;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * KafkaConsumer消费控制器
@@ -34,30 +39,36 @@ public class KafkaConsumerController {
     }
 
     /**
-     * 关闭消费
+     * 执行禁止消费
      *
      * @param kafkaConsumerWrapper 消费者包装实例
-     * @param topics 消费主题
+     * @param prohibitionTopics 禁止消费的主题
      */
-    public static void disableConsumption(KafkaConsumerWrapper kafkaConsumerWrapper, Set<String> topics) {
+    public static void disableConsumption(KafkaConsumerWrapper kafkaConsumerWrapper, Set<String> prohibitionTopics) {
+        Set<String> originalTopics = kafkaConsumerWrapper.getOriginalTopics();
+
+        // 未订阅任何Topic，无需操作
+        if (originalTopics.size() == 0) {
+            return;
+        }
+        Collection<TopicPartition> originalPartitions = kafkaConsumerWrapper.getOriginalPartitions();
+        KafkaConsumer<?, ?> kafkaConsumer = kafkaConsumerWrapper.getKafkaConsumer();
+        Collection<String> subtractTopics = CollectionUtils.subtract(originalTopics, prohibitionTopics);
+        if (kafkaConsumerWrapper.isAssign()) {
+            kafkaConsumer.assign(originalPartitions.stream().filter(obj -> subtractTopics.contains(obj.topic()))
+                    .collect(Collectors.toSet()));
+            return;
+        }
+        kafkaConsumer.subscribe(subtractTopics);
     }
 
     /**
-     * 开启消费
-     *
-     * @param kafkaConsumerWrapper 消费者包装实例
-     * @param topics 消费主题
-     */
-    public static void enableConsumption(KafkaConsumerWrapper kafkaConsumerWrapper, Set<String> topics) {
-    }
-
-    /**
-     * 更新消费者缓存
+     * 新增消费者缓存
      *
      * @param kafkaConsumer 消费者实例
      */
-    public static void updateConsumerCache(KafkaConsumer<?, ?> kafkaConsumer) {
-        KafkaConsumerCache.INSTANCE.updateCache(kafkaConsumer);
+    public static void addKafkaConsumerCache(KafkaConsumer<?, ?> kafkaConsumer) {
+        KafkaConsumerCache.INSTANCE.addKafkaConsumer(kafkaConsumer);
     }
 
     /**
@@ -65,7 +76,16 @@ public class KafkaConsumerController {
      *
      * @return 消费者缓存
      */
-    public static Set<KafkaConsumerWrapper> getConsumerCache() {
+    public static Map<Integer, KafkaConsumerWrapper> getKafkaConsumerCache() {
         return KafkaConsumerCache.INSTANCE.getCache();
+    }
+
+    /**
+     * 移除消费者缓存
+     *
+     * @param kafkaConsumer 消费者实例
+     */
+    public static void removeKafkaConsumeCache(KafkaConsumer<?, ?> kafkaConsumer) {
+        KafkaConsumerCache.INSTANCE.getCache().remove(kafkaConsumer.hashCode());
     }
 }

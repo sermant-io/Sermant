@@ -124,9 +124,9 @@ public class MqConfigListener implements DynamicConfigListener {
     }
 
     private void executeProhibition() {
-        KafkaConsumerController.getConsumerCache()
-                .forEach(obj -> KafkaConsumerController.disableConsumption(obj,
-                        ProhibitionConfigManager.getKafkaProhibitionTopics()));
+        // KafkaConsumer标记配置已更新
+        KafkaConsumerController.getKafkaConsumerCache().values()
+                .forEach(obj -> obj.getIsConfigChanged().set(true));
         RocketMqPushConsumerController.getPushConsumerCache().entrySet()
                 .forEach(obj -> RocketMqPushConsumerController.disablePushConsumption(obj.getValue(),
                         ProhibitionConfigManager.getRocketMqProhibitionTopics()));
