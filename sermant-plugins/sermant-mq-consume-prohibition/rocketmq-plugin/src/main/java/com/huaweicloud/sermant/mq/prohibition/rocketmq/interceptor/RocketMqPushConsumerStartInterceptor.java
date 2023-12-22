@@ -17,33 +17,31 @@
 package com.huaweicloud.sermant.mq.prohibition.rocketmq.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.PullConsumerLocalInfoUtils;
-import com.huaweicloud.sermant.rocketmq.constant.SubscriptionType;
-import com.huaweicloud.sermant.rocketmq.controller.RocketMqPullConsumerController;
+import com.huaweicloud.sermant.rocketmq.controller.RocketMqPushConsumerController;
 import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
-import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
+import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 
-import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 
 /**
- * RocketMq pullConsumer订阅拦截器
+ * RocketMq pushConsumer启动拦截器
  *
  * @author daizhenyu
- * @since 2023-12-15
+ * @since 2023-12-04
  **/
-public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsumerInterceptor {
+public class RocketMqPushConsumerStartInterceptor extends AbstractPushConsumerInterceptor {
     /**
      * 无参构造方法
      */
-    public RocketMqPullConsumerSubscribeInterceptor() {
+    public RocketMqPushConsumerStartInterceptor() {
     }
 
     /**
      * 有参构造方法
      *
-     * @param handler 处理器
+     * @param handler 拦截点处理器
      */
-    public RocketMqPullConsumerSubscribeInterceptor(RocketMqConsumerHandler handler) {
+    public RocketMqPushConsumerStartInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
     }
 
@@ -57,12 +55,14 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        DefaultLitePullConsumerWrapper wrapper = RocketMqPullConsumerController
-                .getPullConsumerWrapper((DefaultLitePullConsumer)context.getObject());
-        if (wrapper == null) {
-            PullConsumerLocalInfoUtils.setSubscriptionType(SubscriptionType.SUBSCRIBE);
-        } else {
-            wrapper.setSubscriptionType(SubscriptionType.SUBSCRIBE);
+        DefaultMQPushConsumer pushConsumer = (DefaultMQPushConsumer) context.getObject();
+        RocketMqPushConsumerController.cachePushConsumer(pushConsumer);
+
+        DefaultMqPushConsumerWrapper pushConsumerWrapper =
+                RocketMqPushConsumerController.getPushConsumerWrapper(pushConsumer);
+        if (pushConsumerWrapper != null) {
+            pushConsumerWrapper.setSubscribedTopics(pushConsumerWrapper.getPushConsumerImpl()
+                    .getSubscriptionInner().keySet());
         }
 
         if (handler != null) {
@@ -70,16 +70,13 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
             return context;
         }
 
-        // 增加topic订阅后，消费者订阅信息发生变化，需根据禁消费的topic配置对消费者开启或禁止消费
-        disablePullConsumption(wrapper);
+        // 消费者启动会根据缓存的禁消费配置对消费者执行禁消费
+        disablePushConsumption(pushConsumerWrapper);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        if (handler != null) {
-            handler.doOnThrow(context);
-        }
         return context;
     }
 }

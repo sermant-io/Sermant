@@ -17,13 +17,10 @@
 package com.huaweicloud.sermant.mq.prohibition.rocketmq.interceptor;
 
 import com.huaweicloud.sermant.config.ProhibitionConfigManager;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.rocketmq.controller.RocketMqPushConsumerController;
 import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
-
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 
 /**
  * 抽象拦截器
@@ -52,27 +49,6 @@ public abstract class AbstractPushConsumerInterceptor extends AbstractIntercepto
         this.handler = handler;
     }
 
-    @Override
-    public ExecuteContext before(ExecuteContext context) {
-        return doBefore(context);
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
-        Object consumerObject = context.getObject();
-        if (consumerObject != null && consumerObject instanceof DefaultMQPushConsumer) {
-            DefaultMqPushConsumerWrapper pushConsumerWrapper =
-                    RocketMqPushConsumerController.getPushConsumerWrapper(consumerObject);
-            return doAfter(context, pushConsumerWrapper);
-        }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        return doOnThrow(context);
-    }
-
     /**
      * pushconsumer 执行禁消费操作
      *
@@ -84,29 +60,4 @@ public abstract class AbstractPushConsumerInterceptor extends AbstractIntercepto
                     ProhibitionConfigManager.getRocketMqProhibitionTopics());
         }
     }
-
-    /**
-     * 前置方法
-     *
-     * @param context 执行上下文
-     * @return ExecuteContext
-     */
-    protected abstract ExecuteContext doBefore(ExecuteContext context);
-
-    /**
-     * 后置方法
-     *
-     * @param context 执行上下文
-     * @param wrapper 消费者包装类
-     * @return ExecuteContext
-     */
-    protected abstract ExecuteContext doAfter(ExecuteContext context, DefaultMqPushConsumerWrapper wrapper);
-
-    /**
-     * 异常时方法
-     *
-     * @param context 执行上下文
-     * @return ExecuteContext
-     */
-    protected abstract ExecuteContext doOnThrow(ExecuteContext context);
 }
