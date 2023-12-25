@@ -170,7 +170,7 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 设置局部临时类加载器
+     * 设置局部类加载器
      *
      * @param loader 类加载器
      */
@@ -179,11 +179,9 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 清楚局部临时类加载器
-     *
-     * @return 被移除的类加载器
+     * 清除局部类加载器
      */
-    public ClassLoader removeTmpLoader() {
-        return localLoader.remove(Thread.currentThread().getId());
+    public void removeLocalLoader() {
+        localLoader.remove(Thread.currentThread().getId());
     }
 }
