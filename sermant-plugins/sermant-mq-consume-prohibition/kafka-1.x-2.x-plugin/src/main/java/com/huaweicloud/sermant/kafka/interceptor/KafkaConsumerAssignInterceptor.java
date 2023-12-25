@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.kafka.cache.KafkaConsumerWrapper;
 import com.huaweicloud.sermant.kafka.controller.KafkaConsumerController;
 import com.huaweicloud.sermant.kafka.extension.KafkaConsumerHandler;
-import com.huaweicloud.sermant.kafka.utils.InvokeUtils;
+import com.huaweicloud.sermant.utils.InvokeUtils;
 
 import org.apache.kafka.common.TopicPartition;
 
@@ -61,7 +61,7 @@ public class KafkaConsumerAssignInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        if (InvokeUtils.isInvokeBySermant()) {
+        if (InvokeUtils.isKafkaInvokeBySermant(Thread.currentThread().getStackTrace())) {
             return context;
         }
         if (handler != null) {
@@ -72,7 +72,7 @@ public class KafkaConsumerAssignInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        if (InvokeUtils.isInvokeBySermant()) {
+        if (InvokeUtils.isKafkaInvokeBySermant(Thread.currentThread().getStackTrace())) {
             return context;
         }
         KafkaConsumerWrapper kafkaConsumerWrapper = KafkaConsumerController.getKafkaConsumerCache()
@@ -95,7 +95,7 @@ public class KafkaConsumerAssignInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        if (InvokeUtils.isInvokeBySermant()) {
+        if (InvokeUtils.isKafkaInvokeBySermant(Thread.currentThread().getStackTrace())) {
             return context;
         }
         if (handler != null) {

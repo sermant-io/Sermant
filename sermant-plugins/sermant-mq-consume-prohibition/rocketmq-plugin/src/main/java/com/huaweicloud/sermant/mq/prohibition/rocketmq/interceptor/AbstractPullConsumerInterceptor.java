@@ -17,13 +17,16 @@
 package com.huaweicloud.sermant.mq.prohibition.rocketmq.interceptor;
 
 import com.huaweicloud.sermant.config.ProhibitionConfigManager;
-import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.rocketmq.controller.RocketMqPullConsumerController;
 import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
 
-import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
+import org.apache.rocketmq.common.message.MessageQueue;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * pullconsumer抽象拦截器
@@ -52,27 +55,6 @@ public abstract class AbstractPullConsumerInterceptor extends AbstractIntercepto
         this.handler = handler;
     }
 
-    @Override
-    public ExecuteContext before(ExecuteContext context) {
-        return doBefore(context);
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
-        Object consumerObject = context.getObject();
-        if (consumerObject != null && consumerObject instanceof DefaultLitePullConsumer) {
-            DefaultLitePullConsumerWrapper pullConsumerWrapper = RocketMqPullConsumerController
-                    .getPullConsumerWrapper(consumerObject);
-            return doAfter(context, pullConsumerWrapper);
-        }
-        return context;
-    }
-
-    @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
-        return doOnThrow(context);
-    }
-
     /**
      * pullconsumer 执行禁消费操作
      *
@@ -86,27 +68,16 @@ public abstract class AbstractPullConsumerInterceptor extends AbstractIntercepto
     }
 
     /**
-     * 前置方法
+     * 获取消息队列的topic
      *
-     * @param context 执行上下文
-     * @return ExecuteContext
+     * @param messageQueues 消息队列
+     * @return 消息队列的topic
      */
-    protected abstract ExecuteContext doBefore(ExecuteContext context);
-
-    /**
-     * 后置方法
-     *
-     * @param context 执行上下文
-     * @param wrapper 消费者包装类
-     * @return ExecuteContext
-     */
-    protected abstract ExecuteContext doAfter(ExecuteContext context, DefaultLitePullConsumerWrapper wrapper);
-
-    /**
-     * 异常时方法
-     *
-     * @param context 执行上下文
-     * @return ExecuteContext
-     */
-    protected abstract ExecuteContext doOnThrow(ExecuteContext context);
+    protected Set<String> getMessageQueueTopics(Collection<MessageQueue> messageQueues) {
+        HashSet<String> topics = new HashSet<>();
+        for (MessageQueue messageQueue : messageQueues) {
+            topics.add(messageQueue.getTopic());
+        }
+        return topics;
+    }
 }

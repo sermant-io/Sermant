@@ -294,7 +294,7 @@ public class RocketMqPullConsumerController {
      * @return PullConsumer包装类实例
      */
     public static DefaultLitePullConsumerWrapper getPullConsumerWrapper(
-            Object pullConsumer) {
+            DefaultLitePullConsumer pullConsumer) {
         return RocketMqConsumerCache.PULL_CONSUMERS_CACHE.get(pullConsumer.hashCode());
     }
 

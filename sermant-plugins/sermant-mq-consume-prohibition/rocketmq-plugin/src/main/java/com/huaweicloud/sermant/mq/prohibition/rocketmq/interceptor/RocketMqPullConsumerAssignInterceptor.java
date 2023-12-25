@@ -22,20 +22,24 @@ import com.huaweicloud.sermant.rocketmq.constant.SubscriptionType;
 import com.huaweicloud.sermant.rocketmq.controller.RocketMqPullConsumerController;
 import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
+import com.huaweicloud.sermant.utils.InvokeUtils;
 
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
+import org.apache.rocketmq.common.message.MessageQueue;
+
+import java.util.Collection;
 
 /**
- * RocketMq pullConsumer订阅拦截器
+ * RocketMq pullConsumer指定队列拦截器
  *
  * @author daizhenyu
  * @since 2023-12-15
  **/
-public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsumerInterceptor {
+public class RocketMqPullConsumerAssignInterceptor extends AbstractPullConsumerInterceptor {
     /**
      * 无参构造方法
      */
-    public RocketMqPullConsumerSubscribeInterceptor() {
+    public RocketMqPullConsumerAssignInterceptor() {
     }
 
     /**
@@ -43,12 +47,15 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
      *
      * @param handler 处理器
      */
-    public RocketMqPullConsumerSubscribeInterceptor(RocketMqConsumerHandler handler) {
+    public RocketMqPullConsumerAssignInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
+        if (InvokeUtils.isRocketMqInvokeBySermant(Thread.currentThread().getStackTrace())) {
+            return context;
+        }
         if (handler != null) {
             handler.doBefore(context);
         }
@@ -57,12 +64,22 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        if (InvokeUtils.isRocketMqInvokeBySermant(Thread.currentThread().getStackTrace())) {
+            return context;
+        }
         DefaultLitePullConsumerWrapper wrapper = RocketMqPullConsumerController
                 .getPullConsumerWrapper((DefaultLitePullConsumer)context.getObject());
+
+        Object messageQueueObject = context.getArguments()[0];
+        if (messageQueueObject == null || !(messageQueueObject instanceof Collection)) {
+            return context;
+        }
+        Collection<MessageQueue> messageQueue = (Collection<MessageQueue>) messageQueueObject;
+
         if (wrapper == null) {
-            PullConsumerLocalInfoUtils.setSubscriptionType(SubscriptionType.SUBSCRIBE);
+            setAssignLocalInfo(messageQueue);
         } else {
-            wrapper.setSubscriptionType(SubscriptionType.SUBSCRIBE);
+            updateAssignWrapperInfo(wrapper, messageQueue);
         }
 
         if (handler != null) {
@@ -70,16 +87,31 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
             return context;
         }
 
-        // 增加topic订阅后，消费者订阅信息发生变化，需根据禁消费的topic配置对消费者开启或禁止消费
+        // 指定消费的队列后，需根据禁消费的topic配置对消费者开启或禁止消费
         disablePullConsumption(wrapper);
         return context;
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
+        if (InvokeUtils.isRocketMqInvokeBySermant(Thread.currentThread().getStackTrace())) {
+            return context;
+        }
         if (handler != null) {
             handler.doOnThrow(context);
         }
         return context;
+    }
+
+    private void updateAssignWrapperInfo(DefaultLitePullConsumerWrapper pullConsumerWrapper,
+            Collection<MessageQueue> messageQueue) {
+        pullConsumerWrapper.setMessageQueues(messageQueue);
+        pullConsumerWrapper.setSubscribedTopics(getMessageQueueTopics(messageQueue));
+        pullConsumerWrapper.setSubscriptionType(SubscriptionType.ASSIGN);
+    }
+
+    private void setAssignLocalInfo(Collection<MessageQueue> messageQueue) {
+        PullConsumerLocalInfoUtils.setSubscriptionType(SubscriptionType.ASSIGN);
+        PullConsumerLocalInfoUtils.setMessageQueue(messageQueue);
     }
 }

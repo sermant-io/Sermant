@@ -142,7 +142,7 @@ public class RocketMqPushConsumerController {
      * @param pushConsumer 消费者实例
      * @return PushConsumer包装类实例
      */
-    public static DefaultMqPushConsumerWrapper getPushConsumerWrapper(Object pushConsumer) {
+    public static DefaultMqPushConsumerWrapper getPushConsumerWrapper(DefaultMQPushConsumer pushConsumer) {
         return RocketMqConsumerCache.PUSH_CONSUMERS_CACHE.get(pushConsumer.hashCode());
     }
 
