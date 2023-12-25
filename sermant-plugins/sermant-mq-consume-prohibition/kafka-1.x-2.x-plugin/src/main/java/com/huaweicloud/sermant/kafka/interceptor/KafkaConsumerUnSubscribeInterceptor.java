@@ -26,8 +26,7 @@ import com.huaweicloud.sermant.utils.InvokeUtils;
 import java.util.Collections;
 
 /**
- * KafkaConsumer unsubscribe方法的拦截器
- * {@link org.apache.kafka.clients.consumer.KafkaConsumer#unsubscribe()}
+ * KafkaConsumer unsubscribe方法的拦截器 {@link org.apache.kafka.clients.consumer.KafkaConsumer#unsubscribe()}
  *
  * @author lilai
  * @since 2023-12-05

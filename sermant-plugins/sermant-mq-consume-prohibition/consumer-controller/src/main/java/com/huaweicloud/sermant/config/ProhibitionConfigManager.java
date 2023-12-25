@@ -78,7 +78,7 @@ public class ProhibitionConfigManager {
      *
      * @return 局部配置
      */
-    public ProhibitionConfig getLocalConfig() {
+    public static ProhibitionConfig getLocalConfig() {
         return localConfig;
     }
 

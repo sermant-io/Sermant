@@ -52,7 +52,7 @@ public class ServiceMeta implements BaseConfig {
     /**
      * 区域
      */
-    private String zone;
+    private String zone = DEFAULT;
 
     /**
      * 命名空间

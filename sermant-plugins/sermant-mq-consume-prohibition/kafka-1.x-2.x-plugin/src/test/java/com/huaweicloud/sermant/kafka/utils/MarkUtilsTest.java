@@ -16,41 +16,27 @@
 
 package com.huaweicloud.sermant.kafka.utils;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * 线程变量标记类，用于兼容kafka不同版本不重复进入构造函数
+ * MarkUtils单元测试
  *
  * @author lilai
- * @since 2023-12-09
+ * @since 2023-12-23
  */
-public class MarkUtils {
-    private static final ThreadLocal<Boolean> MARK = new ThreadLocal<>();
-
-    private MarkUtils() {
-    }
-
+public class MarkUtilsTest {
     /**
-     * 获取线程变量
-     *
-     * @return 线程变量
+     * 测试getMark以及测试setMark
      */
-    public static Boolean getMark() {
-        return MARK.get();
-    }
+    @Test
+    public void testSetAndGetMark() {
+        MarkUtils.setMark(true);
+        Assert.assertTrue(MarkUtils.getMark());
 
-    /**
-     * 存入线程变量
-     *
-     * @param value 线程变量
-     */
-    public static void setMark(Boolean value) {
-        MARK.set(value);
-    }
+        MarkUtils.setMark(false);
+        Assert.assertFalse(MarkUtils.getMark());
 
-    /**
-     * 移除线程变量
-     *
-     */
-    public static void removeMark() {
-        MARK.remove();
+        MarkUtils.removeMark();
     }
 }
