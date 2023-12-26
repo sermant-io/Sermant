@@ -98,11 +98,6 @@ public abstract class AbstractConsumerWrapper {
         this.clientFactory = clientFactory;
     }
 
-    /**
-     * 初始化消费者实例的信息
-     */
-    protected abstract void initClientInfo();
-
     public boolean isProhibition() {
         return prohibition.get();
     }
@@ -182,6 +177,10 @@ public abstract class AbstractConsumerWrapper {
 
     public void setSubscribedTopics(Set<String> subscribedTopics) {
         this.subscribedTopics = subscribedTopics;
+    }
+
+    public void setConsumerGroup(String consumerGroup) {
+        this.consumerGroup = consumerGroup;
     }
 
     /**
