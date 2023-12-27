@@ -28,7 +28,7 @@
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
-        <nacos.version>2.1.0</nacos.version>
+        <nacos.version>2.1.2</nacos.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
     </properties>
 
