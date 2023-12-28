@@ -116,7 +116,7 @@ public class RocketmqWrapperUtils {
         }
 
         // 移除插件类加载器的局部类加载器
-        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).removeTmpLoader();
+        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).removeLocalLoader();
         return Optional.empty();
     }
 

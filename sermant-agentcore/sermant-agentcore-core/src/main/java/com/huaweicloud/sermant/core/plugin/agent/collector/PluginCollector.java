@@ -25,6 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassTypeMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.transformer.ReentrantTransformer;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -107,6 +108,11 @@ public class PluginCollector {
                 combinedList.add(pluginDeclarer);
             }
         }
+        return createPluginDescription(plugin, nameCombinedMap, combinedList);
+    }
+
+    private static AbstractPluginDescription createPluginDescription(Plugin plugin,
+            Map<String, List<PluginDeclarer>> nameCombinedMap, List<PluginDeclarer> combinedList) {
         return new AbstractPluginDescription() {
             @Override
             public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
@@ -114,8 +120,17 @@ public class PluginCollector {
                 final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.get(typeDescription.getActualName());
                 final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
                 for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
-                    interceptDeclarers.addAll(
-                            Arrays.asList(pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                    ClassLoader loader = pluginDeclarer.getClass().getClassLoader();
+                    if (loader instanceof PluginClassLoader) {
+                        PluginClassLoader pluginClassLoader = (PluginClassLoader) loader;
+                        pluginClassLoader.setLocalLoader(classLoader);
+                        interceptDeclarers.addAll(Arrays.asList(
+                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                        pluginClassLoader.removeLocalLoader();
+                    } else {
+                        interceptDeclarers.addAll(Arrays.asList(
+                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                    }
                 }
                 return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]), plugin).transform(
                         builder, typeDescription, classLoader, javaModule, protectionDomain);
