@@ -8,4 +8,6 @@
     <suppress files="sermant-integration-tests/scripts/AgentLoader.java" checks="UncommentedMain"/>
     <suppress files="com.huaweicloud.sermant.premain.AgentLauncher.java" checks="IllegalCatch" />
     <suppress files="com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector.java" checks="IllegalCatch" />
+    <!-- 切面返回null跳过HttpInvokerServiceExporter.handleRequest方法执行，可以避免CVE-2016-1000027漏洞反序列化执行恶意代码-->
+    <suppress files="com.huaweicloud.sermant.backend.aop.HttpInvokerServiceAspect.java" checks="RegexpSingleline"/>
 </suppressions>
