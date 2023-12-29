@@ -62,11 +62,10 @@ public class DefaultLitePullConsumerWrapper extends AbstractConsumerWrapper {
         this.pullConsumer = pullConsumer;
         this.pullConsumerImpl = pullConsumerImpl;
         this.rebalanceImpl = rebalanceImpl;
-        initClientInfo();
+        initPullClientInfo();
     }
 
-    @Override
-    protected void initClientInfo() {
+    private void initPullClientInfo() {
         ClientConfig clientConfig = clientFactory.getClientConfig();
         nameServerAddress = clientConfig.getClientIP();
         clientIp = clientConfig.getClientIP();

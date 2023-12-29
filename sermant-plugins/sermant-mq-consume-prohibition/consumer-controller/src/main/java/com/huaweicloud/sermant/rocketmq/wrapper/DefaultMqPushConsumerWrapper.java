@@ -44,11 +44,10 @@ public class DefaultMqPushConsumerWrapper extends AbstractConsumerWrapper {
         super(clientFactory);
         this.pushConsumer = consumer;
         this.pushConsumerImpl = pushConsumerImpl;
-        initClientInfo();
+        initPushClientInfo();
     }
 
-    @Override
-    protected void initClientInfo() {
+    private void initPushClientInfo() {
         ClientConfig clientConfig = clientFactory.getClientConfig();
         nameServerAddress = clientConfig.getClientIP();
         clientIp = clientConfig.getClientIP();

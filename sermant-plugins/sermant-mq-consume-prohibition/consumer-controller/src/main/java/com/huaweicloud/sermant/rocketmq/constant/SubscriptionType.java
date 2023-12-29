@@ -45,19 +45,4 @@ public enum SubscriptionType {
     public String getSubscriptionTypeName() {
         return this.subscriptionName;
     }
-
-    /**
-     * 用于根据订阅方式名称获取订阅枚举对象
-     *
-     * @param name 订阅方式名称
-     * @return SubscriptionType
-     */
-    public static SubscriptionType getSubscriptionTypeByName(String name) {
-        for (SubscriptionType value : values()) {
-            if (value.getSubscriptionTypeName().equals(name)) {
-                return value;
-            }
-        }
-        return NONE;
-    }
 }
