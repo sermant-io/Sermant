@@ -26,14 +26,12 @@ import com.huaweicloud.sermant.kafka.utils.MarkUtils;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.Deserializer;
 
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer构造方法的拦截器
+ * KafkaConsumer Properties构造方法的拦截器
  * {@link KafkaConsumer#KafkaConsumer(Properties, Deserializer, Deserializer)}
- * {@link KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
  *
  * @author lilai
  * @since 2023-12-05
@@ -62,9 +60,6 @@ public class KafkaConsumerPropertiesConstructorInterceptor extends AbstractInter
     public ExecuteContext before(ExecuteContext context) {
         // 此处为兼容不同版本KafkaConsumer的构造方法
         // 低版本中Properties和Map方式二者互不影响，高版本Properties会调用Map方式
-        if (MarkUtils.getMark() != null) {
-            return context;
-        }
         MarkUtils.setMark(Boolean.TRUE);
         if (handler != null) {
             handler.doBefore(context);
@@ -79,6 +74,7 @@ public class KafkaConsumerPropertiesConstructorInterceptor extends AbstractInter
         }
 
         cacheKafkaConsumer(context);
+        MarkUtils.removeMark();
         return context;
     }
 
@@ -87,6 +83,7 @@ public class KafkaConsumerPropertiesConstructorInterceptor extends AbstractInter
         if (handler != null) {
             handler.doOnThrow(context);
         }
+        MarkUtils.removeMark();
         return context;
     }
 

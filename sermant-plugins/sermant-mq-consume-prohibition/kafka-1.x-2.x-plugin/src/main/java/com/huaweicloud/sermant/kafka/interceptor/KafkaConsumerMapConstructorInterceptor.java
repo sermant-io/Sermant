@@ -27,12 +27,10 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer构造方法的拦截器
- * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Properties, Deserializer, Deserializer)}
+ * KafkaConsumer Map构造方法的拦截器
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
  *
  * @author lilai
