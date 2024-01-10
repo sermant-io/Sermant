@@ -21,7 +21,6 @@ import com.huaweicloud.sermant.router.common.event.PolicyEvent;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.entity.Match;
 import com.huaweicloud.sermant.router.config.entity.Policy;
-import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.PolicyEventUtils;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
@@ -74,9 +73,35 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     }
 
     @Override
-    public List<I> getMatchInstances(String serviceName, List<I> instances, List<Route> routes) {
-        RouteResult<?> result = RuleUtils.getTargetTags(routes);
-        return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
+    public List<I> getFlowMatchInstances(String serviceName, List<I> instances, Rule rule) {
+        RouteResult<?> result = RuleUtils.getTargetTags(rule.getRoute());
+        if (CollectionUtils.isEmpty(rule.getFallback())) {
+            return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
+        }
+        if (result.isMatch()) {
+            // route命中标签，fallback有设置路由规则时，仅返回匹配的实例，如果存在直接返回
+            List<I> routeInstances = getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName,
+                    instances, false);
+            if (!CollectionUtils.isEmpty(routeInstances)) {
+                return routeInstances;
+            }
+        }
+
+        // route设置的目标标签未匹配实例时，fallback有设置路由，通过fallback路由目标标签实例
+        RouteResult<?> fallback = RuleUtils.getTargetTags(rule.getFallback());
+        if (fallback.isMatch()) {
+            List<I> fallbackInstances = getInstances(getStrategy(fallback.isMatch()), fallback.getTags(), serviceName,
+                    instances, false);
+
+            // fallback中设置了路由规则命中routeTag，且有对应的实例匹配则按fallback路由规则选中实例，返回对应实例
+            if (!CollectionUtils.isEmpty(fallbackInstances)) {
+                return fallbackInstances;
+            }
+        }
+
+        // 结合上面result.isMatch()为true逻辑，如果为true未能匹配实例，直接返回所有实例，反之通过mismatch处理
+        return result.isMatch() ? instances
+                : getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
     }
 
     /**

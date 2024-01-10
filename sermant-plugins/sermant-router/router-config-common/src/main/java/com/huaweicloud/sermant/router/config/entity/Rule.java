@@ -40,6 +40,11 @@ public class Rule {
      */
     private List<Route> route;
 
+    /**
+     * 降级路由
+     */
+    private List<Route> fallback;
+
     public void setPrecedence(int precedence) {
         this.precedence = precedence;
     }
@@ -62,5 +67,13 @@ public class Rule {
 
     public List<Route> getRoute() {
         return this.route;
+    }
+
+    public List<Route> getFallback() {
+        return fallback;
+    }
+
+    public void setFallback(List<Route> fallback) {
+        this.fallback = fallback;
     }
 }

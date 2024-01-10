@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 流量匹配方式的路由处理器
@@ -140,9 +141,9 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (CollectionUtils.isEmpty(rules)) {
             return instances;
         }
-        List<Route> routes = getRoutes(rules, header);
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
+        Optional<Rule> ruleOptional = getRule(rules, header);
+        if (ruleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getFlowMatchInstances(targetName, instances, ruleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
                 .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules), true);
@@ -155,14 +156,14 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * @param header header
      * @return 匹配的路由
      */
-    private List<Route> getRoutes(List<Rule> list, Map<String, List<String>> header) {
+    private Optional<Rule> getRule(List<Rule> list, Map<String, List<String>> header) {
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(header, rule);
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private List<Route> getRoutes(Map<String, List<String>> header, Rule rule) {
