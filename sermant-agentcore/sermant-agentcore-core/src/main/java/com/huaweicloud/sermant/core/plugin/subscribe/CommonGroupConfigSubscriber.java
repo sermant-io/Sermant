@@ -135,7 +135,7 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put(APP, config.getApplication());
         map.put(ENVIRONMENT, config.getEnvironment());
-        map.put(ZONE, config.getEnvironment());
+        map.put(ZONE, config.getZone());
         final String labelGroup = LabelGroupUtils.createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, ZONE_ORDER));
