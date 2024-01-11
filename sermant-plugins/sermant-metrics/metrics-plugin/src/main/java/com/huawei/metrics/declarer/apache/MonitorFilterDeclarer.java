@@ -17,14 +17,14 @@
 package com.huawei.metrics.declarer.apache;
 
 import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.apache.MonitorFilterInterceptor;
+import com.huawei.metrics.interceptor.dubbo.apache.MonitorFilterInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo监控过滤器增强声明
+ * dubbo2.7.x监控过滤器增强声明
  *
  * @author zhp
  * @since 2023-10-17
