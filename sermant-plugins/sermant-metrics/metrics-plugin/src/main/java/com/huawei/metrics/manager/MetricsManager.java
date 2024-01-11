@@ -16,7 +16,8 @@
 
 package com.huawei.metrics.manager;
 
-import com.huawei.metrics.entity.MetricsLinkInfo;
+import com.huawei.metrics.common.Constants;
+import com.huawei.metrics.entity.MetricsInfo;
 import com.huawei.metrics.entity.MetricsRpcInfo;
 
 import java.util.Map;
@@ -29,20 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2023-10-17
  */
 public class MetricsManager {
-    private static final Map<String, MetricsLinkInfo> METRICS_LINK_INFO_MAP = new ConcurrentHashMap<>();
-
     private static final Map<String, MetricsRpcInfo> METRICS_RPC_INFO_MAP = new ConcurrentHashMap<>();
 
     private MetricsManager() {
-    }
-
-    /**
-     * 获取全部连接信息
-     *
-     * @return 连接信息
-     */
-    public static Map<String, MetricsLinkInfo> getLinkInfoMap() {
-        return METRICS_LINK_INFO_MAP;
     }
 
     /**
@@ -55,22 +45,44 @@ public class MetricsManager {
     }
 
     /**
-     * 获取连接信息
+     * 保存RPC信息
      *
-     * @param key MAP的密钥信息
-     * @return 连接信息
+     * @param metricsRpcInfo RPC信息
      */
-    public static MetricsLinkInfo getLinkInfo(String key) {
-        return METRICS_LINK_INFO_MAP.computeIfAbsent(key, s -> new MetricsLinkInfo());
+    public static void saveRpcInfo(MetricsRpcInfo metricsRpcInfo) {
+        String key = getKey(metricsRpcInfo);
+        MetricsRpcInfo rpcInfo = METRICS_RPC_INFO_MAP.computeIfAbsent(key, s -> metricsRpcInfo);
+        if (rpcInfo != metricsRpcInfo) {
+            rpcInfo.getReqCount().getAndAdd(metricsRpcInfo.getReqCount().get());
+            rpcInfo.getResponseCount().getAndAdd(metricsRpcInfo.getResponseCount().get());
+            rpcInfo.getSumLatency().getAndAdd(metricsRpcInfo.getSumLatency().get());
+            rpcInfo.getLatencyList().addAll(metricsRpcInfo.getLatencyList());
+            rpcInfo.getReqErrorCount().getAndAdd(metricsRpcInfo.getReqErrorCount().get());
+        }
     }
 
     /**
-     * 获取RPC信息
+     * 获取Map的key
      *
-     * @param key MAP的密钥信息
-     * @return RPC信息
+     * @param metricsInfo 指标信息
+     * @return key
      */
-    public static MetricsRpcInfo getRpcInfo(String key) {
-        return METRICS_RPC_INFO_MAP.computeIfAbsent(key, s -> new MetricsRpcInfo());
+    public static String getKey(MetricsInfo metricsInfo) {
+        return metricsInfo.getClientIp() + Constants.CONNECT + metricsInfo.getServerIp() + Constants.CONNECT
+                + metricsInfo.getServerPort() + Constants.CONNECT + metricsInfo.getProtocol() + Constants.CONNECT
+                + metricsInfo.getL4Role() + Constants.CONNECT + metricsInfo.isEnableSsl() + Constants.CONNECT
+                + metricsInfo.getUrl();
+    }
+
+    /**
+     * 获取Map的key
+     *
+     * @param metricsInfo 指标信息
+     * @return key
+     */
+    public static String getRpcKey(MetricsInfo metricsInfo) {
+        return metricsInfo.getClientIp() + Constants.CONNECT + metricsInfo.getServerIp() + Constants.CONNECT
+                + metricsInfo.getServerPort() + Constants.CONNECT + metricsInfo.getProtocol() + Constants.CONNECT
+                + metricsInfo.getL4Role() + Constants.CONNECT + metricsInfo.isEnableSsl();
     }
 }

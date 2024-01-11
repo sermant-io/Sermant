@@ -14,34 +14,34 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.declarer.alibaba;
+package com.huawei.metrics.declarer.servlet;
 
 import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.dubbo.alibaba.MonitorFilterInterceptor;
+import com.huawei.metrics.interceptor.servlet.HttpServletInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo2.6.x监控过滤器增强声明
+ * HttpServlet3.0+服务处理拦截声明
  *
  * @author zhp
- * @since 2023-10-17
+ * @since 2023-12-15
  */
-public class MonitorFilterDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
-
-    private static final String METHODS_NAME = "invoke";
+public class HttpServletDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "javax.servlet.http.HttpServlet";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals(METHODS_NAME),
-                new MonitorFilterInterceptor())};
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("service"),
+                        new HttpServletInterceptor())
+        };
     }
 }

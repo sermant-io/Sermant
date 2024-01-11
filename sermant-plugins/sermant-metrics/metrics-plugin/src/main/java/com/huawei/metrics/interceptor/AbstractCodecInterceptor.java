@@ -17,8 +17,9 @@
 package com.huawei.metrics.interceptor;
 
 import com.huawei.metrics.common.Constants;
-import com.huawei.metrics.entity.MetricsLinkInfo;
-import com.huawei.metrics.manager.MetricsManager;
+import com.huawei.metrics.common.ResultType;
+import com.huawei.metrics.entity.MetricsRpcInfo;
+import com.huawei.metrics.util.ResultJudgmentUtil;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
@@ -44,25 +45,8 @@ public abstract class AbstractCodecInterceptor implements Interceptor {
         }
     };
 
-    private static final String ENCODE_METHOD_NAME = "encode";
-
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        if (!isValid(context)) {
-            return context;
-        }
-        MetricsLinkInfo metricsLinkInfo = initLinkInfo(context);
-        initIndexInfo(context);
-        context.setLocalFieldValue(Constants.LINK_INFO_KEY, metricsLinkInfo);
-        return context;
-    }
-
-    @Override
-    public ExecuteContext after(ExecuteContext context) {
-        if (!isValid(context)) {
-            return context;
-        }
-        fillMessageInfo(context);
         return context;
     }
 
@@ -82,22 +66,6 @@ public abstract class AbstractCodecInterceptor implements Interceptor {
     }
 
     /**
-     * 校验
-     *
-     * @param context 上下文信息
-     * @return 校验结果
-     */
-    public abstract boolean isValid(ExecuteContext context);
-
-    /**
-     * 初始化连接信息
-     *
-     * @param context 上下文信息
-     * @return 连接信息
-     */
-    public abstract MetricsLinkInfo initLinkInfo(ExecuteContext context);
-
-    /**
      * 初始化连接信息
      *
      * @param localAddress 本地地址
@@ -107,92 +75,57 @@ public abstract class AbstractCodecInterceptor implements Interceptor {
      * @param protocol 协议信息
      * @return 连接信息
      */
-    public MetricsLinkInfo initLinkInfo(InetSocketAddress localAddress, InetSocketAddress remoteAddress,
+    public MetricsRpcInfo initRpcInfo(InetSocketAddress localAddress, InetSocketAddress remoteAddress,
             String side, boolean sslEnable, String protocol) {
-        String metricsKey = localAddress.getHostName() + Constants.CONNECT + remoteAddress.getHostName()
-                + Constants.CONNECT + remoteAddress.getPort();
-        MetricsLinkInfo metricsLinkInfo = MetricsManager.getLinkInfo(metricsKey);
-        if (!StringUtils.isEmpty(metricsLinkInfo.getClientIp())) {
-            return metricsLinkInfo;
-        }
-        metricsLinkInfo.setProtocol(protocol);
+        MetricsRpcInfo metricsRpcInfo = new MetricsRpcInfo();
+        metricsRpcInfo.setProtocol(protocol);
         if (isClientSide(side)) {
-            initAddressAndRole(metricsLinkInfo, Constants.CLIENT_ROLE, localAddress, remoteAddress);
+            initAddressAndRole(metricsRpcInfo, Constants.CLIENT_ROLE, localAddress, remoteAddress);
         } else {
-            initAddressAndRole(metricsLinkInfo, Constants.SERVER_ROLE, remoteAddress, localAddress);
+            initAddressAndRole(metricsRpcInfo, Constants.SERVER_ROLE, remoteAddress, localAddress);
         }
-        if (TCP_PROTOCOL.contains(metricsLinkInfo.getProtocol())) {
-            metricsLinkInfo.setL4Role(Constants.TCP_PROTOCOL + Constants.CONNECT + metricsLinkInfo.getL7Role());
+        if (TCP_PROTOCOL.contains(metricsRpcInfo.getProtocol())) {
+            metricsRpcInfo.setL4Role(Constants.TCP_PROTOCOL + Constants.CONNECT + metricsRpcInfo.getL7Role());
         } else {
-            metricsLinkInfo.setL4Role(Constants.UDP_PROTOCOL + Constants.CONNECT + metricsLinkInfo.getL7Role());
+            metricsRpcInfo.setL4Role(Constants.UDP_PROTOCOL + Constants.CONNECT + metricsRpcInfo.getL7Role());
         }
-        metricsLinkInfo.setEnableSsl(sslEnable);
-        return metricsLinkInfo;
+        metricsRpcInfo.setEnableSsl(sslEnable);
+        return metricsRpcInfo;
     }
 
     /**
      * 初始化地址和角色信息
      *
-     * @param metricsLinkInfo 连接信息
+     * @param metricsRpcInfo RPC指标信息
      * @param role 角色信息
      * @param clientAddress 客户端地址
      * @param serverAddress 服务端地址
      */
-    private void initAddressAndRole(MetricsLinkInfo metricsLinkInfo, String role, InetSocketAddress clientAddress,
+    private void initAddressAndRole(MetricsRpcInfo metricsRpcInfo, String role, InetSocketAddress clientAddress,
             InetSocketAddress serverAddress) {
-        metricsLinkInfo.setL7Role(role);
-        metricsLinkInfo.setClientIp(clientAddress.getAddress().getHostAddress());
-        metricsLinkInfo.setServerIp(serverAddress.getAddress().getHostAddress());
-        metricsLinkInfo.setServerPort(StringUtils.getString(serverAddress.getPort()));
+        metricsRpcInfo.setL7Role(role);
+        metricsRpcInfo.setClientIp(clientAddress.getAddress().getHostAddress());
+        metricsRpcInfo.setServerIp(serverAddress.getAddress().getHostAddress());
+        metricsRpcInfo.setServerPort(StringUtils.getString(serverAddress.getPort()));
     }
 
     /**
-     * 初始化渠道缓存的下标信息
+     * 填充错误统计信息
      *
-     * @param context 上下文信息
+     * @param status 响应编码
+     * @param metricsRpcInfo 指标信息
      */
-    public abstract void initIndexInfo(ExecuteContext context);
-
-    /**
-     * 填充报文信息
-     *
-     * @param currentWriteIndex 当前读索引下标
-     * @param currentReadIndex 当前写索引下标
-     * @param context 上下文信息
-     */
-    protected void fillMessageInfo(int currentWriteIndex, int currentReadIndex, ExecuteContext context) {
-        Object linkInfoObject = context.getLocalFieldValue(Constants.LINK_INFO_KEY);
-        if (!(linkInfoObject instanceof MetricsLinkInfo)) {
+    public void fillErrorCountInfo(byte status, MetricsRpcInfo metricsRpcInfo) {
+        int value = ResultJudgmentUtil.judgeDubboResult(status);
+        if (value == ResultType.SUCCESS.getValue()) {
             return;
         }
-        MetricsLinkInfo metricsLinkInfo = (MetricsLinkInfo) linkInfoObject;
-        if (StringUtils.equals(context.getMethod().getName(), ENCODE_METHOD_NAME)) {
-            Object writeIndex = context.getLocalFieldValue(Constants.WRITE_INDEX_KEY);
-            if (!(writeIndex instanceof Integer)) {
-                return;
-            }
-            int addWriteIndex = currentWriteIndex - Integer.parseInt(StringUtils.getString(writeIndex));
-            if (addWriteIndex > 0) {
-                metricsLinkInfo.getSentBytes().addAndGet(addWriteIndex);
-                metricsLinkInfo.getSentMessages().incrementAndGet();
-            }
+        if (value == ResultType.CLIENT_ERROR.getValue()) {
+            metricsRpcInfo.getClientErrorCount().getAndIncrement();
             return;
         }
-        Object readIndex = context.getLocalFieldValue(Constants.READ_INDEX_KEY);
-        if (!(readIndex instanceof Integer)) {
-            return;
-        }
-        int addReadIndex = currentReadIndex - Integer.parseInt(StringUtils.getString(readIndex));
-        if (addReadIndex > 0) {
-            metricsLinkInfo.getReceiveBytes().addAndGet(addReadIndex);
-            metricsLinkInfo.getReceiveMessages().incrementAndGet();
+        if (value == ResultType.SERVER_ERROR.getValue()) {
+            metricsRpcInfo.getServerErrorCount().getAndIncrement();
         }
     }
-
-    /**
-     * 填充报文信息
-     *
-     * @param context 上下文信息
-     */
-    protected abstract void fillMessageInfo(ExecuteContext context);
 }
