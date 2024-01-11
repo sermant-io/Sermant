@@ -64,16 +64,6 @@ public class Constants {
     public static final String SSL_ENABLE = "sslEnabled";
 
     /**
-     * 服务调用使用的CLIENT下表字段名
-     */
-    public static final String CLIENT_INDEX = "index";
-
-    /**
-     * CLIENT集合名称
-     */
-    public static final String CLIENTS_NAME = "clients";
-
-    /**
      * DUBBO TCP协议集合
      */
     public static final String TCP_PROTOCOLS = "dubbo,rmi,http,https";
@@ -81,12 +71,12 @@ public class Constants {
     /**
      * 连接信息头
      */
-    public static final String LINK_HEAD = "sermant_l7_link";
+    public static final String RPC_HEADER = "sermant_l7_rpc";
 
     /**
-     * 连接信息头
+     * API连接信息头
      */
-    public static final String RPC_HEAD = "sermant_l7_rpc";
+    public static final String RPC_API_HEADER = "sermant_l7_rpc_api";
 
     /**
      * SSL开启标识
@@ -104,29 +94,9 @@ public class Constants {
     public static final String CONSUMER_SIDE = "consumer";
 
     /**
-     * 提供者标识
-     */
-    public static final String PROVIDER_SIDE = "provider";
-
-    /**
      * 客户端 服务端标识的KEY
      */
     public static final String SIDE_KEY = "side";
-
-    /**
-     * 字符串写下标保存到context局部变量中的key
-     */
-    public static final String WRITE_INDEX_KEY = "writeIndex";
-
-    /**
-     * 字符串读下标保存到context局部变量中的key
-     */
-    public static final String READ_INDEX_KEY = "readIndex";
-
-    /**
-     * 连接信息保存到context局部变量中的key
-     */
-    public static final String LINK_INFO_KEY = "linkInfo";
 
     /**
      * RPC信息保存到context局部变量中的key
@@ -147,6 +117,51 @@ public class Constants {
      * 指标值的连接符
      */
     public static final String METRICS_LINK = "|";
+
+    /**
+     * HTTPS协议
+     */
+    public static final String HTTPS_PROTOCOL = "https";
+
+    /**
+     * 最大成功响应编码
+     */
+    public static final int MAX_SUCCESS_CODE = 399;
+
+    /**
+     * 最大客户端失败编码
+     */
+    public static final int MAX_CLIENT_ERROR_CODE = 499;
+
+    /**
+     * 最大服务端失败编码
+     */
+    public static final int MAX_SERVER_ERROR_CODE = 599;
+
+    /**
+     * MYSQL 客户端异常编码
+     */
+    public static final int[][] MYSQL_CLIENT_ERROR = {{1, 999}, {2000, 2999}};
+
+    /**
+     * MYSQL 服务服务端编码
+     */
+    public static final int[][] MYSQL_SERVER_ERROR = {{1000, 1999}, {3000, 4000}};
+
+    /**
+     * dubbo请求成功
+     */
+    public static final byte DUBBO_OK = 20;
+
+    /**
+     * dubbo客户端异常编码
+     */
+    public static final byte[] DUBBO_CLIENT_ERROR = {30, 40, 90};
+
+    /**
+     * dubbo服务端异常编码
+     */
+    public static final byte[] DUBBO_SERVER_ERROR = {31, 80, 50, 60, 70, 100};
 
     private Constants() {
     }

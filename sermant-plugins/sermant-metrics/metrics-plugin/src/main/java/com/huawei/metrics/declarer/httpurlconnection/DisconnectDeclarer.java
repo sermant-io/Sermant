@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.declarer.alibaba;
+package com.huawei.metrics.declarer.httpurlconnection;
 
 import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.dubbo.alibaba.MonitorFilterInterceptor;
+import com.huawei.metrics.interceptor.httpurlconnection.DisconnectorInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo2.6.x监控过滤器增强声明
+ * HttpURLConnection1.7.x+链接断开方法拦截声明
  *
  * @author zhp
- * @since 2023-10-17
+ * @since 2023-12-15
  */
-public class MonitorFilterDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
-
-    private static final String METHODS_NAME = "invoke";
+public class DisconnectDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "sun.net.www.protocol.http.HttpURLConnection";
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -41,7 +39,9 @@ public class MonitorFilterDeclarer extends AbstractDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals(METHODS_NAME),
-                new MonitorFilterInterceptor())};
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("disconnect"),
+                        new DisconnectorInterceptor())
+        };
     }
 }

@@ -14,34 +14,37 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.declarer.alibaba;
+package com.huawei.metrics.declarer.okhttp3;
 
 import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.dubbo.alibaba.MonitorFilterInterceptor;
+import com.huawei.metrics.interceptor.okhttp3.CallInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo2.6.x监控过滤器增强声明
+ * okhttp3.x服务调用拦截声明
  *
  * @author zhp
- * @since 2023-10-17
+ * @since 2023-12-15
  */
-public class MonitorFilterDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
-
-    private static final String METHODS_NAME = "invoke";
+public class CallDeclarer extends AbstractDeclarer {
+    private static final String[] ENHANCE_CLASSES = {
+            "okhttp3.RealCall",
+            "okhttp3.internal.connection.RealCall"
+    };
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals(ENHANCE_CLASS);
+        return ClassMatcher.nameContains(ENHANCE_CLASSES);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals(METHODS_NAME),
-                new MonitorFilterInterceptor())};
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameEquals("getResponseWithInterceptorChain"),
+                        new CallInterceptor())
+        };
     }
 }
