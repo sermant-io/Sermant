@@ -36,6 +36,10 @@ public class MetricsRpcInfo extends MetricsInfo {
 
     private AtomicInteger reqErrorCount = new AtomicInteger();
 
+    private AtomicInteger clientErrorCount = new AtomicInteger();
+
+    private AtomicInteger serverErrorCount = new AtomicInteger();
+
     private List<Long> latencyList = new CopyOnWriteArrayList<>();
 
     public AtomicInteger getReqCount() {
@@ -76,5 +80,21 @@ public class MetricsRpcInfo extends MetricsInfo {
 
     public void setLatencyList(List<Long> latencyList) {
         this.latencyList = latencyList;
+    }
+
+    public AtomicInteger getClientErrorCount() {
+        return clientErrorCount;
+    }
+
+    public void setClientErrorCount(AtomicInteger clientErrorCount) {
+        this.clientErrorCount = clientErrorCount;
+    }
+
+    public AtomicInteger getServerErrorCount() {
+        return serverErrorCount;
+    }
+
+    public void setServerErrorCount(AtomicInteger serverErrorCount) {
+        this.serverErrorCount = serverErrorCount;
     }
 }

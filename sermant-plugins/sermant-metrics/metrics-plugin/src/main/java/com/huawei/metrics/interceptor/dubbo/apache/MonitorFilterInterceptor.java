@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.interceptor.apache;
+package com.huawei.metrics.interceptor.dubbo.apache;
 
 import com.huawei.metrics.common.Constants;
 import com.huawei.metrics.entity.MetricsRpcInfo;
@@ -44,7 +44,9 @@ public class MonitorFilterInterceptor extends AbstractFilterInterceptor {
         RpcContext rpcContext = RpcContext.getContext();
         URL url = rpcContext.getUrl();
         boolean sslEnable = Boolean.parseBoolean(url.getParameter(Constants.SSL_ENABLE));
-        return initRpcInfo(rpcContext.getLocalAddress(), rpcContext.getRemoteAddress(),
+        MetricsRpcInfo metricsRpcInfo = initRpcInfo(rpcContext.getLocalAddress(), rpcContext.getRemoteAddress(),
                 url.getParameter(Constants.SIDE_KEY), sslEnable, url.getProtocol());
+        metricsRpcInfo.setUrl(url.getPath());
+        return metricsRpcInfo;
     }
 }

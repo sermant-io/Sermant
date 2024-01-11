@@ -39,10 +39,7 @@ public abstract class AbstractFilterInterceptor implements Interceptor {
             return context;
         }
         long startTime = System.nanoTime();
-        MetricsRpcInfo metricsRpcInfo = initRpcInfo(context);
-        metricsRpcInfo.getReqCount().incrementAndGet();
         context.setLocalFieldValue(Constants.START_TIME_KEY, startTime);
-        context.setLocalFieldValue(Constants.RPC_INFO_KEY, metricsRpcInfo);
         return context;
     }
 
@@ -55,16 +52,13 @@ public abstract class AbstractFilterInterceptor implements Interceptor {
         if (!(startTimeObject instanceof Long)) {
             return context;
         }
-        Object metrcisObject = context.getLocalFieldValue(Constants.RPC_INFO_KEY);
-        if (!(metrcisObject instanceof MetricsRpcInfo)) {
-            return context;
-        }
-        long startTime = Long.parseLong(StringUtils.getString(startTimeObject));
-        MetricsRpcInfo metricsRpcInfo = (MetricsRpcInfo) metrcisObject;
+        MetricsRpcInfo metricsRpcInfo = initRpcInfo(context);
+        metricsRpcInfo.getReqCount().incrementAndGet();
         metricsRpcInfo.getResponseCount().incrementAndGet();
-        long latency = System.nanoTime() - startTime;
+        long latency = System.nanoTime() - (long) startTimeObject;
         metricsRpcInfo.getSumLatency().addAndGet(latency);
         metricsRpcInfo.getLatencyList().add(latency);
+        MetricsManager.saveRpcInfo(metricsRpcInfo);
         return context;
     }
 
@@ -120,12 +114,7 @@ public abstract class AbstractFilterInterceptor implements Interceptor {
      */
     public MetricsRpcInfo initRpcInfo(InetSocketAddress localAddress, InetSocketAddress remoteAddress,
             String side, boolean sslEnable, String protocol) {
-        String metricsKey = localAddress.getHostName() + Constants.CONNECT + remoteAddress.getHostName()
-                + Constants.CONNECT + remoteAddress.getPort();
-        MetricsRpcInfo metricsRpcInfo = MetricsManager.getRpcInfo(metricsKey);
-        if (!StringUtils.isEmpty(metricsRpcInfo.getClientIp())) {
-            return metricsRpcInfo;
-        }
+        MetricsRpcInfo metricsRpcInfo = new MetricsRpcInfo();
         metricsRpcInfo.setProtocol(protocol);
         if (isClientSide(side)) {
             initAddressAndRole(metricsRpcInfo, localAddress, remoteAddress, Constants.CLIENT_ROLE);
