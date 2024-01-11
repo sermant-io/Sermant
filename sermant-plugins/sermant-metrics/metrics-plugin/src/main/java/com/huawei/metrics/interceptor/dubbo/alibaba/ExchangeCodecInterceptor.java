@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.interceptor.alibaba;
+package com.huawei.metrics.interceptor.dubbo.alibaba;
 
 import com.huawei.metrics.common.Constants;
-import com.huawei.metrics.entity.MetricsLinkInfo;
+import com.huawei.metrics.entity.MetricsRpcInfo;
 import com.huawei.metrics.interceptor.AbstractCodecInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 import com.alibaba.dubbo.common.URL;
 import com.alibaba.dubbo.remoting.Channel;
-import com.alibaba.dubbo.remoting.buffer.ChannelBuffer;
+import com.alibaba.dubbo.remoting.exchange.Response;
 
 /**
  * dubbo报文转码、解码拦截器
@@ -33,42 +33,33 @@ import com.alibaba.dubbo.remoting.buffer.ChannelBuffer;
  * @since 2023-10-17
  */
 public class ExchangeCodecInterceptor extends AbstractCodecInterceptor {
-    private static final int PARAM_COUNT = 2;
-
-    @Override
-    public boolean isValid(ExecuteContext context) {
-        Object[] arguments = context.getArguments();
-        if (arguments == null || arguments.length < PARAM_COUNT) {
-            return false;
-        }
-        if (!(arguments[0] instanceof Channel)) {
-            return false;
-        }
-        if (!(arguments[1] instanceof ChannelBuffer)) {
-            return false;
-        }
-        return ((Channel) arguments[0]).getUrl() != null;
-    }
-
-    @Override
-    public MetricsLinkInfo initLinkInfo(ExecuteContext context) {
+    /**
+     * 初始化指标信息
+     *
+     * @param context 上下文信息
+     * @return 连接信息
+     */
+    private MetricsRpcInfo initRpcInfo(ExecuteContext context) {
         Channel channel = (Channel) context.getArguments()[0];
         URL url = channel.getUrl();
         boolean sslEnable = Boolean.parseBoolean(url.getParameter(Constants.SSL_ENABLE));
-        return initLinkInfo(channel.getLocalAddress(), channel.getRemoteAddress(),
+        MetricsRpcInfo metricsRpcInfo = initRpcInfo(channel.getLocalAddress(), channel.getRemoteAddress(),
                 url.getParameter(Constants.SIDE_KEY), sslEnable, url.getProtocol());
+        metricsRpcInfo.setUrl(url.getPath());
+        return metricsRpcInfo;
     }
 
     @Override
-    public void initIndexInfo(ExecuteContext context) {
-        ChannelBuffer buffer = (ChannelBuffer) context.getArguments()[1];
-        context.setLocalFieldValue(Constants.WRITE_INDEX_KEY, buffer.writerIndex());
-        context.setLocalFieldValue(Constants.READ_INDEX_KEY, buffer.readerIndex());
-    }
-
-    @Override
-    protected void fillMessageInfo(ExecuteContext context) {
-        ChannelBuffer buffer = (ChannelBuffer) context.getArguments()[1];
-        fillMessageInfo(buffer.writerIndex(), buffer.readerIndex(), context);
+    public ExecuteContext after(ExecuteContext context) {
+        if (!(context.getResult() instanceof Response)) {
+            return context;
+        }
+        Response response = (Response) context.getResult();
+        if (response.isHeartbeat() || response.isEvent()) {
+            return context;
+        }
+        MetricsRpcInfo metricsRpcInfo = initRpcInfo(context);
+        fillErrorCountInfo(response.getStatus(), metricsRpcInfo);
+        return context;
     }
 }

@@ -88,6 +88,11 @@ public class MetricsInfo {
      */
     private String machineId;
 
+    /**
+     * URL信息
+     */
+    private String url;
+
     public String getProcessId() {
         return processId;
     }
@@ -190,5 +195,13 @@ public class MetricsInfo {
 
     public void setMachineId(String machineId) {
         this.machineId = machineId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
