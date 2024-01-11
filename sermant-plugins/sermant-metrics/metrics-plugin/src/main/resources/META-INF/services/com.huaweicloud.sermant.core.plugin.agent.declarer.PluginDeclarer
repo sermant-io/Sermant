@@ -19,3 +19,9 @@ com.huawei.metrics.declarer.alibaba.ExchangeCodecDeclarer
 com.huawei.metrics.declarer.alibaba.MonitorFilterDeclarer
 com.huawei.metrics.declarer.apache.ExchangeCodecDeclarer
 com.huawei.metrics.declarer.apache.MonitorFilterDeclarer
+com.huawei.metrics.declarer.httpurlconnection.ConnectDeclarer
+com.huawei.metrics.declarer.httpurlconnection.DisconnectDeclarer
+com.huawei.metrics.declarer.httpclient.HttpClientDeclarer
+com.huawei.metrics.declarer.okhttp.CallDeclarer
+com.huawei.metrics.declarer.okhttp3.CallDeclarer
+com.huawei.metrics.declarer.servlet.HttpServletDeclarer

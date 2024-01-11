@@ -17,14 +17,14 @@
 package com.huawei.metrics.declarer.alibaba;
 
 import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.alibaba.ExchangeCodecInterceptor;
+import com.huawei.metrics.interceptor.dubbo.alibaba.ExchangeCodecInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo报文转码、解码增强声明
+ * dubbo2.6.x报文转码、解码增强声明
  *
  * @author zhp
  * @since 2023-10-17
@@ -32,11 +32,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 public class ExchangeCodecDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec";
 
-    private static final String ENCODE_METHODS_NAMES = "encode";
-
-    private static final String DECODE_METHODS_NAMES = "decode";
-
-    private static final int ENCODE_PARAM_COUNT = 3;
+    private static final String DECODE_METHODS_NAMES = "decodeBody";
 
     private static final int DECODE_PARAM_COUNT = 2;
 
@@ -47,10 +43,8 @@ public class ExchangeCodecDeclarer extends AbstractDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals(ENCODE_METHODS_NAMES)
-                .and(MethodMatcher.paramCountEquals(ENCODE_PARAM_COUNT)), new ExchangeCodecInterceptor()),
-                InterceptDeclarer.build(MethodMatcher.nameEquals(DECODE_METHODS_NAMES)
-                        .and(MethodMatcher.paramCountEquals(DECODE_PARAM_COUNT)), new ExchangeCodecInterceptor())
+        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals(DECODE_METHODS_NAMES)
+                .and(MethodMatcher.paramCountEquals(DECODE_PARAM_COUNT)), new ExchangeCodecInterceptor())
         };
     }
 }
