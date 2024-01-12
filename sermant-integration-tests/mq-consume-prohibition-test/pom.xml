@@ -15,11 +15,7 @@
     <artifactId>mq-consume-prohibition-test</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>rocketmq-consumer-push-demo</module>
         <module>mq-consume-prohibition-common-demo</module>
-        <module>rocketmq-consumer-pull-subscribe-demo</module>
-        <module>rocketmq-consumer-pull-assign-demo</module>
-        <module>rocketmq-producer-demo</module>
         <module>mq-consume-prohibition-integration-test</module>
     </modules>
 
@@ -38,5 +34,23 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>kafka-consumer-test</id>
+            <modules>
+                <module>kafka-consumer-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>rocketmq-consume-test</id>
+            <modules>
+                <module>rocketmq-consumer-push-demo</module>
+                <module>rocketmq-consumer-pull-subscribe-demo</module>
+                <module>rocketmq-consumer-pull-assign-demo</module>
+                <module>rocketmq-producer-demo</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

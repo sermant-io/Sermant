@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.mq.prohibition.common.utils;
+package com.huaweicloud.sermant.mq.prohibition.integration.utils;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;

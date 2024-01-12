@@ -1,0 +1,114 @@
+name: mq-consume-prohibition integration test
+env:
+  sermantVersion: 1.0.0
+on:
+  push:
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      - 'sermant-agentcore/**'
+      - 'sermant-integration-tests/mq-consume-prohibition-test/**'
+      - 'sermant-plugins/sermant-mq-consume-prohibition/**'
+      - '.github/workflows/mq-consume-prohibition_integration_test.yml'
+      - '.github/actions/scenarios/mq-consume-prohibition/**'
+      - '.github/actions/common/mq-consume-prohibition/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
+  cancel-in-progress: true
+jobs:
+  download-midwares-and-cache:
+    name: download midwares and cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: cache zookeeper
+        uses: actions/cache@v3
+        with:
+          path: apache-zookeeper-3.6.3-bin.tar.gz
+          key: ${{ runner.os }}-apache-zookeeper-3.6.3
+          restore-keys: |
+            ${{ runner.os }}-apache-zookeeper-3.6.3
+      - name: download zookeeper
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
+      - name: cache rocketmq
+        uses: actions/cache@v3
+        with:
+          path: rocketmq-all-4.8.0-bin-release.zip
+          key: ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+          restore-keys: |
+            ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+      - name: download rocketmq
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq
+      - name: cache kafka
+        uses: actions/cache@v3
+        with:
+          path: kafka_2.13-2.7.0.tgz
+          key: ${{ runner.os }}-kafka_2.13-2.7.0
+          restore-keys: |
+            ${{ runner.os }}-kafka_2.13-2.7.0
+      - name: download kafka
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh kafka
+  build-agent-and-cache:
+    name: build agent and cache
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+          cache: maven
+      - name: cache agent
+        uses: actions/cache@v3
+        with:
+          path: sermant-agent-*/
+          key: ${{ runner.os }}-agent-${{ github.run_id }}
+      - name: package agent
+        run: |
+          sed -i '/sermant-backend/d' pom.xml
+          sed -i '/sermant-integration-tests/d' pom.xml
+          sed -i '/sermant-injector/d' pom.xml
+          mvn package -DskipTests -Ptest --file pom.xml
+  test-for-mq-consume-prohibition-kafka:
+    name: Test for mq-consume-prohibition kafka
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - kafkaVersion: "2.0.1"
+          - kafkaVersion: "2.1.1"
+          - kafkaVersion: "2.2.2"
+          - kafkaVersion: "2.3.1"
+          - kafkaVersion: "2.4.0"
+          - kafkaVersion: "2.5.1"
+          - kafkaVersion: "2.6.3"
+          - kafkaVersion: "2.7.2"
+          - kafkaVersion: "2.8.2"
+          - kafkaVersion: "3.0.2"
+          - kafkaVersion: "3.1.2"
+          - kafkaVersion: "3.2.2"
+          - kafkaVersion: "3.3.2"
+          - kafkaVersion: "3.4.1"
+          - kafkaVersion: "3.5.2"
+          - kafkaVersion: "3.6.1"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/mq-consume-prohibition
+      - name: mq-consume-prohibition test for kafkaVersion=${{ matrix.kafkaVersion }}
+        uses: ./.github/actions/scenarios/mq-consume-prohibition/kafka

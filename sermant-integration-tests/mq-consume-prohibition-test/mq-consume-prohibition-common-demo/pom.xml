@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <httpclient4x.version>4.5.13</httpclient4x.version>
+        <common.log.version>1.2</common.log.version>
     </properties>
 
     <dependencies>
@@ -34,6 +35,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${common.log.version}</version>
         </dependency>
     </dependencies>
 
