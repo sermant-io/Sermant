@@ -47,6 +47,18 @@ public class RouterConfig implements PluginConfig {
     private String zone;
 
     /**
+     * 是否初始化dubbo区域路由，兼容性开关，开启后，会在dubbo的配置缓存中初始化一条以zone匹配的同标签路由
+     */
+    @ConfigFieldKey("enabled-dubbo-zone-router")
+    private boolean enabledDubboZoneRouter;
+
+    /**
+     * 是否初始化spring cloud区域路由，兼容性开关，开启后，会在spring cloud的配置缓存中初始化一条以zone匹配的同标签路由
+     */
+    @ConfigFieldKey("enabled-spring-zone-router")
+    private boolean enabledSpringZoneRouter;
+
+    /**
      * 是否适配注册插件
      */
     @ConfigFieldKey("enabled-registry-plugin-adaptation")
@@ -102,6 +114,22 @@ public class RouterConfig implements PluginConfig {
 
     public void setZone(String zone) {
         this.zone = zone;
+    }
+
+    public boolean isEnabledDubboZoneRouter() {
+        return enabledDubboZoneRouter;
+    }
+
+    public void setEnabledDubboZoneRouter(boolean enabledDubboZoneRouter) {
+        this.enabledDubboZoneRouter = enabledDubboZoneRouter;
+    }
+
+    public boolean isEnabledSpringZoneRouter() {
+        return enabledSpringZoneRouter;
+    }
+
+    public void setEnabledSpringZoneRouter(boolean enabledSpringZoneRouter) {
+        this.enabledSpringZoneRouter = enabledSpringZoneRouter;
     }
 
     public boolean isEnabledRegistryPluginAdaptation() {

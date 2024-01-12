@@ -258,59 +258,71 @@ public class RuleUtils {
                 entireIterator.remove();
                 continue;
             }
-
-            Iterator<Rule> ruleIterator = entireRule.getRules().iterator();
-            while (ruleIterator.hasNext()) {
-                Rule rule = ruleIterator.next();
-                List<Route> routes = rule.getRoute();
-
-                // 去掉没有配置路由的规则
-                if (CollectionUtils.isEmpty(routes)) {
-                    LOGGER.warning("Routes are empty, rule will be removed.");
-                    ruleIterator.remove();
-                    continue;
-                }
-
-                // 去掉无效的路由和修复同标签规则的路由
-                removeInvalidRoute(routes, kind, isReplaceDash, isAppendPrefix);
-
-                List<Route> fallback = rule.getFallback();
-                if (!CollectionUtils.isEmpty(fallback)) {
-                    // 去掉无效的fallback路由和修复同标签规则的fallback路由
-                    removeInvalidRoute(fallback, kind, isReplaceDash, isAppendPrefix);
-                }
-
-                // 去掉全是无效路由的规则
-                if (CollectionUtils.isEmpty(routes)) {
-                    LOGGER.warning("Routes are invalid, rule will be removed.");
-                    ruleIterator.remove();
-                    continue;
-                }
-
-                if (RouterConstant.FLOW_MATCH_KIND.equals(kind)) {
-                    // 去掉无效的规则
-                    removeInvalidMatch(rule.getMatch());
-
-                    // 无attachments规则，将headers规则更新到attachments规则
-                    setAttachmentsByHeaders(rule.getMatch());
-                    continue;
-                }
-
-                if (RouterConstant.TAG_MATCH_KIND.equals(kind)) {
-                    // 去掉无效的规则
-                    removeInvalidTagMatch(rule.getMatch(), isAppendPrefix);
-                    continue;
-                }
-
-                if (RouterConstant.LANE_MATCH_KIND.equals(kind)) {
-                    // 去掉无效的规则
-                    removeInvalidLaneMatch(rule.getMatch());
-                }
-            }
+            removeInvalidRules(entireRule.getKind(), entireRule.getRules(), isReplaceDash, isAppendPrefix);
 
             // 去掉全是无效规则的配置
             if (CollectionUtils.isEmpty(entireRule.getRules())) {
                 entireIterator.remove();
+            }
+        }
+    }
+
+    /**
+     * 去掉无效的规则
+     *
+     * @param kind 规则类型
+     * @param rules 规则
+     * @param isReplaceDash 是否需要把"-"替换成"."
+     * @param isAppendPrefix 元数据的key值是否需要加上前缀
+     */
+    public static void removeInvalidRules(String kind, List<Rule> rules, boolean isReplaceDash,
+            boolean isAppendPrefix) {
+        Iterator<Rule> ruleIterator = rules.iterator();
+        while (ruleIterator.hasNext()) {
+            Rule rule = ruleIterator.next();
+            List<Route> routes = rule.getRoute();
+
+            // 去掉没有配置路由的规则
+            if (CollectionUtils.isEmpty(routes)) {
+                LOGGER.warning("Routes are empty, rule will be removed.");
+                ruleIterator.remove();
+                continue;
+            }
+
+            // 去掉无效的路由和修复同标签规则的路由
+            removeInvalidRoute(routes, kind, isReplaceDash, isAppendPrefix);
+
+            List<Route> fallback = rule.getFallback();
+            if (!CollectionUtils.isEmpty(fallback)) {
+                // 去掉无效的fallback路由和修复同标签规则的fallback路由
+                removeInvalidRoute(fallback, kind, isReplaceDash, isAppendPrefix);
+            }
+
+            // 去掉全是无效路由的规则
+            if (CollectionUtils.isEmpty(routes)) {
+                LOGGER.warning("Routes are invalid, rule will be removed.");
+                ruleIterator.remove();
+                continue;
+            }
+
+            if (RouterConstant.FLOW_MATCH_KIND.equals(kind)) {
+                // 去掉无效的规则
+                removeInvalidMatch(rule.getMatch());
+
+                // 无attachments规则，将headers规则更新到attachments规则
+                setAttachmentsByHeaders(rule.getMatch());
+                continue;
+            }
+
+            if (RouterConstant.TAG_MATCH_KIND.equals(kind)) {
+                // 去掉无效的规则
+                removeInvalidTagMatch(rule.getMatch(), isAppendPrefix);
+                continue;
+            }
+
+            if (RouterConstant.LANE_MATCH_KIND.equals(kind)) {
+                // 去掉无效的规则
+                removeInvalidLaneMatch(rule.getMatch());
             }
         }
     }
