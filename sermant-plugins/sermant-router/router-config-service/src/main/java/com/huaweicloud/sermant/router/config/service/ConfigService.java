@@ -22,9 +22,16 @@ import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.config.cache.ConfigCache;
+import com.huaweicloud.sermant.router.config.entity.EntireRule;
+import com.huaweicloud.sermant.router.config.entity.Route;
+import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
+import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.listener.RouterConfigListener;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -39,6 +46,8 @@ import java.util.logging.Logger;
  */
 public abstract class ConfigService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final int DEFAULT_TAG_ROUTE_WEIGHT = 100;
 
     private final AtomicBoolean init = new AtomicBoolean();
 
@@ -67,6 +76,7 @@ public abstract class ConfigService {
             return;
         }
         if (init.compareAndSet(false, true)) {
+            initTagRoute(cacheName);
             RouterConfigListener listener = new RouterConfigListener(cacheName);
             ConfigSubscriber subscriber = new CseGroupConfigSubscriber(serviceName, listener, "Sermant-Router");
             subscriber.subscribe();
@@ -89,5 +99,24 @@ public abstract class ConfigService {
      */
     public Set<String> getInjectTags() {
         return RuleUtils.getInjectTags();
+    }
+
+    private void initTagRoute(String cacheName) {
+        Route route = new Route();
+        route.setWeight(DEFAULT_TAG_ROUTE_WEIGHT);
+        if (RouterConstant.DUBBO_CACHE_NAME.equals(cacheName) && routerConfig.isEnabledDubboZoneRouter()) {
+            route.setTags(Collections.singletonMap(RouterConstant.META_ZONE_KEY, routerConfig.getZone()));
+        } else if (RouterConstant.SPRING_CACHE_NAME.equals(cacheName) && routerConfig.isEnabledSpringZoneRouter()) {
+            route.setTags(Collections.singletonMap(RouterConstant.ZONE, routerConfig.getZone()));
+        } else {
+            return;
+        }
+        Rule rule = new Rule();
+        rule.setRoute(Collections.singletonList(route));
+        EntireRule entireRule = new EntireRule();
+        entireRule.setRules(Collections.singletonList(rule));
+        entireRule.setKind(RouterConstant.TAG_MATCH_KIND);
+        RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
+        configuration.resetGlobalRule(entireRule);
     }
 }

@@ -164,6 +164,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
 
     private boolean canLoadHystrix() {
         if (PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool()) {
+            // 开启线程池异步路由时，透传标签不需要依赖HystrixRequestContext，所以直接返回false
             return false;
         }
         try {
