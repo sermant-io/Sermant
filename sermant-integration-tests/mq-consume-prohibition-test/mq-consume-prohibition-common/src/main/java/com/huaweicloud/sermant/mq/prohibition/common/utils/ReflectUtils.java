@@ -20,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * 反射工具类
@@ -51,5 +53,41 @@ public class ReflectUtils {
             LOGGER.error("Get field error, the message is: {}", e.getMessage());
         }
         return fieldValue;
+    }
+
+    /**
+     * 调用类的public无参方法
+     *
+     * @param clazz 类对象
+     * @param obj 类实例
+     * @param methodName 方法名
+     * @return 方法返回值
+     */
+    public static Object invokeMethod(Class clazz, Object obj, String methodName) {
+        Object result = null;
+        try {
+            Method method = clazz.getMethod(methodName);
+            result = method.invoke(obj);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error("Invoke method error, the message is: {}", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * 判断类是否具有某个方法
+     *
+     * @param clazz 类对象
+     * @param methodName 方法名
+     * @return 是否含有方法
+     */
+    public static boolean isHasMethod(Class clazz, String methodName) {
+        Method[] methods = clazz.getDeclaredMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

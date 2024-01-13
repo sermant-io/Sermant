@@ -9,21 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mq-consume-prohibition-common-demo</artifactId>
+    <artifactId>mq-consume-prohibition-common</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <httpclient4x.version>4.5.13</httpclient4x.version>
-        <common.log.version>1.2</common.log.version>
+        <commons-log.version>1.2</commons-log.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient4x.version}</version>
-        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
@@ -39,7 +34,7 @@
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>${common.log.version}</version>
+            <version>${commons-log.version}</version>
         </dependency>
     </dependencies>
 

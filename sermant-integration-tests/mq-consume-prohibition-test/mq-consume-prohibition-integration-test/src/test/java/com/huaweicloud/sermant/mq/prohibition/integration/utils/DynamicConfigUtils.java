@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
  * @since 2024-01-09
  **/
 public class DynamicConfigUtils {
-    public static final String ZOOKEEPER_NODE_PATH = "/app=default&environment/sermant.mq.consume.globalConfig";
+    public static final String ZOOKEEPER_NODE_PATH = "/app=default&environment=/sermant.mq.consume.globalConfig";
 
     private DynamicConfigUtils() {
     }

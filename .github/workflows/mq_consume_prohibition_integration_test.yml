@@ -10,9 +10,9 @@ on:
       - 'sermant-agentcore/**'
       - 'sermant-integration-tests/mq-consume-prohibition-test/**'
       - 'sermant-plugins/sermant-mq-consume-prohibition/**'
-      - '.github/workflows/mq-consume-prohibition_integration_test.yml'
-      - '.github/actions/scenarios/mq-consume-prohibition/**'
+      - '.github/workflows/mq_consume_prohibition_integration_test.yml'
       - '.github/actions/common/mq-consume-prohibition/**'
+      - '.github/actions/scenarios/mq-consume-prohibition/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
@@ -36,14 +36,14 @@ jobs:
       - name: cache rocketmq
         uses: actions/cache@v3
         with:
-          path: rocketmq-all-4.8.0-bin-release.zip
-          key: ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+          path: rocketmq-all-5.1.4-bin-release.zip
+          key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
           restore-keys: |
-            ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+            ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
       - name: download rocketmq
         run: |
           export ROOT_PATH=$(pwd)
-          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq514
       - name: cache kafka
         uses: actions/cache@v3
         with:
@@ -112,3 +112,78 @@ jobs:
         uses: ./.github/actions/common/mq-consume-prohibition
       - name: mq-consume-prohibition test for kafkaVersion=${{ matrix.kafkaVersion }}
         uses: ./.github/actions/scenarios/mq-consume-prohibition/kafka
+  test-for-rocketmq-one-topic:
+    name: Test for rocketmq consumer with one topic
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - rocketMqVersion: "4.6.1"
+          - rocketMqVersion: "4.7.1"
+          - rocketMqVersion: "4.8.0"
+          - rocketMqVersion: "4.9.7"
+          - rocketMqVersion: "5.0.0"
+          - rocketMqVersion: "5.1.4"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/mq-consume-prohibition
+      - name: mq-consume-prohibition-rocketmq test for rocketMqVersion=${{ matrix.rocketMqVersion }}
+        uses: ./.github/actions/scenarios/mq-consume-prohibition/rocketmq/rocketmq-one-topic
+  test-for-rocketmq-two-topic:
+    name: Test for rocketmq consumer with two topic
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - rocketMqVersion: "4.6.1"
+          - rocketMqVersion: "4.7.1"
+          - rocketMqVersion: "4.8.0"
+          - rocketMqVersion: "4.9.7"
+          - rocketMqVersion: "5.0.0"
+          - rocketMqVersion: "5.1.4"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/mq-consume-prohibition
+      - name: mq-consume-prohibition test for rocketMqVersion=${{ matrix.rocketMqVersion }}
+        uses: ./.github/actions/scenarios/mq-consume-prohibition/rocketmq/rocketmq-two-topic
+  test-for-rocketmq-two-consumer:
+    name: Test for rocketmq consumer with two consumer
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - rocketMqVersion: "4.6.1"
+          - rocketMqVersion: "4.7.1"
+          - rocketMqVersion: "4.8.0"
+          - rocketMqVersion: "4.9.7"
+          - rocketMqVersion: "5.0.0"
+          - rocketMqVersion: "5.1.4"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/mq-consume-prohibition
+      - name: mq-consume-prohibition test for rocketMqVersion=${{ matrix.rocketMqVersion }}
+        uses: ./.github/actions/scenarios/mq-consume-prohibition/rocketmq/rocketmq-two-consumer
