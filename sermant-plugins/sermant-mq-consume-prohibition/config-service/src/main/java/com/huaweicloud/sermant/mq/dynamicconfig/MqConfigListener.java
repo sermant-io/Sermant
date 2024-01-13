@@ -25,6 +25,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.kafka.controller.KafkaConsumerController;
+import com.huaweicloud.sermant.rocketmq.cache.RocketMqConsumerCache;
 import com.huaweicloud.sermant.rocketmq.controller.RocketMqPullConsumerController;
 import com.huaweicloud.sermant.rocketmq.controller.RocketMqPushConsumerController;
 
@@ -127,10 +128,10 @@ public class MqConfigListener implements DynamicConfigListener {
         // KafkaConsumer标记配置已更新
         KafkaConsumerController.getKafkaConsumerCache().values()
                 .forEach(obj -> obj.getIsConfigChanged().set(true));
-        RocketMqPushConsumerController.getPushConsumerCache().entrySet()
+        RocketMqConsumerCache.PUSH_CONSUMERS_CACHE.entrySet()
                 .forEach(obj -> RocketMqPushConsumerController.disablePushConsumption(obj.getValue(),
                         ProhibitionConfigManager.getRocketMqProhibitionTopics()));
-        RocketMqPullConsumerController.getPullConsumerCache().entrySet()
+        RocketMqConsumerCache.PULL_CONSUMERS_CACHE.entrySet()
                 .forEach(obj -> RocketMqPullConsumerController.disablePullConsumption(obj.getValue(),
                         ProhibitionConfigManager.getRocketMqProhibitionTopics()));
     }
