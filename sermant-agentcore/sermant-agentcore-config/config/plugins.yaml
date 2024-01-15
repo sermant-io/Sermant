@@ -17,6 +17,7 @@ plugins:
   - service-removal
   - service-visibility
   - tag-transmission
+  - database-write-prohibition
 # dynamicPlugins用于配置支持动态安装的插件, agentmain启动时生效, 允许卸载:
 #  1. active类型插件将会主动启用
 #  2. passive类型插件需通过指令或接口调用启用
