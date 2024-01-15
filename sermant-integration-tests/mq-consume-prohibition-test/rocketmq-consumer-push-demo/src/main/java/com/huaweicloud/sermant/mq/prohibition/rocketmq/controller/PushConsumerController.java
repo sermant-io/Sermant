@@ -25,10 +25,13 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -41,6 +44,8 @@ import java.util.List;
  **/
 @RestController
 public class PushConsumerController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PushConsumerController.class);
+
     /**
      * push消费者
      */
@@ -54,36 +59,41 @@ public class PushConsumerController {
      *
      * @return string
      */
-    @RequestMapping(value = "checkRocketMqStatus", method = RequestMethod.GET,
+    @RequestMapping(value = "checkStatus", method = RequestMethod.GET,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String checkRocketMqStatus() {
+    public String checkStatus() {
         return "ok";
     }
 
     /**
      * 消费者初始化参数并启动
-     *
-     * @throws MQClientException
      */
-    @RequestMapping(value = "initAndStart", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void initAndStart() throws MQClientException {
-        consumer.setNamesrvAddr(rocketMqAddress);
-        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
-        consumer.subscribe(RocketMqConstant.PUSH_CONSUME_TOPIC, RocketMqConstant.TAG_SCOPE);
-        consumer.registerMessageListener(new MessageListenerOrderly() {
-            @Override
-            public ConsumeOrderlyStatus consumeMessage(List<MessageExt> messageExts,
-                    ConsumeOrderlyContext context) {
-                if (messageExts != null) {
-                    for (MessageExt ext : messageExts) {
-                        // 模拟处理消息
-                        ext.getBody();
+    @RequestMapping(value = "initAndStart", method = RequestMethod.GET)
+    public void initAndStart() {
+        Thread thread = new Thread(() -> {
+            consumer.setNamesrvAddr(rocketMqAddress);
+            consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_LAST_OFFSET);
+            try {
+                consumer.subscribe(RocketMqConstant.PUSH_CONSUME_TOPIC, RocketMqConstant.TAG_SCOPE);
+                consumer.registerMessageListener(new MessageListenerOrderly() {
+                    @Override
+                    public ConsumeOrderlyStatus consumeMessage(List<MessageExt> messageExts,
+                            ConsumeOrderlyContext context) {
+                        if (messageExts != null) {
+                            for (MessageExt ext : messageExts) {
+                                // 模拟处理消息
+                                ext.getBody();
+                            }
+                        }
+                        return ConsumeOrderlyStatus.SUCCESS;
                     }
-                }
-                return ConsumeOrderlyStatus.SUCCESS;
+                });
+                consumer.start();
+            } catch (MQClientException e) {
+                LOGGER.error("Consumer run failed, message : {}", e.getMessage());
             }
         });
-        consumer.start();
+        thread.start();
     }
 
     /**
@@ -92,8 +102,8 @@ public class PushConsumerController {
      * @param topic 订阅的topic
      * @throws MQClientException
      */
-    @RequestMapping(value = "subscribe", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void subscribe(String topic) throws MQClientException {
+    @RequestMapping(value = "subscribe", method = RequestMethod.GET)
+    public void subscribe(@RequestParam("topic") String topic) throws MQClientException {
         consumer.subscribe(topic, RocketMqConstant.TAG_SCOPE);
     }
 
@@ -101,10 +111,9 @@ public class PushConsumerController {
      * 消费者取消订阅topic
      *
      * @param topic 取消订阅的topic
-     * @throws MQClientException
      */
-    @RequestMapping(value = "unsubscribe", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public void unsubscribe(String topic) {
+    @RequestMapping(value = "unsubscribe", method = RequestMethod.GET)
+    public void unsubscribe(@RequestParam("topic") String topic) {
         consumer.unsubscribe(topic);
     }
 
@@ -113,16 +122,15 @@ public class PushConsumerController {
      *
      * @param topic 订阅的topic
      * @param group 消费者组
-     * @return 消费者实例id列表
-     * @throws MQClientException
+     * @return 消费者实例id数量
      */
-    @RequestMapping(value = "subscribe", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String getConsumerIdList(String topic, String group) {
+    @RequestMapping(value = "consumerIdList", method = RequestMethod.GET)
+    public String getConsumerIdList(@RequestParam("topic") String topic, @RequestParam("group") String group) {
         List<String> consumerIdList = consumer.getDefaultMQPushConsumerImpl().getmQClientFactory()
                 .findConsumerIdList(topic, group);
         if (consumerIdList == null) {
-            return "[]";
+            return "0";
         }
-        return consumerIdList.toString();
+        return Integer.toString(consumerIdList.size());
     }
 }

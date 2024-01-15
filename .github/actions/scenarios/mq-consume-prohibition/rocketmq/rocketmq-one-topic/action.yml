@@ -1,0 +1,85 @@
+name: "MQ Consume Prohibition Plugin rocketmq Test"
+description: "Auto test for mq consume prohibition by rocketmq with one topic"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/mq-consume-prohibition/rocketmq-one-topic
+    - name: get rocketmq from cache
+      uses: actions/cache@v3
+      with:
+        path: rocketmq-all-5.1.4-bin-release.zip
+        key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
+        restore-keys: |
+          ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
+    - name: start rocketmq server
+      shell: bash
+      run: |
+        unzip rocketmq-all-5.1.4-bin-release.zip
+        sed -i 's/-Xms4g -Xmx4g -Xmn2g/-Xms1g -Xmx1g -Xmn1g/g' rocketmq-all-5.1.4-bin-release/bin/runserver.sh
+        sed -i 's/-Xms4g -Xmx4g/-Xms1g -Xmx1g/g' rocketmq-all-5.1.4-bin-release/bin/runserver.sh
+        nohup bash rocketmq-all-5.1.4-bin-release/bin/mqnamesrv &
+    - name: start rocketmq broker
+      shell: bash
+      run: |
+        sed -i 's/-Xms8g -Xmx8g/-Xms1g -Xmx1g/g' rocketmq-all-5.1.4-bin-release/bin/runbroker.sh
+        sed -i 's/-Xmn4g/-Xmn1g/g' rocketmq-all-5.1.4-bin-release/bin/runbroker.sh
+        nohup bash rocketmq-all-5.1.4-bin-release/bin/mqbroker -n localhost:9876 &
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Drocketmq-client.version=${{ matrix.rocketMqVersion }} -DskipTests -Procketmq-one-topic-test --file \
+        sermant-integration-tests/mq-consume-prohibition-test/pom.xml
+    - name: start rocketmq producer demo
+      shell: bash
+      run: |
+        nohup java -jar \
+        sermant-integration-tests/mq-consume-prohibition-test/rocketmq-producer-demo/target/rocketmq-producer-demo.jar > ${{ env.logDir }}/rocketmq-producer.log 2>&1 &
+    - name: start rocketmq push consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rocketmq-push-consumer \
+        sermant-integration-tests/mq-consume-prohibition-test/rocketmq-consumer-push-demo/target/rocketmq-consumer-push-demo.jar > ${{ env.logDir }}/rocketmq-push-consumer.log 2>&1 &
+    - name: start rocketmq pull subscribe consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rocketmq-pull-subscribe-consumer \
+        sermant-integration-tests/mq-consume-prohibition-test/rocketmq-consumer-pull-subscribe-demo/target/rocketmq-consumer-pull-subscribe-demo.jar > ${{ env.logDir }}/rocketmq-pull-subscribe-consumer.log 2>&1 &
+    - name: start rocketmq pull assign consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/rocketmq-pull-assign-consumer \
+        sermant-integration-tests/mq-consume-prohibition-test/rocketmq-consumer-pull-assign-demo/target/rocketmq-consumer-pull-assign-demo.jar > ${{ env.logDir }}/rocketmq-pull-assignconsumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9059/checkStatus 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9056/checkStatus 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9058/checkStatus 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9057/checkStatus 120
+    - name: test rocketmq
+      shell: bash
+      run: |
+        mvn test -Dmq.consume.prohibition.integration.test.type=ROCKETMQ_ONE_TOPIC --file \
+        sermant-integration-tests/mq-consume-prohibition-test/mq-consume-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: rocketmq
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-mq-consume-prohibition-rocketmq-one-topic-(${{ matrix.rocketMqVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

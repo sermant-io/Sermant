@@ -15,7 +15,7 @@
     <artifactId>mq-consume-prohibition-test</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>mq-consume-prohibition-common-demo</module>
+        <module>mq-consume-prohibition-common</module>
         <module>mq-consume-prohibition-integration-test</module>
     </modules>
 
@@ -29,7 +29,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.huaweicloud.sermant</groupId>
-                <artifactId>mq-consume-prohibition-common-demo</artifactId>
+                <artifactId>mq-consume-prohibition-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -43,7 +43,7 @@
             </modules>
         </profile>
         <profile>
-            <id>rocketmq-consume-test</id>
+            <id>rocketmq-one-topic-test</id>
             <modules>
                 <module>rocketmq-consumer-push-demo</module>
                 <module>rocketmq-consumer-pull-subscribe-demo</module>
@@ -51,6 +51,21 @@
                 <module>rocketmq-producer-demo</module>
             </modules>
         </profile>
+        <profile>
+            <id>rocketmq-two-topic-test</id>
+            <modules>
+                <module>rocketmq-consumer-push-demo</module>
+                <module>rocketmq-consumer-pull-subscribe-demo</module>
+                <module>rocketmq-producer-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>rocketmq-two-consumer-test</id>
+            <modules>
+                <module>rocketmq-consumer-push-demo</module>
+                <module>rocketmq-consumer-pull-subscribe-demo</module>
+                <module>rocketmq-producer-demo</module>
+            </modules>
+        </profile>
     </profiles>
-
 </project>

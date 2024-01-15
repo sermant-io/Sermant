@@ -35,3 +35,4 @@ runs:
       uses: ./.github/actions/common/entry
       with:
         log-dir: ./logs/mq-consume-prohibition/common
+        key: ${{ runner.os }}-agent-${{ github.run_id }}

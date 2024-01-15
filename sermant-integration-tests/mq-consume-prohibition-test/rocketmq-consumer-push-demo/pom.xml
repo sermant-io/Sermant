@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>mq-consume-prohibition-common-demo</artifactId>
+            <artifactId>mq-consume-prohibition-common</artifactId>
         </dependency>
     </dependencies>
 

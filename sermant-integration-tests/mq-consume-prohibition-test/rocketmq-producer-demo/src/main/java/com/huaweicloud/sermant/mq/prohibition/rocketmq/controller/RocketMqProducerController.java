@@ -40,7 +40,6 @@ import java.time.format.DateTimeFormatter;
  * @since 2024-01-08
  **/
 @RestController
-@RequestMapping(value = "rocketMqProducer")
 public class RocketMqProducerController {
     @Value("${rocketmq.address}")
     private String rocketMqAddress;
@@ -50,9 +49,9 @@ public class RocketMqProducerController {
      *
      * @return string
      */
-    @RequestMapping(value = "checkRocketMqProducerStatus", method = RequestMethod.GET,
+    @RequestMapping(value = "checkStatus", method = RequestMethod.GET,
             produces = MediaType.TEXT_PLAIN_VALUE)
-    public String checkRocketMqProducerStatus() {
+    public String checkStatus() {
         return "ok";
     }
 
