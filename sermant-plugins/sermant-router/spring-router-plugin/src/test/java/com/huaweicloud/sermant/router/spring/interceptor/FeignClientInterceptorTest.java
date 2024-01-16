@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
@@ -73,6 +74,8 @@ public class FeignClientInterceptorTest {
         mockStatic = Mockito.mockStatic(PluginConfigManager.class);
         RouterConfig config = new RouterConfig();
         mockStatic.when(() -> PluginConfigManager.getPluginConfig(Mockito.any())).thenReturn(config);
+        mockStatic.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
+                .thenReturn(new TransmitConfig());
     }
 
     @AfterClass

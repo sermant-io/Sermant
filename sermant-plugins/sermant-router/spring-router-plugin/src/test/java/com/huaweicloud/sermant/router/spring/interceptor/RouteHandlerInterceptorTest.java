@@ -19,6 +19,7 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 import com.huaweicloud.sermant.router.spring.TestSpringConfigService;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
@@ -42,7 +43,7 @@ import java.util.Map;
  * @author provenceee
  * @since 2022-09-07
  */
-public class RouteHandlerInterceptorTest {
+public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     private final RouteHandlerInterceptor interceptor;
 
     private static TestSpringConfigService configService;

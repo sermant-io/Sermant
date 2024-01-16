@@ -1,0 +1,2 @@
+com.huaweicloud.sermant.router.transmit.declarer.ExecutorDeclarer
+com.huaweicloud.sermant.router.transmit.declarer.ScheduledExecutorServiceDeclarer

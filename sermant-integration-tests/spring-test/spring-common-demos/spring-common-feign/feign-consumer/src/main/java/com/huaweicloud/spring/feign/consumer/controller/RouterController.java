@@ -19,12 +19,19 @@ package com.huaweicloud.spring.feign.consumer.controller;
 import com.huaweicloud.spring.feign.api.BootRegistryService;
 import com.huaweicloud.spring.feign.api.FeignService;
 
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +45,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/router")
 public class RouterController {
+    private static final String PROVIDER_URL = "http://feign-provider/lane";
+
     @Value("${spring.application.name}")
     private String applicationName;
 
@@ -49,6 +58,10 @@ public class RouterController {
 
     @Autowired
     private FeignService feignService;
+
+    @Autowired
+    @Lazy
+    private WebClient client;
 
     /**
      * 获取区域
@@ -87,6 +100,28 @@ public class RouterController {
         Map<String, Object> result = new HashMap<>(feignService.getLane());
         result.put(applicationName, getMetadata());
         return result;
+    }
+
+    /**
+     * 获取泳道信息
+     *
+     * @param name name
+     * @param id id
+     * @param enabled enabled
+     * @return 泳道信息
+     */
+    @GetMapping("/cloud/getLaneByWebclient")
+    public Mono<Map<String, Object>> getLaneByCloudWebclient(
+            @RequestParam(value = "name", defaultValue = "") String name,
+            @RequestParam(value = "id", defaultValue = "0") int id,
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+        RequestHeadersSpec<?> requestHeadersSpec = client.get().uri(PROVIDER_URL);
+        ResponseSpec spec = requestHeadersSpec.retrieve();
+        return spec.bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+        }).map(map -> {
+            map.put(applicationName, getMetadata());
+            return map;
+        });
     }
 
     private Map<String, Object> getMetadata() {

@@ -28,6 +28,7 @@
         <apache-httpclient.version>4.5.13</apache-httpclient.version>
         <http.client.async.verion>4.1.5</http.client.async.verion>
         <jakarta.el.version>3.0.4</jakarta.el.version>
+        <reactor.version>0.9.0.RELEASE</reactor.version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-webflux</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
             <scope>provided</scope>
@@ -76,6 +83,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
             <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>${reactor.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

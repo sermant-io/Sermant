@@ -52,4 +52,11 @@ public class RequestTag {
     public void addTag(Map<String, List<String>> map) {
         this.tag.putAll(map);
     }
+
+    @Override
+    public String toString() {
+        return "{"
+                + "tag='" + getTag() + '\''
+                + '}';
+    }
 }

@@ -17,7 +17,9 @@
 package com.huaweicloud.sermant.router.dubbo.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
@@ -49,6 +51,8 @@ public class ContextFilterInterceptorTest {
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
     /**
      * UT执行前进行mock
      */
@@ -59,6 +63,10 @@ public class ContextFilterInterceptorTest {
         testDubboConfigService.setReturnEmptyWhenGetInjectTags(true);
         mockServiceManager.when(() -> ServiceManager.getService(DubboConfigService.class))
                 .thenReturn(testDubboConfigService);
+
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
+                .thenReturn(new TransmitConfig());
     }
 
     /**
@@ -67,6 +75,7 @@ public class ContextFilterInterceptorTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public ContextFilterInterceptorTest() throws NoSuchMethodException {
