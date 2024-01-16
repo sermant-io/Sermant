@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,60 +17,54 @@
 package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.router.common.request.RequestData;
+import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
-
 /**
- * 测试ControllerInterceptor
+ * 测试ReactiveTypeHandlerInterceptor
  *
  * @author provenceee
- * @since 2022-10-29
+ * @since 2023-06-13
  */
-public class ControllerInterceptorTest {
-    private final ControllerInterceptor interceptor;
+public class ReactiveTypeHandlerInterceptorTest extends BaseTransmitConfigTest {
+    private final ReactiveTypeHandlerInterceptor interceptor;
 
     private final ExecuteContext context;
 
-    public ControllerInterceptorTest() {
-        interceptor = new ControllerInterceptor();
+    public ReactiveTypeHandlerInterceptorTest() {
+        interceptor = new ReactiveTypeHandlerInterceptor();
         context = ExecuteContext.forMemberMethod(new Object(), null, null, null, null);
     }
 
-    /**
-     * 重置测试数据
-     */
     @Before
     public void clear() {
         ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
 
-    /**
-     * 测试after方法,验证是否释放线程变量
-     */
     @Test
     public void testAfter() {
-        ThreadLocalUtils.addRequestTag(Collections.emptyMap());
+        ThreadLocalUtils.setRequestTag(new RequestTag(null));
+        ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 
-        // 测试after方法,验证是否释放线程变量
         interceptor.after(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 
-    /**
-     * 测试onThrow方法,验证是否释放线程变量
-     */
     @Test
     public void testOnThrow() {
-        ThreadLocalUtils.addRequestTag(Collections.emptyMap());
+        ThreadLocalUtils.setRequestTag(new RequestTag(null));
+        ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 
-        // 测试onThrow方法,验证是否释放线程变量
         interceptor.onThrow(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 }
