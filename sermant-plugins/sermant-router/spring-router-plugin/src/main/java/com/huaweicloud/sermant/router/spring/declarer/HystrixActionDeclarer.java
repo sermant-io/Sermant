@@ -56,6 +56,7 @@ public class HystrixActionDeclarer extends AbstractDeclarer {
 
     @Override
     public boolean isEnabled() {
+        // 不开启线程池异步路由时，才需要开启这个
         return !PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool();
     }
 }

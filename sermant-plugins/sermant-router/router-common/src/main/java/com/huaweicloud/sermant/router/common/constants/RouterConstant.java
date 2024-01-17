@@ -47,12 +47,12 @@ public class RouterConstant {
     public static final String IS_METHOD_SUFFIX = "()";
 
     /**
-     * 标签路由key前缀
+     * 流量路由key前缀
      */
     public static final String ROUTER_KEY_PREFIX = "servicecomb.routeRule";
 
     /**
-     * 标签路由全局规则key
+     * 流量路由全局规则key
      */
     public static final String GLOBAL_ROUTER_KEY = "servicecomb.globalRouteRule";
 
@@ -155,6 +155,38 @@ public class RouterConstant {
      * zone
      */
     public static final String ZONE = "zone";
+
+    /**
+     * 标签路由key前缀
+     */
+    public static final String TAG_KEY_PREFIX = "servicecomb.tagRule";
+
+    /**
+     * 标签路由全局规则key
+     */
+    public static final String GLOBAL_TAG_KEY = "servicecomb.globalTagRule";
+
+    /**
+     * 泳道key前缀
+     */
+    public static final String LANE_KEY_PREFIX = "servicecomb.laneRule";
+
+    /**
+     * 泳道全局规则key
+     */
+    public static final String GLOBAL_LANE_KEY = "servicecomb.globalLaneRule";
+
+    /**
+     * 全量服务级兼容的key
+     */
+    public static final List<String> COMPATIBILITY_KEY_LIST = Arrays.asList(ROUTER_KEY_PREFIX, TAG_KEY_PREFIX,
+            LANE_KEY_PREFIX);
+
+    /**
+     * 全局级兼容的key
+     */
+    public static final List<String> GLOBAL_COMPATIBILITY_KEY_LIST = Arrays.asList(GLOBAL_ROUTER_KEY, GLOBAL_TAG_KEY,
+            GLOBAL_LANE_KEY);
 
     private RouterConstant() {
     }
