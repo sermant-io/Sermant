@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.huaweicloud.sermant</groupId>
+        <artifactId>sermant-metrics</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>metrics-dubbo-plugin</artifactId>
+
+    <name>metrics-dubbo-plugin</name>
+    <description>The plugin module of metrics.</description>
+
+    <properties>
+        <config.skip.flag>false</config.skip.flag>
+        <package.plugin.type>plugin</package.plugin.type>
+        <alibaba.dubbo.version>2.5.7</alibaba.dubbo.version>
+        <apache.dubbo.version>2.7.3</apache.dubbo.version>
+    </properties>
+    <dependencies>
+        <!--provided依赖-->
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>sermant-agentcore-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${alibaba.dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${apache.dubbo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- common依赖 -->
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>metrics-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

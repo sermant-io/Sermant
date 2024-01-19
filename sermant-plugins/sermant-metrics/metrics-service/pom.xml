@@ -14,6 +14,7 @@
     <properties>
         <config.skip.flag>false</config.skip.flag>
         <package.plugin.type>service</package.plugin.type>
+        <fastjson.version>1.2.83</fastjson.version>
     </properties>
 
     <dependencies>
@@ -23,20 +24,22 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>metrics-plugin</artifactId>
+            <artifactId>metrics-common</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- compile依赖 -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.83</version>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <!-- test依赖 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
