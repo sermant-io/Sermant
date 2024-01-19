@@ -24,21 +24,42 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>metrics-plugin</module>
+                <module>metrics-common</module>
+                <module>metrics-dubbo-plugin</module>
+                <module>metrics-springcloud-plugin</module>
+                <module>metrics-mysql8.x-plugin</module>
+                <module>metrics-mysql5.1.x-plugin</module>
+                <module>metrics-mysql5.0.x-plugin</module>
+                <module>metrics-mariadb3.x-plugin</module>
+                <module>metrics-mariadb2.x-plugin</module>
                 <module>metrics-service</module>
             </modules>
         </profile>
         <profile>
             <id>test</id>
             <modules>
-                <module>metrics-plugin</module>
+                <module>metrics-common</module>
+                <module>metrics-dubbo-plugin</module>
+                <module>metrics-springcloud-plugin</module>
+                <module>metrics-mysql8.x-plugin</module>
+                <module>metrics-mysql5.1.x-plugin</module>
+                <module>metrics-mysql5.0.x-plugin</module>
+                <module>metrics-mariadb3.x-plugin</module>
+                <module>metrics-mariadb2.x-plugin</module>
                 <module>metrics-service</module>
             </modules>
         </profile>
         <profile>
             <id>release</id>
             <modules>
-                <module>metrics-plugin</module>
+                <module>metrics-common</module>
+                <module>metrics-dubbo-plugin</module>
+                <module>metrics-springcloud-plugin</module>
+                <module>metrics-mysql8.x-plugin</module>
+                <module>metrics-mysql5.1.x-plugin</module>
+                <module>metrics-mysql5.0.x-plugin</module>
+                <module>metrics-mariadb3.x-plugin</module>
+                <module>metrics-mariadb2.x-plugin</module>
                 <module>metrics-service</module>
             </modules>
         </profile>
