@@ -105,10 +105,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (CollectionUtils.isEmpty(rules)) {
             return invokers;
         }
-        List<Route> routes = getRoutes(rules, DubboReflectUtils.getArguments(invocation),
+        Optional<Rule> ruleOptional = getRule(rules, DubboReflectUtils.getArguments(invocation),
                 parseAttachments(invocation));
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
+        if (ruleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getFlowMatchInvokers(targetService, invokers, ruleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
                 .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
@@ -202,11 +202,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * @param attachments dubbo的attachments参数
      * @return 匹配的路由
      */
-    private static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
+    private static Optional<Rule> getRule(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
-                return rule.getRoute();
+                return Optional.of(rule);
             }
             List<Route> routeList;
             if (!CollectionUtils.isEmpty(match.getAttachments()) && !CollectionUtils.isEmpty(attachments)) {
@@ -217,10 +217,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 routeList = Collections.emptyList();
             }
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     /**

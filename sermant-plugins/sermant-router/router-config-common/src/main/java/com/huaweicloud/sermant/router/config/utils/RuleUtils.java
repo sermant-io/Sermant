@@ -274,6 +274,12 @@ public class RuleUtils {
                 // 去掉无效的路由和修复同标签规则的路由
                 removeInvalidRoute(routes, kind, isReplaceDash, isAppendPrefix);
 
+                List<Route> fallback = rule.getFallback();
+                if (!CollectionUtils.isEmpty(fallback)) {
+                    // 去掉无效的fallback路由和修复同标签规则的fallback路由
+                    removeInvalidRoute(fallback, kind, isReplaceDash, isAppendPrefix);
+                }
+
                 // 去掉全是无效路由的规则
                 if (CollectionUtils.isEmpty(routes)) {
                     LOGGER.warning("Routes are invalid, rule will be removed.");
