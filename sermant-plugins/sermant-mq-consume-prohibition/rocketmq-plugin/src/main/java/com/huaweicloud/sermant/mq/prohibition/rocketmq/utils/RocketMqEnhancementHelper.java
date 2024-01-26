@@ -36,7 +36,7 @@ import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
  * @author daizhenyu
  * @since 2023-12-13
  **/
-public class RocketmqEnhancementHelper {
+public class RocketMqEnhancementHelper {
     private static final String ENHANCE_PUSH_CONSUMER_CLASS =
             "org.apache.rocketmq.client.consumer.DefaultMQPushConsumer";
 
@@ -53,7 +53,7 @@ public class RocketmqEnhancementHelper {
 
     private static final String ASSIGN_METHOD_NAME = "assign";
 
-    private RocketmqEnhancementHelper() {
+    private RocketMqEnhancementHelper() {
     }
 
     /**

@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketmqEnhancementHelper;
+import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketMqEnhancementHelper;
 
 /**
  * pullConsumer拦截声明器，支持rocketmq4.8+版本
@@ -27,20 +27,20 @@ import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketmqEnhancement
  * @author daizhenyu
  * @since 2023-12-04
  **/
-public class RocketmqPullConsumerDeclarer extends AbstractPluginDeclarer {
+public class RocketMqPullConsumerDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return RocketmqEnhancementHelper.getPullConsumerClassMatcher();
+        return RocketMqEnhancementHelper.getPullConsumerClassMatcher();
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                RocketmqEnhancementHelper.getPullConsumerStartInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPullConsumerSubscribeInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPullConsumerUnsubscribeInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPullConsumerAssignInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPullConsumerShutdownInterceptDeclarers()
+                RocketMqEnhancementHelper.getPullConsumerStartInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPullConsumerSubscribeInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPullConsumerUnsubscribeInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPullConsumerAssignInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPullConsumerShutdownInterceptDeclarers()
         };
     }
 }

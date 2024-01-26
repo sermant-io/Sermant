@@ -74,7 +74,7 @@ public class RocketmqWrapperUtilsTest {
 
     @Test
     public void testWrapPullConsumer() {
-        Optional<DefaultLitePullConsumerWrapper> pullConsumerWrapperOptional = RocketmqWrapperUtils
+        Optional<DefaultLitePullConsumerWrapper> pullConsumerWrapperOptional = RocketMqWrapperUtils
                 .wrapPullConsumer(pullConsumer);
         Assert.assertTrue(pullConsumerWrapperOptional.isPresent());
         Assert.assertEquals(pullConsumerWrapperOptional.get().getPullConsumer(), pullConsumer);
@@ -82,7 +82,7 @@ public class RocketmqWrapperUtilsTest {
 
     @Test
     public void testWrapPushConsumer() {
-        Optional<DefaultMqPushConsumerWrapper> pushConsumerWrapperOptional = RocketmqWrapperUtils
+        Optional<DefaultMqPushConsumerWrapper> pushConsumerWrapperOptional = RocketMqWrapperUtils
                 .wrapPushConsumer(pushConsumer);
         Assert.assertTrue(pushConsumerWrapperOptional.isPresent());
         Assert.assertEquals(pushConsumerWrapperOptional.get().getPushConsumer(), pushConsumer);
