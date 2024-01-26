@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.rocketmq.controller;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.rocketmq.cache.RocketMqConsumerCache;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
-import com.huaweicloud.sermant.utils.RocketmqWrapperUtils;
+import com.huaweicloud.sermant.utils.RocketMqWrapperUtils;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
@@ -105,7 +105,7 @@ public class RocketMqPushConsumerController {
      * @param pushConsumer pushConsumer实例
      */
     public static void cachePushConsumer(DefaultMQPushConsumer pushConsumer) {
-        Optional<DefaultMqPushConsumerWrapper> pushConsumerWrapperOptional = RocketmqWrapperUtils
+        Optional<DefaultMqPushConsumerWrapper> pushConsumerWrapperOptional = RocketMqWrapperUtils
                 .wrapPushConsumer(pushConsumer);
         if (pushConsumerWrapperOptional.isPresent()) {
             RocketMqConsumerCache.PUSH_CONSUMERS_CACHE.put(pushConsumer.hashCode(), pushConsumerWrapperOptional.get());

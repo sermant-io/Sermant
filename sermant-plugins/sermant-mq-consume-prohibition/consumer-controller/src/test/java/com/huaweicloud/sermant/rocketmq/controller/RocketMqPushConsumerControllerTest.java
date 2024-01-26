@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.rocketmq.cache.RocketMqConsumerCache;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
-import com.huaweicloud.sermant.utils.RocketmqWrapperUtils;
+import com.huaweicloud.sermant.utils.RocketMqWrapperUtils;
 
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -66,9 +66,9 @@ public class RocketMqPushConsumerControllerTest {
         pushConsumerWrapper = new DefaultMqPushConsumerWrapper(pushConsumer, pushConsumerImpl, instance);
         pushConsumerWrapper.setConsumerGroup("test-group");
 
-        MockedStatic<RocketmqWrapperUtils> wrapperUtilsMockedStatic = Mockito
-                .mockStatic(RocketmqWrapperUtils.class);
-        wrapperUtilsMockedStatic.when(() -> RocketmqWrapperUtils.wrapPushConsumer(pushConsumer))
+        MockedStatic<RocketMqWrapperUtils> wrapperUtilsMockedStatic = Mockito
+                .mockStatic(RocketMqWrapperUtils.class);
+        wrapperUtilsMockedStatic.when(() -> RocketMqWrapperUtils.wrapPushConsumer(pushConsumer))
                 .thenReturn(Optional.of(pushConsumerWrapper));
 
         prohibitionTopics = new HashSet<>();
