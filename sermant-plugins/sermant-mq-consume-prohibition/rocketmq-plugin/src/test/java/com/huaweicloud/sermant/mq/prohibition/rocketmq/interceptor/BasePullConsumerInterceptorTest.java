@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.mq.prohibition.rocketmq.interceptor;
 
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
-import com.huaweicloud.sermant.utils.RocketmqWrapperUtils;
+import com.huaweicloud.sermant.utils.RocketMqWrapperUtils;
 
 import org.apache.rocketmq.client.ClientConfig;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
@@ -46,9 +46,9 @@ public class BasePullConsumerInterceptorTest {
     public void before() throws MQClientException {
         pullConsumer = new DefaultLitePullConsumer("test-group");
         pullConsumerWrapper = createPullConsumerWrapper();
-        MockedStatic<RocketmqWrapperUtils> wrapperUtilsMockedStatic = Mockito
-                .mockStatic(RocketmqWrapperUtils.class);
-        wrapperUtilsMockedStatic.when(() -> RocketmqWrapperUtils.wrapPullConsumer(pullConsumer))
+        MockedStatic<RocketMqWrapperUtils> wrapperUtilsMockedStatic = Mockito
+                .mockStatic(RocketMqWrapperUtils.class);
+        wrapperUtilsMockedStatic.when(() -> RocketMqWrapperUtils.wrapPullConsumer(pullConsumer))
                 .thenReturn(Optional.of(pullConsumerWrapper));
     }
 

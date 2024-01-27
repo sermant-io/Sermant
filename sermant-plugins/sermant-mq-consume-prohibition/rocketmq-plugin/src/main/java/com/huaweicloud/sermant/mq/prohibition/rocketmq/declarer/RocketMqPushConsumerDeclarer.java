@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketmqEnhancementHelper;
+import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketMqEnhancementHelper;
 
 /**
  * pushConsumer拦截声明器，支持rocketmq4.8+版本
@@ -27,19 +27,19 @@ import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketmqEnhancement
  * @author daizhenyu
  * @since 2023-12-04
  **/
-public class RocketmqPushConsumerDeclarer extends AbstractPluginDeclarer {
+public class RocketMqPushConsumerDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return RocketmqEnhancementHelper.getPushConsumerClassMatcher();
+        return RocketMqEnhancementHelper.getPushConsumerClassMatcher();
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                RocketmqEnhancementHelper.getPushConsumerStartInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPushConsumerSubscribeInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPushConsumerUnsubscribeInterceptDeclarers(),
-                RocketmqEnhancementHelper.getPushConsumerShutdownInterceptDeclarers()
+                RocketMqEnhancementHelper.getPushConsumerStartInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPushConsumerSubscribeInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPushConsumerUnsubscribeInterceptDeclarers(),
+                RocketMqEnhancementHelper.getPushConsumerShutdownInterceptDeclarers()
         };
     }
 }

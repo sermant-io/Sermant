@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.rocketmq.cache.RocketMqConsumerCache;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
-import com.huaweicloud.sermant.utils.RocketmqWrapperUtils;
+import com.huaweicloud.sermant.utils.RocketMqWrapperUtils;
 
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 import org.apache.rocketmq.client.impl.consumer.AssignedMessageQueue;
@@ -115,7 +115,7 @@ public class RocketMqPullConsumerController {
     private static void suspendAssignedConsumer(DefaultLitePullConsumerWrapper wrapper) {
         DefaultLitePullConsumerImpl pullConsumerImpl = wrapper.getPullConsumerImpl();
         if (wrapper.getAssignedMessageQueue() == null) {
-            Optional<AssignedMessageQueue> assignedMessageQueueOptional = RocketmqWrapperUtils
+            Optional<AssignedMessageQueue> assignedMessageQueueOptional = RocketMqWrapperUtils
                     .getAssignedMessageQueue(pullConsumerImpl);
             if (assignedMessageQueueOptional.isPresent()) {
                 wrapper.setAssignedMessageQueue(assignedMessageQueueOptional.get());
@@ -255,7 +255,7 @@ public class RocketMqPullConsumerController {
      * @param pullConsumer pullConsumer实例
      */
     public static void cachePullConsumer(DefaultLitePullConsumer pullConsumer) {
-        Optional<DefaultLitePullConsumerWrapper> pullConsumerWrapperOptional = RocketmqWrapperUtils
+        Optional<DefaultLitePullConsumerWrapper> pullConsumerWrapperOptional = RocketMqWrapperUtils
                 .wrapPullConsumer(pullConsumer);
         if (pullConsumerWrapperOptional.isPresent()) {
             RocketMqConsumerCache.PULL_CONSUMERS_CACHE.put(pullConsumer.hashCode(), pullConsumerWrapperOptional.get());

@@ -13,5 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer.RocketmqPullConsumerDeclarer
-com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer.RocketmqPushConsumerDeclarer
+com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer.RocketMqPullConsumerDeclarer
+com.huaweicloud.sermant.mq.prohibition.rocketmq.declarer.RocketMqPushConsumerDeclarer

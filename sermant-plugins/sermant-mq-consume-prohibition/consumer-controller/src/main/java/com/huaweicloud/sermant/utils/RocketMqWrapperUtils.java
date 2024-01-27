@@ -40,8 +40,8 @@ import java.util.Optional;
  * @author daizhenyu
  * @since 2023-12-14
  **/
-public class RocketmqWrapperUtils {
-    private RocketmqWrapperUtils() {
+public class RocketMqWrapperUtils {
+    private RocketMqWrapperUtils() {
     }
 
     /**
@@ -105,7 +105,7 @@ public class RocketmqWrapperUtils {
      */
     public static Optional<AssignedMessageQueue> getAssignedMessageQueue(DefaultLitePullConsumerImpl pullConsumerImpl) {
         // 设置插件类加载器的局部类加载器为宿主类加载器
-        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).setLocalLoader(
+        ((PluginClassLoader) RocketMqWrapperUtils.class.getClassLoader()).setLocalLoader(
                 pullConsumerImpl.getClass().getClassLoader());
 
         Optional<Object> assignedMessageQueueOptional = ReflectUtils
@@ -116,7 +116,7 @@ public class RocketmqWrapperUtils {
         }
 
         // 移除插件类加载器的局部类加载器
-        ((PluginClassLoader) RocketmqWrapperUtils.class.getClassLoader()).removeLocalLoader();
+        ((PluginClassLoader) RocketMqWrapperUtils.class.getClassLoader()).removeLocalLoader();
         return Optional.empty();
     }
 
