@@ -103,6 +103,20 @@ public class RouterConfiguration {
     }
 
     /**
+     * 按类型更新服务粒度的路由规则
+     *
+     * @param serviceName 服务名
+     * @param entireRule 规则
+     */
+    public void updateServiceRule(String serviceName, EntireRule entireRule) {
+        Map<String, List<Rule>> ruleList = rules.computeIfAbsent(entireRule.getKind(),
+                key -> new ConcurrentHashMap<>());
+        ruleList.put(serviceName, entireRule.getRules());
+        LOGGER.info(String.format(Locale.ROOT, "Rule for %s has been updated: %s ", serviceName,
+                JSONObject.toJSONString(entireRule)));
+    }
+
+    /**
      * 移除服务的路由规则
      *
      * @param serviceName 服务名
@@ -124,6 +138,20 @@ public class RouterConfiguration {
     }
 
     /**
+     * 移除服务的路由规则
+     *
+     * @param serviceName 服务名
+     * @param kind 规则类型
+     */
+    public void removeServiceRule(String serviceName, String kind) {
+        Map<String, List<Rule>> ruleList = rules.get(kind);
+        if (!CollectionUtils.isEmpty(ruleList)) {
+            ruleList.remove(serviceName);
+        }
+        LOGGER.info(String.format(Locale.ROOT, "%s rules for %s have been removed! ", kind, serviceName));
+    }
+
+    /**
      * 重置路由规则
      *
      * @param map 路由规则
@@ -140,6 +168,29 @@ public class RouterConfiguration {
     }
 
     /**
+     * 重置路由规则
+     *
+     * @param kind 规则类型
+     * @param map 路由规则
+     */
+    public void resetRouteRule(String kind, Map<String, EntireRule> map) {
+        if (map == null) {
+            return;
+        }
+        if (map.isEmpty()) {
+            rules.remove(kind);
+        } else {
+            for (Map.Entry<String, EntireRule> ruleEntry : map.entrySet()) {
+                EntireRule entireRule = ruleEntry.getValue();
+                Map<String, List<Rule>> serviceRuleMap = rules.compute(kind, (key, value) -> new ConcurrentHashMap<>());
+                serviceRuleMap.put(ruleEntry.getKey(), entireRule.getRules());
+            }
+        }
+        LOGGER.info(String.format(Locale.ROOT, "Service rules have been updated: %s",
+                JSONObject.toJSONString(map)));
+    }
+
+    /**
      * 重置全局路由规则
      *
      * @param list 路由规则
@@ -151,6 +202,25 @@ public class RouterConfiguration {
         }
         LOGGER.info(String.format(Locale.ROOT, "Global rules have been updated: %s",
                 JSONObject.toJSONString(list)));
+    }
+
+    /**
+     * 重置全局路由规则
+     *
+     * @param entireRule 路由规则
+     */
+    public void resetGlobalRule(EntireRule entireRule) {
+        List<Rule> ruleList = entireRule.getRules();
+        if (ruleList == null) {
+            return;
+        }
+        if (ruleList.isEmpty()) {
+            globalRules.remove(entireRule.getKind());
+        } else {
+            globalRules.put(entireRule.getKind(), ruleList);
+        }
+        LOGGER.info(String.format(Locale.ROOT, "Global rules have been updated: %s",
+                JSONObject.toJSONString(entireRule)));
     }
 
     /**

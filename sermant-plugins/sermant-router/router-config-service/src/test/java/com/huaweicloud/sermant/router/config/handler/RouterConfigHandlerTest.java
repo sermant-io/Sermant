@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.config.handler;
 
+import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,7 +39,7 @@ public class RouterConfigHandlerTest {
      */
     @Test
     public void testShouldHandle() {
-        Assert.assertTrue(handler.shouldHandle("servicecomb.routeRule"));
-        Assert.assertFalse(handler.shouldHandle("servicecomb.routeRule.foo"));
+        Assert.assertTrue(handler.shouldHandle("servicecomb.routeRule", RouterConstant.FLOW_MATCH_KIND));
+        Assert.assertFalse(handler.shouldHandle("servicecomb.routeRule.foo", RouterConstant.FLOW_MATCH_KIND));
     }
 }

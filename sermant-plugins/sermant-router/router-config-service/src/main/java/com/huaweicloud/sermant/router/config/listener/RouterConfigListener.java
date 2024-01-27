@@ -19,12 +19,15 @@ package com.huaweicloud.sermant.router.config.listener;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import com.huaweicloud.sermant.router.config.handler.AbstractConfigHandler;
+import com.huaweicloud.sermant.router.config.handler.AbstractHandler;
 import com.huaweicloud.sermant.router.config.handler.GlobalConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.RouterConfigHandler;
 import com.huaweicloud.sermant.router.config.handler.ServiceConfigHandler;
+import com.huaweicloud.sermant.router.config.handler.kind.FlowKindHandler;
+import com.huaweicloud.sermant.router.config.handler.kind.LaneKindHandler;
+import com.huaweicloud.sermant.router.config.handler.kind.TagKindHandler;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -40,7 +43,7 @@ public class RouterConfigListener implements DynamicConfigListener {
 
     private final String cacheName;
 
-    private final Set<AbstractConfigHandler> handlers;
+    private final Set<AbstractHandler> handlers;
 
     /**
      * 构造方法
@@ -49,7 +52,10 @@ public class RouterConfigListener implements DynamicConfigListener {
      */
     public RouterConfigListener(String cacheName) {
         this.cacheName = cacheName;
-        this.handlers = new HashSet<>();
+        this.handlers = new LinkedHashSet<>();
+        this.handlers.add(new FlowKindHandler());
+        this.handlers.add(new LaneKindHandler());
+        this.handlers.add(new TagKindHandler());
         this.handlers.add(new GlobalConfigHandler());
         this.handlers.add(new RouterConfigHandler());
         this.handlers.add(new ServiceConfigHandler());
@@ -59,7 +65,7 @@ public class RouterConfigListener implements DynamicConfigListener {
     public void process(DynamicConfigEvent event) {
         String key = event.getKey();
         handlers.forEach(handler -> {
-            if (handler.shouldHandle(key)) {
+            if (handler.shouldHandle(key, event.getContent())) {
                 handler.handle(event, cacheName);
             }
         });
