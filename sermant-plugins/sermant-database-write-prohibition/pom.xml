@@ -27,6 +27,7 @@
             </activation>
             <modules>
                 <module>database-controller</module>
+                <module>database-config-service</module>
                 <module>mongodb-3.x-4.x-plugin</module>
             </modules>
         </profile>
@@ -34,6 +35,7 @@
             <id>test</id>
             <modules>
                 <module>database-controller</module>
+                <module>database-config-service</module>
                 <module>mongodb-3.x-4.x-plugin</module>
             </modules>
         </profile>
@@ -41,6 +43,7 @@
             <id>release</id>
             <modules>
                 <module>database-controller</module>
+                <module>database-config-service</module>
                 <module>mongodb-3.x-4.x-plugin</module>
             </modules>
         </profile>

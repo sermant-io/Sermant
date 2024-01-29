@@ -27,38 +27,118 @@ import java.util.Set;
  **/
 public class DatabaseWriteProhibitionConfig {
     /**
-     * 是否开启禁写
+     * MongoDb是否开启禁写
      */
-    private boolean enableDatabaseWriteProhibition = false;
+    private boolean enableMongoDbWriteProhibition = false;
 
     /**
-     * 需要禁写的数据库
+     * MongoDb需要禁写的数据库
      */
-    private Set<String> databases = new HashSet<>();
-
-    public boolean isEnableDatabaseWriteProhibition() {
-        return enableDatabaseWriteProhibition;
-    }
-
-    public void setEnableDatabaseWriteProhibition(boolean enableDatabaseWriteProhibition) {
-        this.enableDatabaseWriteProhibition = enableDatabaseWriteProhibition;
-    }
+    private Set<String> mongoDbDatabases = new HashSet<>();
 
     /**
-     * 获取禁消费的数据库列表
-     *
-     * @return 数据库列表
+     * Mysql是否开启禁写
      */
-    public Set<String> getDatabases() {
-        return databases;
+    private boolean enableMysqlWriteProhibition = false;
+
+    /**
+     * Mysql需要禁写的数据库
+     */
+    private Set<String> mysqlDatabases = new HashSet<>();
+
+    /**
+     * PostgreSQL是否开启禁写
+     */
+    private boolean enablePostgreSqlWriteProhibition = false;
+
+    /**
+     * PostgreSQL需要禁写的数据库
+     */
+    private Set<String> postgreSqlDatabases = new HashSet<>();
+
+    /**
+     * OpenGauss是否开启禁写
+     */
+    private boolean enableOpenGaussWriteProhibition = false;
+
+    /**
+     * OpenGauss需要禁写的数据库
+     */
+    private Set<String> openGaussDatabases = new HashSet<>();
+
+    public boolean isEnableMongoDbWriteProhibition() {
+        return enableMongoDbWriteProhibition;
     }
 
-    public void setDatabases(Set<String> databases) {
-        this.databases = databases;
+    public void setEnableMongoDbWriteProhibition(boolean enableMongoDbWriteProhibition) {
+        this.enableMongoDbWriteProhibition = enableMongoDbWriteProhibition;
+    }
+
+    public Set<String> getMongoDbDatabases() {
+        return mongoDbDatabases;
+    }
+
+    public void setMongoDbDatabases(Set<String> mongoDbDatabases) {
+        this.mongoDbDatabases = mongoDbDatabases;
+    }
+
+    public boolean isEnableMysqlWriteProhibition() {
+        return enableMysqlWriteProhibition;
+    }
+
+    public void setEnableMysqlWriteProhibition(boolean enableMysqlWriteProhibition) {
+        this.enableMysqlWriteProhibition = enableMysqlWriteProhibition;
+    }
+
+    public Set<String> getMysqlDatabases() {
+        return mysqlDatabases;
+    }
+
+    public void setMysqlDatabases(Set<String> mysqlDatabases) {
+        this.mysqlDatabases = mysqlDatabases;
+    }
+
+    public boolean isEnablePostgreSqlWriteProhibition() {
+        return enablePostgreSqlWriteProhibition;
+    }
+
+    public void setEnablePostgreSqlWriteProhibition(boolean enablePostgreSqlWriteProhibition) {
+        this.enablePostgreSqlWriteProhibition = enablePostgreSqlWriteProhibition;
+    }
+
+    public Set<String> getPostgreSqlDatabases() {
+        return postgreSqlDatabases;
+    }
+
+    public void setPostgreSqlDatabases(Set<String> postgreSqlDatabases) {
+        this.postgreSqlDatabases = postgreSqlDatabases;
+    }
+
+    public boolean isEnableOpenGaussWriteProhibition() {
+        return enableOpenGaussWriteProhibition;
+    }
+
+    public void setEnableOpenGaussWriteProhibition(boolean enableOpenGaussWriteProhibition) {
+        this.enableOpenGaussWriteProhibition = enableOpenGaussWriteProhibition;
+    }
+
+    public Set<String> getOpenGaussDatabases() {
+        return openGaussDatabases;
+    }
+
+    public void setOpenGaussDatabases(Set<String> openGaussDatabases) {
+        this.openGaussDatabases = openGaussDatabases;
     }
 
     @Override
     public String toString() {
-        return "enableDatabaseWriteProhibition=" + enableDatabaseWriteProhibition + ", databases=" + databases;
+        return "enableMongoDbWriteProhibition=" + enableMongoDbWriteProhibition
+                + ", mongoDbDatabases=" + mongoDbDatabases + "; "
+                + "enableMysqlWriteProhibition=" + enableMysqlWriteProhibition
+                + ", mysqlDatabases=" + mysqlDatabases + "; "
+                + "enablePostgreSqlWriteProhibition=" + enablePostgreSqlWriteProhibition
+                + ", postgreSqlDatabases=" + postgreSqlDatabases + ";"
+                + " enableOpenGaussWriteProhibition=" + enableOpenGaussWriteProhibition
+                + ", openGaussDatabases=" + openGaussDatabases;
     }
 }

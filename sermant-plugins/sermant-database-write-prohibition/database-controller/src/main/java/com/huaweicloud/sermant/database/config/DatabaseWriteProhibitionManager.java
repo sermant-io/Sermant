@@ -35,16 +35,61 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取要禁止消费的数据库集合
+     * 获取MongoDb禁止写入的数据库集合
      *
-     * @return 禁止消费的数据库集合
+     * @return MongoDb禁止写入的数据库集合
      */
-    public static Set<String> getProhibitionDatabases() {
-        if (globalConfig.isEnableDatabaseWriteProhibition()) {
-            return globalConfig.getDatabases();
+    public static Set<String> getMongoDbProhibitionDatabases() {
+        if (globalConfig.isEnableMongoDbWriteProhibition()) {
+            return globalConfig.getMongoDbDatabases();
         }
-        if (localConfig.isEnableDatabaseWriteProhibition()) {
-            return localConfig.getDatabases();
+        if (localConfig.isEnableMongoDbWriteProhibition()) {
+            return localConfig.getMongoDbDatabases();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    /**
+     * 获取Mysql要禁止写入的数据库集合
+     *
+     * @return Mysql禁止写入的数据库集合
+     */
+    public static Set<String> getMysqlProhibitionDatabases() {
+        if (globalConfig.isEnableMysqlWriteProhibition()) {
+            return globalConfig.getMysqlDatabases();
+        }
+        if (localConfig.isEnableMysqlWriteProhibition()) {
+            return localConfig.getMysqlDatabases();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    /**
+     * 获取PostgreSQL要禁止写入的数据库集合
+     *
+     * @return PostgreSQL禁止写入的数据库集合
+     */
+    public static Set<String> getPostgreSqlProhibitionDatabases() {
+        if (globalConfig.isEnablePostgreSqlWriteProhibition()) {
+            return globalConfig.getPostgreSqlDatabases();
+        }
+        if (localConfig.isEnablePostgreSqlWriteProhibition()) {
+            return localConfig.getPostgreSqlDatabases();
+        }
+        return Collections.EMPTY_SET;
+    }
+
+    /**
+     * 获取OpenGauss要禁止写入的数据库集合
+     *
+     * @return OpenGauss禁止写入的数据库集合
+     */
+    public static Set<String> getOpenGaussProhibitionDatabases() {
+        if (globalConfig.isEnableOpenGaussWriteProhibition()) {
+            return globalConfig.getOpenGaussDatabases();
+        }
+        if (localConfig.isEnableOpenGaussWriteProhibition()) {
+            return localConfig.getOpenGaussDatabases();
         }
         return Collections.EMPTY_SET;
     }
@@ -70,7 +115,7 @@ public class DatabaseWriteProhibitionManager {
     /**
      * 更新全局配置
      *
-     * @param config 禁止消费配置
+     * @param config 禁止写数据库配置
      */
     public static void updateGlobalConfig(DatabaseWriteProhibitionConfig config) {
         if (config == null) {
@@ -83,7 +128,7 @@ public class DatabaseWriteProhibitionManager {
     /**
      * 更新局部配置
      *
-     * @param config 禁止消费配置
+     * @param config 禁止写数据库配置
      */
     public static void updateLocalConfig(DatabaseWriteProhibitionConfig config) {
         if (config == null) {

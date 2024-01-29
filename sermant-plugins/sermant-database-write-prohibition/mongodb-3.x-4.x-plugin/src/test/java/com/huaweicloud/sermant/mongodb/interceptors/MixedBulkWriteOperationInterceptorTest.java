@@ -69,7 +69,7 @@ public class MixedBulkWriteOperationInterceptorTest {
     @Test
     public void testDoBefore() {
         // 数据库禁写开关关闭
-        globalConfig.setEnableDatabaseWriteProhibition(false);
+        globalConfig.setEnableMongoDbWriteProhibition(false);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, null, null, null);
         interceptor.doBefore(context);
         Assert.assertNull(context.getThrowableOut());
@@ -77,18 +77,18 @@ public class MixedBulkWriteOperationInterceptorTest {
         // 数据库禁写开关关闭，禁写数据库set包含被拦截的数据库
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
-        globalConfig.setDatabases(databases);
+        globalConfig.setMongoDbDatabases(databases);
         Assert.assertNull(context.getThrowableOut());
 
         //数据库禁写开关打开，禁写数据库集合包含被拦截的数据库
-        globalConfig.setEnableDatabaseWriteProhibition(true);
+        globalConfig.setEnableMongoDbWriteProhibition(true);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, null, null, null);
         interceptor.doBefore(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
         //数据库禁写开关打开，禁写数据库集合不包含被拦截的数据库
-        globalConfig.setDatabases(new HashSet<>());
+        globalConfig.setMongoDbDatabases(new HashSet<>());
         interceptor.doBefore(context);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, null, null, null);
         Assert.assertNull(context.getThrowableOut());

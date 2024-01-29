@@ -49,7 +49,7 @@ public class MixedBulkWriteOperationInterceptor extends AbstractDatabaseIntercep
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         String database = ((MixedBulkWriteOperation) context.getObject()).getNamespace().getDatabaseName();
-        if (DatabaseWriteProhibitionManager.getProhibitionDatabases().contains(database)) {
+        if (DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases().contains(database)) {
             DatabaseController.disableDatabaseWriteOperation(database, context);
         }
         return context;
