@@ -95,6 +95,10 @@ public class HttpComponentsClientHttpConnectorInterceptor extends MarkIntercepto
         return context;
     }
 
+    @Override
+    protected void ready() {
+    }
+
     private Object buildInvokerFunc(ExecuteContext context, InvokerContext invokerContext,
             AbstractClientHttpRequest request, Map<String, String> uriInfo) {
         String url = RequestInterceptorUtils.buildUrl(uriInfo, invokerContext.getServiceInstance());

@@ -43,7 +43,7 @@ public class MonitorCacheUtil {
      * @return MetricCalEntity 监控数据
      */
     public static MetricCalEntity getMetricCalEntity(String key) {
-        return CONCURRENT_MAP.computeIfAbsent(key, s -> new MetricCalEntity());
+        return CONCURRENT_MAP.computeIfAbsent(key, str -> new MetricCalEntity());
     }
 
     /**

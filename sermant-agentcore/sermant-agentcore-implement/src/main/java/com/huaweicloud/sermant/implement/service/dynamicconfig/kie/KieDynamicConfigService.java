@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -82,12 +81,13 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
+        String newGroup = group;
         if (!LabelGroupUtils.isLabelGroup(group)) {
             // 增加标签group判断, 对不规则的group进行适配处理
-            group = LabelGroupUtils
-                .createLabelGroup(Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
+            newGroup = LabelGroupUtils
+                    .createLabelGroup(Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
         }
-        return subscriberManager.addConfigListener(key, group, listener, ifNotify);
+        return subscriberManager.addConfigListener(key, newGroup, listener, ifNotify);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
     @Override
     public Optional<String> doGetConfig(String key, String group) {
         final KieResponse kieResponse =
-            subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
+                subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (!isValidResponse(kieResponse)) {
             return Optional.empty();
         }
@@ -125,7 +125,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
     @Override
     public List<String> doListKeysFromGroup(String group) {
         final KieResponse kieResponse =
-            subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
+                subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (isValidResponse(kieResponse)) {
             final List<KieConfigEntity> data = kieResponse.getData();
             final List<String> keys = new ArrayList<String>(data.size());
@@ -142,17 +142,16 @@ public class KieDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 更新监听器（删除||添加）
-     * 若第一次添加监听器，则会将数据通知给监听器
+     * 更新监听器（删除||添加） 若第一次添加监听器，则会将数据通知给监听器
      *
-     * @param group        分组， 针对KIE特别处理生成group方法{@link LabelGroupUtils#createLabelGroup(Map)}
-     * @param listener     对应改组的监听器
+     * @param group 分组， 针对KIE特别处理生成group方法LabelGroupUtils#createLabelGroup(Map)
+     * @param listener 对应改组的监听器
      * @param forSubscribe 是否为订阅
-     * @param ifNotify     初次添加监听器，是否通知监听的数据
+     * @param ifNotify 初次添加监听器，是否通知监听的数据
      * @return 更新是否成功
      */
     private synchronized boolean updateGroupListener(String group, DynamicConfigListener listener, boolean forSubscribe,
-        boolean ifNotify) {
+            boolean ifNotify) {
         if (listener == null) {
             LOGGER.warning("Empty listener is not allowed. ");
             return false;
@@ -172,19 +171,20 @@ public class KieDynamicConfigService extends DynamicConfigService {
     /**
      * 去除路径分隔符
      *
-     * @param str     key or group
+     * @param str key or group
      * @param isGroup 是否为组
      * @return 修正值
      */
     private String fixSeparator(String str, boolean isGroup) {
+        String newStr = str;
         if (str == null) {
             if (isGroup) {
                 // 默认分组
-                str = CONFIG.getDefaultGroup();
+                newStr = CONFIG.getDefaultGroup();
             } else {
                 throw new IllegalArgumentException("Key must not be empty!");
             }
         }
-        return str.startsWith("/") ? str.substring(1) : str;
+        return newStr.startsWith("/") ? newStr.substring(1) : newStr;
     }
 }

@@ -50,6 +50,11 @@ public class TagTransmissionConfig implements PluginConfig {
         this.enabled = enabled;
     }
 
+    /**
+     * 流量标签透传规则是否有效开启
+     *
+     * @return boolean
+     */
     public boolean isEffect() {
         return enabled && !MapUtils.isEmpty(matchRule);
     }

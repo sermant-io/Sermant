@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.common.utils;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
+
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,6 +26,8 @@ import java.security.PrivilegedAction;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 反射工具类
@@ -32,6 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2022-02-07
  */
 public class ReflectUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final Map<String, AccessibleObject> ACCESSIBLE_OBJECT_MAP = new ConcurrentHashMap<>();
 
     private static final Map<String, Optional<Method>> METHOD_MAP = new ConcurrentHashMap<>();
@@ -113,8 +119,10 @@ public class ReflectUtils {
                     return Optional.of(getAccessibleObject(invokeClass.getMethod(name)));
                 }
                 return Optional.of(getAccessibleObject(invokeClass.getMethod(name, parameterClass)));
-            } catch (NoSuchMethodException ignored) {
+            } catch (NoSuchMethodException noSuchMethodException) {
                 // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+                LOGGER.log(Level.WARNING, "Method {0} for class {1} is not found.",
+                        new Object[]{name, invokeClass.getCanonicalName()});
             }
             return Optional.empty();
         });
@@ -124,8 +132,10 @@ public class ReflectUtils {
                     return Optional.ofNullable(method.get().invoke(obj));
                 }
                 return Optional.ofNullable(method.get().invoke(obj, parameter));
-            } catch (IllegalAccessException | InvocationTargetException ignored) {
+            } catch (IllegalAccessException | InvocationTargetException operationException) {
                 // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+                LOGGER.log(Level.WARNING, "Method {0} for class {1} is not found.",
+                        new Object[]{name, invokeClass.getCanonicalName()});
             }
         }
         return Optional.empty();

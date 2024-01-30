@@ -87,13 +87,13 @@ public class RetryServiceImpl implements InvokerService {
 
     @Override
     public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-                                   String serviceName) {
+            String serviceName) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(null));
     }
 
     @Override
     public Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-                                   String serviceName, RetryConfig retryConfig) {
+            String serviceName, RetryConfig retryConfig) {
         return invoke(invokeFunc, exFunc, serviceName, getRetry(retryConfig));
     }
 

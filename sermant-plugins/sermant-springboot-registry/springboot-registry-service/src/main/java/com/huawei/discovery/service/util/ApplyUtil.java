@@ -71,7 +71,7 @@ public class ApplyUtil {
      * @throws Exception 调用异常信息
      */
     public static Optional<Object> invokeWithEx(Function<InvokerContext, Object> invokeFunc, String serviceName,
-             Retry retry, InvokerContext invokerContext, RetryPolicy retryPolicy) throws Exception {
+            Retry retry, InvokerContext invokerContext, RetryPolicy retryPolicy) throws Exception {
         final Retry.RetryContext<Recorder> context = retry.context();
         final PolicyContext policyContext = new PolicyContext();
         boolean isInRetry = false;
@@ -102,7 +102,7 @@ public class ApplyUtil {
                     context.onComplete(stats);
                     return Optional.ofNullable(result);
                 }
-            } catch (Exception ex) {
+            } catch (RetryException ex) {
                 handleEx(ex, context, stats, System.currentTimeMillis() - start);
             }
         } while (true);
@@ -115,12 +115,12 @@ public class ApplyUtil {
      * @param context 上下文信息
      * @param stats 实例指标数据
      * @param consumeTimeMs 调用事件
-     * @throws Exception 服务调用异常信息
+     * @throws RetryException 服务调用异常信息
      */
     private static void handleEx(Exception ex, Retry.RetryContext<Recorder> context, InstanceStats stats,
-                                 long consumeTimeMs) throws Exception {
+            long consumeTimeMs) throws RetryException {
         if (ex instanceof RetryException) {
-            throw ex;
+            throw (RetryException) ex;
         }
         context.onError(stats, ex, consumeTimeMs);
     }

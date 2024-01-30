@@ -17,7 +17,7 @@
         <ribbon-loadbalancer-version>2.3.0</ribbon-loadbalancer-version>
         <spring-cloud-version>2.1.0.RELEASE</spring-cloud-version>
         <slf4j.version>1.7.35</slf4j.version>
-        <jackson.databind.version>2.13.4.1</jackson.databind.version>
+        <jackson.databind.version>2.13.4.2</jackson.databind.version>
     </properties>
 
     <dependencies>

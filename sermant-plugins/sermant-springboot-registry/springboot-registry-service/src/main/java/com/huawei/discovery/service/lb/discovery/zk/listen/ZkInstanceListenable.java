@@ -72,7 +72,7 @@ public class ZkInstanceListenable implements InstanceListenable {
 
     private final Predicate<ServiceInstance<ZookeeperInstance>> predicate;
 
-    private TreeCache childrenCache;
+    private volatile TreeCache childrenCache;
 
     /**
      * 构造器

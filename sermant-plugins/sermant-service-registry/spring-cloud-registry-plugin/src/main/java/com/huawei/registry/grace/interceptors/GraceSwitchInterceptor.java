@@ -46,7 +46,12 @@ import java.util.Random;
  * @since 2022-05-17
  */
 public class GraceSwitchInterceptor extends RegisterSwitchSupport {
+    /**
+     * grace配置类
+     */
     protected final GraceConfig graceConfig;
+
+    private Random random = new Random();
 
     /**
      * 优雅上下线开关
@@ -172,7 +177,7 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
         if (totalWeight <= 0) {
             return Optional.empty();
         }
-        int position = new Random().nextInt(totalWeight);
+        int position = random.nextInt(totalWeight);
         for (int i = 0; i < weights.length; i++) {
             position -= weights[i];
             if (position < 0) {

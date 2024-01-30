@@ -65,7 +65,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
      * 黑名单，该名单内的类不拦截
      */
     private final List<String> backList = Collections
-        .singletonList("org.apache.dubbo.rpc.cluster.support.registry.ZoneAwareClusterInvoker");
+            .singletonList("org.apache.dubbo.rpc.cluster.support.registry.ZoneAwareClusterInvoker");
 
     /**
      * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
@@ -100,14 +100,15 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
      * <H2>不可抽出</H2>
      * 由于两个框架类权限定名不同, 且仅当当前的拦截器才可加载宿主类
      *
-     * @param obj          增强对象
+     * @param obj 增强对象
      * @param allArguments 方法参数
-     * @param ret          响应结果
-     * @param isNeedThrow  是否需抛出异常
+     * @param ret 响应结果
+     * @param isNeedThrow 是否需抛出异常
+     * @param isRetry 是否需要重试
      * @return 方法调用器
      */
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
-        boolean isRetry) {
+            boolean isRetry) {
         try {
             if (obj instanceof AbstractClusterInvoker) {
                 final Invocation invocation = (Invocation) allArguments[0];
@@ -116,7 +117,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                 final Optional<Method> selectOption = getMethodSelect();
                 if (!checkInvokersOption.isPresent() || !selectOption.isPresent()) {
                     LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
-                        obj.getClass().getCanonicalName()));
+                            obj.getClass().getCanonicalName()));
                     return ret;
                 }
                 if (isRetry) {
@@ -129,7 +130,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
 
                 // 选择invoker
                 final Invoker<?> invoke = (Invoker<?>) selectOption.get()
-                    .invoke(obj, loadBalance, invocation, invokers, null);
+                        .invoke(obj, loadBalance, invocation, invokers, null);
 
                 // 执行调用
                 final Result result = invoke.invoke(invocation);
@@ -157,7 +158,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         return getInvokerMethod("select", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
-                    .getDeclaredMethod("select", LoadBalance.class, Invocation.class, List.class, List.class);
+                        .getDeclaredMethod("select", LoadBalance.class, Invocation.class, List.class, List.class);
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException ex) {
@@ -171,7 +172,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         return getInvokerMethod("checkInvokers", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
-                    .getDeclaredMethod("checkInvokers", List.class, Invocation.class);
+                        .getDeclaredMethod("checkInvokers", List.class, Invocation.class);
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException ex) {
@@ -202,12 +203,12 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                .getHandlers(convertToApacheDubboEntity(invocation));
+                    .getHandlers(convertToApacheDubboEntity(invocation));
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((AsyncRpcResult) result).getException())) {
                 RetryContext.INSTANCE.markRetry(retry);
                 result = handlers.get(0)
-                    .executeCheckedSupplier(() -> invokeRetryMethod(context.getObject(), allArguments,
-                        context.getResult(), true, true));
+                        .executeCheckedSupplier(() -> invokeRetryMethod(context.getObject(), allArguments,
+                                context.getResult(), true, true));
                 invocation.getAttachments().remove(RETRY_KEY);
             }
         } catch (Throwable throwable) {
@@ -228,7 +229,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         }
         result = AsyncRpcResult.newDefaultAsyncResult(realException, invocation);
         LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method [%s] failed, reason : %s",
-            invocation.getMethodName(), realException.getMessage()));
+                invocation.getMethodName(), realException.getMessage()));
         return result;
     }
 

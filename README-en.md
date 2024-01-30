@@ -10,7 +10,7 @@
 
 [![Gitter](https://badges.gitter.im/SermantUsers/community.svg)](https://gitter.im/SermantUsers/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/Java%20CI%20with%20Maven/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:Java%20CI%20with%20Maven%20event:push%20branch:develop)
+[![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/CI/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:CI:push%20branch:develop)
 [![codecov](https://codecov.io/gh/huaweicloud/Sermant/develop/graph/badge.svg)](https://codecov.io/gh/huaweicloud/Sermant)
 </div>
 
@@ -44,7 +44,7 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.1.0/sermant-1.1.0.tar.gz) Sermant package (The current version recommended is 1.1.0)
+- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant package (The current version recommended is 1.2.1)
 - [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 

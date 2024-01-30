@@ -88,6 +88,10 @@ public class JettyRequestInterceptor extends MarkInterceptor {
         return context;
     }
 
+    @Override
+    protected void ready() {
+    }
+
     private Object buildInvokerFunc(ExecuteContext context, InvokerContext invokerContext, Request request,
             String path) {
         ServiceInstance instance = invokerContext.getServiceInstance();

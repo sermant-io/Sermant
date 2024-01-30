@@ -38,7 +38,6 @@ public abstract class MarkInterceptor implements Interceptor {
         }
         MARK.set(Boolean.TRUE);
         try {
-            ready();
             return doBefore(context);
         } finally {
             MARK.remove();
@@ -53,10 +52,4 @@ public abstract class MarkInterceptor implements Interceptor {
      * @throws Exception 执行异常抛出
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context) throws Exception;
-
-    /**
-     * 调用前的准备
-     */
-    protected void ready() {
-    }
 }

@@ -1,0 +1,52 @@
+name: "Tag Transmission Plugin Grpc Test"
+description: "Auto test for tag transmission by Grpc"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/grpc
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dgrpc.version=${{ matrix.grpcVersion }} -DskipTests -Pgrpc-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start grpc client demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/grpc-client \
+        sermant-integration-tests/tag-transmission-test/grpc-client-demo/target/grpc-client-demo.jar > ${{ env.logDir }}/grpc-client.log 2>&1 &
+    - name: start grpc server demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/grpc-server \
+        sermant-integration-tests/tag-transmission-test/grpc-server-demo/target/grpc-server-demo.jar > ${{ env.logDir }}/grpc-server.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9046/grpc/testGrpcByStub 120
+    - name: test grpc
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=GRPC --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|grpc
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-grpc-(${{ matrix.grpcVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

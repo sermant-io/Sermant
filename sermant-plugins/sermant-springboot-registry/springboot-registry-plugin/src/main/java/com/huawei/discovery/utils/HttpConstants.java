@@ -16,8 +16,8 @@
 
 package com.huawei.discovery.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 参数标签类
@@ -79,7 +79,7 @@ public class HttpConstants {
     /**
      * 时间格式
      */
-    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private HttpConstants() {
     }
@@ -90,6 +90,7 @@ public class HttpConstants {
      * @return 时间
      */
     public static String currentTime() {
-        return SIMPLE_DATE_FORMAT.format(new Date());
+        LocalDateTime now = LocalDateTime.now();
+        return now.format(DATE_TIME_FORMATTER);
     }
 }

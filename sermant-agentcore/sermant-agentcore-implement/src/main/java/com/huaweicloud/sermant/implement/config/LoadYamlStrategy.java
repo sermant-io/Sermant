@@ -26,6 +26,8 @@ import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
 
 import com.alibaba.fastjson.util.IOUtils;
 
+
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.ConstructorException;
 import org.yaml.snakeyaml.representer.Representer;
@@ -60,7 +62,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final Map<Class<?>, Class<?>> BASE_TYPE_TRANSFER_MAP = new HashMap<Class<?>, Class<?>>() {{
+    private static final Map<Class<?>, Class<?>> BASE_TYPE_TRANSFER_MAP = new HashMap<Class<?>, Class<?>>() {
+        {
             put(int.class, Integer.class);
             put(short.class, Short.class);
             put(long.class, Long.class);
@@ -69,12 +72,14 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
             put(float.class, Float.class);
             put(double.class, Double.class);
             put(boolean.class, Boolean.class);
-        }};
+        }
+    };
 
     /**
      * Yaml对象
      */
     private final Yaml yaml;
+
     /**
      * 启动参数
      */
@@ -84,7 +89,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * 构造函数
      */
     public LoadYamlStrategy() {
-        Representer representer = new Representer();
+        Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
         this.yaml = new Yaml(representer);
     }
@@ -103,7 +108,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
 
     @Override
     public <R extends BaseConfig> R loadConfig(Map holder, R config) {
-        final Class<? extends BaseConfig> cls = config.getClass();
+        final Class<R> cls = (Class<R>) config.getClass();
         final String typeKey = ConfigKeyUtil.getTypeKey(cls);
         final Object typeVal = holder.get(typeKey);
         if (!(typeVal instanceof Map)) {
@@ -153,7 +158,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * 修正键，如果属性被{@link ConfigFieldKey}修饰，则将{@link ConfigFieldKey#value()}转化为属性值
      *
      * @param typeMap 类对应的配置信息
-     * @param cls     类Class
+     * @param cls 类Class
+     * @return 类的字段map
      */
     private Map fixEntry(Map typeMap, Class<?> cls) {
         if (cls == Object.class || Map.class.isAssignableFrom(cls)) {
@@ -197,8 +203,9 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
      * 修正值中形如"${}"的部分
      *
-     * @param configKey  配置键
-     * @param typeMap    父Map
+     * @param field 类的字段名
+     * @param configKey 配置键
+     * @param typeMap 父Map
      * @param subTypeVal 当前值
      * @return 修正后的值
      */
@@ -223,15 +230,16 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
                 if (fixedStrValue == null) {
                     fixedVal = null;
                 } else {
-                    fixedVal = yaml.loadAs(fixedStrValue, BASE_TYPE_TRANSFER_MAP.getOrDefault(field.getType(),
-                            field.getType()));
+                    Class fieldClass = BASE_TYPE_TRANSFER_MAP.getOrDefault(field.getType(), field.getType());
+                    fixedVal = yaml.loadAs(fixedStrValue, fieldClass);
                 }
             } else {
+                Class fieldClass = subTypeVal.getClass();
                 fixedVal = yaml.loadAs(ConfigValueUtil.fixValue(configKey, yaml.dump(subTypeVal), argsMap, provider),
-                        subTypeVal.getClass());
+                        fieldClass);
             }
         } catch (ConstructorException exception) {
-            LOGGER.severe(String.format(Locale.ENGLISH,"Error occurs while parsing configKey: %s", configKey));
+            LOGGER.severe(String.format(Locale.ENGLISH, "Error occurs while parsing configKey: %s", configKey));
         }
 
         return fixedVal;

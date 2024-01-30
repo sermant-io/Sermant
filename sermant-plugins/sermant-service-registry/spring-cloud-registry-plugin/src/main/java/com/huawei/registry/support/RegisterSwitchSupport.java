@@ -31,6 +31,9 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
  * @since 2022-03-02
  */
 public abstract class RegisterSwitchSupport implements Interceptor {
+    /**
+     * register配置类
+     */
     protected final RegisterConfig registerConfig;
 
     /**

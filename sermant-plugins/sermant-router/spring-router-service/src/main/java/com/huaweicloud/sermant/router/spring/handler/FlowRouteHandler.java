@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 流量匹配方式的路由处理器
@@ -99,12 +100,13 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
         // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
         Map<String, String> mismatchTags = new HashMap<>();
-        for (String key : header.keySet()) {
+        for (Map.Entry<String, List<String>> entry : header.entrySet()) {
+            String key = entry.getKey();
             if (!requestTags.contains(key)) {
                 continue;
             }
             mismatchTags.put(key, null);
-            List<String> values = header.get(key);
+            List<String> values = entry.getValue();
             if (!CollectionUtils.isEmpty(values) && StringUtils.isExist(values.get(0))) {
                 tags.put(key, values.get(0));
             }
@@ -139,9 +141,9 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (CollectionUtils.isEmpty(rules)) {
             return instances;
         }
-        List<Route> routes = getRoutes(rules, header);
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInstances(targetName, instances, routes);
+        Optional<Rule> ruleOptional = getRule(rules, header);
+        if (ruleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getFlowMatchInstances(targetName, instances, ruleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
                 .getMismatchInstances(targetName, instances, RuleUtils.getTags(rules), true);
@@ -154,14 +156,14 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * @param header header
      * @return 匹配的路由
      */
-    private List<Route> getRoutes(List<Rule> list, Map<String, List<String>> header) {
+    private Optional<Rule> getRule(List<Rule> list, Map<String, List<String>> header) {
         for (Rule rule : list) {
             List<Route> routeList = getRoutes(header, rule);
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private List<Route> getRoutes(Map<String, List<String>> header, Rule rule) {

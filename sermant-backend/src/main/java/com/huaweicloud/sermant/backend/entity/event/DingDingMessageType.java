@@ -27,7 +27,7 @@ public enum DingDingMessageType {
     /**
      * 文本
      */
-    Text("text"),
+    TEXT("text"),
 
     /**
      * 富文本

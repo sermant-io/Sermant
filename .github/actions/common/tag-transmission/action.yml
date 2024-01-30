@@ -1,0 +1,45 @@
+name: "Common operations"
+description: "do something common for tag transmission plugin test"
+runs:
+  using: "composite"
+  steps:
+    - name: Set up JDK ${{ env.javaVersion }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ env.javaVersion }}
+        distribution: 'adopt'
+        cache: maven
+    - name: get zookeeper from cache
+      uses: actions/cache@v3
+      with:
+        path: apache-zookeeper-3.6.3-bin.tar.gz
+        key: ${{ runner.os }}-apache-zookeeper-3.6.3
+    - name: run zookeeper
+      shell: bash
+      run: |
+        tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
+        bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
+    - name: cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: cache agent
+      uses: actions/cache@v3
+      with:
+        path: sermant-agent-*/
+        key: ${{ runner.os }}-agent-${{ github.run_id }}
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/common
+    - name: package common demos
+      shell: bash
+      run: |
+        mvn package -DskipTests --file sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start common httpserver
+      shell: bash
+      run: |
+        nohup java -jar sermant-integration-tests/tag-transmission-test/httpserver-common-demo/target/httpserver-common-demo.jar > ${{ env.logDir }}/httpserver-common-demo.log 2>&1 &

@@ -44,7 +44,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <kafka.version>2.7.0</kafka.version>
+        <kafka.version>3.4.0</kafka.version>
     </properties>
 
     <dependencies>

@@ -97,6 +97,10 @@ public class MonoHttpConnectInterceptor extends MarkInterceptor {
         return context;
     }
 
+    @Override
+    protected void ready() {
+    }
+
     private Object buildInvokerFunc(ExecuteContext context, InvokerContext invokerContext, Object config, String uri,
             Map<String, String> uriInfo) {
         context.setLocalFieldValue(ORIGIN_URI_FIELD_NAME, uri);

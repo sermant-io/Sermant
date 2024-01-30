@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
  * @author zhouss
  * @since 2022-05-19
  */
-public class OriginRegistrySwitchInjectDefine extends BaseAutoConfigurationDefine implements ClassInjectDefine {
+public class OriginRegistrySwitchInjectDefine extends BaseAutoConfigurationDefine {
     @Override
     public String injectClassName() {
         return "com.huawei.registry.inject.source.SpringEnvironmentProcessor";

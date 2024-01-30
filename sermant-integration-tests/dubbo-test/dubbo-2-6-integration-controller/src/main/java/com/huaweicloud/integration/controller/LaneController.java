@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 
@@ -50,13 +52,17 @@ public class LaneController {
      *
      * @param entity entity
      * @return map
+     * @throws ExecutionException ExecutionException
+     * @throws InterruptedException InterruptedException
      */
     @GetMapping("/getLaneByDubbo")
-    public Map<String, Object> getLaneByDubbo(TestEntity entity) {
+    public Map<String, Object> getLaneByDubbo(TestEntity entity) throws ExecutionException, InterruptedException {
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(entity.getId()));
-        return laneService.getLaneByDubbo(entity.getName(), new LaneTestEntity(entity.getLaneId(), entity.isEnabled()),
+        laneService.getLaneByDubbo(entity.getName(), new LaneTestEntity(entity.getLaneId(), entity.isEnabled()),
                 new String[]{entity.getArrName()}, Collections.singletonList(entity.getListId()),
                 Collections.singletonMap("name", entity.getMapName()));
+        Future<Map<String, Object>> future = RpcContext.getContext().getFuture();
+        return future.get();
     }
 
     /**
@@ -66,13 +72,18 @@ public class LaneController {
      * @param id id
      * @param enabled enabled
      * @return map
+     * @throws ExecutionException ExecutionException
+     * @throws InterruptedException InterruptedException
      */
     @GetMapping("/getLaneByFeign")
     public Map<String, Object> getLaneByFeign(@RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "id", defaultValue = "0") int id,
-            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled)
+            throws ExecutionException, InterruptedException {
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(id));
-        return laneService.getLaneByFeign(name, new LaneTestEntity(id, enabled));
+        laneService.getLaneByFeign(name, new LaneTestEntity(id, enabled));
+        Future<Map<String, Object>> future = RpcContext.getContext().getFuture();
+        return future.get();
     }
 
     /**
@@ -82,12 +93,17 @@ public class LaneController {
      * @param id id
      * @param enabled enabled
      * @return map
+     * @throws ExecutionException ExecutionException
+     * @throws InterruptedException InterruptedException
      */
     @GetMapping("/getLaneByRest")
     public Map<String, Object> getLaneByRest(@RequestParam(value = "name", defaultValue = "") String name,
             @RequestParam(value = "id", defaultValue = "0") int id,
-            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled) {
+            @RequestParam(value = "enabled", defaultValue = "false") boolean enabled)
+            throws ExecutionException, InterruptedException {
         RpcContext.getContext().setAttachment(Constant.LANE_TEST_USER_ID, String.valueOf(id));
-        return laneService.getLaneByRest(name, new LaneTestEntity(id, enabled));
+        laneService.getLaneByRest(name, new LaneTestEntity(id, enabled));
+        Future<Map<String, Object>> future = RpcContext.getContext().getFuture();
+        return future.get();
     }
 }

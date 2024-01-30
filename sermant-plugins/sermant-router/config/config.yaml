@@ -7,3 +7,14 @@ router.plugin:
   request-tags: []
   # 需要解析的请求头的tag
   parse-header-tag: ''
+  # 是否初始化dubbo区域路由，兼容性开关，开启后，会在dubbo的配置缓存中初始化一条以zone匹配的同标签路由
+  enabled-dubbo-zone-router: false
+  # 是否初始化spring cloud区域路由，兼容性开关，开启后，会在spring cloud的配置缓存中初始化一条以zone匹配的同标签路由
+  enabled-spring-zone-router: false
+transmit.plugin:
+  # 是否在直接new Thread时传递标签
+  enabled-thread: true
+  # 是否在非定时线程池中传递标签
+  enabled-thread-pool: true
+  # 是否在定时线程池的schedule/scheduleAtFixedRate/scheduleWithFixedDelay方法中传递标签
+  enabled-scheduler: false

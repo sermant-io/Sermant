@@ -1,0 +1,66 @@
+name: "Mq-consume-prohibition Plugin kafka Test"
+description: "Auto test for mq-consume-prohibition by kafka"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/mq-consume-prohibition/kafka
+    - name: get kafka from cache
+      uses: actions/cache@v3
+      with:
+        path: kafka_2.13-2.7.0.tgz
+        key: ${{ runner.os }}-kafka_2.13-2.7.0
+        restore-keys: |
+          ${{ runner.os }}-kafka_2.13-2.7.0
+    - name: start kafka
+      shell: bash
+      run: |
+        tar -zxf kafka_2.13-2.7.0.tgz
+        nohup bash kafka_2.13-2.7.0/bin/kafka-server-start.sh kafka_2.13-2.7.0/config/server.properties &
+    - name: package demo
+      shell: bash
+      run: |
+        mvn package -Dkafka-client.version=${{ matrix.kafkaVersion }} -DskipTests -Pkafka-consumer-test --file \
+        sermant-integration-tests/mq-consume-prohibition-test/pom.xml
+    - name: start first kafka consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/kafka-consumer -Dservice_meta_zone=hangzhou -Dserver.port=7070 \
+        -Dclient_id=test-client-1  \
+        sermant-integration-tests/mq-consume-prohibition-test/kafka-consumer-demo/target/kafka-consumer-demo.jar > ${{ env.logDir }}/kafka-consumer-1.log 2>&1 &
+    - name: start second kafka consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/kafka-consumer -Dservice_meta_zone=shanghai -Dserver.port=7071 \
+        -Dclient_id=test-client-2  \
+        sermant-integration-tests/mq-consume-prohibition-test/kafka-consumer-demo/target/kafka-consumer-demo.jar > ${{ env.logDir }}/kafka-consumer-2.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:7070/healthCheck 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:7071/healthCheck 120
+    - name: test kafka
+      shell: bash
+      run: |
+        mvn test -Dmq.consume.prohibition.test.type=KAFKA --file \
+        sermant-integration-tests/mq-consume-prohibition-test/mq-consume-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: mq-consume-prohibition|kafka
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-mq-consume-prohibition-kafka-(${{ matrix.kafkaVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

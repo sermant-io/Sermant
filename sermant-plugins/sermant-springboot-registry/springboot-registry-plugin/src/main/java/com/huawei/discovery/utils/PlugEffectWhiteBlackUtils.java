@@ -37,7 +37,7 @@ public class PlugEffectWhiteBlackUtils {
     /**
      * 域名列表
      */
-    private static String[] domainNames;
+    private static volatile String[] domainNames;
 
     private PlugEffectWhiteBlackUtils() {
     }

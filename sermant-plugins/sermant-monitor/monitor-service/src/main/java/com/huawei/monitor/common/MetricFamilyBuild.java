@@ -28,7 +28,6 @@ import java.util.Collections;
  * @since 2022-08-02
  */
 public class MetricFamilyBuild {
-
     /**
      * 构造方法
      */
@@ -56,7 +55,7 @@ public class MetricFamilyBuild {
      * @return 创建的收集指标
      */
     public static GaugeMetricFamily buildGaugeMetric(MetricEnum metricEnum, double value, String labelName,
-                                                     String labelValue) {
+            String labelValue) {
         GaugeMetricFamily gaugeMetricFamily = new GaugeMetricFamily(metricEnum.getName(), metricEnum.getDisc(),
                 Collections.singletonList(labelName));
         return gaugeMetricFamily.addMetric(Collections.singletonList(labelValue), value);

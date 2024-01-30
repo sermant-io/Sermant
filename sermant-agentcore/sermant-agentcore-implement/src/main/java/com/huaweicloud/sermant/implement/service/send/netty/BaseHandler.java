@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.implement.service.send.netty;
 
 import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message;
+import com.huaweicloud.sermant.implement.service.send.netty.pojo.Message.NettyMessage.MessageType;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -39,13 +40,10 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
     public void channelRead0(ChannelHandlerContext ctx, Message.NettyMessage msg) {
         // 获取收到的消息类型
         int type = msg.getMessageTypeValue();
-        switch (type) {
-            // 如果为业务数据进行各自的处理
-            case Message.NettyMessage.MessageType.SERVICE_DATA_VALUE:
-                handlerData(ctx, msg);
-                break;
-            default:
-                break;
+
+        // 如果为业务数据进行各自的处理
+        if (type == MessageType.SERVICE_DATA_VALUE) {
+            handlerData(ctx, msg);
         }
     }
 

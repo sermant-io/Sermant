@@ -17,7 +17,9 @@
 package com.huaweicloud.sermant.core.utils;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
+import com.huaweicloud.sermant.core.exception.NetworkInterfacesCheckException;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -25,6 +27,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +62,7 @@ public class NetworkUtils {
         try {
             Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
             if (netInterfaces == null) {
-                throw new RuntimeException("netInterfaces is null");
+                throw new NetworkInterfacesCheckException("netInterfaces is null");
             }
             InetAddress ip;
             while (netInterfaces.hasMoreElements()) {
@@ -90,14 +93,55 @@ public class NetworkUtils {
      *
      * @return String
      */
-    public static String getHostName() {
+    public static Optional<String> getHostName() {
         InetAddress ia;
         try {
             ia = InetAddress.getLocalHost();
-            return ia.getHostName();
+            return Optional.ofNullable(ia.getHostName());
         } catch (UnknownHostException e) {
-            return null;
+            return Optional.empty();
         }
+    }
 
+    /**
+     * 获取Linux下的IP地址
+     *
+     * @return IP地址
+     */
+    public static String getMachineIp() {
+        try {
+            for (Enumeration<NetworkInterface> networkInterfaceEnumeration = NetworkInterface.getNetworkInterfaces();
+                    networkInterfaceEnumeration.hasMoreElements(); ) {
+                NetworkInterface networkInterface = networkInterfaceEnumeration.nextElement();
+                String name = networkInterface.getName();
+                if (name.contains("docker") || name.contains("lo")) {
+                    continue;
+                }
+                String ip = resolveNetworkIp(networkInterface);
+                if (!StringUtils.EMPTY.equals(ip)) {
+                    return ip;
+                }
+            }
+        } catch (SocketException exception) {
+            LOGGER.warning("An exception occurred while getting the machine's IP address.");
+        }
+        LOGGER.severe("Can not acquire correct instance ip , it will be replaced by local ip!");
+        return LOCAL_HOST_IP;
+    }
+
+    private static String resolveNetworkIp(NetworkInterface networkInterface) {
+        for (Enumeration<InetAddress> enumIpAddr = networkInterface.getInetAddresses();
+                enumIpAddr.hasMoreElements(); ) {
+            InetAddress inetAddress = enumIpAddr.nextElement();
+            if (!(inetAddress instanceof Inet4Address) || inetAddress.isLoopbackAddress()) {
+                continue;
+            }
+            String ipaddress = inetAddress.getHostAddress();
+            if (!StringUtils.EMPTY.equals(ipaddress) && !LOCAL_HOST_IP.equals(ipaddress)) {
+                // 取第一个符合要求的IP
+                return ipaddress;
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }

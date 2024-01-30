@@ -19,8 +19,10 @@ package com.huaweicloud.sermant.core.plugin.agent.transformer;
 import com.huaweicloud.sermant.core.plugin.Plugin;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.info.EnhancementManager;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.template.BaseAdviseHandler;
+import com.huaweicloud.sermant.core.plugin.agent.template.MethodKeyCreator;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.description.method.MethodDescription.InDefinedShape;
@@ -59,9 +61,9 @@ public class ReentrantTransformer extends AbstractTransformer {
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException {
         final String adviceKey = getAdviceKey(templateCls, classLoader, methodDesc);
         List<Interceptor> interceptorsForAdviceKey = BaseAdviseHandler.getInterceptorListMap()
-                .computeIfAbsent(adviceKey, k -> new ArrayList<>());
+                .computeIfAbsent(adviceKey, key -> new ArrayList<>());
         Set<String> createdInterceptorForAdviceKey = plugin.getInterceptors()
-                .computeIfAbsent(adviceKey, k -> new HashSet<>());
+                .computeIfAbsent(adviceKey, key -> new HashSet<>());
         for (Interceptor interceptor : interceptors) {
             // 需要先校验该Interceptor是否被创建过
             if (checkInterceptor(adviceKey, interceptor.getClass().getCanonicalName())) {
@@ -69,6 +71,8 @@ public class ReentrantTransformer extends AbstractTransformer {
                 createdInterceptorForAdviceKey.add(interceptor.getClass().getCanonicalName());
             }
         }
+        EnhancementManager.addEnhancements(plugin, interceptors, classLoader,
+                MethodKeyCreator.getMethodDescKey(methodDesc));
         if (checkAdviceLock(adviceKey)) {
             return builder.visit(Advice.to(templateCls).on(ElementMatchers.is(methodDesc)));
         }

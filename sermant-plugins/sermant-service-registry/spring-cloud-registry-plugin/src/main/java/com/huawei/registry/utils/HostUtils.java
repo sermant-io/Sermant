@@ -68,8 +68,8 @@ public class HostUtils {
                     return ip;
                 }
             }
-        } catch (SocketException ignored) {
-            // ignored
+        } catch (SocketException exception) {
+            LOGGER.warning("An exception occurred while getting the machine's IP address.");
         }
         LOGGER.severe("Can not acquire correct instance ip , it will be replaced by local ip!");
         return LOCAL_IP;
@@ -151,8 +151,9 @@ public class HostUtils {
                     return true;
                 }
             }
-        } catch (UnknownHostException ignored) {
-            // ignored 若域名解析失败, 则无需再比较, 说明本身域名（或者网络）存在问题, 无需再做比较
+        } catch (UnknownHostException exception) {
+            // 若域名解析失败, 则无需再比较, 说明本身域名（或者网络）存在问题, 无需再做比较
+            LOGGER.warning("Domain name resolution failure.");
         }
         return false;
     }

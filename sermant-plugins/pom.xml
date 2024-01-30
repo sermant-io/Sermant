@@ -36,13 +36,14 @@
                 <module>sermant-router</module>
                 <module>sermant-loadbalancer</module>
                 <module>sermant-springboot-registry</module>
-                <module>sermant-mq-consume-deny</module>
+                <module>sermant-mq-consume-prohibition</module>
                 <module>sermant-monitor</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-metrics</module>
+                <module>sermant-database-write-prohibition</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -70,12 +71,13 @@
                 <module>sermant-dynamic-config</module>
                 <module>sermant-monitor</module>
                 <module>sermant-springboot-registry</module>
-                <module>sermant-mq-consume-deny</module>
+                <module>sermant-mq-consume-prohibition</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-metrics</module>
+                <module>sermant-database-write-prohibition</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -103,12 +105,13 @@
                 <module>sermant-loadbalancer</module>
                 <module>sermant-monitor</module>
                 <module>sermant-springboot-registry</module>
-                <module>sermant-mq-consume-deny</module>
+                <module>sermant-mq-consume-prohibition</module>
                 <module>sermant-service-visibility</module>
                 <module>sermant-service-removal</module>
                 <module>sermant-spring-beans-deal</module>
                 <module>sermant-tag-transmission</module>
                 <module>sermant-metrics</module>
+                <module>sermant-database-write-prohibition</module>
             </modules>
         </profile>
     </profiles>

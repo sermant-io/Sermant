@@ -26,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -107,7 +109,10 @@ public class GraceHelper {
         }
         try {
             final Method method = target.getClass().getDeclaredMethod(META_METHOD);
-            method.setAccessible(true);
+            AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+                method.setAccessible(true);
+                return Optional.empty();
+            });
             final Object result = method.invoke(target);
             if (result instanceof Map) {
                 return (Map<String, String>) result;

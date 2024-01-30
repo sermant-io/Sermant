@@ -48,6 +48,7 @@ public class ApacheDubboInvokeInterceptor extends AbstractCallInterceptor<Invoca
      *
      * @return 例信息的参数下标
      */
+    @Override
     protected int getIndex() {
         return 1;
     }

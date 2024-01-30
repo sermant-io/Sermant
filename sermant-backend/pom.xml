@@ -13,11 +13,10 @@
         <sermant.basedir>${pom.basedir}/..</sermant.basedir>
         <package.output.dir>${package.server.dir}/sermant</package.output.dir>
         <jdk.version>1.8</jdk.version>
-        <spring.boot.version>2.5.3</spring.boot.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <io.netty.version>4.1.86.Final</io.netty.version>
-        <spring-boot.version>2.6.1</spring-boot.version>
-        <protobuf-java.version>3.9.1</protobuf-java.version>
+        <io.netty.version>4.1.100.Final</io.netty.version>
+        <protobuf-java.version>3.19.6</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -26,10 +25,11 @@
         <mockito-core.version>2.28.2</mockito-core.version>
         <slf4j-api.version>1.7.32</slf4j-api.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <jedis.version>4.3.1</jedis.version>
+        <jedis.version>4.4.0</jedis.version>
         <powermock.version>2.0.9</powermock.version>
         <expiringmap.version>0.5.8</expiringmap.version>
-        <jackson-databind.version>2.13.4.1</jackson-databind.version>
+        <jackson-databind.version>2.13.4.2</jackson-databind.version>
+        <aspectjweaver.version>1.8.4</aspectjweaver.version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
 
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-dependencies</artifactId>
-            <version>${spring.boot.version}</version>
+            <version>${spring-boot.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -181,6 +181,11 @@
             <artifactId>expiringmap</artifactId>
             <version>${expiringmap.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectjweaver.version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -194,7 +199,7 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>${spring.boot.version}</version>
+                        <version>${spring-boot.version}</version>
                         <configuration>
                             <mainClass>com.huaweicloud.sermant.backend.Backend</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
@@ -217,7 +222,7 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>${spring.boot.version}</version>
+                        <version>${spring-boot.version}</version>
                         <configuration>
                             <mainClass>com.huaweicloud.sermant.backend.Backend</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
@@ -240,7 +245,7 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>${spring.boot.version}</version>
+                        <version>${spring-boot.version}</version>
                         <executions>
                             <execution>
                                 <goals>

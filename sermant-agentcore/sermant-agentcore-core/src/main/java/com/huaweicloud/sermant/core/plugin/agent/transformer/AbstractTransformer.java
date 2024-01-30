@@ -161,6 +161,7 @@ public abstract class AbstractTransformer implements AgentBuilder.Transformer {
      * @param methodDesc 方法定义
      * @param interceptors 拦截器列表
      * @param templateCls 增强模板类
+     * @param classLoader 类加载器
      * @return 构建器
      * @throws InvocationTargetException 调用方法错误
      * @throws IllegalAccessException 无法访问属性或方法，正常不会报出

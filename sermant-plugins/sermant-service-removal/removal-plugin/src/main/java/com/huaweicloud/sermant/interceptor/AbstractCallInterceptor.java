@@ -65,9 +65,7 @@ public abstract class AbstractCallInterceptor<T> extends AbstractSwitchIntercept
      *
      * @return 例信息的参数下标
      */
-    protected int getIndex() {
-        return 0;
-    }
+    protected abstract int getIndex();
 
     /**
      * 获取实例IP

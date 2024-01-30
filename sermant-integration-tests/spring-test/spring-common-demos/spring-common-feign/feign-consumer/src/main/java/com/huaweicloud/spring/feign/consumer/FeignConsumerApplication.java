@@ -21,8 +21,11 @@ import feign.codec.ErrorDecoder;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * 启动类
@@ -31,9 +34,9 @@ import org.springframework.context.annotation.Bean;
  * @since 2022-07-29
  */
 @SpringBootApplication(scanBasePackages = {
-    "com.huaweicloud.spring.feign.consumer.controller",
-    "com.huaweicloud.spring.common.loadbalancer.feign",
-    "com.huaweicloud.spring.feign.api.configuration"
+        "com.huaweicloud.spring.feign.consumer.controller",
+        "com.huaweicloud.spring.common.loadbalancer.feign",
+        "com.huaweicloud.spring.feign.api.configuration"
 })
 @EnableFeignClients(basePackages = "com.huaweicloud.spring.feign.api")
 public class FeignConsumerApplication {
@@ -54,5 +57,28 @@ public class FeignConsumerApplication {
     @Bean
     public ErrorDecoder errorDecoder() {
         return new FeignErrorDecoder();
+    }
+
+    /**
+     * webclient，需要懒加载以避免spring cloud Finchley.x无法负载均衡的bug
+     *
+     * @param builder 构造器
+     * @return webclient
+     */
+    @Bean
+    @Lazy
+    public WebClient webClient(WebClient.Builder builder) {
+        return builder.build();
+    }
+
+    /**
+     * 构造器
+     *
+     * @return builder
+     */
+    @Bean
+    @LoadBalanced
+    public WebClient.Builder builder() {
+        return WebClient.builder();
     }
 }

@@ -21,6 +21,7 @@ import com.huaweicloud.sermant.god.common.SermantManager;
 import com.huaweicloud.sermant.premain.common.AgentArgsResolver;
 import com.huaweicloud.sermant.premain.common.BootArgsBuilder;
 import com.huaweicloud.sermant.premain.common.BootConstant;
+import com.huaweicloud.sermant.premain.common.DirectoryCheckException;
 import com.huaweicloud.sermant.premain.common.PathDeclarer;
 import com.huaweicloud.sermant.premain.utils.LoggerUtils;
 import com.huaweicloud.sermant.premain.utils.StringUtils;
@@ -159,11 +160,11 @@ public class AgentLauncher {
     private static void appendGodLibToBootStrapClassLoaderSearch(Instrumentation instrumentation) {
         final File bootstrapDir = new File(PathDeclarer.getGodLibPath(PathDeclarer.getAgentPath()));
         if (!bootstrapDir.exists() || !bootstrapDir.isDirectory()) {
-            throw new RuntimeException("God directory is not exist or is not directory.");
+            throw new DirectoryCheckException("God directory is not exist or is not directory.");
         }
         File[] jars = bootstrapDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
-            throw new RuntimeException("God directory is empty");
+            throw new DirectoryCheckException("God directory is empty");
         }
 
         for (File jar : jars) {
@@ -179,11 +180,11 @@ public class AgentLauncher {
         String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
         final File coreDir = new File(PathDeclarer.getCorePath(realPath));
         if (!coreDir.exists() || !coreDir.isDirectory()) {
-            throw new RuntimeException("Core directory is not exist or is not directory.");
+            throw new DirectoryCheckException("Core directory is not exist or is not directory.");
         }
         final File[] jars = coreDir.listFiles((dir, name) -> name.endsWith(".jar"));
         if (jars == null || jars.length == 0) {
-            throw new RuntimeException("Core directory is empty.");
+            throw new DirectoryCheckException("Core directory is empty.");
         }
         List<URL> list = new ArrayList<>();
         for (File jar : jars) {

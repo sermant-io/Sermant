@@ -76,11 +76,11 @@ public class ServiceCollectorService extends Collector implements PluginService 
             return samples;
         }
         Map<String, MetricEntity> currentMap = getCurrentMap();
-        currentMap.forEach((k, v) -> {
-            if (v == null || StringUtils.isBlank(v.getName())) {
+        currentMap.forEach((key, value) -> {
+            if (value == null || StringUtils.isBlank(value.getName())) {
                 return;
             }
-            collectFuseMetric(metricMap, k, v);
+            collectFuseMetric(metricMap, key, value);
         });
         lastStartTime = System.currentTimeMillis();
         lastMetricMap = currentMap;
@@ -92,40 +92,41 @@ public class ServiceCollectorService extends Collector implements PluginService 
      * 采集熔断指标
      *
      * @param metricMap 指标采集Map
-     * @param k 指标标签值
-     * @param v 指标信息
+     * @param metricLabel 指标标签值
+     * @param metricInfo 指标信息
      */
-    private void collectFuseMetric(Map<String, GaugeMetricFamily> metricMap, String k, MetricEntity v) {
+    private void collectFuseMetric(Map<String, GaugeMetricFamily> metricMap, String metricLabel,
+            MetricEntity metricInfo) {
         MetricEntity lastMetric;
-        if (lastMetricMap.get(k) == null) {
+        if (lastMetricMap.get(metricLabel) == null) {
             lastMetric = new MetricEntity();
         } else {
-            lastMetric = lastMetricMap.get(k);
+            lastMetric = lastMetricMap.get(metricLabel);
         }
-        long total = v.getFuseRequest().get() - lastMetric.getFuseRequest().get();
-        addMetric(metricMap, MetricType.FUSED_REQUEST, total, k);
-        long failure = v.getFailedClientRequest().get() - lastMetric.getFailedClientRequest().get();
-        long ignore = v.getIgnoreFulFuseRequest().get() - lastMetric.getIgnoreFulFuseRequest().get();
-        addMetric(metricMap, MetricType.FAILURE_FUSE_REQUEST, failure + ignore, k);
+        long total = metricInfo.getFuseRequest().get() - lastMetric.getFuseRequest().get();
+        addMetric(metricMap, MetricType.FUSED_REQUEST, total, metricLabel);
+        long failure = metricInfo.getFailedClientRequest().get() - lastMetric.getFailedClientRequest().get();
+        long ignore = metricInfo.getIgnoreFulFuseRequest().get() - lastMetric.getIgnoreFulFuseRequest().get();
+        addMetric(metricMap, MetricType.FAILURE_FUSE_REQUEST, failure + ignore, metricLabel);
         double failRate = total == 0 ? 0 : (failure + ignore) / (double) total;
-        addMetric(metricMap, MetricType.FAILURE_RATE_FUSE_REQUEST, failRate, k);
-        long fuseTime = v.getFuseTime().get() - lastMetric.getFuseTime().get();
+        addMetric(metricMap, MetricType.FAILURE_RATE_FUSE_REQUEST, failRate, metricLabel);
+        long fuseTime = metricInfo.getFuseTime().get() - lastMetric.getFuseTime().get();
         double avgResponseTime = total == 0 ? 0 : fuseTime / (double) total;
-        addMetric(metricMap, MetricType.AVG_RESPONSE_TIME, avgResponseTime, k);
+        addMetric(metricMap, MetricType.AVG_RESPONSE_TIME, avgResponseTime, metricLabel);
         if (lastStartTime == null) {
-            addMetric(metricMap, MetricType.QPS, 0, k);
-            addMetric(metricMap, MetricType.TPS, 0, k);
+            addMetric(metricMap, MetricType.QPS, 0, metricLabel);
+            addMetric(metricMap, MetricType.TPS, 0, metricLabel);
         } else {
             long interval = System.currentTimeMillis() - lastStartTime;
             double qps = interval == 0 ? 0 : total * PROPORTION / (double) interval;
             double tps = avgResponseTime == 0 ? 0 : qps * PROPORTION / avgResponseTime;
-            addMetric(metricMap, MetricType.QPS, qps, k);
-            addMetric(metricMap, MetricType.TPS, tps, k);
+            addMetric(metricMap, MetricType.QPS, qps, metricLabel);
+            addMetric(metricMap, MetricType.TPS, tps, metricLabel);
         }
-        long slowNum = v.getSlowFuseRequest().get() - lastMetric.getSlowFuseRequest().get();
-        addMetric(metricMap, MetricType.SLOW_CALL_NUMBER, slowNum, k);
-        long permitted = v.getPermittedFulFuseRequest().get() - lastMetric.getPermittedFulFuseRequest().get();
-        addMetric(metricMap, MetricType.PERMITTED_FUSE_REQUEST, permitted, k);
+        long slowNum = metricInfo.getSlowFuseRequest().get() - lastMetric.getSlowFuseRequest().get();
+        addMetric(metricMap, MetricType.SLOW_CALL_NUMBER, slowNum, metricLabel);
+        long permitted = metricInfo.getPermittedFulFuseRequest().get() - lastMetric.getPermittedFulFuseRequest().get();
+        addMetric(metricMap, MetricType.PERMITTED_FUSE_REQUEST, permitted, metricLabel);
     }
 
     /**
@@ -175,7 +176,7 @@ public class ServiceCollectorService extends Collector implements PluginService 
      * @param labelValue 指标标签值
      */
     private void addMetric(Map<String, GaugeMetricFamily> metricMap, MetricType type, double value, String labelValue) {
-        GaugeMetricFamily metric = metricMap.computeIfAbsent(type.getName(), s -> buildGaugeMetric(type));
+        GaugeMetricFamily metric = metricMap.computeIfAbsent(type.getName(), key -> buildGaugeMetric(type));
         metric.addMetric(Collections.singletonList(labelValue), value < 0 ? 0 : value);
     }
 

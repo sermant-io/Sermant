@@ -50,12 +50,12 @@ public class NotificationManager {
      * @param typeClass 通知类型
      */
     public static void registry(NotificationListener notificationListener,
-                                Class<? extends NotificationType> typeClass) {
+            Class<? extends NotificationType> typeClass) {
         if (!isEnable()) {
             return;
         }
         List<NotificationListener> listenerList = NOTIFICATION_LISTENER_MAP.computeIfAbsent(
-                typeClass.getCanonicalName(), s -> new ArrayList<>());
+                typeClass.getCanonicalName(), key -> new ArrayList<>());
         listenerList.add(notificationListener);
     }
 
@@ -66,7 +66,7 @@ public class NotificationManager {
      * @param typeClass 通知类型
      */
     public static void unRegistry(NotificationListener notificationListener,
-                                  Class<? extends NotificationType> typeClass) {
+            Class<? extends NotificationType> typeClass) {
         if (!isEnable()) {
             return;
         }

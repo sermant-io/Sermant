@@ -29,21 +29,13 @@ import java.util.logging.Logger;
  * @since 2023-07-20
  */
 public class LoggerUtils {
-    private static Logger logger;
+    private static final Logger LOGGER = initLogger();
 
     private LoggerUtils() {
     }
 
-    /**
-     * 获取基础日志
-     *
-     * @return Logger
-     */
-    public static Logger getLogger() {
-        if (logger != null) {
-            return logger;
-        }
-        logger = Logger.getLogger("sermant.agent");
+    private static Logger initLogger() {
+        Logger tmpLogger = Logger.getLogger("sermant.agent");
         final ConsoleHandler handler = new ConsoleHandler();
         final String lineSeparator = System.getProperty("line.separator");
         handler.setFormatter(new Formatter() {
@@ -53,8 +45,17 @@ public class LoggerUtils {
                 return "[" + time + "] " + "[" + record.getLevel() + "] " + record.getMessage() + lineSeparator;
             }
         });
-        logger.addHandler(handler);
-        logger.setUseParentHandlers(false);
-        return logger;
+        tmpLogger.addHandler(handler);
+        tmpLogger.setUseParentHandlers(false);
+        return tmpLogger;
+    }
+
+    /**
+     * 获取基础日志
+     *
+     * @return Logger
+     */
+    public static Logger getLogger() {
+        return LOGGER;
     }
 }

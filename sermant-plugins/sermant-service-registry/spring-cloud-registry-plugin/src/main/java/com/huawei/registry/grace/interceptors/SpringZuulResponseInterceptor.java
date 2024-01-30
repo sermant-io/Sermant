@@ -48,7 +48,7 @@ public class SpringZuulResponseInterceptor extends GraceSwitchInterceptor {
     protected ExecuteContext doBefore(ExecuteContext context) {
         RequestContext requestContext = RequestContext.getCurrentContext();
         Map<String, List<String>> map = getGraceIpHeaders();
-        map.forEach((k, v) -> requestContext.addZuulRequestHeader(k, v.get(0)));
+        map.forEach((key, value) -> requestContext.addZuulRequestHeader(key, value.get(0)));
         return context;
     }
 
@@ -61,10 +61,10 @@ public class SpringZuulResponseInterceptor extends GraceSwitchInterceptor {
         }
         HttpServletResponse response = (HttpServletResponse) rawResponse;
         GraceContext.INSTANCE.getGraceShutDownManager()
-            .addShutdownEndpoints(response.getHeaders(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
+                .addShutdownEndpoints(response.getHeaders(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
         HttpServletRequest request = (HttpServletRequest) rawRequest;
         RefreshUtils.refreshTargetServiceInstances(request.getRemoteHost(),
-            Collections.singleton(response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME)));
+                Collections.singleton(response.getHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME)));
         return context;
     }
 

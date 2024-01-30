@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.core.common;
 
 import com.huaweicloud.sermant.core.classloader.ClassLoaderManager;
 import com.huaweicloud.sermant.core.classloader.FrameworkClassLoader;
+import com.huaweicloud.sermant.core.exception.LoggerInitException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,9 +36,9 @@ public class LoggerFactory {
 
     private static final String LOGGER_INIT_METHOD = "init";
 
-    private static Logger defaultLogger;
+    private static volatile Logger defaultLogger;
 
-    private static Logger sermantLogger;
+    private static volatile Logger sermantLogger;
 
     private LoggerFactory() {
     }
@@ -46,21 +47,35 @@ public class LoggerFactory {
      * 初始化logback配置文件路径
      *
      * @param artifact 归属产品
-     * @throws RuntimeException RuntimeException
+     * @throws LoggerInitException LoggerInitException
      */
     public static void init(String artifact) {
         if (sermantLogger == null) {
-            FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
-            try {
-                Method initMethod = frameworkClassLoader
-                        .loadClass(LOGGER_FACTORY_IMPL_CLASS)
-                        .getMethod(LOGGER_INIT_METHOD, String.class);
-                sermantLogger = (Logger) initMethod.invoke(null, artifact);
-            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
-                     | InvocationTargetException e) {
-                throw new RuntimeException(e);
+            synchronized (LoggerFactory.class) {
+                if (sermantLogger == null) {
+                    FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
+                    try {
+                        Method initMethod = frameworkClassLoader
+                                .loadClass(LOGGER_FACTORY_IMPL_CLASS)
+                                .getMethod(LOGGER_INIT_METHOD, String.class);
+                        sermantLogger = (Logger) initMethod.invoke(null, artifact);
+                    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                             | InvocationTargetException e) {
+                        throw new LoggerInitException(e.getMessage());
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * 初始化默认日志
+     *
+     * @param artifact 归属产品
+     */
+    public static void initDefaultLogger(String artifact) {
+        // 初始化默认日志，默认日志名必须为 sermant.<artifact>，通过这种方式，才能添加上SermantBridgeHandler
+        defaultLogger = java.util.logging.Logger.getLogger("sermant." + artifact);
     }
 
     /**
@@ -75,7 +90,11 @@ public class LoggerFactory {
 
         // 避免日志重复获取
         if (defaultLogger == null) {
-            defaultLogger = java.util.logging.Logger.getLogger("sermant");
+            synchronized (LoggerFactory.class) {
+                if (defaultLogger == null) {
+                    defaultLogger = java.util.logging.Logger.getLogger("sermant");
+                }
+            }
         }
         return defaultLogger;
     }

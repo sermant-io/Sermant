@@ -127,6 +127,5 @@ public abstract class RegistryConfigResolver {
     /**
      * 更新配置之后的操作
      */
-    protected void afterUpdateConfig() {
-    }
+    protected abstract void afterUpdateConfig();
 }

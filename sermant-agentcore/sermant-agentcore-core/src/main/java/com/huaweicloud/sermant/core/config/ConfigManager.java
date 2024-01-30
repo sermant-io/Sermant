@@ -205,6 +205,7 @@ public abstract class ConfigManager {
      * <p>文件中声明的所有实现都将会进行遍历，每一个实现类都会通过spi获取实例，然后调用{@code configConsumer}进行消费
      *
      * @param configConsumer 配置处理方法
+     * @param classLoader 类加载器
      */
     private static void foreachConfig(ConfigConsumer configConsumer,
             ClassLoader classLoader) {

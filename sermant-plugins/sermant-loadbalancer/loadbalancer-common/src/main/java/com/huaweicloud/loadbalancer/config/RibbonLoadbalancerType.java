@@ -53,6 +53,8 @@ public enum RibbonLoadbalancerType {
 
     /**
      * 响应时间加权重策略
+     *
+     * @deprecated Use {@link #WEIGHTED_RESPONSE_TIME} instead.
      */
     @Deprecated
     RESPONSE_TIME_WEIGHTED("ResponseTimeWeighted", "com.netflix.loadbalancer.ResponseTimeWeightedRule"),

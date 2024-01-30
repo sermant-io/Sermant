@@ -36,6 +36,9 @@ import java.util.Set;
  * @since 2022-02-10
  */
 public abstract class AbstractRetry extends ReflectMethodCacheSupport implements Retry {
+    /**
+     * 重试异常类
+     */
     protected Class<? extends Throwable>[] classes;
 
     /**
@@ -54,7 +57,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
                 result.add(Class.forName(className, false, Thread.currentThread().getContextClassLoader()));
             } catch (ClassNotFoundException exception) {
                 LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
-                    "Can not find retry exception class %s", className));
+                        "Can not find retry exception class %s", className));
             }
         }
         return result.toArray(new Class[0]);

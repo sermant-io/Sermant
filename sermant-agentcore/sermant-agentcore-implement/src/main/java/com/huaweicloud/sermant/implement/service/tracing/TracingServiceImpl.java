@@ -85,7 +85,7 @@ public class TracingServiceImpl implements TracingService {
 
     @Override
     public <T> Optional<SpanEvent> onProviderSpanStart(TracingRequest tracingRequest, ExtractService<T> extractService,
-        T carrier) {
+            T carrier) {
         if (!isTracing) {
             return Optional.empty();
         }
@@ -118,7 +118,7 @@ public class TracingServiceImpl implements TracingService {
 
     @Override
     public <T> Optional<SpanEvent> onConsumerSpanStart(TracingRequest tracingRequest, InjectService<T> injectService,
-        T carrier) {
+            T carrier) {
         if (!isTracing) {
             return Optional.empty();
         }
@@ -187,13 +187,14 @@ public class TracingServiceImpl implements TracingService {
      * 通过SpanId来限制采样深度
      *
      * @param tracingRequest 调用链路追踪生命周期时需要传入的参数
+     * @return tracingRequest长度是否合法
      */
     private boolean filterSpanDepth(TracingRequest tracingRequest) {
         // 检查spanId长度 大于100忽略
         String spanIdPrefix = tracingRequest.getSpanIdPrefix();
         if (spanIdPrefix != null && spanIdPrefix.length() > MAX_SPAN_EVENT_DEPTH) {
             LOGGER.info(String.format(Locale.ROOT, "SpanId is too long, discard this span : [%s]",
-                JSON.toJSONString(tracingRequest, SerializerFeature.WriteMapNullValue)));
+                    JSON.toJSONString(tracingRequest, SerializerFeature.WriteMapNullValue)));
             return false;
         }
         return true;
@@ -201,7 +202,7 @@ public class TracingServiceImpl implements TracingService {
 
     private void sendSpanEvent(SpanEvent spanEvent) {
         LOGGER.info(String.format(Locale.ROOT, "Add spanEvent to queue , TraceId : [%s] , SpanId [%s] . ",
-            spanEvent.getTraceId(), spanEvent.getSpanId()));
+                spanEvent.getTraceId(), spanEvent.getSpanId()));
         tracingSender.offerSpanEvent(spanEvent);
     }
 }

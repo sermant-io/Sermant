@@ -27,11 +27,14 @@ import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 /**
  * 客户端拦截器抽象类，获取当前线程的流量标签并透传至下游进程，适用于http客户端/rpc客户端/消息队列生产者
  *
- * @param <Carrier> 标签载体
+ * @param <C> 标签载体
  * @author lilai
  * @since 2023-07-18
  */
-public abstract class AbstractClientInterceptor<Carrier> extends AbstractInterceptor {
+public abstract class AbstractClientInterceptor<C> extends AbstractInterceptor {
+    /**
+     * 流量标签透传配置类
+     */
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**
@@ -81,5 +84,5 @@ public abstract class AbstractClientInterceptor<Carrier> extends AbstractInterce
      *
      * @param carrier 载体
      */
-    protected abstract void injectTrafficTag2Carrier(Carrier carrier);
+    protected abstract void injectTrafficTag2Carrier(C carrier);
 }

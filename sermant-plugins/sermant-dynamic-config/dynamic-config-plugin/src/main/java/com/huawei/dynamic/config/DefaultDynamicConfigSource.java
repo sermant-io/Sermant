@@ -97,7 +97,7 @@ public class DefaultDynamicConfigSource extends DynamicConfigSource {
 
     private void updateAllConfigSources(Map<String, Object> changeConfigs, String eventKey) {
         final Map<String, Object> configMap = allConfigSources
-            .getOrDefault(eventKey, new HashMap<>(changeConfigs.size()));
+                .getOrDefault(eventKey, new HashMap<>(changeConfigs.size()));
         configMap.putAll(changeConfigs);
         allConfigSources.put(eventKey, configMap);
         sortedKeys.removeIf(timestampKey -> timestampKey.key.equals(eventKey));
@@ -125,6 +125,16 @@ public class DefaultDynamicConfigSource extends DynamicConfigSource {
                 return -1;
             }
             return Long.compare(this.timestamp, target.timestamp);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 

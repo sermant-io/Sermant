@@ -50,8 +50,6 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
 
     private DynamicConfigListener listener;
 
-    private String pluginName;
-
     private String key;
 
     private NacosDynamicConfigService nacosDynamicConfigService;
@@ -61,13 +59,11 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
      *
      * @param serviceName 服务名称
      * @param listener 动态配置监听器
-     * @param pluginName 插件名称
      * @param key 配置名称
      */
-    public DynamicConfigSubscribe(String serviceName, DynamicConfigListener listener, String pluginName, String key) {
+    public DynamicConfigSubscribe(String serviceName, DynamicConfigListener listener, String key) {
         this.serviceName = serviceName;
         this.listener = listener;
-        this.pluginName = pluginName;
         this.key = key;
         try {
             this.nacosDynamicConfigService = ServiceManager.getService(NacosDynamicConfigService.class);

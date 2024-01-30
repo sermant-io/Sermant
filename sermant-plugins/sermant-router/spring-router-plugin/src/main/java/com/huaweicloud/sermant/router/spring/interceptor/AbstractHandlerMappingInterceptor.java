@@ -58,6 +58,7 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         if (shouldHandle(context)) {
+            ThreadLocalUtils.removeRequestTag();
             ServerWebExchange exchange = (ServerWebExchange) context.getArguments()[0];
             ServerHttpRequest request = exchange.getRequest();
             HttpHeaders headers = request.getHeaders();
@@ -72,7 +73,8 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        // 方法会在controller方法之前结束，所以不能在这里释放线程变量，线程变量会在ControllerInterceptor进行释放
+        // 响应式编程不能在after方法中删除，否则会导致线程变量无法透传到负载均衡线程中
+        // 会在HttpServerHandleInterceptor、ReactiveTypeHandlerInterceptor中删除
         return context;
     }
 

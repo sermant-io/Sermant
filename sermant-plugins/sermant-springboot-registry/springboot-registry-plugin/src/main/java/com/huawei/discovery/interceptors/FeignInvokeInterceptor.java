@@ -71,6 +71,10 @@ public class FeignInvokeInterceptor extends MarkInterceptor {
         return context;
     }
 
+    @Override
+    protected void ready() {
+    }
+
     private Function<InvokerContext, Object> buildInvokerFunc(ExecuteContext context, Request request,
             Map<String, String> urlInfo) {
         return invokerContext -> {

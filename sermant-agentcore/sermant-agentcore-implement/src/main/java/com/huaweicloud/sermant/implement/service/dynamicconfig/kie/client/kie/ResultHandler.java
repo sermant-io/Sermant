@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * Kie结果处理器
  *
+ * @param <R> handle泛型
  * @author zhouss
  * @since 2021-11-17
  */
@@ -42,9 +43,13 @@ public interface ResultHandler<R> {
 
     /**
      * 默认结果处理器
+     *
+     * @author zhouss
+     * @since 2021-11-17
      */
     class DefaultResultHandler implements ResultHandler<KieResponse> {
         private final boolean onlyEnabled;
+
         public DefaultResultHandler() {
             onlyEnabled = true;
         }
@@ -67,6 +72,7 @@ public interface ResultHandler<R> {
                 // KIE如果响应状态码为304，则表示没有相关键变更
                 kieResponse.setChanged(false);
             }
+
             // 过滤掉disabled的kv配置
             final List<KieConfigEntity> data = kieResponse.getData();
             if (data == null) {
@@ -77,6 +83,7 @@ public interface ResultHandler<R> {
             kieResponse.setTotal(data.size());
             return kieResponse;
         }
+
         /**
          * 过滤未开启的kv
          *

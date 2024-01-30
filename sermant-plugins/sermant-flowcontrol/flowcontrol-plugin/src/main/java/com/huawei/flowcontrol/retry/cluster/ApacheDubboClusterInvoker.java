@@ -174,6 +174,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
      * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
      *
      * @param invocation 调用信息
+     * @param invoker 调用者
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToApacheDubboEntity(Invocation invocation, Invoker<T> invoker) {

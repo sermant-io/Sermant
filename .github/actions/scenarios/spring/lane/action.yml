@@ -186,6 +186,7 @@ runs:
       shell: bash
       env:
         SPRING_CLOUD_VERSION: ${{ matrix.springCloudVersion }}
+        SPRING_BOOT_VERSION: ${{ matrix.springBootVersion }}
       run: mvn test -Dsermant.integration.test.type=LANE --file sermant-integration-tests/spring-test/pom.xml
     - name: exit
       if: always()

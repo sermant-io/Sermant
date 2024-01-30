@@ -18,6 +18,10 @@ runs:
       shell: bash
       run: |
         nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+    - name: waiting for backend start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8900/sermant/event/webhooks 120
     - name: start applications
       shell: bash
       env:
@@ -32,7 +36,6 @@ runs:
       shell: bash
       run: |
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8900/sermant/event/webhooks 120
     - name: test premain startup
       shell: bash
       run: mvn test -Dagentcore.test.type=PREMAIN_STARTUP --file sermant-integration-tests/agentcore-test/agentcore-integration-test/pom.xml

@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  * @since 2022-08-02
  */
 public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String COMMAND = "cat /proc/stat";
@@ -46,9 +45,13 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
      * 各状态列索引
      */
     private static final int USER_INDEX = 1;
+
     private static final int NICE_INDEX = 2;
+
     private static final int SYSTEM_INDEX = 3;
+
     private static final int IDLE_INDEX = 4;
+
     private static final int IO_WAIT_INDEX = 5;
 
     @Override
@@ -58,6 +61,9 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
 
     /**
      * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.CpuParser parse方法
+     *
+     * @param inputStream 外部进程输出流
+     * @return 解析后的结果
      */
     @Override
     public CpuStat parseResult(InputStream inputStream) {
@@ -82,7 +88,6 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
      * @since 2022-08-02
      */
     public static class CpuStat {
-
         /**
          * 用户态
          */
@@ -111,10 +116,10 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
         /**
          * 构造方法
          *
-         * @param user   用户态
-         * @param nice   nice信息
+         * @param user 用户态
+         * @param nice nice信息
          * @param system 系统占用CPU
-         * @param idle   CPU空闲情况
+         * @param idle CPU空闲情况
          * @param ioWait CPU等待时间
          */
         public CpuStat(long user, long nice, long system, long idle, long ioWait) {
@@ -145,6 +150,11 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
             return ioWait;
         }
 
+        /**
+         * 获取总的CPU占用率
+         *
+         * @return CPU占用率之和
+         */
         public long getTotal() {
             return system + user + nice + idle + ioWait;
         }

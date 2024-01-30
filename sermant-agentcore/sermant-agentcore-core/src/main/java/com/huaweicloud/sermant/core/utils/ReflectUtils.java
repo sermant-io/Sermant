@@ -194,7 +194,7 @@ public class ReflectUtils {
             if (method != null) {
                 return Optional.of(method);
             }
-            method = setAccessible(clazz.getDeclaredMethod(methodName, paramsType));
+            method = setObjectAccessible(clazz.getDeclaredMethod(methodName, paramsType));
             METHOD_CACHE.put(methodKey, method);
             return Optional.of(method);
         } catch (NoSuchMethodException ex) {
@@ -271,7 +271,7 @@ public class ReflectUtils {
         // 增加构造方法缓存
         return CONSTRUCTOR_CACHE.computeIfAbsent(buildMethodKey(clazz, "<init>", paramsTypes), key -> {
             try {
-                return Optional.of(setAccessible(clazz.getDeclaredConstructor(paramsTypes)));
+                return Optional.of(setObjectAccessible(clazz.getDeclaredConstructor(paramsTypes)));
             } catch (NoSuchMethodException e) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Can not find constructor for class [%s] with params [%s]",
                         clazz.getName(), Arrays.toString(paramsTypes)));
@@ -314,7 +314,7 @@ public class ReflectUtils {
             return true;
         } catch (IllegalAccessException ex) {
             LOGGER.warning(String.format(Locale.ENGLISH, "Set value for field [%s] failed! %s", fieldName,
-                ex.getMessage()));
+                    ex.getMessage()));
             return false;
         }
     }
@@ -422,7 +422,7 @@ public class ReflectUtils {
         Field field = cache.get(fieldName);
         try {
             if (field == null) {
-                field = setAccessible(clazz.getDeclaredField(fieldName));
+                field = setObjectAccessible(clazz.getDeclaredField(fieldName));
                 cache.putIfAbsent(fieldName, field);
             }
         } catch (IllegalArgumentException | NoSuchFieldException ex) {
@@ -460,7 +460,7 @@ public class ReflectUtils {
         return Optional.empty();
     }
 
-    private static <T extends AccessibleObject> T setAccessible(T object) {
+    private static <T extends AccessibleObject> T setObjectAccessible(T object) {
         AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
             object.setAccessible(true);
             return object;

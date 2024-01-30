@@ -32,6 +32,7 @@ import com.huaweicloud.sermant.core.plugin.PluginSystemEntrance;
 import com.huaweicloud.sermant.core.plugin.agent.ByteEnhanceManager;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserInterface;
 import com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler;
+import com.huaweicloud.sermant.core.plugin.agent.info.EnhancementManager;
 import com.huaweicloud.sermant.core.plugin.agent.template.DefaultAdviser;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.god.common.SermantManager;
@@ -86,10 +87,13 @@ public class AgentCoreEntrance {
         artifactCache = artifact;
         adviserCache = new DefaultAdviser();
 
+        // 初始化默认日志，在未加载日志引擎前保证日志可用
+        LoggerFactory.initDefaultLogger(artifact);
+
         // 初始化框架类加载器
         ClassLoaderManager.init(argsMap);
 
-        // 初始化日志
+        // 初始化日志，用于添加SermantBridgeHandler
         LoggerFactory.init(artifact);
 
         // 通过启动配置构建路径索引
@@ -156,6 +160,9 @@ public class AgentCoreEntrance {
 
         // 清理配置类
         ConfigManager.shutdown();
+
+        // 清理增强信息类
+        EnhancementManager.shutdown();
 
         // 设置该artifact的Sermant状态为false，非运行状态
         SermantManager.updateSermantStatus(artifactCache, false);

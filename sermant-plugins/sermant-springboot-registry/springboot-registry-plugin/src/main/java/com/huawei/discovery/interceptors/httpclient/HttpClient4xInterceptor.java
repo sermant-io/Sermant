@@ -150,7 +150,7 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
                 }
             }
         } catch (IOException ex) {
-            // ignored
+            LOGGER.warning("An exception occurred when attempting to close the httpResponse.");
         }
     }
 

@@ -18,6 +18,8 @@ package com.huaweicloud.sermant.router.spring.declarer;
 
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 import net.bytebuddy.matcher.ElementMatchers;
 
@@ -50,5 +52,11 @@ public class HystrixActionDeclarer extends AbstractDeclarer {
     @Override
     public MethodMatcher getMethodMatcher() {
         return MethodMatcher.isConstructor().and(ElementMatchers.takesArguments(ARGS_LENGTH));
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // 不开启线程池异步路由时，才需要开启这个
+        return !PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool();
     }
 }

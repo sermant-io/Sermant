@@ -15,7 +15,7 @@
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
         <package.plugin.name>service-registry</package.plugin.name>
         <service-center-version>2.7.6</service-center-version>
-        <guava.version>31.0.1-jre</guava.version>
+        <guava.version>32.1.3-jre</guava.version>
         <nacos.version>2.0.4</nacos.version>
     </properties>
     <profiles>

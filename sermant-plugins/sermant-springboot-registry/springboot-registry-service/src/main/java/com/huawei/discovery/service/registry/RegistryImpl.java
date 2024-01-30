@@ -52,7 +52,7 @@ public class RegistryImpl implements RegistryService {
         try {
             heartbeatService = ServiceManager.getService(HeartbeatService.class);
         } catch (IllegalArgumentException ex) {
-            // ignored 不存在心跳服务
+            LOGGER.warning("No heartbeat service found.");
         }
     }
 

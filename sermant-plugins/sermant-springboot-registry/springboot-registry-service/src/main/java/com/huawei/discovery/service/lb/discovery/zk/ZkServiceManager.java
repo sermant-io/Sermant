@@ -37,7 +37,7 @@ public class ZkServiceManager {
 
     private final LbConfig lbConfig;
 
-    private ZkService zkService;
+    private volatile ZkService zkService;
 
     /**
      * 构造器

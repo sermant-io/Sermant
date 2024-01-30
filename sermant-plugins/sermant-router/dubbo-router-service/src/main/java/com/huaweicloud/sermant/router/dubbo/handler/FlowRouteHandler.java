@@ -105,10 +105,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (CollectionUtils.isEmpty(rules)) {
             return invokers;
         }
-        List<Route> routes = getRoutes(rules, DubboReflectUtils.getArguments(invocation),
+        Optional<Rule> ruleOptional = getRule(rules, DubboReflectUtils.getArguments(invocation),
                 parseAttachments(invocation));
-        if (!CollectionUtils.isEmpty(routes)) {
-            return RuleStrategyHandler.INSTANCE.getMatchInvokers(targetService, invokers, routes);
+        if (ruleOptional.isPresent()) {
+            return RuleStrategyHandler.INSTANCE.getFlowMatchInvokers(targetService, invokers, ruleOptional.get());
         }
         return RuleStrategyHandler.INSTANCE
                 .getMismatchInvokers(targetService, invokers, RuleUtils.getTags(rules), true);
@@ -126,7 +126,8 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
         // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
         Map<String, String> mismatchTags = new HashMap<>();
-        for (String key : attachments.keySet()) {
+        for (Map.Entry<String, Object> entry : attachments.entrySet()) {
+            String key = entry.getKey();
             if (!requestTags.contains(key)) {
                 continue;
             }
@@ -136,7 +137,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 replaceDashKey = replaceDashKey.replace(RouterConstant.DASH, RouterConstant.POINT);
             }
             mismatchTags.put(RuleUtils.getMetaKey(replaceDashKey), null);
-            String value = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
+            String value = Optional.ofNullable(entry.getValue()).map(String::valueOf).orElse(null);
             if (StringUtils.isExist(value)) {
                 tags.put(RuleUtils.getMetaKey(replaceDashKey), value);
             }
@@ -201,11 +202,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
      * @param attachments dubbo的attachments参数
      * @return 匹配的路由
      */
-    private static List<Route> getRoutes(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
+    private static Optional<Rule> getRule(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
         for (Rule rule : list) {
             Match match = rule.getMatch();
             if (match == null) {
-                return rule.getRoute();
+                return Optional.of(rule);
             }
             List<Route> routeList;
             if (!CollectionUtils.isEmpty(match.getAttachments()) && !CollectionUtils.isEmpty(attachments)) {
@@ -216,10 +217,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 routeList = Collections.emptyList();
             }
             if (!CollectionUtils.isEmpty(routeList)) {
-                return routeList;
+                return Optional.of(rule);
             }
         }
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     /**

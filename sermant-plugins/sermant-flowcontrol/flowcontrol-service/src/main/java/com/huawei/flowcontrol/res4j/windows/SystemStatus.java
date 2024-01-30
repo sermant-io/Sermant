@@ -40,12 +40,12 @@ public class SystemStatus {
     /**
      * qps
      */
-    private double qps = 0;
+    private double qps = 0d;
 
     /**
      * 平均响应时间
      */
-    private double aveRt = 0;
+    private double aveRt = 0d;
 
     /**
      * 最小响应时间

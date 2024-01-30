@@ -76,13 +76,14 @@ runs:
       run: |
         echo "sermantSpringbootRegistryChanged=${{ steps.changed-sermant-springboot-registry.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1.0.1
-      id: changed-sermant-mq-consumer-deny
+      id: changed-sermant-mq-consume-prohibition
       with:
-        paths: sermant-plugins/sermant-mq-consumer-deny
-    - name: env sermant-sermant-mq-consumer-deny
+        paths: sermant-plugins/sermant-mq-consume-prohibition
+    - name: env sermant-sermant-mq-consume-prohibition
       shell: bash
       run: |
-        echo "sermantMqConsumerDenyChanged=${{ steps.changed-sermant-mq-consumer-deny.outputs.changed }}" >> $GITHUB_ENV
+        echo "sermantMqConsumeProhibitionChanged=${{ steps.changed-sermant-mq-consume-prohibition.outputs.changed
+        }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-removal
       with:
@@ -172,7 +173,7 @@ runs:
             ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
           echo "enableSpringLane=true" >> $GITHUB_ENV
         fi
-        
+
         # ==========removal is needed to test?==========
         if [ ${{ env.sermantAgentCoreChanged }} == 'true' -o ${{ env.sermantServiceRemovalChanged }} == 'true' -o \
             ${{ env.sermantSpringbootRegistryChanged }} == 'true' -o ${{ env.sermantServiceRegistryChanged }} == 'true' ];then
@@ -194,4 +195,3 @@ runs:
           echo "enableDubboLane=true" >> $GITHUB_ENV
           echo "enableRemoval=true" >> $GITHUB_ENV
         fi
-

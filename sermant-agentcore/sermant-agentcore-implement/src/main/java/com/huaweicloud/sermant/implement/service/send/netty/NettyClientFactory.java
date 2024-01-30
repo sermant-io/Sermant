@@ -34,6 +34,11 @@ public class NettyClientFactory {
 
     private static final Map<String, NettyClient> CLIENT_MAP = new HashMap<>();
 
+    /**
+     * 获取netty客户端工厂单例
+     *
+     * @return netty客户端工厂单例
+     */
     public static NettyClientFactory getInstance() {
         return FACTORY;
     }
@@ -74,8 +79,8 @@ public class NettyClientFactory {
      * 关闭工厂，清空Client示例
      */
     public static void stop() {
-        for (String key : CLIENT_MAP.keySet()) {
-            CLIENT_MAP.get(key).stop();
+        for (Map.Entry<String, NettyClient> entry : CLIENT_MAP.entrySet()) {
+            entry.getValue().stop();
         }
         CLIENT_MAP.clear();
     }

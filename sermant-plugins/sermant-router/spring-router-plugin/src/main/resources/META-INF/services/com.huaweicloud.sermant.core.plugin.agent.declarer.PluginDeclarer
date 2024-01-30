@@ -1,7 +1,6 @@
 com.huaweicloud.sermant.router.spring.declarer.AbstractHandlerMappingDeclarer
 com.huaweicloud.sermant.router.spring.declarer.BaseLoadBalancerDeclarer
 com.huaweicloud.sermant.router.spring.declarer.ClientHttpRequestDeclarer
-com.huaweicloud.sermant.router.spring.declarer.ControllerDeclarer
 com.huaweicloud.sermant.router.spring.declarer.DiscoveryManagerDeclarer
 com.huaweicloud.sermant.router.spring.declarer.EurekaHttpClientDeclarer
 com.huaweicloud.sermant.router.spring.declarer.FeignClientDeclarer
@@ -19,3 +18,9 @@ com.huaweicloud.sermant.router.spring.declarer.RestTemplateDeclarer
 com.huaweicloud.sermant.router.spring.declarer.SpringBootLoadClassDeclarer
 com.huaweicloud.sermant.router.spring.declarer.HttpAsyncClient4xDeclarer
 com.huaweicloud.sermant.router.spring.declarer.ZuulServletDeclarer
+com.huaweicloud.sermant.router.spring.declarer.LoadBalancerDeclarer
+com.huaweicloud.sermant.router.spring.declarer.ReactiveLoadBalancerClientFilterDeclarer
+com.huaweicloud.sermant.router.spring.declarer.HttpServerHandleDeclarer
+com.huaweicloud.sermant.router.spring.declarer.ReactiveTypeHandlerDeclarer
+com.huaweicloud.sermant.router.spring.declarer.WebClientBuilderDeclarer
+com.huaweicloud.sermant.router.spring.declarer.HttpServerOperationsDeclarer

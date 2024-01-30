@@ -59,7 +59,7 @@ public class NacosRegistryFactory extends AbstractRegistryFactory {
                 return (Registry) registryClass.get().getConstructor(URL.class).newInstance(url);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException e) {
+                | InvocationTargetException e) {
             LOGGER.log(Level.WARNING, "Can not get the registry", e);
         }
         return new NacosRegistry(url);

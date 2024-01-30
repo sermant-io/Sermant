@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
+import com.huaweicloud.sermant.router.spring.BaseTransmitConfigTest;
 
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
@@ -41,7 +42,7 @@ import java.util.Map.Entry;
  * @author provenceee
  * @since 2022-09-08
  */
-public class HystrixActionInterceptorTest {
+public class HystrixActionInterceptorTest extends BaseTransmitConfigTest {
     private final HystrixActionInterceptor interceptor;
 
     private final ExecuteContext context;

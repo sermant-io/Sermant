@@ -234,7 +234,7 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
      * 超类检查
      *
      * @param typeDescription 类型描述
-     * @param superTypeNames  超类名称集
+     * @param superTypeNames 超类名称集
      * @return 检查是否通过
      */
     private static boolean superTypeCheck(TypeDescription typeDescription, Collection<String> superTypeNames) {
@@ -245,8 +245,8 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
         final Queue<TypeDefinition> queue = new LinkedList<TypeDefinition>();
         queue.add(typeDescription);
         for (TypeDefinition current = queue.poll();
-             current != null && !superTypeNameSet.isEmpty();
-             current = queue.poll()) {
+                current != null && !superTypeNameSet.isEmpty();
+                current = queue.poll()) {
             superTypeNameSet.remove(current.getActualName());
             final TypeList.Generic interfaces = current.getInterfaces();
             if (!interfaces.isEmpty()) {

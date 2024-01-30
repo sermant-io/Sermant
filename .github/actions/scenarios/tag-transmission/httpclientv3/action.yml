@@ -1,0 +1,46 @@
+name: "Tag Transmission Plugin HttpClientV3 Test"
+description: "Auto test for tag transmission by httpclientv3"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/httpclientv3
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dhttpclient3x.version=${{ matrix.httpclientVersion }} -DskipTests -Phttpclientv3-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start httpclientv3 demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/sermant \
+        sermant-integration-tests/tag-transmission-test/httpclientv3-demo/target/httpclientv3-demo.jar > ${{ env.logDir }}/httpclientv3.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9048/httpClientV3/testHttpClientV3 120
+    - name: test httpclientv3
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=HTTPCLIENTV3 --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|httpclientv3
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-httpclientv3-(${{ matrix.httpClientVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

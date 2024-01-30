@@ -50,25 +50,17 @@ public class GzipUtils {
      * @return 压缩完成的数据
      */
     public static byte[] compress(byte[] data) {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        // 压缩
-        compress(bais, baos);
-        byte[] output = baos.toByteArray();
-        try {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            // 压缩
+            compress(bais, baos);
+            byte[] output = baos.toByteArray();
             baos.flush();
+            return output;
         } catch (IOException e) {
-            LOGGER.error("Exception occurs when compress. Exception info: {}", e);
-        } finally {
-            try {
-                baos.close();
-                bais.close();
-            } catch (IOException e) {
-                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
-            }
+            LOGGER.error("Exception occurs when compress or close IOStream. Exception info: {}", e.getMessage());
+            return new byte[0];
         }
-        return output;
     }
 
     /**
@@ -89,14 +81,14 @@ public class GzipUtils {
             gos.finish();
             gos.flush();
         } catch (IOException e) {
-            LOGGER.error("Exception occurs when compress. Exception info: {}", e);
+            LOGGER.error("Exception occurs when compress. Exception info: {}", e.getMessage());
         } finally {
             try {
                 if (gos != null) {
                     gos.close();
                 }
             } catch (IOException e) {
-                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
+                LOGGER.error("Exception occurs when close IOStream, Exception info: {}", e.getMessage());
             }
         }
     }
@@ -113,20 +105,20 @@ public class GzipUtils {
 
         // 解压缩
         decompress(bais, baos);
-        data = baos.toByteArray();
+        byte[] newData = baos.toByteArray();
         try {
             baos.flush();
         } catch (IOException e) {
-            LOGGER.error("Exception occurs when decompress. Exception info: {}", e);
+            LOGGER.error("Exception occurs when decompress. Exception info: {}", e.getMessage());
         } finally {
             try {
                 baos.close();
                 bais.close();
             } catch (IOException e) {
-                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
+                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e.getMessage());
             }
         }
-        return data;
+        return newData;
     }
 
     /**
@@ -145,14 +137,14 @@ public class GzipUtils {
                 os.write(data, 0, count);
             }
         } catch (IOException e) {
-            LOGGER.error("Exception occurs when decompress. Exception info: {}", e);
+            LOGGER.error("Exception occurs when decompress. Exception info: {}", e.getMessage());
         } finally {
             try {
                 if (gis != null) {
                     gis.close();
                 }
             } catch (IOException e) {
-                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e);
+                LOGGER.error("Exception occurs when close IOStream. Exception info: {}", e.getMessage());
             }
         }
     }

@@ -24,6 +24,13 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpConversation;
+import org.eclipse.jetty.client.HttpDestination;
+import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.HttpRequest;
+import org.eclipse.jetty.client.Origin;
+import org.eclipse.jetty.client.Origin.Address;
+import org.eclipse.jetty.client.SendFailure;
+import org.eclipse.jetty.client.api.Connection;
 import org.eclipse.jetty.client.api.Response.CompleteListener;
 import org.eclipse.jetty.client.api.Result;
 import org.junit.AfterClass;
@@ -35,6 +42,9 @@ import org.mockito.Mockito;
 
 import java.net.ConnectException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * 测试JettyClientWrapper
@@ -72,14 +82,14 @@ public class JettyClientWrapperTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws URISyntaxException {
         CompleteListener listener = new TestCompleteListener();
-
         // 测试send方法
         wrapper.send(listener);
         Assert.assertEquals(listener, ReflectUtils.getFieldValue(wrapper, "originCompleteListener").orElse(null));
 
         // 模拟send方法之后的数据更新
+        conversation.getExchanges().add(initHttpExchangeInstance());
         conversation.updateResponseListeners(new TestCompleteListener());
         conversation.updateResponseListeners(listener);
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_HOST, "127.0.0.1");
@@ -94,6 +104,26 @@ public class JettyClientWrapperTest {
         Assert.assertEquals("/foo/hello", wrapper.getPath());
         Assert.assertEquals(80, wrapper.getPort());
         Assert.assertEquals(listener, ReflectUtils.getFieldValue(wrapper, "originCompleteListener").orElse(null));
+    }
+
+    /**
+     * 获取一个HttpExchange实例对象，以适配Jetty 9.4.53.v20231009支持
+     *
+     * @return HttpExchange实例对象
+     * @throws URISyntaxException
+     */
+    private HttpExchange initHttpExchangeInstance() throws URISyntaxException {
+        Origin origin = new Origin("xxx", new Address("127.0.0.1", 11111));
+        HttpDestination httpDestination = new HttpDestination(new HttpClient(), origin) {
+            @Override
+            protected SendFailure send(Connection connection, HttpExchange exchange) {
+                return null;
+            }
+        };
+        HttpRequest httpRequest = (HttpRequest) ReflectUtils.buildWithConstructor(HttpRequest.class,
+                new Class[]{HttpClient.class, HttpConversation.class, URI.class},
+                new Object[]{new HttpClient(), conversation, new URI("127.0.0.1")}).get();
+        return new HttpExchange(httpDestination, httpRequest, Collections.emptyList());
     }
 
     public static class TestCompleteListener implements CompleteListener {

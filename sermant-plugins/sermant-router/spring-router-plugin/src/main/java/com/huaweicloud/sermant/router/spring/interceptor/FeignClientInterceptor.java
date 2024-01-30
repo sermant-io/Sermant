@@ -18,8 +18,10 @@ package com.huaweicloud.sermant.router.spring.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
@@ -161,6 +163,10 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     }
 
     private boolean canLoadHystrix() {
+        if (PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool()) {
+            // 开启线程池异步路由时，透传标签不需要依赖HystrixRequestContext，所以直接返回false
+            return false;
+        }
         try {
             Class.forName(HystrixRequestContext.class.getCanonicalName());
         } catch (NoClassDefFoundError | ClassNotFoundException error) {

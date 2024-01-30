@@ -30,6 +30,7 @@ import com.huawei.dubbo.registry.alibaba.NacosRegistryFactory;
 import com.huawei.dubbo.registry.service.nacos.NacosRegistryService;
 import com.huaweicloud.sermant.core.service.BaseService;
 import com.huaweicloud.sermant.core.service.ServiceManager;
+import com.huaweicloud.sermant.core.utils.KeyGenerateUtils;
 
 /**
  * 测试NacosRegistryFactory
@@ -45,7 +46,8 @@ public class NacosRegistryFactoryTest {
         Field field = ServiceManager.class.getDeclaredField("SERVICES");
         field.setAccessible(true);
         Map<String, BaseService> map = (Map<String, BaseService>) field.get(null);
-        map.put(NacosRegistryService.class.getCanonicalName(), new NacosRegistryService() {
+        map.put(KeyGenerateUtils.generateClassKeyWithClassLoader(NacosRegistryService.class),
+                new NacosRegistryService() {
 
             @Override
             public void doRegister(Object url) {

@@ -25,6 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDescription;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassTypeMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.transformer.ReentrantTransformer;
+import com.huaweicloud.sermant.core.plugin.classloader.PluginClassLoader;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -74,6 +75,7 @@ public class PluginCollector {
     /**
      * 从插件收集器中获取所有插件描述器
      *
+     * @param classLoader 类加载器
      * @return 插件描述器集
      */
     private static List<? extends PluginDescription> getDescriptions(ClassLoader classLoader) {
@@ -99,13 +101,18 @@ public class PluginCollector {
             if (classMatcher instanceof ClassTypeMatcher) {
                 for (String typeName : ((ClassTypeMatcher) classMatcher).getTypeNames()) {
                     List<PluginDeclarer> nameCombinedList = nameCombinedMap.computeIfAbsent(typeName,
-                            k -> new ArrayList<>());
+                            key -> new ArrayList<>());
                     nameCombinedList.add(pluginDeclarer);
                 }
             } else {
                 combinedList.add(pluginDeclarer);
             }
         }
+        return createPluginDescription(plugin, nameCombinedMap, combinedList);
+    }
+
+    private static AbstractPluginDescription createPluginDescription(Plugin plugin,
+            Map<String, List<PluginDeclarer>> nameCombinedMap, List<PluginDeclarer> combinedList) {
         return new AbstractPluginDescription() {
             @Override
             public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
@@ -113,8 +120,17 @@ public class PluginCollector {
                 final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.get(typeDescription.getActualName());
                 final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
                 for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
-                    interceptDeclarers.addAll(
-                            Arrays.asList(pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                    ClassLoader loader = pluginDeclarer.getClass().getClassLoader();
+                    if (loader instanceof PluginClassLoader) {
+                        PluginClassLoader pluginClassLoader = (PluginClassLoader) loader;
+                        pluginClassLoader.setLocalLoader(classLoader);
+                        interceptDeclarers.addAll(Arrays.asList(
+                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                        pluginClassLoader.removeLocalLoader();
+                    } else {
+                        interceptDeclarers.addAll(Arrays.asList(
+                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                    }
                 }
                 return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]), plugin).transform(
                         builder, typeDescription, classLoader, javaModule, protectionDomain);
@@ -126,7 +142,7 @@ public class PluginCollector {
                 for (PluginDeclarer declarer : combinedList) {
                     if (matchTarget(declarer.getClassMatcher(), target)) {
                         List<PluginDeclarer> declarers = nameCombinedMap.computeIfAbsent(typeName,
-                                k -> new ArrayList<>());
+                                key -> new ArrayList<>());
                         if (!declarers.contains(declarer)) {
                             declarers.add(declarer);
                         }
@@ -140,6 +156,7 @@ public class PluginCollector {
     /**
      * 从插件收集器中获取所有插件声明器
      *
+     * @param classLoader 类加载器
      * @return 插件声明器集
      */
     private static List<? extends PluginDeclarer> getDeclarers(ClassLoader classLoader) {

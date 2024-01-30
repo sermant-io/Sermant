@@ -18,6 +18,7 @@ package com.huaweicloud.agentcore.test.application.router;
 
 import com.huaweicloud.agentcore.test.application.controller.TestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -53,13 +54,19 @@ public class ControllerHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String response = setResponse(exchange);
+        Object responseObject = setResponse(exchange);
+        String response = "";
         int responseCode = REQUEST_SUCCESS_CODE;
-        if (response.equals(REQUEST_URL_NOT_FOUND)) {
-            responseCode = REQUEST_NOT_FOUND_CODE;
-        }
-        if (response.equals(REQUEST_PARAMS_ERROR)) {
-            responseCode = REQUEST_FAILED_CODE;
+        if (responseObject instanceof String) {
+            if (responseObject.equals(REQUEST_URL_NOT_FOUND)) {
+                responseCode = REQUEST_NOT_FOUND_CODE;
+            }
+            if (responseObject.equals(REQUEST_PARAMS_ERROR)) {
+                responseCode = REQUEST_FAILED_CODE;
+            }
+            response = (String) responseObject;
+        } else {
+            response = JSONObject.toJSONString(responseObject);
         }
 
         // 构建响应消息
@@ -77,7 +84,7 @@ public class ControllerHandler implements HttpHandler {
      * @param exchange
      * @return
      */
-    private String setResponse(HttpExchange exchange) {
+    private Object setResponse(HttpExchange exchange) {
         switch (exchange.getRequestURI().getPath()) {
             case RouterPath.REQUEST_PATH_PING:
                 return testController.ping();
@@ -97,6 +104,14 @@ public class ControllerHandler implements HttpHandler {
                 return testController.testAgentmainStartup();
             case RouterPath.REQUEST_PATH_CORE_AND_PLUGIN_CONFIG_LOAD:
                 return testController.testCoreAndPluginConfigLoad();
+            case RouterPath.REQUEST_PATH_CLASS_MATCH:
+                return testController.testClassMatch();
+            case RouterPath.REQUEST_PATH_METHOD_MATCH:
+                return testController.testMethodMatch();
+            case RouterPath.REQUEST_PATH_ENHANCEMENT:
+                return testController.testEnhancement();
+            case RouterPath.REQUEST_PATH_RE_TRANSFORM:
+                return testController.testReTransform();
             default:
                 return REQUEST_URL_NOT_FOUND;
         }

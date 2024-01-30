@@ -102,6 +102,10 @@ public enum SpringLoadbalancerCache {
         if (!result) {
             return;
         }
+        if (!(rule instanceof ChangedLoadbalancerRule)) {
+            LOGGER.warning("LoadbalancerRule can not be cast to ChangedLoadbalancerRule");
+            return;
+        }
         ChangedLoadbalancerRule changedLoadbalancerRule = (ChangedLoadbalancerRule) rule;
         final LoadbalancerRule oldRule = changedLoadbalancerRule.getOldRule();
         final LoadbalancerRule newRule = changedLoadbalancerRule.getNewRule();

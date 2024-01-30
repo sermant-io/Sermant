@@ -92,18 +92,22 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         HttpConnectionUtils.save(new HttpConnectionContext(urlInfo, url));
         RequestInterceptorUtils.printRequestLog("HttpURLConnection", urlInfo);
         invokerService.invoke(
-            buildInvokerFunc(context, url, urlInfo),
-            ex -> ex,
-            urlInfo.get(HttpConstants.HTTP_URI_SERVICE))
-                .ifPresent(obj -> {
-                    if (obj instanceof Exception) {
-                        LOGGER.log(Level.SEVERE, "request is error, uri is " + fullUrl, (Exception) obj);
-                        context.setThrowableOut((Exception) obj);
-                        return;
-                    }
-                    context.skip(obj);
-                });
+                buildInvokerFunc(context, url, urlInfo),
+                ex -> ex,
+                urlInfo.get(HttpConstants.HTTP_URI_SERVICE))
+                    .ifPresent(obj -> {
+                        if (obj instanceof Exception) {
+                            LOGGER.log(Level.SEVERE, "request is error, uri is " + fullUrl, (Exception) obj);
+                            context.setThrowableOut((Exception) obj);
+                            return;
+                        }
+                        context.skip(obj);
+                    });
         return context;
+    }
+
+    @Override
+    protected void ready() {
     }
 
     private Optional<URL> getUrl(Object target) {
@@ -131,6 +135,9 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
 
     /**
      * 针对指定代理的场景下, 需将代理的地址替换为实际下游地址, 否则将出现404
+     *
+     * @param newUrl 实际下游地址
+     * @param context 拦截器上下文
      */
     private void tryResetProxy(URL newUrl, ExecuteContext context) {
         final Optional<Object> instProxy = ReflectUtils.getFieldValue(context.getObject(), "instProxy");
