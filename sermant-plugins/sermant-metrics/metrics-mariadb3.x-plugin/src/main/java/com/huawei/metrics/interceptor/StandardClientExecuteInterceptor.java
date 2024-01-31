@@ -17,41 +17,34 @@
 package com.huawei.metrics.interceptor;
 
 import com.huawei.metrics.common.Constants;
-import com.huawei.metrics.manager.MetricsManager;
+import com.huawei.metrics.util.ThreadMetricsUtil;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.core.utils.StringUtils;
 
-import org.mariadb.jdbc.internal.util.dao.ClientPrepareResult;
+import org.mariadb.jdbc.message.ClientMessage;
 
 /**
- * Mariadb2.x SQL执行增强器
+ * mariadb3.x SQL执行增强器
  *
  * @author zhp
  * @since 2024-01-15
  */
-public class ExecuteInterceptor extends AbstractQueryProtocolInterceptor {
-    private static final int SQL_PARAM_INDEX = 2;
+public class StandardClientExecuteInterceptor extends AbstractStandardClientExecuteInterceptor {
+    @Override
+    public ExecuteContext before(ExecuteContext context) {
+        context.setLocalFieldValue(Constants.START_TIME_KEY, System.nanoTime());
+        return context;
+    }
 
     @Override
     public ExecuteContext collectMetrics(ExecuteContext context) {
         Object startTime = context.getLocalFieldValue(Constants.START_TIME_KEY);
-        if (startTime == null) {
+        if (context.getArguments()[0] == null || ThreadMetricsUtil.getStartTime() != null || startTime == null) {
             return context;
         }
-        String sql = null;
-        if (context.getArguments()[SQL_PARAM_INDEX] instanceof String) {
-            sql = (String) context.getArguments()[SQL_PARAM_INDEX];
-        } else if (context.getArguments()[SQL_PARAM_INDEX] instanceof ClientPrepareResult) {
-            ClientPrepareResult clientPrepareResult = (ClientPrepareResult) context.getArguments()[SQL_PARAM_INDEX];
-            sql = clientPrepareResult.getSql();
-        }
-        if (StringUtils.isEmpty(sql)) {
-            LOGGER.warning("Unable to obtain the SQL that needs to be executed.");
-            return context;
-        }
+        ClientMessage message = (ClientMessage) context.getArguments()[0];
+        String sql = message.description();
         long latency = System.nanoTime() - (long) startTime;
-        MetricsManager.saveRpcInfo(createRpcInfo(sql, context, latency));
-        return context;
+        return saveMetricInfo(context, sql, latency);
     }
 }

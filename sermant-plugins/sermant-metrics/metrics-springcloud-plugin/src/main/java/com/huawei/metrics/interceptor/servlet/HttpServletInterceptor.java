@@ -20,6 +20,7 @@ import com.huawei.metrics.common.Constants;
 import com.huawei.metrics.entity.MetricsRpcInfo;
 import com.huawei.metrics.interceptor.AbstractHttpInterceptor;
 import com.huawei.metrics.manager.MetricsManager;
+import com.huawei.metrics.util.InetAddressUtil;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
@@ -59,8 +60,8 @@ public class HttpServletInterceptor extends AbstractHttpInterceptor {
      */
     private MetricsRpcInfo initMetricsInfo(HttpServletRequest req, long latency, int status) {
         MetricsRpcInfo metricsRpcInfo = new MetricsRpcInfo();
-        metricsRpcInfo.setClientIp(req.getRemoteHost());
-        metricsRpcInfo.setServerIp(req.getLocalAddr());
+        metricsRpcInfo.setClientIp(InetAddressUtil.getHostAddress());
+        metricsRpcInfo.setServerIp(InetAddressUtil.getHostAddress(req.getLocalAddr()));
         metricsRpcInfo.setServerPort(req.getLocalPort());
         metricsRpcInfo.setProtocol(req.getScheme());
         metricsRpcInfo.setEnableSsl(Constants.HTTPS_PROTOCOL.equals(req.getScheme()));

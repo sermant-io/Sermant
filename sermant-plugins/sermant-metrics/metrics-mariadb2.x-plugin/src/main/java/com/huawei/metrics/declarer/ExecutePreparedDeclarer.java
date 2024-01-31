@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,38 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.declarer.httpurlconnection;
+package com.huawei.metrics.declarer;
 
-import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.httpurlconnection.ConnectorInterceptor;
+import com.huawei.metrics.interceptor.ExecutePreparedInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * HttpURLConnection1.7.x+链接方法拦截声明
+ * mariadb2.x sql执行方法拦截声明
  *
  * @author zhp
- * @since 2023-12-15
+ * @since 2024-01-15
  */
-public class ConnectDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "java.net.HttpURLConnection";
+public class ExecutePreparedDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol";
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
+    /**
+     * 获取插件的拦截声明 {@link org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol#prepare(String, boolean)}
+     *
+     * @param classLoader 被增强类的类加载器
+     * @return 拦截声明集
+     */
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("connect"),
-                        new ConnectorInterceptor())
+        return new InterceptDeclarer[]{InterceptDeclarer.build(MethodMatcher.nameEquals("prepare"),
+                new ExecutePreparedInterceptor())
         };
     }
 }

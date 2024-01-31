@@ -14,4 +14,6 @@
 # limitations under the License.
 #
 #
-com.huawei.metrics.declarer.StandardClientDeclarer
+com.huawei.metrics.declarer.StandardClientExecuteDeclarer
+com.huawei.metrics.declarer.StandardClientExecutePipelineDeclarer
+com.huawei.metrics.declarer.ReplayClientDeclarer

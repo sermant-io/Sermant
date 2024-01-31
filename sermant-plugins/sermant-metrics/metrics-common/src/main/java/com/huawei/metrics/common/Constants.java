@@ -129,6 +129,11 @@ public class Constants {
     public static final int MAX_SUCCESS_CODE = 399;
 
     /**
+     * 默认的HTTP失败编码
+     */
+    public static final int HTTP_DEFAULT_FAILURE_CODE = 9999;
+
+    /**
      * 最大客户端失败编码
      */
     public static final int MAX_CLIENT_ERROR_CODE = 499;

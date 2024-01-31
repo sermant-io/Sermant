@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package com.huawei.metrics.declarer.httpurlconnection;
+package com.huawei.metrics.declarer;
 
-import com.huawei.metrics.declarer.AbstractDeclarer;
-import com.huawei.metrics.interceptor.httpurlconnection.ConnectorInterceptor;
+import com.huawei.metrics.interceptor.StandardClientExecuteInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * HttpURLConnection1.7.x+链接方法拦截声明
+ * mariadb3.x SQL执行方法拦截声明
  *
  * @author zhp
- * @since 2023-12-15
+ * @since 2024-01-15
  */
-public class ConnectDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "java.net.HttpURLConnection";
+public class StandardClientExecuteDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "org.mariadb.jdbc.client.impl.StandardClient";
+
+    private static final int PARAM_COUNT = 8;
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("connect"),
-                        new ConnectorInterceptor())
+                InterceptDeclarer.build(MethodMatcher.nameEquals("execute")
+                        .and(MethodMatcher.paramCountEquals(PARAM_COUNT)), new StandardClientExecuteInterceptor())
         };
     }
 }

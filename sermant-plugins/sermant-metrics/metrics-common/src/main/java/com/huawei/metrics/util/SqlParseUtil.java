@@ -24,9 +24,9 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.util.TablesNamesFinder;
 
-import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,11 +39,15 @@ import java.util.logging.Logger;
 public class SqlParseUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String STATEMENT_CLASS_NAME_SUFFIX = "Statement";
+
+    private static final String STATEMENT_CLASS_NAME_PREFIX = "Plain";
+
     private SqlParseUtil() {
     }
 
     /**
-     * 获取mysql的API维度信息（命令类型_表名）
+     * 获取mysql的API维度信息（命令类型_表名或命令类型）
      *
      * @param sql 执行的SQL语句
      * @return API
@@ -52,12 +56,16 @@ public class SqlParseUtil {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             Statement statement = CCJSqlParserUtil.parse(sql);
-            stringBuilder.append(statement.getClass().getSimpleName().replace("Statement", StringUtils.EMPTY));
-            TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
-            List<String> tables = tablesNamesFinder.getTableList(statement);
+            String className = statement.getClass().getSimpleName();
+            String commandType = className.replace(STATEMENT_CLASS_NAME_PREFIX, StringUtils.EMPTY)
+                    .replace(STATEMENT_CLASS_NAME_SUFFIX, StringUtils.EMPTY)
+                    .toLowerCase(Locale.ROOT);
+            stringBuilder.append(commandType);
+            MysqlTablesNameFinder tablesNamesFinder = new MysqlTablesNameFinder();
+            Set<String> tables = tablesNamesFinder.getTables(statement);
             if (tables != null) {
                 for (String table : tables) {
-                    stringBuilder.append(Constants.CONNECT).append(table);
+                    stringBuilder.append(Constants.CONNECT).append(table.toLowerCase(Locale.ROOT));
                 }
             }
             return stringBuilder.toString();

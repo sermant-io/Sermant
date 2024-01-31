@@ -19,14 +19,15 @@ package com.huawei.metrics.interceptor;
 import com.huawei.metrics.common.Constants;
 import com.huawei.metrics.common.ResultType;
 import com.huawei.metrics.entity.MetricsRpcInfo;
+import com.huawei.metrics.util.InetAddressUtil;
 import com.huawei.metrics.util.ResultJudgmentUtil;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.logging.Logger;
 
 /**
  * Http拦截器父类
@@ -35,8 +36,13 @@ import java.net.UnknownHostException;
  * @since 2023-12-15
  */
 public abstract class AbstractHttpInterceptor implements Interceptor {
+    /**
+     * 日志
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger();
+
     @Override
-    public ExecuteContext after(ExecuteContext context) throws Exception {
+    public ExecuteContext after(ExecuteContext context) {
         return collectMetrics(context);
     }
 
@@ -45,9 +51,8 @@ public abstract class AbstractHttpInterceptor implements Interceptor {
      *
      * @param context 上下文信息
      * @return ExecuteContext 上下文信息
-     * @throws Exception 指标采集异常
      */
-    public abstract ExecuteContext collectMetrics(ExecuteContext context) throws Exception;
+    public abstract ExecuteContext collectMetrics(ExecuteContext context);
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
@@ -62,13 +67,11 @@ public abstract class AbstractHttpInterceptor implements Interceptor {
      * @param latency 时延
      * @param statusCode 结果编码
      * @return 指标数据
-     * @throws UnknownHostException 未知域名异常
      */
-    public MetricsRpcInfo initMetricsInfo(URL url, boolean enableSsl, long latency, int statusCode)
-            throws UnknownHostException {
+    public MetricsRpcInfo initMetricsInfo(URL url, boolean enableSsl, long latency, int statusCode) {
         MetricsRpcInfo metricsRpcInfo = new MetricsRpcInfo();
-        metricsRpcInfo.setClientIp(InetAddress.getLocalHost().getHostAddress());
-        metricsRpcInfo.setServerIp(url.getHost());
+        metricsRpcInfo.setClientIp(InetAddressUtil.getHostAddress());
+        metricsRpcInfo.setServerIp(InetAddressUtil.getHostAddress(url.getHost()));
         metricsRpcInfo.setServerPort(url.getPort());
         metricsRpcInfo.setProtocol(url.getProtocol());
         metricsRpcInfo.setEnableSsl(enableSsl);

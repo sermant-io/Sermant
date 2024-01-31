@@ -23,10 +23,12 @@ import com.huawei.metrics.util.InetAddressUtil;
 import com.huawei.metrics.util.ResultJudgmentUtil;
 import com.huawei.metrics.util.SqlParseUtil;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 /**
  * MYSQL拦截器父类
@@ -35,6 +37,11 @@ import java.sql.SQLException;
  * @since 2024-01-15
  */
 public abstract class AbstractMysqlInterceptor implements Interceptor {
+    /**
+     * 日志
+     */
+    public static final Logger LOGGER = LoggerFactory.getLogger();
+
     @Override
     public ExecuteContext after(ExecuteContext context) {
         return collectMetrics(context);
@@ -58,16 +65,16 @@ public abstract class AbstractMysqlInterceptor implements Interceptor {
      *
      * @param context 上下文信息
      * @param enableSsl 是否开启SSL
-     * @param serverIp 服务端IP
+     * @param host 服务端域名或者IP
      * @param serverPort 服务端端口
      * @param sql 执行的SQL
      * @return 指标信息
      */
-    public MetricsRpcInfo initMetricsRpcInfo(ExecuteContext context, boolean enableSsl, String serverIp,
+    public MetricsRpcInfo initMetricsRpcInfo(ExecuteContext context, boolean enableSsl, String host,
             int serverPort, String sql) {
         MetricsRpcInfo metricsRpcInfo = new MetricsRpcInfo();
         metricsRpcInfo.setClientIp(InetAddressUtil.getHostAddress());
-        metricsRpcInfo.setServerIp(serverIp);
+        metricsRpcInfo.setServerIp(InetAddressUtil.getHostAddress(host));
         metricsRpcInfo.setServerPort(serverPort);
         metricsRpcInfo.setProtocol(Constants.MYSQL_PROTOCOL);
         metricsRpcInfo.setEnableSsl(enableSsl);

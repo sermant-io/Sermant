@@ -27,8 +27,6 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.core.utils.ThreadFactoryUtils;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -145,8 +143,7 @@ public class MetricsService implements PluginService {
         Map<String, MetricsRpcInfo> rpcInfoMap = new HashMap<>();
         StringBuilder stringBuilder = new StringBuilder();
         for (Entry<String, MetricsRpcInfo> entry : MetricsManager.getRpcInfoMap().entrySet()) {
-            MetricsRpcInfo metricsRpcInfo = JSONObject.parseObject(JSONObject.toJSONString(entry.getValue()),
-                    MetricsRpcInfo.class);
+            MetricsRpcInfo metricsRpcInfo = copyRpcInfo(entry.getValue());
             if (metricsRpcInfo.getReqCount().get() == 0 || metricsRpcInfo.getResponseCount().get() == 0
                     || metricsRpcInfo.getSumLatency().get() == 0) {
                 continue;
@@ -316,5 +313,37 @@ public class MetricsService implements PluginService {
                             && value < (MS_TO_NS.longValue() * RANGE[latencyIndex + 1])).count());
         }
         return latencyHistogram.toString();
+    }
+
+    /**
+     * 数据拷贝
+     *
+     * @param metricsRpcInfo 指标数据
+     * @return 指标数据信息
+     */
+    private MetricsRpcInfo copyRpcInfo(MetricsRpcInfo metricsRpcInfo) {
+        MetricsRpcInfo targetRpcInfo = new MetricsRpcInfo();
+        targetRpcInfo.setProcessId(metricsRpcInfo.getProcessId());
+        targetRpcInfo.setClientIp(metricsRpcInfo.getClientIp());
+        targetRpcInfo.setServerIp(metricsRpcInfo.getServerIp());
+        targetRpcInfo.setServerPort(metricsRpcInfo.getServerPort());
+        targetRpcInfo.setL4Role(metricsRpcInfo.getL4Role());
+        targetRpcInfo.setL7Role(metricsRpcInfo.getL7Role());
+        targetRpcInfo.setProtocol(metricsRpcInfo.getProtocol());
+        targetRpcInfo.setContainerId(metricsRpcInfo.getContainerId());
+        targetRpcInfo.setComm(metricsRpcInfo.getComm());
+        targetRpcInfo.setPodName(metricsRpcInfo.getPodName());
+        targetRpcInfo.setPodIp(metricsRpcInfo.getPodIp());
+        targetRpcInfo.setEnableSsl(metricsRpcInfo.isEnableSsl());
+        targetRpcInfo.setMachineId(metricsRpcInfo.getMachineId());
+        targetRpcInfo.setUrl(metricsRpcInfo.getUrl());
+        targetRpcInfo.getReqCount().set(metricsRpcInfo.getReqCount().get());
+        targetRpcInfo.getResponseCount().set(metricsRpcInfo.getResponseCount().get());
+        targetRpcInfo.getSumLatency().set(metricsRpcInfo.getSumLatency().get());
+        targetRpcInfo.getReqErrorCount().set(metricsRpcInfo.getReqErrorCount().get());
+        targetRpcInfo.getClientErrorCount().set(metricsRpcInfo.getClientErrorCount().get());
+        targetRpcInfo.getServerErrorCount().set(metricsRpcInfo.getServerErrorCount().get());
+        targetRpcInfo.getLatencyList().addAll(metricsRpcInfo.getLatencyList());
+        return targetRpcInfo;
     }
 }

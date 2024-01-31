@@ -16,7 +16,6 @@
 
 package com.huawei.metrics.interceptor;
 
-import com.huawei.metrics.common.Constants;
 import com.huawei.metrics.entity.MetricsRpcInfo;
 import com.huawei.metrics.manager.MetricsManager;
 
@@ -26,31 +25,25 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.mariadb.jdbc.HostAddress;
 import org.mariadb.jdbc.client.impl.StandardClient;
 import org.mariadb.jdbc.export.SslMode;
-import org.mariadb.jdbc.message.ClientMessage;
 
 /**
- * mysql-connector-java8.0 SQL执行增强器
+ * mariadb3.x SQL执行增强器
  *
  * @author zhp
  * @since 2024-01-15
  */
-public class StandardClientInterceptor extends AbstractMysqlInterceptor {
-    private static final int PARAM_COUNT = 1;
-
-    @Override
-    public ExecuteContext before(ExecuteContext context) {
-        context.setLocalFieldValue(Constants.START_TIME_KEY, System.nanoTime());
-        return context;
-    }
-
-    @Override
-    public ExecuteContext collectMetrics(ExecuteContext context) {
-        if (context.getArguments()[0] == null) {
-            return context;
-        }
-        ClientMessage message = (ClientMessage) context.getArguments()[0];
-        String sql = message.description();
+public abstract class AbstractStandardClientExecuteInterceptor extends AbstractMysqlInterceptor {
+    /**
+     * 保存指标数据
+     *
+     * @param context 上下文信息
+     * @param sql sql信息
+     * @param latency 时延
+     * @return 上下文信息
+     */
+    public ExecuteContext saveMetricInfo(ExecuteContext context, String sql, long latency) {
         if (StringUtils.isEmpty(sql)) {
+            LOGGER.warning("Unable to obtain the SQL that needs to be executed.");
             return context;
         }
         StandardClient client = (StandardClient) context.getObject();
@@ -61,7 +54,6 @@ public class StandardClientInterceptor extends AbstractMysqlInterceptor {
                 && client.getContext().getConf().sslMode() != SslMode.DISABLE;
         HostAddress hostAddress = client.getHostAddress();
         MetricsRpcInfo metricsRpcInfo = initMetricsRpcInfo(context, enableSsl, hostAddress.host, hostAddress.port, sql);
-        long latency = System.nanoTime() - (long) context.getLocalFieldValue(Constants.START_TIME_KEY);
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
         metricsRpcInfo.getLatencyList().add(latency);
         MetricsManager.saveRpcInfo(metricsRpcInfo);

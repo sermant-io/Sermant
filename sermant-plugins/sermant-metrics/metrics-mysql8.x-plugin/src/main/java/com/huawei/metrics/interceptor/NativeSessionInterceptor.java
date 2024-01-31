@@ -21,6 +21,7 @@ import com.huawei.metrics.entity.MetricsRpcInfo;
 import com.huawei.metrics.manager.MetricsManager;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
+import com.huaweicloud.sermant.core.utils.StringUtils;
 
 import com.mysql.cj.NativeSession;
 import com.mysql.cj.conf.HostInfo;
@@ -41,6 +42,10 @@ public class NativeSessionInterceptor extends AbstractMysqlInterceptor {
 
     @Override
     public ExecuteContext collectMetrics(ExecuteContext context) {
+        Object startTime = context.getLocalFieldValue(Constants.START_TIME_KEY);
+        if (startTime == null) {
+            return context;
+        }
         String sql;
         Object object = context.getArguments()[0];
         if (object instanceof JdbcPreparedStatement) {
@@ -48,11 +53,19 @@ public class NativeSessionInterceptor extends AbstractMysqlInterceptor {
         } else {
             sql = (String) context.getArguments()[1];
         }
+        if (StringUtils.isEmpty(sql)) {
+            LOGGER.warning("Unable to obtain the SQL that needs to be executed.");
+            return context;
+        }
         NativeSession nativeSession = (NativeSession) context.getObject();
         HostInfo hostInfo = nativeSession.getHostInfo();
+        if (hostInfo == null) {
+            LOGGER.warning("Unable to obtain host information for database.");
+            return context;
+        }
         MetricsRpcInfo metricsRpcInfo = initMetricsRpcInfo(context, nativeSession.isSSLEstablished(),
-                nativeSession.getProcessHost(), hostInfo.getPort(), sql);
-        long latency = System.nanoTime() - (long) context.getLocalFieldValue(Constants.START_TIME_KEY);
+                hostInfo.getHost(), hostInfo.getPort(), sql);
+        long latency = System.nanoTime() - (long) startTime;
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
         metricsRpcInfo.getLatencyList().add(latency);
         MetricsManager.saveRpcInfo(metricsRpcInfo);
