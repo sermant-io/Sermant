@@ -23,6 +23,8 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
+import com.squareup.okhttp.Request;
+
 /**
  * okhttp2.x服务调用拦截声明
  *
@@ -30,18 +32,25 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @since 2023-12-15
  */
 public class CallDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "com.squareup.okhttp.Call";
+    private static final String ENHANCE_CLASS = "com.squareup.okhttp.Call$ApplicationInterceptorChain";
 
     @Override
     public ClassMatcher getClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
+    /**
+     * 获取插件的拦截声明
+     * {@link com.squareup.okhttp.Call.ApplicationInterceptorChain#proceed(Request)}}
+     *
+     * @param classLoader 被增强类的类加载器
+     * @return 拦截声明集
+     */
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("getResponseWithInterceptorChain"),
-                        new CallInterceptor())
+                InterceptDeclarer.build(MethodMatcher.nameEquals("proceed")
+                        .and(MethodMatcher.paramTypesEqual("com.squareup.okhttp.Request")), new CallInterceptor())
         };
     }
 }

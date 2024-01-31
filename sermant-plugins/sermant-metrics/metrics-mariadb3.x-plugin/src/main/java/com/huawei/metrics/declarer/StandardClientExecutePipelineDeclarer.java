@@ -16,33 +16,31 @@
 
 package com.huawei.metrics.declarer;
 
-import com.huawei.metrics.interceptor.StandardClientInterceptor;
+import com.huawei.metrics.interceptor.StandardClientExecutePipelineInterceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 链接方法拦截声明
+ * mariadb3.x SQL批量执行方法拦截声明
  *
  * @author zhp
  * @since 2024-01-15
  */
-public class StandardClientDeclarer extends AbstractDeclarer {
+public class StandardClientExecutePipelineDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS = "org.mariadb.jdbc.client.impl.StandardClient";
-
-    private static final int PARAM_COUNT = 1;
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(ENHANCE_CLASS);
+        return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(MethodMatcher.nameEquals("sendQuery")
-                        .and(MethodMatcher.paramCountEquals(PARAM_COUNT)), new StandardClientInterceptor())
+                InterceptDeclarer.build(MethodMatcher.nameEquals("executePipeline"),
+                        new StandardClientExecutePipelineInterceptor())
         };
     }
 }

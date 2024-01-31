@@ -17,7 +17,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <jsqlparser.version>4.4</jsqlparser.version>
+        <jsqlparser.version>4.8</jsqlparser.version>
     </properties>
     <dependencies>
         <!--provided依赖-->

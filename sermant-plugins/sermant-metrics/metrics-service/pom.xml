@@ -29,12 +29,6 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- compile依赖 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${fastjson.version}</version>
-        </dependency>
         <!-- test依赖 -->
         <dependency>
             <groupId>junit</groupId>

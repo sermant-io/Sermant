@@ -16,3 +16,5 @@
 #
 com.huawei.metrics.declarer.ExecuteBatchDeclarer
 com.huawei.metrics.declarer.ExecuteDeclarer
+com.huawei.metrics.declarer.ExecutePreparedDeclarer
+com.huawei.metrics.declarer.ExecutePreparedQueryDeclarer

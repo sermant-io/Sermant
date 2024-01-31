@@ -25,6 +25,7 @@ import com.huawei.metrics.util.ThreadMetricsUtil;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -41,20 +42,35 @@ public class DisconnectorInterceptor extends AbstractHttpInterceptor {
     }
 
     @Override
-    public ExecuteContext collectMetrics(ExecuteContext context) throws Exception {
+    public ExecuteContext collectMetrics(ExecuteContext context) {
         if (ThreadMetricsUtil.getStartTime() == null) {
             return context;
         }
         HttpURLConnection httpUrlConnection = (HttpURLConnection) context.getObject();
         URL url = httpUrlConnection.getURL();
         if (url == null) {
+            ThreadMetricsUtil.removeStartTime();
             return context;
         }
         boolean enableSsl = StringUtils.equals(url.getProtocol(), Constants.HTTPS_PROTOCOL);
-        long latency = System.nanoTime() - (long) ThreadMetricsUtil.getStartTime();
-        MetricsRpcInfo metricsRpcInfo = initMetricsInfo(url, enableSsl, latency, httpUrlConnection.getResponseCode());
+        long latency = System.nanoTime() - ThreadMetricsUtil.getStartTime();
+        MetricsRpcInfo metricsRpcInfo = initMetricsInfo(url, enableSsl, latency, getResponseCode(httpUrlConnection));
         MetricsManager.saveRpcInfo(metricsRpcInfo);
         ThreadMetricsUtil.removeStartTime();
         return context;
+    }
+
+    /**
+     * 获取响应编码
+     *
+     * @param httpUrlConnection 请求链接
+     * @return 响应编码
+     */
+    private int getResponseCode(HttpURLConnection httpUrlConnection) {
+        try {
+            return httpUrlConnection.getResponseCode();
+        } catch (IOException e) {
+            return Constants.HTTP_DEFAULT_FAILURE_CODE;
+        }
     }
 }

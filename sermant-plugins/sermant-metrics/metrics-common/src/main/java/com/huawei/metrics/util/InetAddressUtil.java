@@ -19,6 +19,7 @@ package com.huawei.metrics.util;
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -61,7 +62,8 @@ public class InetAddressUtil {
                     for (Enumeration<InetAddress> inetAdd = ni.getInetAddresses();
                             inetAdd.hasMoreElements(); ) {
                         InetAddress inetAddress = inetAdd.nextElement();
-                        if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
+                        if (!inetAddress.isLoopbackAddress() && !inetAddress.isSiteLocalAddress()
+                                && inetAddress instanceof Inet4Address) {
                             hostAddress = inetAddress.getHostAddress();
                             return hostAddress;
                         }
@@ -74,5 +76,25 @@ public class InetAddressUtil {
             }
         }
         return hostAddress;
+    }
+
+    /**
+     * 获取host对应的IP地址
+     *
+     * @param host 域名
+     * @return IP地址
+     */
+    public static String getHostAddress(String host) {
+        try {
+            InetAddress inetAddress = InetAddress.getByName(host);
+            String address = inetAddress.getHostAddress();
+            if (StringUtils.equals(address, "127.0.0.1")) {
+                return getHostAddress();
+            }
+            return address;
+        } catch (UnknownHostException e) {
+            LOGGER.log(Level.SEVERE, "Unable to resolve domain name to IP.");
+            return StringUtils.EMPTY;
+        }
     }
 }

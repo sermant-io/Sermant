@@ -22,7 +22,7 @@ import com.huawei.metrics.manager.MetricsManager;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
-import org.mariadb.jdbc.internal.util.dao.ClientPrepareResult;
+import org.mariadb.jdbc.internal.util.dao.ServerPrepareResult;
 
 /**
  * Mariadb2.x SQL执行增强器
@@ -30,22 +30,15 @@ import org.mariadb.jdbc.internal.util.dao.ClientPrepareResult;
  * @author zhp
  * @since 2024-01-15
  */
-public class ExecuteInterceptor extends AbstractQueryProtocolInterceptor {
-    private static final int SQL_PARAM_INDEX = 2;
-
+public class ExecutePreparedQueryInterceptor extends AbstractQueryProtocolInterceptor {
     @Override
     public ExecuteContext collectMetrics(ExecuteContext context) {
         Object startTime = context.getLocalFieldValue(Constants.START_TIME_KEY);
-        if (startTime == null) {
+        if (context.getArguments()[1] == null || startTime == null) {
             return context;
         }
-        String sql = null;
-        if (context.getArguments()[SQL_PARAM_INDEX] instanceof String) {
-            sql = (String) context.getArguments()[SQL_PARAM_INDEX];
-        } else if (context.getArguments()[SQL_PARAM_INDEX] instanceof ClientPrepareResult) {
-            ClientPrepareResult clientPrepareResult = (ClientPrepareResult) context.getArguments()[SQL_PARAM_INDEX];
-            sql = clientPrepareResult.getSql();
-        }
+        ServerPrepareResult serverPrepareResult = (ServerPrepareResult) context.getArguments()[1];
+        String sql = serverPrepareResult.getSql();
         if (StringUtils.isEmpty(sql)) {
             LOGGER.warning("Unable to obtain the SQL that needs to be executed.");
             return context;

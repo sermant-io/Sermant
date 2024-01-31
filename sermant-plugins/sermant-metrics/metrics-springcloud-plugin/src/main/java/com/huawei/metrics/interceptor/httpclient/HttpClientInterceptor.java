@@ -28,7 +28,10 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
 
 /**
  * HttpClient请求发送增强器
@@ -44,20 +47,38 @@ public class HttpClientInterceptor extends AbstractHttpInterceptor {
     }
 
     @Override
-    public ExecuteContext collectMetrics(ExecuteContext context) throws Exception {
+    public ExecuteContext collectMetrics(ExecuteContext context) {
         HttpHost httpHost = (HttpHost) context.getArguments()[0];
         HttpRequest httpRequest = (HttpRequest) context.getArguments()[1];
         HttpResponse httpResponse = (HttpResponse) context.getResult();
-        if (context.getLocalFieldValue(Constants.START_TIME_KEY) == null || httpRequest.getRequestLine() == null
-                || httpResponse.getStatusLine() == null) {
+        Object object = context.getLocalFieldValue(Constants.START_TIME_KEY);
+        if (object == null || httpRequest.getRequestLine() == null) {
             return context;
         }
-        URI uri = new URI(httpRequest.getRequestLine().getUri());
-        long latency = System.nanoTime() - (Long) context.getLocalFieldValue(Constants.START_TIME_KEY);
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        boolean enableSsl = StringUtils.equals(httpHost.getSchemeName(), Constants.HTTPS_PROTOCOL);
-        MetricsRpcInfo metricsRpcInfo = initMetricsInfo(uri.toURL(), enableSsl, latency, statusCode);
-        MetricsManager.saveRpcInfo(metricsRpcInfo);
-        return context;
+        try {
+            URI uri = new URI(httpRequest.getRequestLine().getUri());
+            long latency = System.nanoTime() - (Long) object;
+            int statusCode = getResponseCode(httpResponse);
+            boolean enableSsl = StringUtils.equals(httpHost.getSchemeName(), Constants.HTTPS_PROTOCOL);
+            MetricsRpcInfo metricsRpcInfo = initMetricsInfo(uri.toURL(), enableSsl, latency, statusCode);
+            MetricsManager.saveRpcInfo(metricsRpcInfo);
+            return context;
+        } catch (IOException | URISyntaxException e) {
+            LOGGER.log(Level.SEVERE, "Unable to obtain requested URL information.", e);
+            return context;
+        }
+    }
+
+    /**
+     * 获取响应编码
+     *
+     * @param httpResponse 响应信息
+     * @return 响应编码
+     */
+    private int getResponseCode(HttpResponse httpResponse) {
+        if (httpResponse == null || httpResponse.getStatusLine() == null) {
+            return Constants.HTTP_DEFAULT_FAILURE_CODE;
+        }
+        return httpResponse.getStatusLine().getStatusCode();
     }
 }

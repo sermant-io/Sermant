@@ -43,13 +43,19 @@ public class CallInterceptor extends AbstractHttpInterceptor {
     }
 
     @Override
-    public ExecuteContext collectMetrics(ExecuteContext context) throws Exception {
+    public ExecuteContext collectMetrics(ExecuteContext context) {
         Call realCall = (Call) context.getObject();
         Request request = realCall.request();
         URL url = request.url().url();
         long latency = System.nanoTime() - (Long) context.getLocalFieldValue(Constants.START_TIME_KEY);
         Response response = (Response) context.getResult();
-        MetricsRpcInfo metricsRpcInfo = initMetricsInfo(url, request.url().isHttps(), latency, response.code());
+        int statusCode;
+        if (response == null) {
+            statusCode = Constants.HTTP_DEFAULT_FAILURE_CODE;
+        } else {
+            statusCode = response.code();
+        }
+        MetricsRpcInfo metricsRpcInfo = initMetricsInfo(url, request.url().isHttps(), latency, statusCode);
         MetricsManager.saveRpcInfo(metricsRpcInfo);
         return context;
     }
