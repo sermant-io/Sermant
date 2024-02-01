@@ -20,20 +20,13 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
+import com.huaweicloud.sermant.mongodb.constant.MethodParamTypeName;
 import com.huaweicloud.sermant.mongodb.interceptors.ExecuteCommandInterceptor;
 import com.huaweicloud.sermant.mongodb.interceptors.ExecuteRetryableCommandInterceptor;
 import com.huaweicloud.sermant.mongodb.interceptors.MixedBulkWriteOperationInterceptor;
 
-import com.mongodb.ReadPreference;
-import com.mongodb.internal.binding.ConnectionSource;
-import com.mongodb.internal.connection.Connection;
-
-import org.bson.BsonDocument;
-import org.bson.FieldNameValidator;
-import org.bson.codecs.Decoder;
-
 /**
- * mongo拦截点辅助类
+ * mongodb拦截点辅助类
  *
  * @author daizhenyu
  * @since 2024-01-16
@@ -57,37 +50,37 @@ public class MongoDbEnhancementHelper {
 
     private static final int METHOD_PARAM_COUNT = 9;
 
-    private static final Class[] EXECUTE_COMMAND_PARAMS_TYPE = {
-            String.class,
-            BsonDocument.class,
-            FieldNameValidator.class,
-            Decoder.class,
-            ConnectionSource.class,
-            Connection.class,
-            ReadPreference.class
+    private static final String[] EXECUTE_COMMAND_PARAMS_TYPE = {
+            MethodParamTypeName.STRING_CLASS_NAME,
+            MethodParamTypeName.BSON_DOCUMENT_CLASS_NAME,
+            MethodParamTypeName.FIELD_NAME_VALIDATOR_CLASS_NAME,
+            MethodParamTypeName.DECODER_CLASS_NAME,
+            MethodParamTypeName.CONNECTION_SOURCE_CLASS_NAME,
+            MethodParamTypeName.CONNECTION_CLASS_NAME,
+            MethodParamTypeName.READ_PREFERENCE_CLASS_NAME
     };
 
     private static final String[] EXECUTE_RETRY_COMMAND_PARAMS_TYPE = {
-            "com.mongodb.internal.binding.WriteBinding",
-            "java.lang.String",
-            "com.mongodb.ReadPreference",
-            "org.bson.FieldNameValidator",
-            "org.bson.codecs.Decoder",
-            "com.mongodb.internal.operation.CommandOperationHelper.CommandCreator",
-            "com.mongodb.internal.operation.CommandOperationHelper.CommandWriteTransformer",
-            "com.mongodb.Function"
+            MethodParamTypeName.WRITE_BINDING_CLASS_NAME,
+            MethodParamTypeName.STRING_CLASS_NAME,
+            MethodParamTypeName.READ_PREFERENCE_CLASS_NAME,
+            MethodParamTypeName.FIELD_NAME_VALIDATOR_CLASS_NAME,
+            MethodParamTypeName.DECODER_CLASS_NAME,
+            MethodParamTypeName.COMMAND_CREATOR_CLASS_NAME,
+            MethodParamTypeName.COMMAND_WRITE_TRANSFORMER_CLASS_NAME,
+            MethodParamTypeName.FUNCTION_CLASS_NAME
     };
 
     private static final String[] EXECUTE_RETRY_COMMAND_ASYNC_PARAMS_TYPE = {
-            "com.mongodb.internal.binding.AsyncWriteBinding",
-            "java.lang.String",
-            "com.mongodb.ReadPreference",
-            "org.bson.FieldNameValidator",
-            "org.bson.codecs.Decoder",
-            "com.mongodb.internal.operation.CommandOperationHelper.CommandCreator",
-            "com.mongodb.internal.operation.CommandOperationHelper.CommandWriteTransformerAsync",
-            "com.mongodb.Function",
-            "com.mongodb.internal.async.SingleResultCallback"
+            MethodParamTypeName.ASYNC_WRITE_BINDING_CLASS_NAME,
+            MethodParamTypeName.STRING_CLASS_NAME,
+            MethodParamTypeName.READ_PREFERENCE_CLASS_NAME,
+            MethodParamTypeName.FIELD_NAME_VALIDATOR_CLASS_NAME,
+            MethodParamTypeName.DECODER_CLASS_NAME,
+            MethodParamTypeName.COMMAND_CREATOR_CLASS_NAME,
+            MethodParamTypeName.COMMAND_WRITE_TRANSFORMER_ASYNC_CLASS_NAME,
+            MethodParamTypeName.FUNCTION_CLASS_NAME,
+            MethodParamTypeName.SINGLE_RESULT_CALLBACK_CLASS_NAME
     };
 
     private MongoDbEnhancementHelper() {

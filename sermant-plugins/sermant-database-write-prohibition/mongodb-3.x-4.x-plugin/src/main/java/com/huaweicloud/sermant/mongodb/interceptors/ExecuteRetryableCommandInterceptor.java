@@ -47,7 +47,7 @@ public class ExecuteRetryableCommandInterceptor extends AbstractDatabaseIntercep
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
         String database = (String) context.getArguments()[1];
-        if (DatabaseWriteProhibitionManager.getProhibitionDatabases().contains(database)) {
+        if (DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases().contains(database)) {
             DatabaseController.disableDatabaseWriteOperation(database, context);
         }
         return context;
