@@ -52,7 +52,7 @@
         <lombok.version>1.18.22</lombok.version>
         <asm.version>8.0.1</asm.version>
         <common.io.version>2.7</common.io.version>
-        <org.jacoco.version>0.8.8</org.jacoco.version>
+        <org.jacoco.version>0.8.11</org.jacoco.version>
         <simpleclient.version>0.16.0</simpleclient.version>
 
         <slf4j.version>1.7.35</slf4j.version>
