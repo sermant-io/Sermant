@@ -18,19 +18,29 @@ package com.huaweicloud.sermant.database.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 
 /**
- * mongodb抽象interceptor
+ * 数据库抽象interceptor
  *
  * @author daizhenyu
  * @since 2024-01-22
  **/
 public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
+    /**
+     * 数据库信息存储的key
+     */
+    protected static final String DATABASE_INFO = "databaseInfo";
+
+    /**
+     * 自定义数据库处理handle
+     */
     protected DatabaseHandler handler;
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
+        createAndCacheDatabaseInfo(context);
         if (handler != null) {
             handler.doBefore(context);
             return context;
@@ -63,4 +73,21 @@ public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
      * @return ExecuteContext 上下文
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
+
+    /**
+     * 创建数据库实例对象并缓存在上下文的本地局部属性集中
+     *
+     * @param context 上下文
+     */
+    protected abstract void createAndCacheDatabaseInfo(ExecuteContext context);
+
+    /**
+     * 从context局部属性集中获取数据库实例信息
+     *
+     * @param context 上下文
+     * @return DatabaseInfo 数据库实例信息
+     */
+    protected DatabaseInfo getDataBaseInfo(ExecuteContext context) {
+        return (DatabaseInfo) context.getLocalFieldValue(DATABASE_INFO);
+    }
 }

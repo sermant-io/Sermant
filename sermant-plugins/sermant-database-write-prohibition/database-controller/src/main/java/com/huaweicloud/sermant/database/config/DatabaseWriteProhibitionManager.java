@@ -54,12 +54,12 @@ public class DatabaseWriteProhibitionManager {
      *
      * @return Mysql禁止写入的数据库集合
      */
-    public static Set<String> getMysqlProhibitionDatabases() {
-        if (globalConfig.isEnableMysqlWriteProhibition()) {
-            return globalConfig.getMysqlDatabases();
+    public static Set<String> getMySqlProhibitionDatabases() {
+        if (globalConfig.isEnableMySqlWriteProhibition()) {
+            return globalConfig.getMySqlDatabases();
         }
-        if (localConfig.isEnableMysqlWriteProhibition()) {
-            return localConfig.getMysqlDatabases();
+        if (localConfig.isEnableMySqlWriteProhibition()) {
+            return localConfig.getMySqlDatabases();
         }
         return Collections.EMPTY_SET;
     }

@@ -22,20 +22,22 @@ import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 
 import com.mongodb.ServerAddress;
-import com.mongodb.internal.binding.WriteBinding;
-import com.mongodb.internal.operation.MixedBulkWriteOperation;
+import com.mongodb.connection.ConnectionDescription;
+import com.mongodb.internal.connection.Connection;
 
 /**
- * MixedBulkWriteOperation类拦截声明器
+ * 执行executeWriteCommand方法的拦截器
  *
  * @author daizhenyu
- * @since 2024-01-16
+ * @since 2024-01-18
  **/
-public class MixedBulkWriteOperationInterceptor extends AbstractMongoDbInterceptor {
+public class ExecuteWriteCommandInterceptor extends AbstractMongoDbInterceptor {
+    private static final int PARAM_INDEX = 4;
+
     /**
      * 无参构造方法
      */
-    public MixedBulkWriteOperationInterceptor() {
+    public ExecuteWriteCommandInterceptor() {
     }
 
     /**
@@ -43,7 +45,7 @@ public class MixedBulkWriteOperationInterceptor extends AbstractMongoDbIntercept
      *
      * @param handler 写操作处理器
      */
-    public MixedBulkWriteOperationInterceptor(DatabaseHandler handler) {
+    public ExecuteWriteCommandInterceptor(DatabaseHandler handler) {
         this.handler = handler;
     }
 
@@ -51,12 +53,13 @@ public class MixedBulkWriteOperationInterceptor extends AbstractMongoDbIntercept
     protected void createAndCacheDatabaseInfo(ExecuteContext context) {
         DatabaseInfo info = new DatabaseInfo(DatabaseType.MONGODB);
         context.setLocalFieldValue(DATABASE_INFO, info);
-        ServerAddress serverAddress = ((WriteBinding) context.getArguments()[0])
-                .getWriteConnectionSource()
-                .getServerDescription()
-                .getAddress();
-        info.setDatabaseName(((MixedBulkWriteOperation) context.getObject()).getNamespace().getDatabaseName());
-        info.setHostAddress(serverAddress.getHost());
-        info.setPort(serverAddress.getPort());
+        info.setDatabaseName((String) context.getArguments()[0]);
+        Connection connection = (Connection) context.getArguments()[PARAM_INDEX];
+        ConnectionDescription description = connection.getDescription();
+        if (description != null) {
+            ServerAddress serverAddress = description.getServerAddress();
+            info.setHostAddress(serverAddress.getHost());
+            info.setPort(serverAddress.getPort());
+        }
     }
 }

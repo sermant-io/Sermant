@@ -41,7 +41,7 @@ public class DatabaseWriteProhibitionManagerTest {
         globalConfig.setMongoDbDatabases(globalMongoDbDatabases);
         HashSet<String> globalMysqlDatabases = new HashSet<>();
         globalMysqlDatabases.add("mysql-test-1");
-        globalConfig.setMysqlDatabases(globalMysqlDatabases);
+        globalConfig.setMySqlDatabases(globalMysqlDatabases);
         HashSet<String> globalPostgreSqlDatabases = new HashSet<>();
         globalPostgreSqlDatabases.add("postgresql-test-1");
         globalConfig.setPostgreSqlDatabases(globalPostgreSqlDatabases);
@@ -54,7 +54,7 @@ public class DatabaseWriteProhibitionManagerTest {
         localConfig.setMongoDbDatabases(localMongoDbDatabases);
         HashSet<String> localMysqlDatabases = new HashSet<>();
         localMysqlDatabases.add("mysql-test-1");
-        globalConfig.setMysqlDatabases(localMysqlDatabases);
+        globalConfig.setMySqlDatabases(localMysqlDatabases);
         HashSet<String> localPostgreSqlDatabases = new HashSet<>();
         localPostgreSqlDatabases.add("postgresql-test-1");
         globalConfig.setPostgreSqlDatabases(localPostgreSqlDatabases);
@@ -69,11 +69,11 @@ public class DatabaseWriteProhibitionManagerTest {
     @Test
     public void testGetProhibitionDatabasesWithGlobalAndLocalConfigEnabled() {
         globalConfig.setEnableMongoDbWriteProhibition(true);
-        globalConfig.setEnableMysqlWriteProhibition(true);
+        globalConfig.setEnableMySqlWriteProhibition(true);
         globalConfig.setEnablePostgreSqlWriteProhibition(true);
         globalConfig.setEnableOpenGaussWriteProhibition(true);
         localConfig.setEnableMongoDbWriteProhibition(true);
-        localConfig.setEnableMysqlWriteProhibition(true);
+        localConfig.setEnableMySqlWriteProhibition(true);
         localConfig.setEnablePostgreSqlWriteProhibition(true);
         localConfig.setEnableOpenGaussWriteProhibition(true);
         DatabaseWriteProhibitionManager.updateGlobalConfig(globalConfig);
@@ -81,8 +81,8 @@ public class DatabaseWriteProhibitionManagerTest {
 
         Assert.assertEquals(globalConfig.getMongoDbDatabases(),
                 DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases());
-        Assert.assertEquals(globalConfig.getMysqlDatabases(),
-                DatabaseWriteProhibitionManager.getMysqlProhibitionDatabases());
+        Assert.assertEquals(globalConfig.getMySqlDatabases(),
+                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases());
         Assert.assertEquals(globalConfig.getPostgreSqlDatabases(),
                 DatabaseWriteProhibitionManager.getPostgreSqlProhibitionDatabases());
         Assert.assertEquals(globalConfig.getOpenGaussDatabases(),
@@ -95,11 +95,11 @@ public class DatabaseWriteProhibitionManagerTest {
     @Test
     public void testGetProhibitionDatabasesWithJustGlobalConfigEnabled() {
         globalConfig.setEnableMongoDbWriteProhibition(true);
-        globalConfig.setEnableMysqlWriteProhibition(true);
+        globalConfig.setEnableMySqlWriteProhibition(true);
         globalConfig.setEnablePostgreSqlWriteProhibition(true);
         globalConfig.setEnableOpenGaussWriteProhibition(true);
         localConfig.setEnableMongoDbWriteProhibition(false);
-        localConfig.setEnableMysqlWriteProhibition(false);
+        localConfig.setEnableMySqlWriteProhibition(false);
         localConfig.setEnablePostgreSqlWriteProhibition(false);
         localConfig.setEnableOpenGaussWriteProhibition(false);
         DatabaseWriteProhibitionManager.updateGlobalConfig(globalConfig);
@@ -107,8 +107,8 @@ public class DatabaseWriteProhibitionManagerTest {
 
         Assert.assertEquals(globalConfig.getMongoDbDatabases(),
                 DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases());
-        Assert.assertEquals(globalConfig.getMysqlDatabases(),
-                DatabaseWriteProhibitionManager.getMysqlProhibitionDatabases());
+        Assert.assertEquals(globalConfig.getMySqlDatabases(),
+                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases());
         Assert.assertEquals(globalConfig.getPostgreSqlDatabases(),
                 DatabaseWriteProhibitionManager.getPostgreSqlProhibitionDatabases());
         Assert.assertEquals(globalConfig.getOpenGaussDatabases(),
@@ -121,11 +121,11 @@ public class DatabaseWriteProhibitionManagerTest {
     @Test
     public void testGetProhibitionDatabasesWithJustLocalConfigEnabled() {
         globalConfig.setEnableMongoDbWriteProhibition(false);
-        globalConfig.setEnableMysqlWriteProhibition(false);
+        globalConfig.setEnableMySqlWriteProhibition(false);
         globalConfig.setEnablePostgreSqlWriteProhibition(false);
         globalConfig.setEnableOpenGaussWriteProhibition(false);
         localConfig.setEnableMongoDbWriteProhibition(true);
-        localConfig.setEnableMysqlWriteProhibition(true);
+        localConfig.setEnableMySqlWriteProhibition(true);
         localConfig.setEnablePostgreSqlWriteProhibition(true);
         localConfig.setEnableOpenGaussWriteProhibition(true);
         DatabaseWriteProhibitionManager.updateGlobalConfig(globalConfig);
@@ -133,8 +133,8 @@ public class DatabaseWriteProhibitionManagerTest {
 
         Assert.assertEquals(localConfig.getMongoDbDatabases(),
                 DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases());
-        Assert.assertEquals(localConfig.getMysqlDatabases(),
-                DatabaseWriteProhibitionManager.getMysqlProhibitionDatabases());
+        Assert.assertEquals(localConfig.getMySqlDatabases(),
+                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases());
         Assert.assertEquals(localConfig.getPostgreSqlDatabases(),
                 DatabaseWriteProhibitionManager.getPostgreSqlProhibitionDatabases());
         Assert.assertEquals(localConfig.getOpenGaussDatabases(),
@@ -147,18 +147,18 @@ public class DatabaseWriteProhibitionManagerTest {
     @Test
     public void testGetProhibitionDatabasesWithBothConfigsDisabled() {
         globalConfig.setEnableMongoDbWriteProhibition(false);
-        globalConfig.setEnableMysqlWriteProhibition(false);
+        globalConfig.setEnableMySqlWriteProhibition(false);
         globalConfig.setEnablePostgreSqlWriteProhibition(false);
         globalConfig.setEnableOpenGaussWriteProhibition(false);
         localConfig.setEnableMongoDbWriteProhibition(false);
-        localConfig.setEnableMysqlWriteProhibition(false);
+        localConfig.setEnableMySqlWriteProhibition(false);
         localConfig.setEnablePostgreSqlWriteProhibition(false);
         localConfig.setEnableOpenGaussWriteProhibition(false);
         DatabaseWriteProhibitionManager.updateGlobalConfig(globalConfig);
         DatabaseWriteProhibitionManager.updateLocalConfig(localConfig);
 
         Assert.assertTrue(DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases().isEmpty());
-        Assert.assertTrue(DatabaseWriteProhibitionManager.getMysqlProhibitionDatabases().isEmpty());
+        Assert.assertTrue(DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases().isEmpty());
         Assert.assertTrue(DatabaseWriteProhibitionManager.getPostgreSqlProhibitionDatabases().isEmpty());
         Assert.assertTrue(DatabaseWriteProhibitionManager.getOpenGaussProhibitionDatabases().isEmpty());
     }
@@ -183,19 +183,19 @@ public class DatabaseWriteProhibitionManagerTest {
         DatabaseWriteProhibitionManager.updateLocalConfig(null);
 
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getGlobalConfig().getMongoDbDatabases().size());
-        Assert.assertEquals(0, DatabaseWriteProhibitionManager.getGlobalConfig().getMysqlDatabases().size());
+        Assert.assertEquals(0, DatabaseWriteProhibitionManager.getGlobalConfig().getMySqlDatabases().size());
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getGlobalConfig().getPostgreSqlDatabases().size());
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getGlobalConfig().getOpenGaussDatabases().size());
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getLocalConfig().getMongoDbDatabases().size());
-        Assert.assertEquals(0, DatabaseWriteProhibitionManager.getLocalConfig().getMysqlDatabases().size());
+        Assert.assertEquals(0, DatabaseWriteProhibitionManager.getLocalConfig().getMySqlDatabases().size());
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getLocalConfig().getPostgreSqlDatabases().size());
         Assert.assertEquals(0, DatabaseWriteProhibitionManager.getLocalConfig().getOpenGaussDatabases().size());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getGlobalConfig().isEnableMongoDbWriteProhibition());
-        Assert.assertFalse(DatabaseWriteProhibitionManager.getGlobalConfig().isEnableMysqlWriteProhibition());
+        Assert.assertFalse(DatabaseWriteProhibitionManager.getGlobalConfig().isEnableMySqlWriteProhibition());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getGlobalConfig().isEnablePostgreSqlWriteProhibition());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getGlobalConfig().isEnableOpenGaussWriteProhibition());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getLocalConfig().isEnableMongoDbWriteProhibition());
-        Assert.assertFalse(DatabaseWriteProhibitionManager.getLocalConfig().isEnableMysqlWriteProhibition());
+        Assert.assertFalse(DatabaseWriteProhibitionManager.getLocalConfig().isEnableMySqlWriteProhibition());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getLocalConfig().isEnablePostgreSqlWriteProhibition());
         Assert.assertFalse(DatabaseWriteProhibitionManager.getLocalConfig().isEnableOpenGaussWriteProhibition());
     }

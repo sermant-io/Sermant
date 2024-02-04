@@ -17,18 +17,23 @@
 package com.huaweicloud.sermant.mongodb.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.database.controller.DatabaseController;
+import com.huaweicloud.sermant.database.constant.DatabaseType;
+import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
-import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
+
+import com.mongodb.ServerAddress;
+import com.mongodb.connection.ConnectionDescription;
+import com.mongodb.internal.connection.Connection;
 
 /**
- * 执行同步和异步write操作的拦截器
+ * 执行executeCommand方法的拦截器
  *
  * @author daizhenyu
  * @since 2024-01-18
  **/
-public class ExecuteCommandInterceptor extends AbstractDatabaseInterceptor {
+public class ExecuteCommandInterceptor extends AbstractMongoDbInterceptor {
+    private static final int PARAM_INDEX = 5;
+
     /**
      * 无参构造方法
      */
@@ -45,11 +50,16 @@ public class ExecuteCommandInterceptor extends AbstractDatabaseInterceptor {
     }
 
     @Override
-    public ExecuteContext doBefore(ExecuteContext context) {
-        String database = (String) context.getArguments()[0];
-        if (DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases().contains(database)) {
-            DatabaseController.disableDatabaseWriteOperation(database, context);
+    protected void createAndCacheDatabaseInfo(ExecuteContext context) {
+        DatabaseInfo info = new DatabaseInfo(DatabaseType.MONGODB);
+        context.setLocalFieldValue(DATABASE_INFO, info);
+        info.setDatabaseName((String) context.getArguments()[0]);
+        Connection connection = (Connection) context.getArguments()[PARAM_INDEX];
+        ConnectionDescription description = connection.getDescription();
+        if (description != null) {
+            ServerAddress serverAddress = description.getServerAddress();
+            info.setHostAddress(serverAddress.getHost());
+            info.setPort(serverAddress.getPort());
         }
-        return context;
     }
 }

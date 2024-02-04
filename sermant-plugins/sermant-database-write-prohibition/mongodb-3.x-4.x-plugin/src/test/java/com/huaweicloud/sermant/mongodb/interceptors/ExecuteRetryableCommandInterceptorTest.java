@@ -21,7 +21,15 @@ import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionConfig;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
 
 import com.mongodb.MongoNamespace;
+import com.mongodb.ServerAddress;
+import com.mongodb.ServerApi;
+import com.mongodb.connection.ServerDescription;
+import com.mongodb.internal.binding.ConnectionSource;
+import com.mongodb.internal.binding.SingleServerBinding;
+import com.mongodb.internal.binding.WriteBinding;
+import com.mongodb.internal.connection.Connection;
 import com.mongodb.internal.operation.MixedBulkWriteOperation;
+import com.mongodb.internal.session.SessionContext;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -61,7 +69,12 @@ public class ExecuteRetryableCommandInterceptorTest {
         operationMock = Mockito.mock(MixedBulkWriteOperation.class);
         methodMock = Mockito.mock(Method.class);
         Mockito.when(operationMock.getNamespace()).thenReturn(namespace);
-        argument = new Object[] {"first-param", "database-test"};
+        WriteBinding binding = Mockito.mock(SingleServerBinding.class);
+        ServerDescription description = Mockito.mock(ServerDescription.class);
+        ServerAddress serverAddress = new ServerAddress("127.0.0.1", 8080);
+        Mockito.when(binding.getWriteConnectionSource()).thenReturn(new ConnectionSourceImpl(description));
+        Mockito.when(description.getAddress()).thenReturn(serverAddress);
+        argument = new Object[] {binding, "database-test"};
     }
 
     @AfterClass
@@ -70,30 +83,31 @@ public class ExecuteRetryableCommandInterceptorTest {
     }
 
     @Test
-    public void testDoBefore() {
+    public void testDoBefore() throws Exception {
         // 数据库禁写开关关闭
         globalConfig.setEnableMongoDbWriteProhibition(false);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, argument, null, null);
-        interceptor.doBefore(context);
+        interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
         // 数据库禁写开关关闭，禁写数据库set包含被拦截的数据库
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
         globalConfig.setMongoDbDatabases(databases);
+        interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
         //数据库禁写开关打开，禁写数据库集合包含被拦截的数据库
         globalConfig.setEnableMongoDbWriteProhibition(true);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, argument, null, null);
-        interceptor.doBefore(context);
+        interceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
         //数据库禁写开关打开，禁写数据库集合不包含被拦截的数据库
         globalConfig.setMongoDbDatabases(new HashSet<>());
-        interceptor.doBefore(context);
         context = ExecuteContext.forMemberMethod(operationMock, methodMock, argument, null, null);
+        interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
     }
 }

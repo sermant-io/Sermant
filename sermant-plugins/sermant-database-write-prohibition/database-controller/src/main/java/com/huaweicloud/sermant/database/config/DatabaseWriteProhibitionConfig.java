@@ -39,12 +39,12 @@ public class DatabaseWriteProhibitionConfig {
     /**
      * Mysql是否开启禁写
      */
-    private boolean enableMysqlWriteProhibition = false;
+    private boolean enableMySqlWriteProhibition = false;
 
     /**
      * Mysql需要禁写的数据库
      */
-    private Set<String> mysqlDatabases = new HashSet<>();
+    private Set<String> mySqlDatabases = new HashSet<>();
 
     /**
      * PostgreSQL是否开启禁写
@@ -82,20 +82,20 @@ public class DatabaseWriteProhibitionConfig {
         this.mongoDbDatabases = mongoDbDatabases;
     }
 
-    public boolean isEnableMysqlWriteProhibition() {
-        return enableMysqlWriteProhibition;
+    public boolean isEnableMySqlWriteProhibition() {
+        return enableMySqlWriteProhibition;
     }
 
-    public void setEnableMysqlWriteProhibition(boolean enableMysqlWriteProhibition) {
-        this.enableMysqlWriteProhibition = enableMysqlWriteProhibition;
+    public void setEnableMySqlWriteProhibition(boolean enableMySqlWriteProhibition) {
+        this.enableMySqlWriteProhibition = enableMySqlWriteProhibition;
     }
 
-    public Set<String> getMysqlDatabases() {
-        return mysqlDatabases;
+    public Set<String> getMySqlDatabases() {
+        return mySqlDatabases;
     }
 
-    public void setMysqlDatabases(Set<String> mysqlDatabases) {
-        this.mysqlDatabases = mysqlDatabases;
+    public void setMySqlDatabases(Set<String> mySqlDatabases) {
+        this.mySqlDatabases = mySqlDatabases;
     }
 
     public boolean isEnablePostgreSqlWriteProhibition() {
@@ -134,8 +134,8 @@ public class DatabaseWriteProhibitionConfig {
     public String toString() {
         return "enableMongoDbWriteProhibition=" + enableMongoDbWriteProhibition
                 + ", mongoDbDatabases=" + mongoDbDatabases + "; "
-                + "enableMysqlWriteProhibition=" + enableMysqlWriteProhibition
-                + ", mysqlDatabases=" + mysqlDatabases + "; "
+                + "enableMysqlWriteProhibition=" + enableMySqlWriteProhibition
+                + ", mysqlDatabases=" + mySqlDatabases + "; "
                 + "enablePostgreSqlWriteProhibition=" + enablePostgreSqlWriteProhibition
                 + ", postgreSqlDatabases=" + postgreSqlDatabases + ";"
                 + " enableOpenGaussWriteProhibition=" + enableOpenGaussWriteProhibition
