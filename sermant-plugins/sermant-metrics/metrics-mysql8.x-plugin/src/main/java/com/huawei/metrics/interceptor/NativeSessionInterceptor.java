@@ -67,7 +67,6 @@ public class NativeSessionInterceptor extends AbstractMysqlInterceptor {
                 hostInfo.getHost(), hostInfo.getPort(), sql);
         long latency = System.nanoTime() - (long) startTime;
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
-        metricsRpcInfo.getLatencyList().add(latency);
         MetricsManager.saveRpcInfo(metricsRpcInfo);
         return context;
     }

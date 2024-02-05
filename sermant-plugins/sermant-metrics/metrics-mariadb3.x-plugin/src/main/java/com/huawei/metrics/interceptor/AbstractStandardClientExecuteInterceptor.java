@@ -55,7 +55,6 @@ public abstract class AbstractStandardClientExecuteInterceptor extends AbstractM
         HostAddress hostAddress = client.getHostAddress();
         MetricsRpcInfo metricsRpcInfo = initMetricsRpcInfo(context, enableSsl, hostAddress.host, hostAddress.port, sql);
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
-        metricsRpcInfo.getLatencyList().add(latency);
         MetricsManager.saveRpcInfo(metricsRpcInfo);
         return context;
     }

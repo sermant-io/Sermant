@@ -22,6 +22,7 @@ import com.huawei.metrics.entity.MetricsRpcInfo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Metrics管理类
@@ -50,14 +51,35 @@ public class MetricsManager {
      * @param metricsRpcInfo RPC信息
      */
     public static void saveRpcInfo(MetricsRpcInfo metricsRpcInfo) {
-        String key = getKey(metricsRpcInfo);
-        MetricsRpcInfo rpcInfo = METRICS_RPC_INFO_MAP.computeIfAbsent(key, s -> metricsRpcInfo);
-        if (rpcInfo != metricsRpcInfo) {
-            rpcInfo.getReqCount().getAndAdd(metricsRpcInfo.getReqCount().get());
-            rpcInfo.getResponseCount().getAndAdd(metricsRpcInfo.getResponseCount().get());
-            rpcInfo.getSumLatency().getAndAdd(metricsRpcInfo.getSumLatency().get());
-            rpcInfo.getLatencyList().addAll(metricsRpcInfo.getLatencyList());
-            rpcInfo.getReqErrorCount().getAndAdd(metricsRpcInfo.getReqErrorCount().get());
+        MetricsRpcInfo rpcInfo = METRICS_RPC_INFO_MAP.computeIfAbsent(getKey(metricsRpcInfo), key -> metricsRpcInfo);
+        if (rpcInfo == metricsRpcInfo) {
+            return;
+        }
+        rpcInfo.getReqCount().getAndAdd(metricsRpcInfo.getReqCount().get());
+        rpcInfo.getResponseCount().getAndAdd(metricsRpcInfo.getResponseCount().get());
+        long latency = metricsRpcInfo.getSumLatency().get();
+        rpcInfo.getSumLatency().getAndAdd(latency);
+        rpcInfo.getReqErrorCount().getAndAdd(metricsRpcInfo.getReqErrorCount().get());
+        for (int index = 0; index < Constants.LATENCY_RANGE.length; index++) {
+            if (latency < Constants.LATENCY_RANGE[index]) {
+                modifyLatencyCountsByRange(index, rpcInfo);
+                break;
+            }
+        }
+    }
+
+    /**
+     * 根据时延范围下标修改时延统计数量。时延统计数量对应的时延范围包含该时延范围时，时延统计数量+1，
+     * 由于时延统计数量自增排列，下标大于该时延范围下标的对应的时延范围都包含该时延范围时。
+     *
+     * @param rangeIndex 时延所属范围的数组下标
+     * @param rpcInfo 指标信息
+     */
+    private static void modifyLatencyCountsByRange(int rangeIndex, MetricsRpcInfo rpcInfo) {
+        for (int index = rangeIndex; index < Constants.LATENCY_RANGE.length; index++) {
+            AtomicInteger atomicInteger = rpcInfo.getLatencyCounts()
+                    .computeIfAbsent(Constants.LATENCY_COUNT_KEY[index], key -> new AtomicInteger());
+            atomicInteger.getAndIncrement();
         }
     }
 

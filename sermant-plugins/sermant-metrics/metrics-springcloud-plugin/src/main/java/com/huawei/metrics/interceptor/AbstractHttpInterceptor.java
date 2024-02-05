@@ -80,7 +80,6 @@ public abstract class AbstractHttpInterceptor implements Interceptor {
         metricsRpcInfo.setUrl(url.getPath());
         metricsRpcInfo.getReqCount().getAndIncrement();
         metricsRpcInfo.getResponseCount().getAndIncrement();
-        metricsRpcInfo.getLatencyList().add(latency);
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
         fillErrorCountInfo(statusCode, metricsRpcInfo);
         return metricsRpcInfo;

@@ -26,12 +26,6 @@
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!--SQL解析第三方依赖-->
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>${jsqlparser.version}</version>
-        </dependency>
         <!--test依赖-->
         <dependency>
             <groupId>junit</groupId>

@@ -19,16 +19,11 @@ package com.huawei.metrics.util;
 import com.huawei.metrics.common.Constants;
 
 import com.huaweicloud.sermant.core.common.LoggerFactory;
-import com.huaweicloud.sermant.core.utils.StringUtils;
 
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-
-import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * SQL解析工具类
@@ -39,9 +34,16 @@ import java.util.logging.Logger;
 public class SqlParseUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final String STATEMENT_CLASS_NAME_SUFFIX = "Statement";
+    private static final Pattern COMMAND_TYPE_PATTERN =
+            Pattern.compile("^*(INSERT\\b|UPDATE\\b|DELETE\\b|CREATE\\b|ALTER\\b|DROP\\b|TRUNCATE\\b|SET\\b"
+                            + "|COMMIT\\b|SHOW\\b|USE\\b|SELECT\\b)",
+                    Pattern.CASE_INSENSITIVE);
 
-    private static final String STATEMENT_CLASS_NAME_PREFIX = "Plain";
+    private static final Pattern TABLE_PATTERN =
+            Pattern.compile("(?i)(?:CREATE\\s+INDEX\\s+\\$\\{\\w+\\}\\s+ON|SELECT\\s+\\*\\s+FROM|DROP\\s+INDEX\\s"
+                    + "+\\w+\\s+ON|CREATE\\s+INDEX\\s+\\w+\\s+ON|ALTER\\s+TABLE|INSERT\\s+INTO|UPDATE|TRUNCATE\\s+TABLE"
+                    + "|CREATE\\s+TABLE|DELETE\\s+FROM|DROP\\s+"
+                    + "TABLE)\\s+`*(\\w+)`*", Pattern.CASE_INSENSITIVE);
 
     private SqlParseUtil() {
     }
@@ -55,21 +57,18 @@ public class SqlParseUtil {
     public static String getApi(String sql) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            Statement statement = CCJSqlParserUtil.parse(sql);
-            String className = statement.getClass().getSimpleName();
-            String commandType = className.replace(STATEMENT_CLASS_NAME_PREFIX, StringUtils.EMPTY)
-                    .replace(STATEMENT_CLASS_NAME_SUFFIX, StringUtils.EMPTY)
-                    .toLowerCase(Locale.ROOT);
-            stringBuilder.append(commandType);
-            MysqlTablesNameFinder tablesNamesFinder = new MysqlTablesNameFinder();
-            Set<String> tables = tablesNamesFinder.getTables(statement);
-            if (tables != null) {
-                for (String table : tables) {
-                    stringBuilder.append(Constants.CONNECT).append(table.toLowerCase(Locale.ROOT));
-                }
+            Matcher commandTypeMatcher = COMMAND_TYPE_PATTERN.matcher(sql);
+            if (commandTypeMatcher.find()) {
+                stringBuilder.append(commandTypeMatcher.group());
+            }
+            Matcher tableMatcher = TABLE_PATTERN.matcher(sql);
+            while (tableMatcher.find()) {
+                String group = tableMatcher.group();
+                String[] groupStr = group.split(Constants.SPACE);
+                stringBuilder.append(Constants.CONNECT).append(groupStr[groupStr.length - 1]);
             }
             return stringBuilder.toString();
-        } catch (JSQLParserException | UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             LOGGER.log(Level.INFO, "There is currently no table data in SQL.");
             return stringBuilder.toString();
         }
