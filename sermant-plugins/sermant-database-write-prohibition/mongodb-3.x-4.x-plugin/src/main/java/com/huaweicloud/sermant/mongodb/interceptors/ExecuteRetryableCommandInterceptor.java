@@ -17,10 +17,12 @@
 package com.huaweicloud.sermant.mongodb.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
-import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.database.controller.DatabaseController;
+import com.huaweicloud.sermant.database.constant.DatabaseType;
+import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
-import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
+
+import com.mongodb.ServerAddress;
+import com.mongodb.internal.binding.WriteBinding;
 
 /**
  * 执行重试write操作的拦截器
@@ -28,7 +30,7 @@ import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
  * @author daizhenyu
  * @since 2024-01-18
  **/
-public class ExecuteRetryableCommandInterceptor extends AbstractDatabaseInterceptor {
+public class ExecuteRetryableCommandInterceptor extends AbstractMongoDbInterceptor {
     /**
      * 无参构造方法
      */
@@ -45,11 +47,15 @@ public class ExecuteRetryableCommandInterceptor extends AbstractDatabaseIntercep
     }
 
     @Override
-    public ExecuteContext doBefore(ExecuteContext context) {
-        String database = (String) context.getArguments()[1];
-        if (DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases().contains(database)) {
-            DatabaseController.disableDatabaseWriteOperation(database, context);
-        }
-        return context;
+    protected void createAndCacheDatabaseInfo(ExecuteContext context) {
+        DatabaseInfo info = new DatabaseInfo(DatabaseType.MONGODB);
+        context.setLocalFieldValue(DATABASE_INFO, info);
+        ServerAddress serverAddress = ((WriteBinding) context.getArguments()[0])
+                .getWriteConnectionSource()
+                .getServerDescription()
+                .getAddress();
+        info.setDatabaseName((String) context.getArguments()[1]);
+        info.setHostAddress(serverAddress.getHost());
+        info.setPort(serverAddress.getPort());
     }
 }

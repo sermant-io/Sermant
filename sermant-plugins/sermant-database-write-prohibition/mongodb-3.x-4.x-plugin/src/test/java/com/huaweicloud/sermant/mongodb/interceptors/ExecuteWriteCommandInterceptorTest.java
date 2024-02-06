@@ -43,7 +43,7 @@ import java.util.Set;
  * @author daizhenyu
  * @since 2024-01-23
  **/
-public class ExecuteCommandInterceptorTest {
+public class ExecuteWriteCommandInterceptorTest {
     private static DatabaseWriteProhibitionConfig globalConfig = new DatabaseWriteProhibitionConfig();
 
     private static MongoNamespace namespace = new MongoNamespace("database-test",
@@ -57,7 +57,7 @@ public class ExecuteCommandInterceptorTest {
 
     private static Object[] argument;
 
-    private ExecuteCommandInterceptor interceptor = new ExecuteCommandInterceptor();
+    private ExecuteWriteCommandInterceptor interceptor = new ExecuteWriteCommandInterceptor();
 
     @BeforeClass
     public static void setUp() {
@@ -70,7 +70,7 @@ public class ExecuteCommandInterceptorTest {
         ServerAddress serverAddress = new ServerAddress("127.0.0.1", 8080);
         Mockito.when(connection.getDescription()).thenReturn(description);
         Mockito.when(description.getServerAddress()).thenReturn(serverAddress);
-        argument = new Object[]{"database-test", null, null, null, null, connection};
+        argument = new Object[]{"database-test", null, null, null, connection};
     }
 
     @AfterClass

@@ -23,6 +23,7 @@ import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 import com.huaweicloud.sermant.mongodb.constant.MethodParamTypeName;
 import com.huaweicloud.sermant.mongodb.interceptors.ExecuteCommandInterceptor;
 import com.huaweicloud.sermant.mongodb.interceptors.ExecuteRetryableCommandInterceptor;
+import com.huaweicloud.sermant.mongodb.interceptors.ExecuteWriteCommandInterceptor;
 import com.huaweicloud.sermant.mongodb.interceptors.MixedBulkWriteOperationInterceptor;
 
 /**
@@ -37,10 +38,6 @@ public class MongoDbEnhancementHelper {
     private static final String COMMAND_OPERATION_CLASS = "com.mongodb.internal.operation.CommandOperationHelper";
 
     private static final String EXECUTE_METHOD_NAME = "execute";
-
-    private static final String EXECUTE_ASYNC_METHOD_NAME = "executeAsync";
-
-    private static final String EXECUTE_COMMAND_ASYNC_METHOD_NAME = "executeCommandAsync";
 
     private static final String EXECUTE_COMMAND_METHOD_NAME = "executeCommand";
 
@@ -69,18 +66,6 @@ public class MongoDbEnhancementHelper {
             MethodParamTypeName.COMMAND_CREATOR_CLASS_NAME,
             MethodParamTypeName.COMMAND_WRITE_TRANSFORMER_CLASS_NAME,
             MethodParamTypeName.FUNCTION_CLASS_NAME
-    };
-
-    private static final String[] EXECUTE_RETRY_COMMAND_ASYNC_PARAMS_TYPE = {
-            MethodParamTypeName.ASYNC_WRITE_BINDING_CLASS_NAME,
-            MethodParamTypeName.STRING_CLASS_NAME,
-            MethodParamTypeName.READ_PREFERENCE_CLASS_NAME,
-            MethodParamTypeName.FIELD_NAME_VALIDATOR_CLASS_NAME,
-            MethodParamTypeName.DECODER_CLASS_NAME,
-            MethodParamTypeName.COMMAND_CREATOR_CLASS_NAME,
-            MethodParamTypeName.COMMAND_WRITE_TRANSFORMER_ASYNC_CLASS_NAME,
-            MethodParamTypeName.FUNCTION_CLASS_NAME,
-            MethodParamTypeName.SINGLE_RESULT_CALLBACK_CLASS_NAME
     };
 
     private MongoDbEnhancementHelper() {
@@ -114,7 +99,6 @@ public class MongoDbEnhancementHelper {
                 new MixedBulkWriteOperationInterceptor();
         return new InterceptDeclarer[]{
                 InterceptDeclarer.build(getExecuteMethodMatcher(), mixedBulkWriteOperationInterceptor),
-                InterceptDeclarer.build(getExecuteAsyncMethodMatcher(), mixedBulkWriteOperationInterceptor)
         };
     }
 
@@ -140,37 +124,14 @@ public class MongoDbEnhancementHelper {
     }
 
     /**
-     * 获取MixedBulkWriteOperation executeAsync方法无参拦截器
+     * 获取CommandOperationHelper写操作无参拦截器数组
      *
-     * @return InterceptDeclarer MixedBulkWriteOperation executeAsync方法无参拦截器
-     */
-    public static InterceptDeclarer getExecuteAsyncInterceptDeclarer() {
-        return InterceptDeclarer.build(getExecuteAsyncMethodMatcher(),
-                new MixedBulkWriteOperationInterceptor());
-    }
-
-    /**
-     * 获取MixedBulkWriteOperation executeAsync方法有参拦截器
-     *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer MixedBulkWriteOperation executeAsync方法有参拦截器
-     */
-    public static InterceptDeclarer getExecuteAsyncInterceptDeclarer(DatabaseHandler handler) {
-        return InterceptDeclarer.build(getExecuteAsyncMethodMatcher(),
-                new MixedBulkWriteOperationInterceptor(handler));
-    }
-
-    /**
-     * 获取CommandOperationHelper写操作无参拦截器
-     *
-     * @return InterceptDeclarer[] CommandOperationHelper写操作无参拦截器
+     * @return InterceptDeclarer[] CommandOperationHelper写操作无参拦截器数组
      */
     public static InterceptDeclarer[] getCommandOperationHelperInterceptDeclarers() {
-        ExecuteCommandInterceptor commandInterceptor = new ExecuteCommandInterceptor();
         return new InterceptDeclarer[]{
-                InterceptDeclarer.build(getExecuteCommandMethodMatcher(), commandInterceptor),
-                InterceptDeclarer.build(getExecuteCommandAsyncMethodMatcher(), commandInterceptor),
-                InterceptDeclarer.build(getExecuteWriteCommandMethodMatcher(), commandInterceptor),
+                InterceptDeclarer.build(getExecuteCommandMethodMatcher(), new ExecuteCommandInterceptor()),
+                InterceptDeclarer.build(getExecuteWriteCommandMethodMatcher(), new ExecuteWriteCommandInterceptor()),
                 InterceptDeclarer.build(getExecuteRetryableCommandMethodMatcher(),
                         new ExecuteRetryableCommandInterceptor())
         };
@@ -201,7 +162,7 @@ public class MongoDbEnhancementHelper {
      * @return InterceptDeclarer CommandOperationHelper executeWriteCommand方法无参拦截器
      */
     public static InterceptDeclarer getExecuteWriteCommandInterceptDeclarer() {
-        return InterceptDeclarer.build(getExecuteWriteCommandMethodMatcher(), new ExecuteCommandInterceptor());
+        return InterceptDeclarer.build(getExecuteWriteCommandMethodMatcher(), new ExecuteWriteCommandInterceptor());
     }
 
     /**
@@ -212,27 +173,8 @@ public class MongoDbEnhancementHelper {
      */
     public static InterceptDeclarer getExecuteWriteCommandInterceptDeclarer(
             DatabaseHandler handler) {
-        return InterceptDeclarer.build(getExecuteWriteCommandMethodMatcher(), new ExecuteCommandInterceptor(handler));
-    }
-
-    /**
-     * 获取CommandOperationHelper executeCommandAsync方法无参拦截器
-     *
-     * @return InterceptDeclarer CommandOperationHelper executeCommandAsync方法无参拦截器
-     */
-    public static InterceptDeclarer getExecuteCommandAsyncInterceptDeclarer() {
-        return InterceptDeclarer.build(getExecuteCommandAsyncMethodMatcher(), new ExecuteCommandInterceptor());
-    }
-
-    /**
-     * 获取CommandOperationHelper executeCommandAsync方法有参拦截器
-     *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer CommandOperationHelper executeCommandAsync方法有参拦截器
-     */
-    public static InterceptDeclarer getExecuteCommandAsyncInterceptDeclarer(
-            DatabaseHandler handler) {
-        return InterceptDeclarer.build(getExecuteCommandAsyncMethodMatcher(), new ExecuteCommandInterceptor(handler));
+        return InterceptDeclarer
+                .build(getExecuteWriteCommandMethodMatcher(), new ExecuteWriteCommandInterceptor(handler));
     }
 
     /**
@@ -261,10 +203,6 @@ public class MongoDbEnhancementHelper {
         return MethodMatcher.nameEquals(EXECUTE_METHOD_NAME);
     }
 
-    private static MethodMatcher getExecuteAsyncMethodMatcher() {
-        return MethodMatcher.nameEquals(EXECUTE_ASYNC_METHOD_NAME);
-    }
-
     private static MethodMatcher getExecuteCommandMethodMatcher() {
         return MethodMatcher.nameEquals(EXECUTE_COMMAND_METHOD_NAME)
                 .and(MethodMatcher.paramTypesEqual(EXECUTE_COMMAND_PARAMS_TYPE));
@@ -275,14 +213,8 @@ public class MongoDbEnhancementHelper {
                 .and(MethodMatcher.paramCountEquals(METHOD_PARAM_COUNT));
     }
 
-    private static MethodMatcher getExecuteCommandAsyncMethodMatcher() {
-        return MethodMatcher.nameEquals(EXECUTE_COMMAND_ASYNC_METHOD_NAME)
-                .and(MethodMatcher.paramCountEquals(METHOD_PARAM_COUNT));
-    }
-
     private static MethodMatcher getExecuteRetryableCommandMethodMatcher() {
         return MethodMatcher.nameEquals(EXECUTE_RETRYABLE_COMMAND_METHOD_NAME)
-                .and(MethodMatcher.paramTypesEqual(EXECUTE_RETRY_COMMAND_ASYNC_PARAMS_TYPE)
-                        .or(MethodMatcher.paramTypesEqual(EXECUTE_RETRY_COMMAND_PARAMS_TYPE)));
+                .and(MethodMatcher.paramTypesEqual(EXECUTE_RETRY_COMMAND_PARAMS_TYPE));
     }
 }
