@@ -54,7 +54,6 @@ public abstract class AbstractQueryProtocolInterceptor extends AbstractMysqlInte
         MetricsRpcInfo metricsRpcInfo = initMetricsRpcInfo(context, enableSsl, protocol.getHost(), protocol.getPort(),
                 sql);
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
-        metricsRpcInfo.getLatencyList().add(latency);
         return metricsRpcInfo;
     }
 }

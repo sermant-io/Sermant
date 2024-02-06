@@ -18,6 +18,7 @@ package com.huawei.metrics.service;
 
 import com.huawei.metrics.common.Constants;
 import com.huawei.metrics.config.MetricsConfig;
+import com.huawei.metrics.entity.MetricsInfo;
 import com.huawei.metrics.entity.MetricsRpcInfo;
 import com.huawei.metrics.manager.MetricsManager;
 
@@ -37,12 +38,12 @@ import java.math.RoundingMode;
 import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,11 +67,7 @@ public class MetricsService implements PluginService {
 
     private static final BigDecimal MS_TO_S = new BigDecimal(1000);
 
-    private static final BigDecimal MS_TO_NS = new BigDecimal(1000000);
-
     private static final BigDecimal TO_PERCENT = new BigDecimal(100);
-
-    private static final int[] RANGE = {0, 3, 10, 50, 100, 500, 1000, 10000};
 
     /**
      * 进程Id
@@ -197,7 +194,11 @@ public class MetricsService implements PluginService {
         originalRpcInfo.getSumLatency().getAndAdd(-metricsRpcInfo.getSumLatency().get());
         originalRpcInfo.getResponseCount().getAndAdd(-metricsRpcInfo.getResponseCount().get());
         originalRpcInfo.getReqCount().getAndAdd(-metricsRpcInfo.getReqCount().get());
-        originalRpcInfo.getLatencyList().removeAll(metricsRpcInfo.getLatencyList());
+        Map<String, AtomicInteger> latenctCountMap = originalRpcInfo.getLatencyCounts();
+        for (Entry<String, AtomicInteger> entry : metricsRpcInfo.getLatencyCounts().entrySet()) {
+            AtomicInteger atomicInteger = latenctCountMap.get(entry.getKey());
+            atomicInteger.getAndAdd(-entry.getValue().get());
+        }
     }
 
     /**
@@ -240,7 +241,7 @@ public class MetricsService implements PluginService {
                 ENABLE_NUM, RoundingMode.HALF_UP);
         BigDecimal resThroughout = resCount.multiply(MS_TO_S).divide(new BigDecimal(METRICS_CONFIG.getDelayTime()),
                 ENABLE_NUM, RoundingMode.HALF_UP);
-        String latencyHistogram = getLatencyHistogram(metricsRpcInfo.getLatencyList());
+        String latencyHistogram = getLatencyHistogram(metricsRpcInfo.getLatencyCounts());
         String sslFlag = metricsRpcInfo.isEnableSsl() ? Constants.SSL_OPEN : Constants.SSL_CLOSE;
         StringBuilder stringBuilder = new StringBuilder();
         String metricsRpcInfoStr = stringBuilder.append(sslFlag).append(Constants.METRICS_LINK)
@@ -269,7 +270,12 @@ public class MetricsService implements PluginService {
             rpcInfo.getSumLatency().getAndAdd(metricsRpcInfo.getSumLatency().get());
             rpcInfo.getResponseCount().getAndAdd(metricsRpcInfo.getResponseCount().get());
             rpcInfo.getReqCount().getAndAdd(metricsRpcInfo.getReqCount().get());
-            rpcInfo.getLatencyList().addAll(metricsRpcInfo.getLatencyList());
+            Map<String, AtomicInteger> latenctCountMap = rpcInfo.getLatencyCounts();
+            for (Entry<String, AtomicInteger> entry : metricsRpcInfo.getLatencyCounts().entrySet()) {
+                AtomicInteger atomicInteger = latenctCountMap.computeIfAbsent(entry.getKey(),
+                        key -> new AtomicInteger());
+                atomicInteger.getAndAdd(entry.getValue().get());
+            }
         }
     }
 
@@ -301,16 +307,20 @@ public class MetricsService implements PluginService {
      * @param latencyList 时延信息
      * @return 时延直方图
      */
-    private String getLatencyHistogram(List<Long> latencyList) {
+    private String getLatencyHistogram(Map<String, AtomicInteger> latencyList) {
         if (latencyList == null || latencyList.isEmpty()) {
             return StringUtils.EMPTY;
         }
-        StringBuilder latencyHistogram = new StringBuilder(String.valueOf(RANGE.length - 1));
-        for (int index = 0; index < RANGE.length - 1; index++) {
-            final int latencyIndex = index;
-            latencyHistogram.append(" ").append(MS_TO_NS.longValue() * RANGE[index + 1]).append(" ").append(
-                    (int) latencyList.stream().filter(value -> value > RANGE[0]
-                            && value < (MS_TO_NS.longValue() * RANGE[latencyIndex + 1])).count());
+        int length = Constants.LATENCY_RANGE.length;
+        StringBuilder latencyHistogram = new StringBuilder(String.valueOf(length));
+        for (int index = 0; index < length; index++) {
+            AtomicInteger atomicInteger = latencyList.get(Constants.LATENCY_COUNT_KEY[index]);
+            latencyHistogram.append(Constants.SPACE).append(Constants.LATENCY_RANGE[index]).append(Constants.SPACE);
+            if (atomicInteger != null) {
+                latencyHistogram.append(atomicInteger.get());
+            } else {
+                latencyHistogram.append(0);
+            }
         }
         return latencyHistogram.toString();
     }
@@ -322,6 +332,27 @@ public class MetricsService implements PluginService {
      * @return 指标数据信息
      */
     private MetricsRpcInfo copyRpcInfo(MetricsRpcInfo metricsRpcInfo) {
+        MetricsRpcInfo targetRpcInfo = copyMetricsBaseInfo(metricsRpcInfo);
+        targetRpcInfo.getReqCount().set(metricsRpcInfo.getReqCount().get());
+        targetRpcInfo.getResponseCount().set(metricsRpcInfo.getResponseCount().get());
+        targetRpcInfo.getSumLatency().set(metricsRpcInfo.getSumLatency().get());
+        targetRpcInfo.getReqErrorCount().set(metricsRpcInfo.getReqErrorCount().get());
+        targetRpcInfo.getClientErrorCount().set(metricsRpcInfo.getClientErrorCount().get());
+        targetRpcInfo.getServerErrorCount().set(metricsRpcInfo.getServerErrorCount().get());
+        Map<String, AtomicInteger> latenctCountMap = targetRpcInfo.getLatencyCounts();
+        for (Entry<String, AtomicInteger> entry : metricsRpcInfo.getLatencyCounts().entrySet()) {
+            latenctCountMap.put(entry.getKey(), new AtomicInteger(entry.getValue().get()));
+        }
+        return targetRpcInfo;
+    }
+
+    /**
+     * 拷贝基础信息
+     *
+     * @param metricsRpcInfo 指标信息
+     * @return 新的指标信息实体类
+     */
+    private MetricsRpcInfo copyMetricsBaseInfo(MetricsInfo metricsRpcInfo) {
         MetricsRpcInfo targetRpcInfo = new MetricsRpcInfo();
         targetRpcInfo.setProcessId(metricsRpcInfo.getProcessId());
         targetRpcInfo.setClientIp(metricsRpcInfo.getClientIp());
@@ -337,13 +368,6 @@ public class MetricsService implements PluginService {
         targetRpcInfo.setEnableSsl(metricsRpcInfo.isEnableSsl());
         targetRpcInfo.setMachineId(metricsRpcInfo.getMachineId());
         targetRpcInfo.setUrl(metricsRpcInfo.getUrl());
-        targetRpcInfo.getReqCount().set(metricsRpcInfo.getReqCount().get());
-        targetRpcInfo.getResponseCount().set(metricsRpcInfo.getResponseCount().get());
-        targetRpcInfo.getSumLatency().set(metricsRpcInfo.getSumLatency().get());
-        targetRpcInfo.getReqErrorCount().set(metricsRpcInfo.getReqErrorCount().get());
-        targetRpcInfo.getClientErrorCount().set(metricsRpcInfo.getClientErrorCount().get());
-        targetRpcInfo.getServerErrorCount().set(metricsRpcInfo.getServerErrorCount().get());
-        targetRpcInfo.getLatencyList().addAll(metricsRpcInfo.getLatencyList());
         return targetRpcInfo;
     }
 }

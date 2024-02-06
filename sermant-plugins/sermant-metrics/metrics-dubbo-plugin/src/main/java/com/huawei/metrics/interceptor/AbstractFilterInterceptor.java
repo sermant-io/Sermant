@@ -56,7 +56,6 @@ public abstract class AbstractFilterInterceptor implements Interceptor {
         metricsRpcInfo.getResponseCount().incrementAndGet();
         long latency = System.nanoTime() - (long) startTimeObject;
         metricsRpcInfo.getSumLatency().addAndGet(latency);
-        metricsRpcInfo.getLatencyList().add(latency);
         MetricsManager.saveRpcInfo(metricsRpcInfo);
         return context;
     }

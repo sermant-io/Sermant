@@ -168,6 +168,24 @@ public class Constants {
      */
     public static final byte[] DUBBO_SERVER_ERROR = {31, 80, 50, 60, 70, 100};
 
+    /**
+     * 时延范围纳秒
+     */
+    public static final long[] LATENCY_RANGE = {3000000L, 10000000L, 50000000L, 100000000L, 500000000L, 1000000000L,
+            10000000000L};
+
+    /**
+     * 时延统计的key
+     */
+    public static final String[] LATENCY_COUNT_KEY = {"COUNT_ZERO_TO_THREE", "COUNT_ZERO_TO_TEN",
+            "COUNT_ZERO_TO_FIFTY", "COUNT_ZERO_TO_ONE_HUNDRED", "COUNT_ZERO_TO_FIVE_HUNDRED",
+            "COUNT_ZERO_TO_ONE_THOUSAND", "COUNT_ZERO_TO_TEN_THOUSAND"};
+
+    /**
+     * 空格字符
+     */
+    public static final String SPACE = " ";
+
     private Constants() {
     }
 }

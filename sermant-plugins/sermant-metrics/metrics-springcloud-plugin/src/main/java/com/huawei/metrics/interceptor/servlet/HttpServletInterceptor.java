@@ -69,7 +69,6 @@ public class HttpServletInterceptor extends AbstractHttpInterceptor {
         metricsRpcInfo.setL4Role(Constants.TCP_PROTOCOL + Constants.CONNECT + metricsRpcInfo.getL7Role());
         metricsRpcInfo.setUrl(req.getRequestURI());
         metricsRpcInfo.getReqCount().getAndIncrement();
-        metricsRpcInfo.getLatencyList().add(latency);
         metricsRpcInfo.getSumLatency().getAndAdd(latency);
         metricsRpcInfo.getResponseCount().getAndIncrement();
         fillErrorCountInfo(status, metricsRpcInfo);

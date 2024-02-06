@@ -73,7 +73,6 @@ public class ConnectionInterceptor extends AbstractMysqlInterceptor {
                     url.getHost(), url.getPort(), sql);
             long latency = System.nanoTime() - (long) context.getLocalFieldValue(Constants.START_TIME_KEY);
             metricsRpcInfo.getSumLatency().getAndAdd(latency);
-            metricsRpcInfo.getLatencyList().add(latency);
             MetricsManager.saveRpcInfo(metricsRpcInfo);
             return context;
         } catch (SQLException | URISyntaxException e) {

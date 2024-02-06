@@ -16,8 +16,8 @@
 
 package com.huawei.metrics.entity;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -40,7 +40,7 @@ public class MetricsRpcInfo extends MetricsInfo {
 
     private AtomicInteger serverErrorCount = new AtomicInteger();
 
-    private List<Long> latencyList = new CopyOnWriteArrayList<>();
+    private Map<String, AtomicInteger> latencyCounts = new ConcurrentHashMap<>();
 
     public AtomicInteger getReqCount() {
         return reqCount;
@@ -74,12 +74,12 @@ public class MetricsRpcInfo extends MetricsInfo {
         this.reqErrorCount = reqErrorCount;
     }
 
-    public List<Long> getLatencyList() {
-        return latencyList;
+    public Map<String, AtomicInteger> getLatencyCounts() {
+        return latencyCounts;
     }
 
-    public void setLatencyList(List<Long> latencyList) {
-        this.latencyList = latencyList;
+    public void setLatencyCounts(Map<String, AtomicInteger> latencyCounts) {
+        this.latencyCounts = latencyCounts;
     }
 
     public AtomicInteger getClientErrorCount() {
