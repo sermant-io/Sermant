@@ -20,10 +20,11 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
+import com.huaweicloud.sermant.mariadbv3.interceptors.ExecutePipelineInterceptor;
 import com.huaweicloud.sermant.mariadbv3.interceptors.SendQueryInterceptor;
 
 /**
- * mariadb3.x拦截点辅助类
+ * mariadb3.x declarer helper
  *
  * @author daizhenyu
  * @since 2024-01-30
@@ -35,31 +36,33 @@ public class MariadbV3EnhancementHelper {
 
     private static final String SEND_QUERY_METHOD_NAME = "sendQuery";
 
+    private static final String EXECUTE_PIPELINE_METHOD_NAME = "executePipeline";
+
     private MariadbV3EnhancementHelper() {
     }
 
     /**
-     * 获取ReplayClient类的ClassMatcher
+     * Get ClassMatcher of ReplayClient
      *
-     * @return ClassMatcher 类匹配器
+     * @return ClassMatcher ClassMatcher
      */
     public static ClassMatcher getReplayClientClassMatcher() {
         return ClassMatcher.nameEquals(REPLAY_CLIENT_CLASS);
     }
 
     /**
-     * 获取StandardClient类的ClassMatcher
+     * Get ClassMatcher of StandardClient
      *
-     * @return ClassMatcher 类匹配器
+     * @return ClassMatcher ClassMatcher
      */
     public static ClassMatcher getStandardClientClassMatcher() {
         return ClassMatcher.nameEquals(STANDARD_CLIENT_CLASS);
     }
 
     /**
-     * 获取sendQuery方法无参拦截器
+     * Get No-argument Interceptor of sendQuery Method
      *
-     * @return InterceptDeclarer sendQuery方法无参拦截器
+     * @return InterceptDeclarer No-argument Interceptor of sendQuery Method
      */
     public static InterceptDeclarer getSendQueryInterceptDeclarer() {
         return InterceptDeclarer.build(getSendQueryMethodMatcher(),
@@ -67,17 +70,42 @@ public class MariadbV3EnhancementHelper {
     }
 
     /**
-     * 获取sendQuery方法有参拦截器
+     * Get Parametric Interceptor of sendQuery Method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer sendQuery方法有参拦截器
+     * @param handler write operation handler
+     * @return InterceptDeclarer Parametric Interceptor of sendQuery Method
      */
     public static InterceptDeclarer getSendQueryInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getSendQueryMethodMatcher(),
                 new SendQueryInterceptor(handler));
     }
 
+    /**
+     * Get No-argument Interceptor of executePipeline Method
+     *
+     * @return InterceptDeclarer No-argument Interceptor of executePipeline Method
+     */
+    public static InterceptDeclarer getExecutePipelineInterceptDeclarer() {
+        return InterceptDeclarer.build(getExecutePipelineMethodMatcher(),
+                new ExecutePipelineInterceptor());
+    }
+
+    /**
+     * Get Parametric Interceptor of executePipeline Method
+     *
+     * @param handler write operation handler
+     * @return InterceptDeclarer Parametric Interceptor of executePipeline Method
+     */
+    public static InterceptDeclarer getExecutePipelineInterceptDeclarer(DatabaseHandler handler) {
+        return InterceptDeclarer.build(getExecutePipelineMethodMatcher(),
+                new ExecutePipelineInterceptor(handler));
+    }
+
     private static MethodMatcher getSendQueryMethodMatcher() {
         return MethodMatcher.nameEquals(SEND_QUERY_METHOD_NAME);
+    }
+
+    private static MethodMatcher getExecutePipelineMethodMatcher() {
+        return MethodMatcher.nameEquals(EXECUTE_PIPELINE_METHOD_NAME);
     }
 }

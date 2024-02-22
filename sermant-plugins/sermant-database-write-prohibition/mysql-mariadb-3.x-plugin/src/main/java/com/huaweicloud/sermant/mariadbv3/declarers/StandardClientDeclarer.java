@@ -35,8 +35,9 @@ public class StandardClientDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
-                MariadbV3EnhancementHelper.getSendQueryInterceptDeclarer()
+        return new InterceptDeclarer[]{
+                MariadbV3EnhancementHelper.getSendQueryInterceptDeclarer(),
+                MariadbV3EnhancementHelper.getExecutePipelineInterceptDeclarer()
         };
     }
 }
