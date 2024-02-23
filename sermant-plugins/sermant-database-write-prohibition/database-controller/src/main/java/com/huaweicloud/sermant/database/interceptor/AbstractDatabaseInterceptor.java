@@ -18,8 +18,12 @@ package com.huaweicloud.sermant.database.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.database.controller.DatabaseController;
 import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
+import com.huaweicloud.sermant.database.utils.SqlParserUtils;
+
+import java.util.Set;
 
 /**
  * 数据库抽象interceptor
@@ -89,5 +93,20 @@ public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
      */
     protected DatabaseInfo getDataBaseInfo(ExecuteContext context) {
         return (DatabaseInfo) context.getLocalFieldValue(DATABASE_INFO);
+    }
+
+    /**
+     * 如果当前数据库开启禁写，并且为写操作，则执行禁写逻辑处理，
+     *
+     * @param sql 执行的SQL
+     * @param databaseName 执行SQL的数据库名称
+     * @param prohibitionDatabases 禁写的数据库集合
+     * @param context 上下文信息
+     */
+    protected void handleWriteOperationIfWriteDisabled(String sql, String databaseName,
+            Set<String> prohibitionDatabases, ExecuteContext context) {
+        if (prohibitionDatabases.contains(databaseName) && SqlParserUtils.isWriteOperation(sql)) {
+            DatabaseController.disableDatabaseWriteOperation(databaseName, context);
+        }
     }
 }
