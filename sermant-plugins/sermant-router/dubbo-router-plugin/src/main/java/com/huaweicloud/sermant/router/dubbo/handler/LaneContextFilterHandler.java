@@ -20,8 +20,8 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.Collections;
 import java.util.List;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.service;
+package com.huaweicloud.sermant.router.common.service;
 
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
@@ -29,7 +29,7 @@ public interface AbstractDirectoryService extends PluginService {
      * 筛选标签invoker
      *
      * @param obj RegistryDirectory
-     * @param arguments 参数
+     * @param invocation 参数
      * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory
@@ -37,5 +37,5 @@ public interface AbstractDirectoryService extends PluginService {
      * @see com.alibaba.dubbo.rpc.Invoker
      * @see org.apache.dubbo.rpc.Invoker
      */
-    Object selectInvokers(Object obj, Object[] arguments, Object result);
+    Object selectInvokers(Object obj, Object invocation, Object result);
 }

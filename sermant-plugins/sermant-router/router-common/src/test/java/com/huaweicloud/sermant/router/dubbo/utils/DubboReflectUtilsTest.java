@@ -17,6 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.utils;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
 
 import com.alibaba.dubbo.common.URL;

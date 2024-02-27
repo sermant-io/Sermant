@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EntireRule;
@@ -27,7 +28,6 @@ import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.entity.ValueMatch;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -18,14 +18,15 @@ package com.huaweicloud.sermant.router.dubbo.service;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 import com.huaweicloud.sermant.router.dubbo.RuleInitializationUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import org.apache.dubbo.common.utils.MapUtils;
 import org.apache.dubbo.rpc.Invocation;
@@ -124,7 +125,7 @@ public class AbstractDirectoryServiceTest {
 
         // 测试传递attachment与queryMap为空
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("foo", Collections.singletonList("foo1")));
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
         Assert.assertEquals("foo1", invocation.getAttachment("foo"));
@@ -132,14 +133,14 @@ public class AbstractDirectoryServiceTest {
 
         // side不为consumer
         testObject.getQueryMap().put("side", "");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
         // targetService为空
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
@@ -149,7 +150,7 @@ public class AbstractDirectoryServiceTest {
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
         targetInvokers = (List<Object>) service
-                .selectInvokers(testObject, arguments, Collections.singletonList(invoker1));
+                .selectInvokers(testObject, arguments[0], Collections.singletonList(invoker1));
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker1, targetInvokers.get(0));
 
@@ -157,7 +158,7 @@ public class AbstractDirectoryServiceTest {
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
-        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -185,7 +186,7 @@ public class AbstractDirectoryServiceTest {
         queryMap.put("version", "0.0.1");
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -216,7 +217,7 @@ public class AbstractDirectoryServiceTest {
         parameters.put(RouterConstant.PARAMETERS_KEY_PREFIX + "group", "red");
         DubboCache.INSTANCE.setParameters(parameters);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
@@ -251,7 +252,7 @@ public class AbstractDirectoryServiceTest {
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         DubboCache.INSTANCE.setParameters(parameters1);
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
-        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments, invokers);
+        List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());

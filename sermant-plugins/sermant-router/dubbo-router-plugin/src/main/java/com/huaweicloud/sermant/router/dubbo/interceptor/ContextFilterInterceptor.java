@@ -21,12 +21,12 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.dubbo.handler.AbstractContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.LaneContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.RouteContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

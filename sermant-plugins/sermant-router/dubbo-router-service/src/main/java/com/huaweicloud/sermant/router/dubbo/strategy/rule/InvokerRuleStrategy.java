@@ -16,10 +16,10 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy.rule;
 
+import com.huaweicloud.sermant.router.common.mapper.AbstractMetadataMapper;
 import com.huaweicloud.sermant.router.config.strategy.AbstractRuleStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.instance.MatchInstanceStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.instance.MismatchInstanceStrategy;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 /**
  * 路由规则匹配策略
@@ -30,9 +30,10 @@ import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 public class InvokerRuleStrategy extends AbstractRuleStrategy<Object> {
     /**
      * 构造方法
+     *
+     * @param mapper metadata处理
      */
-    public InvokerRuleStrategy() {
-        super("dubbo", new MatchInstanceStrategy(), new MismatchInstanceStrategy(),
-                obj -> DubboReflectUtils.getParameters(DubboReflectUtils.getUrl(obj)));
+    public InvokerRuleStrategy(AbstractMetadataMapper<Object> mapper) {
+        super("dubbo", new MatchInstanceStrategy(), new MismatchInstanceStrategy(), mapper);
     }
 }

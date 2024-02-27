@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
 
 /**
- * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
+ * 增强dubbo3.x AbstractDirectory的子类的doList方法，筛选标签应用的地址
  *
- * @author provenceee
- * @since 2021-06-28
+ * @author chengyouling
+ * @since 2024-02-20
  */
-public class AbstractDirectoryInterceptor extends AbstractInterceptor {
-    private static final int INDEX = 0;
+public class Dubbo3AbstractDirectoryInterceptor extends AbstractInterceptor {
+    private static final int INDEX = 2;
     private final AbstractDirectoryService abstractDirectoryService;
 
     /**
      * 构造方法
      */
-    public AbstractDirectoryInterceptor() {
+    public Dubbo3AbstractDirectoryInterceptor() {
         abstractDirectoryService = PluginServiceManager.getPluginService(AbstractDirectoryService.class);
     }
 

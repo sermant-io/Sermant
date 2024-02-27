@@ -17,12 +17,13 @@
 package com.huaweicloud.sermant.router.dubbo.service;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
+import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.handler.HandlerChainEntry;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
      * 筛选标签invoker
      *
      * @param registryDirectory RegistryDirectory
-     * @param arguments 参数
+     * @param invocation 参数
      * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory
@@ -56,14 +57,13 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
      * @see org.apache.dubbo.rpc.Invoker
      */
     @Override
-    public Object selectInvokers(Object registryDirectory, Object[] arguments, Object result) {
-        if (arguments == null || arguments.length == 0) {
+    public Object selectInvokers(Object registryDirectory, Object invocation, Object result) {
+        if (invocation == null) {
             return result;
         }
         if (!(result instanceof List<?>)) {
             return result;
         }
-        Object invocation = arguments[0];
         putAttachment(invocation);
         List<Object> invokers = (List<Object>) result;
         Map<String, String> queryMap = DubboReflectUtils.getQueryMap(registryDirectory);
