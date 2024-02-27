@@ -17,12 +17,12 @@
 package com.huaweicloud.sermant.router.dubbo.handler;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 import com.huaweicloud.sermant.router.dubbo.RuleInitializationUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceTest;
 
 import org.apache.dubbo.rpc.Invocation;

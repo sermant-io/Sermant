@@ -69,32 +69,39 @@ jobs:
     needs: [download-midwares-and-cache, build-agent-and-cache]
     strategy:
       matrix:
-        dubbo-version: ['2-5','2-6','2-7']
-        dubbo-versions: ['0','1','2','3','4','5','6','7','8','9','10','11','12']
+        registry-model: ['interface']
+        dubbo-version: ['2-5','2-6','2-7','3-0','3-1','3-2']
+        dubbo-versions: ['0','3','6','9','12']
         include:
-          - dubbo-version: '2-6'
-            dubbo-versions: '10.1'
-          - dubbo-version: '2-7'
-            dubbo-versions: '4.1'
-          - dubbo-version: '2-7'
-            dubbo-versions: '13'
-          - dubbo-version: '2-7'
-            dubbo-versions: '14'
+          - dubbo-version: '2-5'
+            dubbo-versions: '10'
           - dubbo-version: '2-7'
             dubbo-versions: '15'
+          - dubbo-version: '3-0'
+            dubbo-versions: '15'
+            registry-model: 'interface'
+          - dubbo-version: '3-1'
+            dubbo-versions: '11'
+            registry-model: 'interface'
+          - dubbo-version: '3-2'
+            dubbo-versions: '11'
+            registry-model: 'interface'
         exclude:
           - dubbo-version: '2-5'
-            dubbo-versions: '11'
+            dubbo-versions: '9'
+            registry-model: 'interface'
           - dubbo-version: '2-5'
             dubbo-versions: '12'
-          - dubbo-version: '2-7'
-            dubbo-versions: '1'
-          - dubbo-version: '2-7'
-            dubbo-versions: '2'
+            registry-model: 'interface'
           - dubbo-version: '2-7'
             dubbo-versions: '3'
-          - dubbo-version: '2-7'
-            dubbo-versions: '4'
+            registry-model: 'interface'
+          - dubbo-version: '3-1'
+            dubbo-versions: '12'
+            registry-model: 'interface'
+          - dubbo-version: '3-2'
+            dubbo-versions: '12'
+            registry-model: 'interface'
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
@@ -105,21 +112,27 @@ jobs:
           echo "javaVersion=8" >> $GITHUB_ENV
       - name: common operations
         uses: ./.github/actions/common/dubbo
-      - name: (dubbo router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboRouter == 'true'
+      - name: (dubbo2.x router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableDubboRouter == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/router
+      - name: (dubbo3.x router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableDubboRouter == 'true' && matrix.dubbo-version == '3-0' || matrix.dubbo-version == '3-1' || matrix.dubbo-version == '3-2'
+        uses: ./.github/actions/scenarios/dubbo/router-dubbo3
       - name: monitor test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableMonitor == 'true'
+        if: env.enableMonitor == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/monitor
       - name: visibility test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableVisibility == 'true'
+        if: env.enableVisibility == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/visibility
       - name: (dubbo common) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboCommon == 'true'
+        if: env.enableDubboCommon == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/dubbo-common
-      - name: (dubbo lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboLane == 'true'
+      - name: (dubbo2.x lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableDubboLane == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/lane
+      - name: (dubbo3.x lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
+        if: env.enableDubboLane == 'true' && matrix.dubbo-version == '3-0' || matrix.dubbo-version == '3-1' || matrix.dubbo-version == '3-2'
+        uses: ./.github/actions/scenarios/dubbo/lane-dubbo3
       - name: removal test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableRemoval == 'true'
+        if: env.enableRemoval == 'true' && matrix.dubbo-version != '3-0' && matrix.dubbo-version != '3-1' && matrix.dubbo-version != '3-2'
         uses: ./.github/actions/scenarios/dubbo/removal

@@ -20,6 +20,8 @@ import com.huaweicloud.integration.client.ProviderClient;
 import com.huaweicloud.integration.constants.Constant;
 
 import org.apache.dubbo.rpc.RpcContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.client.RestTemplate;
@@ -33,6 +35,8 @@ import javax.annotation.Resource;
  * @since 2022-11-04
  */
 public class MetadataServiceImpl implements MetadataService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataServiceImpl.class);
+
     private static final String PROVIDER_URL = "http://dubbo-integration-provider/hello";
 
     @Resource(name = "fooService")
@@ -48,7 +52,11 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public String getMetadataByDubbo() {
-        RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
+        if (Boolean.parseBoolean(System.getProperty("execute.rpcContext.getContext", "true"))) {
+            LOGGER.info("execute rpcContext getContext========================true");
+            RpcContext.getContext().setAttachment(Constant.TAG_KEY, Constant.TAG);
+        }
+        LOGGER.info("execute rpcContext getContext========================false");
         return fooService.getMetadata(false);
     }
 

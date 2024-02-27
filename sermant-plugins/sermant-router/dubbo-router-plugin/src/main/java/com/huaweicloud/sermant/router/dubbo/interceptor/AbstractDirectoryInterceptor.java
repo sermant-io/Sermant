@@ -16,11 +16,15 @@
 
 package com.huaweicloud.sermant.router.dubbo.interceptor;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.core.utils.LogUtils;
-import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryService;
+import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
+
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
@@ -29,6 +33,14 @@ import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryService;
  * @since 2021-06-28
  */
 public class AbstractDirectoryInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final int LENGTH_ONE = 1;
+
+    private static final int LENGTH_TWO = 2;
+
+    private static final int LENGTH_THREE = 3;
+
     private final AbstractDirectoryService abstractDirectoryService;
 
     /**
@@ -46,7 +58,17 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        context.changeResult(abstractDirectoryService.selectInvokers(context.getObject(), context.getArguments(),
+        Object[] arguments = context.getArguments();
+
+        // DUBBO 2.x and DUBBO 3.O.x dolist method is one parameter
+        // DUBBO 3.1.x dolist method is two parameter
+        // DUBBO 3.2.x dolist method is three parameter
+        Object invocation = arguments.length == LENGTH_ONE ? arguments[LENGTH_ONE - 1]
+                : arguments.length == LENGTH_TWO ? arguments[LENGTH_TWO - 1]
+                : arguments.length == LENGTH_THREE ? arguments[LENGTH_THREE - 1] : null;
+        LOGGER.info("======arguments length==========" + arguments.length
+                + "=========serverList size============" + ((List<Object>) context.getResult()).size());
+        context.changeResult(abstractDirectoryService.selectInvokers(context.getObject(), invocation,
                 context.getResult()));
         LogUtils.printDubboRequestAfterPoint(context);
         return context;

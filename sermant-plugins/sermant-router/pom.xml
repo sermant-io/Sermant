@@ -29,6 +29,7 @@
             </activation>
             <modules>
                 <module>dubbo-router-plugin</module>
+                <module>dubbo3-router-plugin</module>
                 <module>dubbo-router-service</module>
                 <module>router-common</module>
                 <module>router-config-common</module>
@@ -42,6 +43,7 @@
             <id>test</id>
             <modules>
                 <module>dubbo-router-plugin</module>
+                <module>dubbo3-router-plugin</module>
                 <module>dubbo-router-service</module>
                 <module>router-common</module>
                 <module>router-config-common</module>
@@ -55,6 +57,7 @@
             <id>release</id>
             <modules>
                 <module>dubbo-router-plugin</module>
+                <module>dubbo3-router-plugin</module>
                 <module>dubbo-router-service</module>
                 <module>router-common</module>
                 <module>router-config-common</module>

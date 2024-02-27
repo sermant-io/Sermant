@@ -5,3 +5,4 @@
 com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceImpl
 com.huaweicloud.sermant.router.dubbo.service.ClusterUtilsServiceImpl
 com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterServiceImpl
+com.huaweicloud.sermant.router.dubbo.service.InvokerRuleStrategyServiceImpl

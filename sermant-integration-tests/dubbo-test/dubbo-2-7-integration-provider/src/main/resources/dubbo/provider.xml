@@ -17,7 +17,7 @@
     <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="bar2ServiceImpl" group="bar2"/>
 
     <bean id="fooServiceImpl" class="com.huaweicloud.integration.service.FooServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"
+    <dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl"
             tag="app1"/>
 
     <!--流控测试-->

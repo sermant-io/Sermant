@@ -16,9 +16,9 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 
 import java.util.HashMap;
 import java.util.Map;

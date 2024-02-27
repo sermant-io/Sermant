@@ -17,7 +17,7 @@
     <dubbo:reference id="barGenericService" check="false" interface="com.huaweicloud.integration.service.BarService"
                      generic="true"/>
     <dubbo:reference id="fooService" check="false" interface="com.huaweicloud.integration.service.FooService"
-                     version="0.0.1" timeout="10000"/>
+                     timeout="10000"/>
     <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
                      version="*"/>
 

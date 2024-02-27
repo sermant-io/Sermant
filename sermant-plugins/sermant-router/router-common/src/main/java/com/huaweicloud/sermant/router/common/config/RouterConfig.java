@@ -88,6 +88,11 @@ public class RouterConfig implements PluginConfig {
     private String parseHeaderTag;
 
     /**
+     * 配置是否兼容1.0路由配置，默认为false不开启兼容
+     */
+    private boolean configCompatibilityEnabled = false;
+
+    /**
      * 构造方法
      */
     public RouterConfig() {
@@ -180,5 +185,13 @@ public class RouterConfig implements PluginConfig {
 
     public void setParseHeaderTag(String parseHeaderTag) {
         this.parseHeaderTag = parseHeaderTag;
+    }
+
+    public boolean isConfigCompatibilityEnabled() {
+        return configCompatibilityEnabled;
+    }
+
+    public void setConfigCompatibilityEnabled(boolean configCompatibilityEnabled) {
+        this.configCompatibilityEnabled = configCompatibilityEnabled;
     }
 }

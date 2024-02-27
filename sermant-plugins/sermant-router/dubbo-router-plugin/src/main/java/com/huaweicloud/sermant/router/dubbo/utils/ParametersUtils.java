@@ -17,10 +17,10 @@
 package com.huaweicloud.sermant.router.dubbo.utils;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import java.util.HashMap;
 import java.util.Locale;
