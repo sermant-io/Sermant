@@ -25,34 +25,39 @@ import com.huaweicloud.sermant.database.utils.SqlParserUtils;
 import org.mariadb.jdbc.message.ClientMessage;
 
 /**
- * sendQuery方法拦截器
+ * executePipeline Method Interceptor
  *
  * @author daizhenyu
  * @since 2024-01-30
  **/
-public class SendQueryInterceptor extends AbstractMariadbV3Interceptor {
+public class ExecutePipelineInterceptor extends AbstractMariadbV3Interceptor {
     /**
-     * 无参构造方法
+     * No-argument constructor
      */
-    public SendQueryInterceptor() {
+    public ExecutePipelineInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parametric constructor
      *
-     * @param handler 写操作处理器
+     * @param handler write operation handler
      */
-    public SendQueryInterceptor(DatabaseHandler handler) {
+    public ExecutePipelineInterceptor(DatabaseHandler handler) {
         this.handler = handler;
     }
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) {
-        ClientMessage clientMessage = (ClientMessage) context.getArguments()[0];
         String database = getDataBaseInfo(context).getDatabaseName();
-        if (SqlParserUtils.isWriteOperation(clientMessage.description())
-                && DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases().contains(database)) {
-            DatabaseController.disableDatabaseWriteOperation(database, context);
+        if (!DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases().contains(database)) {
+            return context;
+        }
+        ClientMessage[] clientMessages = (ClientMessage[]) context.getArguments()[0];
+        for (ClientMessage clientMessage : clientMessages) {
+            if (SqlParserUtils.isWriteOperation(clientMessage.description())) {
+                DatabaseController.disableDatabaseWriteOperation(database, context);
+                return context;
+            }
         }
         return context;
     }
