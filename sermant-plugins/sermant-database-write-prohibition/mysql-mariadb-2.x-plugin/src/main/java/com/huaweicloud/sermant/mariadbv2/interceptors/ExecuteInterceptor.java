@@ -18,14 +18,12 @@ package com.huaweicloud.sermant.mariadbv2.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.database.controller.DatabaseController;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
-import com.huaweicloud.sermant.database.utils.SqlParserUtils;
 
 import org.mariadb.jdbc.internal.util.dao.ClientPrepareResult;
 
 /**
- * executeQuery、executeBatchClient方法拦截器
+ * executeQuery、executeBatchClient Method Interceptor
  *
  * @author daizhenyu
  * @since 2024-01-26
@@ -34,15 +32,15 @@ public class ExecuteInterceptor extends AbstractMariadbV2Interceptor {
     private static final int PARAM_INDEX = 2;
 
     /**
-     * 无参构造方法
+     * No-argument constructor
      */
     public ExecuteInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parametric constructor
      *
-     * @param handler 写操作处理器
+     * @param handler write operation handler
      */
     public ExecuteInterceptor(DatabaseHandler handler) {
         this.handler = handler;
@@ -52,16 +50,14 @@ public class ExecuteInterceptor extends AbstractMariadbV2Interceptor {
     protected ExecuteContext doBefore(ExecuteContext context) {
         String database = getDataBaseInfo(context).getDatabaseName();
         Object argument = context.getArguments()[PARAM_INDEX];
-        String sql = null;
+        String sql;
         if (argument instanceof ClientPrepareResult) {
             sql = ((ClientPrepareResult) argument).getSql();
         } else {
             sql = (String) argument;
         }
-        if (SqlParserUtils.isWriteOperation(sql)
-                && DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases().contains(database)) {
-            DatabaseController.disableDatabaseWriteOperation(database, context);
-        }
+        handleWriteOperationIfWriteDisabled(sql, database,
+                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases(), context);
         return context;
     }
 }

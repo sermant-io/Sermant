@@ -14,40 +14,23 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.mariadbv2.interceptors;
+package com.huaweicloud.sermant.database.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 
 /**
- * prepare Method Interceptor
+ * MongoDB Abstract Interceptor
  *
  * @author daizhenyu
- * @since 2024-01-27
+ * @since 2024-02-02
  **/
-public class PrepareInterceptor extends AbstractMariadbV2Interceptor {
-    /**
-     * No-argument constructor
-     */
-    public PrepareInterceptor() {
-    }
-
-    /**
-     * Parametric constructor
-     *
-     * @param handler write operation handler
-     */
-    public PrepareInterceptor(DatabaseHandler handler) {
-        this.handler = handler;
-    }
-
+public abstract class AbstractMongoDbInterceptor extends AbstractDatabaseInterceptor {
     @Override
-    protected ExecuteContext doBefore(ExecuteContext context) {
+    public ExecuteContext doBefore(ExecuteContext context) {
         String database = getDataBaseInfo(context).getDatabaseName();
-        String sql = (String) context.getArguments()[0];
-        handleWriteOperationIfWriteDisabled(sql, database,
-                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases(), context);
+        handleWriteOperationIfWriteDisabled(database,
+                DatabaseWriteProhibitionManager.getMongoDbProhibitionDatabases(), context);
         return context;
     }
 }

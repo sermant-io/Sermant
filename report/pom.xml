@@ -48,7 +48,22 @@
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>mongodb-3.x-4.x-plugin</artifactId>
+            <artifactId>mongodb-3.x-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>mongodb-4.x-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>mysql-mariadb-2.x-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud.sermant</groupId>
+            <artifactId>mysql-mariadb-3.x-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
