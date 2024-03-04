@@ -81,6 +81,7 @@
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
         <frontend.plugin.version>1.12.1</frontend.plugin.version>
+        <surefire.plugin.version>3.0.0</surefire.plugin.version>
 
         <sermant.name>sermant-agent</sermant.name>
         <sermant.basedir>${pom.basedir}</sermant.basedir>
@@ -624,6 +625,11 @@
                             </licenseMerge>
                         </licenseMerges>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
