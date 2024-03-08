@@ -18,29 +18,27 @@ package com.huaweicloud.sermant.mariadbv3.interceptors;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.database.controller.DatabaseController;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
-import com.huaweicloud.sermant.database.utils.SqlParserUtils;
 
 import org.mariadb.jdbc.message.ClientMessage;
 
 /**
- * sendQuery方法拦截器
+ * sendQuery Method Interceptor
  *
  * @author daizhenyu
  * @since 2024-01-30
  **/
 public class SendQueryInterceptor extends AbstractMariadbV3Interceptor {
     /**
-     * 无参构造方法
+     * No-argument constructor
      */
     public SendQueryInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parametric constructor
      *
-     * @param handler 写操作处理器
+     * @param handler write operation handler
      */
     public SendQueryInterceptor(DatabaseHandler handler) {
         this.handler = handler;
@@ -50,10 +48,8 @@ public class SendQueryInterceptor extends AbstractMariadbV3Interceptor {
     protected ExecuteContext doBefore(ExecuteContext context) {
         ClientMessage clientMessage = (ClientMessage) context.getArguments()[0];
         String database = getDataBaseInfo(context).getDatabaseName();
-        if (SqlParserUtils.isWriteOperation(clientMessage.description())
-                && DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases().contains(database)) {
-            DatabaseController.disableDatabaseWriteOperation(database, context);
-        }
+        handleWriteOperationIfWriteDisabled(clientMessage.description(), database,
+                DatabaseWriteProhibitionManager.getMySqlProhibitionDatabases(), context);
         return context;
     }
 }

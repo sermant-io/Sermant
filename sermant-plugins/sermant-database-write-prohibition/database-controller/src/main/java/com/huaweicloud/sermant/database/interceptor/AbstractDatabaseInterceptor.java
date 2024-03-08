@@ -109,4 +109,19 @@ public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
             DatabaseController.disableDatabaseWriteOperation(databaseName, context);
         }
     }
+
+    /**
+     * If the mongodb database has write prohibition enabled and it is a write operation, the write prohibition logic
+     * will be executed
+     *
+     * @param databaseName databaseName
+     * @param prohibitionDatabases prohibition write database collection
+     * @param context contextual information
+     */
+    protected void handleWriteOperationIfWriteDisabled(String databaseName,
+            Set<String> prohibitionDatabases, ExecuteContext context) {
+        if (prohibitionDatabases.contains(databaseName)) {
+            DatabaseController.disableDatabaseWriteOperation(databaseName, context);
+        }
+    }
 }
