@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.15</version>
+        <relativePath/>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <version>1.0.0</version>
+
+    <groupId>com.huaweicloud.sermant</groupId>
+    <artifactId>database-write-prohibition-test</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>database-write-prohibition-common</module>
+        <module>database-write-prohibition-integration-test</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.huaweicloud.sermant</groupId>
+                <artifactId>database-write-prohibition-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>opengauss-test</id>
+            <modules>
+                <module>opengauss-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>postgresql-test</id>
+            <modules>
+                <module>postgresql-demo</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

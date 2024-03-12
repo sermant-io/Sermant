@@ -1,0 +1,10 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username:
+    password:
+  application:
+    name: postgresql-demo
