@@ -78,30 +78,24 @@ public class QueryExecutorImplInterceptorTest {
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned off, and the write prohibition database set contains the
-         * intercepted database
-         */
+        // The database write prohibition switch is turned off, and the write prohibition database set contains the
+        // intercepted database
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
         GLOBAL_CONFIG.setOpenGaussDatabases(databases);
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection contains
-         * the intercepted databases
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection contains
+        // the intercepted databases
         GLOBAL_CONFIG.setEnableOpenGaussWriteProhibition(true);
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock, argument, null, null);
         queryExecutorImplInterceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection contains
-         * the intercepted database. SQL does not perform write operations
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection contains
+        // the intercepted database. SQL does not perform write operations
         Query readQuery = new BatchedQuery(new NativeQuery(READ_SQL, null),
                 null, 0, 0, false);
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock,
@@ -109,10 +103,8 @@ public class QueryExecutorImplInterceptorTest {
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection does not
-         * contain the intercepted database
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection does not
+        // contain the intercepted database
         GLOBAL_CONFIG.setOpenGaussDatabases(new HashSet<>());
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock, argument, null, null);
         queryExecutorImplInterceptor.before(context);

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.postgresqlv42.utils.QueryExecutorImplEnhancementHelper;
 
 /**
- * SQL执行器增强声明器
+ * QueryExecutorImpl declarer
  *
  * @author zhp
  * @since 2024-02-04
@@ -35,6 +35,6 @@ public class QueryExecutorImplDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{QueryExecutorImplEnhancementHelper.getSendQueryInterceptDeclarer()};
+        return new InterceptDeclarer[]{QueryExecutorImplEnhancementHelper.getSendOneQueryInterceptDeclarer()};
     }
 }

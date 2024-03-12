@@ -32,7 +32,6 @@
                 <module>mysql-mariadb-2.x-plugin</module>
                 <module>mysql-mariadb-3.x-plugin</module>
                 <module>opengauss-3.0.x-plugin</module>
-                <module>opengauss-3.1.x-plugin</module>
                 <module>postgresql-9.4.x-plugin</module>
                 <module>postgresql-42.x-plugin</module>
             </modules>
@@ -46,7 +45,6 @@
                 <module>mysql-mariadb-2.x-plugin</module>
                 <module>mysql-mariadb-3.x-plugin</module>
                 <module>opengauss-3.0.x-plugin</module>
-                <module>opengauss-3.1.x-plugin</module>
                 <module>postgresql-9.4.x-plugin</module>
                 <module>postgresql-42.x-plugin</module>
             </modules>
@@ -60,7 +58,6 @@
                 <module>mysql-mariadb-2.x-plugin</module>
                 <module>mysql-mariadb-3.x-plugin</module>
                 <module>opengauss-3.0.x-plugin</module>
-                <module>opengauss-3.1.x-plugin</module>
                 <module>postgresql-9.4.x-plugin</module>
                 <module>postgresql-42.x-plugin</module>
             </modules>

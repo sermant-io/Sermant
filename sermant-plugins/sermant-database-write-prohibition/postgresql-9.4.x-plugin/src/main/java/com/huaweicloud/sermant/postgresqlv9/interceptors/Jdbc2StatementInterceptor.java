@@ -16,47 +16,62 @@
 
 package com.huaweicloud.sermant.postgresqlv9.interceptors;
 
+import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
-import com.huaweicloud.sermant.postgresqlv9.utils.ThreadConnectionUtil;
+import com.huaweicloud.sermant.database.utils.ThreadDatabaseUrlUtil;
 
 import org.postgresql.jdbc3g.AbstractJdbc3gStatement;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- * 执行SQL操作的拦截器
+ * Interceptor for AbstractJdbc2Statement execute and executeBatch method
  *
  * @author zhp
  * @since 2024-02-04
  **/
-public class Jdbc4StatementInterceptor extends AbstractDatabaseInterceptor {
+public class Jdbc2StatementInterceptor extends AbstractDatabaseInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
-    public Jdbc4StatementInterceptor() {
+    public Jdbc2StatementInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 写操作处理器
+     * @param handler Database write operation handler
      */
-    public Jdbc4StatementInterceptor(DatabaseHandler handler) {
+    public Jdbc2StatementInterceptor(DatabaseHandler handler) {
         this.handler = handler;
     }
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
+        if (!(context.getObject() instanceof AbstractJdbc3gStatement)) {
+            return context;
+        }
         AbstractJdbc3gStatement statement = (AbstractJdbc3gStatement) context.getObject();
 
-        // 存放链接信息，保证QueryExecutorImplInterceptor可以获取到数据库信息
-        ThreadConnectionUtil.setConnection(statement.getPGConnection());
+        // Store link information to ensure that QueryExecutorImplInterceptor can retrieve database information
+        try {
+            ThreadDatabaseUrlUtil.setDatabaseUrl(statement.getPGConnection().getMetaData().getURL());
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "can not obtain the database information.", e);
+        }
         return context;
     }
 
     @Override
     protected void createAndCacheDatabaseInfo(ExecuteContext context) {
-        // 此拦截点主要是存放链接信息到线程变量中，不需要缓存数据库基础信息，因此方法为空实现
+        // This interception point is mainly used to store link information into thread variables, without the need to
+        // cache basic database information, so the method is implemented as empty
     }
 
     @Override
@@ -65,7 +80,7 @@ public class Jdbc4StatementInterceptor extends AbstractDatabaseInterceptor {
             handler.doAfter(context);
             return context;
         }
-        ThreadConnectionUtil.removeConnection();
+        ThreadDatabaseUrlUtil.removeDatabaseUrl();
         return context;
     }
 }

@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.postgresqlv9.interceptors;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionConfig;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.postgresqlv9.utils.ThreadConnectionUtil;
+import com.huaweicloud.sermant.database.utils.ThreadDatabaseUrlUtil;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -28,11 +28,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.postgresql.core.Query;
 import org.postgresql.core.v3.QueryExecutorImpl;
-import org.postgresql.jdbc4.Jdbc4Connection;
 import org.postgresql.jdbc4.Jdbc4DatabaseMetaData;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -53,10 +51,7 @@ public class QueryExecutorImplInterceptorTest {
 
     private static QueryExecutorImpl queryExecutor;
 
-    private static Connection connection;
-
-    private static final String URL = "jdbc:postgresql://localhost:5432/database-test?useUnicode=true&useSSL=false"
-            + "&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true";
+    private static final String URL = "jdbc:postgresql://localhost:5432/database-test";
 
     private static final String WRITE_SQL =
             "INSERT INTO `test`.`students` (`id`, `name`, `age`) VALUES (19, 'lilei', 111)";
@@ -71,10 +66,8 @@ public class QueryExecutorImplInterceptorTest {
         methodMock = Mockito.mock(Method.class);
         queryExecutor = Mockito.mock(QueryExecutorImpl.class);
         DatabaseMetaData metaData = Mockito.mock(Jdbc4DatabaseMetaData.class);
-        connection = Mockito.mock(Jdbc4Connection.class);
-        ThreadConnectionUtil.setConnection(connection);
+        ThreadDatabaseUrlUtil.setDatabaseUrl(URL);
         Mockito.when(metaData.getURL()).thenReturn(URL);
-        Mockito.when(connection.getMetaData()).thenReturn(metaData);
         Query query = new PostSqlQuery(WRITE_SQL);
         argument = new Object[]{query, null, null, null, null, null, null};
     }
@@ -87,40 +80,32 @@ public class QueryExecutorImplInterceptorTest {
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned off, and the write prohibition database set contains the
-         * intercepted database
-         */
+        // The database write prohibition switch is turned off, and the write prohibition database set contains the
+        // intercepted database
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
         GLOBAL_CONFIG.setPostgreSqlDatabases(databases);
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection contains
-         * the intercepted databases
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection contains
+        // the intercepted databases
         GLOBAL_CONFIG.setEnablePostgreSqlWriteProhibition(true);
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock, argument, null, null);
         queryExecutorImplInterceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection contains
-         * the intercepted database. SQL does not perform write operations
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection contains
+        // the intercepted database. SQL does not perform write operations
         Query readQuery = new PostSqlQuery(READ_SQL);
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock,
                 new Object[]{readQuery, null, null, null, null, null, null}, null, null);
         queryExecutorImplInterceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        /*
-         * The database write prohibition switch is turned on, and the write prohibition database collection does not
-         * contain the intercepted database
-         */
+        // The database write prohibition switch is turned on, and the write prohibition database collection does not
+        // contain the intercepted database
         GLOBAL_CONFIG.setPostgreSqlDatabases(new HashSet<>());
         context = ExecuteContext.forMemberMethod(queryExecutor, methodMock, argument, null, null);
         queryExecutorImplInterceptor.before(context);
@@ -129,8 +114,8 @@ public class QueryExecutorImplInterceptorTest {
 
     @AfterClass
     public static void tearDown() throws SQLException {
-        connection.close();
         Mockito.clearAllCaches();
+        ThreadDatabaseUrlUtil.removeDatabaseUrl();
         DatabaseWriteProhibitionManager.updateGlobalConfig(null);
     }
 }

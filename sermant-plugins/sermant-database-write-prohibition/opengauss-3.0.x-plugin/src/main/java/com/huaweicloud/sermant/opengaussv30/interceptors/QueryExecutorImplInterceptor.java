@@ -24,6 +24,7 @@ import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
 
+import org.opengauss.core.ParameterList;
 import org.opengauss.core.Query;
 import org.opengauss.core.v3.QueryExecutorImpl;
 import org.opengauss.util.HostSpec;
@@ -31,7 +32,7 @@ import org.opengauss.util.HostSpec;
 import java.util.logging.Logger;
 
 /**
- * 执行SQL操作的拦截器
+ * Interceptor for QueryExecutorImpl sendOneQuery method
  *
  * @author zhp
  * @since 2024-02-04
@@ -40,15 +41,15 @@ public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public QueryExecutorImplInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 写操作处理器
+     * @param handler Database write operation handler
      */
     public QueryExecutorImplInterceptor(DatabaseHandler handler) {
         this.handler = handler;
@@ -59,7 +60,7 @@ public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
         DatabaseInfo databaseInfo = getDataBaseInfo(context);
         String database = databaseInfo.getDatabaseName();
         Query query = (Query) context.getArguments()[0];
-        String sql = query.getNativeSql();
+        String sql = query.toString((ParameterList) context.getArguments()[1]);
         handleWriteOperationIfWriteDisabled(sql, database,
                 DatabaseWriteProhibitionManager.getOpenGaussProhibitionDatabases(), context);
         return context;
@@ -73,7 +74,7 @@ public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
         databaseInfo.setDatabaseName(queryExecutor.getDatabase());
         HostSpec hostSpec = queryExecutor.getHostSpec();
         if (hostSpec == null) {
-            LOGGER.info("Unable to obtain the link address of the database.");
+            LOGGER.warning("Unable to obtain the link address of the database.");
             return;
         }
         databaseInfo.setPort(hostSpec.getPort());
