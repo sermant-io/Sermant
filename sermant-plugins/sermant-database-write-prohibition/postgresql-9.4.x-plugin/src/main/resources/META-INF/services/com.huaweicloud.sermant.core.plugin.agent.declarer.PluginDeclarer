@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 com.huaweicloud.sermant.postgresqlv9.declarers.QueryExecutorImplDeclarer
-com.huaweicloud.sermant.postgresqlv9.declarers.Jdbc4StatementDeclarer
+com.huaweicloud.sermant.postgresqlv9.declarers.Jdbc2StatementDeclarer

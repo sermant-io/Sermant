@@ -16,7 +16,6 @@
 
 package com.huaweicloud.sermant.postgresqlv9.interceptors;
 
-import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
@@ -24,37 +23,32 @@ import com.huaweicloud.sermant.database.constant.DatabaseType;
 import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
 import com.huaweicloud.sermant.database.interceptor.AbstractDatabaseInterceptor;
-import com.huaweicloud.sermant.postgresqlv9.utils.ThreadConnectionUtil;
+import com.huaweicloud.sermant.database.utils.ThreadDatabaseUrlUtil;
 
 import org.postgresql.Driver;
+import org.postgresql.core.ParameterList;
 import org.postgresql.core.Query;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * 执行SQL操作的拦截器
+ * Interceptor for org.postgresql.core.v2.QueryExecutorImpl sendQuery and org.postgresql.core.v3.QueryExecutorImpl
+ * sendOneQuery method
  *
  * @author zhp
  * @since 2024-02-04
  **/
 public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public QueryExecutorImplInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 写操作处理器
+     * @param handler Database write operation handler
      */
     public QueryExecutorImplInterceptor(DatabaseHandler handler) {
         this.handler = handler;
@@ -64,7 +58,7 @@ public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
     public ExecuteContext doBefore(ExecuteContext context) {
         DatabaseInfo databaseInfo = getDataBaseInfo(context);
         Query query = (Query) context.getArguments()[0];
-        String sql = query.toString();
+        String sql = query.toString((ParameterList) context.getArguments()[1]);
         String database = databaseInfo.getDatabaseName();
         handleWriteOperationIfWriteDisabled(sql, database,
                 DatabaseWriteProhibitionManager.getPostgreSqlProhibitionDatabases(), context);
@@ -75,22 +69,14 @@ public class QueryExecutorImplInterceptor extends AbstractDatabaseInterceptor {
     protected void createAndCacheDatabaseInfo(ExecuteContext context) {
         DatabaseInfo databaseInfo = new DatabaseInfo(DatabaseType.POSTGRESQL);
         context.setLocalFieldValue(DATABASE_INFO, databaseInfo);
-        Connection connection = ThreadConnectionUtil.getConnection();
-        if (connection == null) {
+        String url = ThreadDatabaseUrlUtil.getDatabaseUrl();
+        if (StringUtils.isEmpty(url)) {
             return;
         }
-        try {
-            DatabaseMetaData databaseMetaData = connection.getMetaData();
-            if (databaseMetaData == null || StringUtils.isEmpty(databaseMetaData.getURL())) {
-                return;
-            }
-            Properties properties = new Properties();
-            properties = Driver.parseURL(databaseMetaData.getURL(), properties);
-            databaseInfo.setHostAddress(properties.getProperty("PGHOST"));
-            databaseInfo.setPort(Integer.parseInt(properties.getProperty("PGPORT")));
-            databaseInfo.setDatabaseName(properties.getProperty("PGDBNAME"));
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "can not obtain the database information.", e);
-        }
+        Properties properties = new Properties();
+        properties = Driver.parseURL(url, properties);
+        databaseInfo.setHostAddress(properties.getProperty("PGHOST"));
+        databaseInfo.setPort(Integer.parseInt(properties.getProperty("PGPORT")));
+        databaseInfo.setDatabaseName(properties.getProperty("PGDBNAME"));
     }
 }

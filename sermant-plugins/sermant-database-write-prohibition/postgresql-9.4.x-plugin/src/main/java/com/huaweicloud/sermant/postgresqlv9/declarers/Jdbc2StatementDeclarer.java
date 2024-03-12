@@ -14,27 +14,28 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.opengaussv31.declarers;
+package com.huaweicloud.sermant.postgresqlv9.declarers;
 
 import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
-import com.huaweicloud.sermant.opengaussv31.utils.QueryExecutorImplEnhancementHelper;
+import com.huaweicloud.sermant.postgresqlv9.utils.PostgresqlEnhancementHelper;
 
 /**
- * SQL执行器增强声明器
+ * AbstractJdbc2Statement declarer
  *
  * @author zhp
  * @since 2024-02-04
  **/
-public class QueryExecutorImplDeclarer extends AbstractPluginDeclarer {
+public class Jdbc2StatementDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return QueryExecutorImplEnhancementHelper.getQueryExecutorImplClassMatcher();
+        return PostgresqlEnhancementHelper.getJdbc2StatementClassMatcher();
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{QueryExecutorImplEnhancementHelper.getSendQueryInterceptDeclarer()};
+        return new InterceptDeclarer[]{PostgresqlEnhancementHelper.getExecuteInterceptDeclarer(),
+                PostgresqlEnhancementHelper.getExecuteBatchInterceptDeclarer()};
     }
 }

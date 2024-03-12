@@ -20,11 +20,11 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
-import com.huaweicloud.sermant.postgresqlv9.interceptors.Jdbc4StatementInterceptor;
+import com.huaweicloud.sermant.postgresqlv9.interceptors.Jdbc2StatementInterceptor;
 import com.huaweicloud.sermant.postgresqlv9.interceptors.QueryExecutorImplInterceptor;
 
 /**
- * postgresql拦截点辅助类
+ * Helper class for postgresql9.x
  *
  * @author zhp
  * @since 2024-02-04
@@ -32,7 +32,7 @@ import com.huaweicloud.sermant.postgresqlv9.interceptors.QueryExecutorImplInterc
 public class PostgresqlEnhancementHelper {
     private static final String SEND_QUERY_METHOD_NAME = "sendQuery";
 
-    private static final String QUERY_EXECUTOR_CLASS_NAME = "org.postgresql.core.v3.QueryExecutorImpl";
+    private static final String V2_QUERY_EXECUTOR_CLASS_NAME = "org.postgresql.core.v2.QueryExecutorImpl";
 
     private static final String INT_CLASS_NAME = "int";
 
@@ -40,23 +40,23 @@ public class PostgresqlEnhancementHelper {
 
     private static final String PARAMETER_LIST_CLASS_NAME = "org.postgresql.core.ParameterList";
 
-    private static final String ERROR_TRACKING_RESULT_HANDLER_CLASS_NAME =
-            "org.postgresql.core.v3.ErrorTrackingResultHandler";
+    private static final String V2_QUERY_CLASS_NAME = "org.postgresql.core.v2.V2Query";
+
+    private static final String V2_SIMPLE_PARAMETER_LIST_CLASS_NAME = "org.postgresql.core.v2.SimpleParameterList";
+
+    private static final String STRING_CLASS_NAME = "java.lang.String";
 
     private static final String[] SEND_QUERY_METHOD_PARAMS_TYPE = {
-            QUERY_CLASS_NAME,
-            PARAMETER_LIST_CLASS_NAME,
-            INT_CLASS_NAME,
-            INT_CLASS_NAME,
-            INT_CLASS_NAME,
-            ERROR_TRACKING_RESULT_HANDLER_CLASS_NAME
+            V2_QUERY_CLASS_NAME,
+            V2_SIMPLE_PARAMETER_LIST_CLASS_NAME,
+            STRING_CLASS_NAME
     };
 
     private static final String EXECUTE_METHOD_NAME = "execute";
 
     private static final String EXECUTE_BATCH_METHOD_NAME = "executeBatch";
 
-    private static final String STATEMENT_CLASS_NAME = "org.postgresql.jdbc4.Jdbc4Statement";
+    private static final String STATEMENT_CLASS_NAME = "org.postgresql.jdbc2.AbstractJdbc2Statement";
 
     private static final String[] EXECUTE_METHOD_PARAMS_TYPE = {
             QUERY_CLASS_NAME,
@@ -73,78 +73,78 @@ public class PostgresqlEnhancementHelper {
     }
 
     /**
-     * 获取QueryExecutorImpl sendQuery方法有参拦截声明器
+     * Get the parameterized interceptor declarer for the org.postgresql.core.v2.QueryExecutorImpl sendQuery method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer QueryExecutorImpl sendQuery方法有参拦截声明器
+     * @param handler Database write operation handler
+     * @return InterceptDeclarer The parameterized interceptor declarer for the QueryExecutorImpl sendQuery method
      */
     public static InterceptDeclarer getSendQueryInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getSendQueryMethodMatcher(), new QueryExecutorImplInterceptor(handler));
     }
 
     /**
-     * 获取QueryExecutorImpl sendQuery方法无参拦截声明器
+     * Get the non-parameter interceptor declarer for org.postgresql.core.v2.QueryExecutorImpl sendQuery method
      *
-     * @return InterceptDeclarer QueryExecutorImpl sendQuery方法无参拦截声明器
+     * @return InterceptDeclarer The non-parameter interceptor declarer for QueryExecutorImpl sendQuery method
      */
     public static InterceptDeclarer getSendQueryInterceptDeclarer() {
         return InterceptDeclarer.build(getSendQueryMethodMatcher(), new QueryExecutorImplInterceptor());
     }
 
     /**
-     * 获取QueryExecutorImpl类的ClassMatcher
+     * Get ClassMatcher for the org.postgresql.core.v2.QueryExecutorImpl class
      *
-     * @return ClassMatcher 类匹配器
+     * @return ClassMatcher Class matcher
      */
-    public static ClassMatcher getQueryExecutorImplClassMatcher() {
-        return ClassMatcher.nameEquals(QUERY_EXECUTOR_CLASS_NAME);
+    public static ClassMatcher getQueryExecutorImplV2ClassMatcher() {
+        return ClassMatcher.nameEquals(V2_QUERY_EXECUTOR_CLASS_NAME);
     }
 
     /**
-     * 获取Jdbc4Statement类的ClassMatcher
+     * Get ClassMatcher for AbstractJdbc2Statement class
      *
-     * @return ClassMatcher 类匹配器
+     * @return ClassMatcher Database write operation handler
      */
-    public static ClassMatcher getJdbc4StatementClassMatcher() {
+    public static ClassMatcher getJdbc2StatementClassMatcher() {
         return ClassMatcher.nameEquals(STATEMENT_CLASS_NAME);
     }
 
     /**
-     * 获取Jdbc4Statement execute方法无参拦截声明器
+     * Get the non-parameter interceptor declarer for AbstractJdbc2Statement execute method
      *
-     * @return InterceptDeclarer Jdbc4Statement execute方法无参拦截声明器
+     * @return InterceptDeclarer The non-parameter interceptor declarer for AbstractJdbc2Statement execute method
      */
     public static InterceptDeclarer getExecuteInterceptDeclarer() {
-        return InterceptDeclarer.build(getExecuteMethodMatcher(), new Jdbc4StatementInterceptor());
+        return InterceptDeclarer.build(getExecuteMethodMatcher(), new Jdbc2StatementInterceptor());
     }
 
     /**
-     * 获取Jdbc4Statement execute方法有参拦截声明器
+     * Get the parameterized interceptor declarer for the AbstractJdbc2Statement execute method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer Jdbc4Statement execute方法有参拦截声明器
+     * @param handler Database write operation handler
+     * @return InterceptDeclarer The parameterized interceptor declarer for the AbstractJdbc2Statement execute method
      */
     public static InterceptDeclarer getExecuteInterceptDeclarer(DatabaseHandler handler) {
-        return InterceptDeclarer.build(getExecuteMethodMatcher(), new Jdbc4StatementInterceptor(handler));
+        return InterceptDeclarer.build(getExecuteMethodMatcher(), new Jdbc2StatementInterceptor(handler));
     }
 
     /**
-     * 获取Jdbc4Statement executeBatch方法无参拦截声明器
+     * Get the non-parameter interceptor declarer for AbstractJdbc2Statement executeBatch method
      *
-     * @return InterceptDeclarer Jdbc4Statement executeBatch方法无参拦截声明器
+     * @return InterceptDeclarer The non-parameter interceptor declarer for AbstractJdbc2Statement executeBatch method
      */
     public static InterceptDeclarer getExecuteBatchInterceptDeclarer() {
-        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new Jdbc4StatementInterceptor());
+        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new Jdbc2StatementInterceptor());
     }
 
     /**
-     * 获取Jdbc4Statement executeBatch方法有参拦截声明器
+     * Get the parameterized interceptor declarer for AbstractJdbc2Statement executeBatch method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer Jdbc4Statement executeBatch方法有参拦截声明器
+     * @param handler Database write operation handler
+     * @return InterceptDeclarer The parameterized interceptor declarer for AbstractJdbc2Statement executeBatch method
      */
     public static InterceptDeclarer getExecuteBatchInterceptDeclarer(DatabaseHandler handler) {
-        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new Jdbc4StatementInterceptor(handler));
+        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new Jdbc2StatementInterceptor(handler));
     }
 
     private static MethodMatcher getExecuteMethodMatcher() {

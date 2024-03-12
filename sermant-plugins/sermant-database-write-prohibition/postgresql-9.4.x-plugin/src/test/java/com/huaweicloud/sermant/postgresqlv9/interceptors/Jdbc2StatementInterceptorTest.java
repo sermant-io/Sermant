@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.postgresqlv9.interceptors;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionConfig;
 import com.huaweicloud.sermant.database.config.DatabaseWriteProhibitionManager;
-import com.huaweicloud.sermant.postgresqlv9.utils.ThreadConnectionUtil;
+import com.huaweicloud.sermant.database.utils.ThreadDatabaseUrlUtil;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -41,7 +41,7 @@ import java.sql.SQLException;
  * @author zhp
  * @since 2024-02-04
  **/
-public class Jdbc4StatementInterceptorTest {
+public class Jdbc2StatementInterceptorTest {
     private static final DatabaseWriteProhibitionConfig GLOBAL_CONFIG = new DatabaseWriteProhibitionConfig();
 
     private static Method methodMock;
@@ -50,7 +50,9 @@ public class Jdbc4StatementInterceptorTest {
 
     private static BaseConnection connection;
 
-    private final Jdbc4StatementInterceptor jdbc4StatementInterceptor = new Jdbc4StatementInterceptor();
+    private final Jdbc2StatementInterceptor jdbc2StatementInterceptor = new Jdbc2StatementInterceptor();
+
+    private static final String URL = "jdbc:postgresql://localhost:5432/database-test";
 
     @BeforeClass
     public static void setUp() throws SQLException {
@@ -60,6 +62,7 @@ public class Jdbc4StatementInterceptorTest {
         DatabaseMetaData metaData = Mockito.mock(Jdbc4DatabaseMetaData.class);
         connection = Mockito.mock(Jdbc4Connection.class);
         Mockito.when(connection.getMetaData()).thenReturn(metaData);
+        Mockito.when(metaData.getURL()).thenReturn(URL);
         Mockito.when(abstractJdbc3gStatement.getPGConnection()).thenReturn(connection);
     }
 
@@ -67,13 +70,14 @@ public class Jdbc4StatementInterceptorTest {
     public void testDoBefore() throws Exception {
         ExecuteContext context = ExecuteContext.forMemberMethod(abstractJdbc3gStatement, methodMock,
                 null, null, null);
-        jdbc4StatementInterceptor.before(context);
-        Assert.assertNotNull(ThreadConnectionUtil.getConnection());
+        jdbc2StatementInterceptor.before(context);
+        Assert.assertNotNull(ThreadDatabaseUrlUtil.getDatabaseUrl());
     }
 
     @AfterClass
     public static void tearDown() throws SQLException {
         connection.close();
+        ThreadDatabaseUrlUtil.removeDatabaseUrl();
         Mockito.clearAllCaches();
     }
 }

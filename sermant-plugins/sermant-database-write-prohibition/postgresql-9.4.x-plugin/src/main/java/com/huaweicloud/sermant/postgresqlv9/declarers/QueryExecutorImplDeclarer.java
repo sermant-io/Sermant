@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.postgresqlv9.utils.PostgresqlEnhancementHelper;
 
 /**
- * SQL执行器增强声明器
+ * org.postgresql.core.v2.QueryExecutorImpl declarer
  *
  * @author zhp
  * @since 2024-02-04
@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.postgresqlv9.utils.PostgresqlEnhancementHelper;
 public class QueryExecutorImplDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return PostgresqlEnhancementHelper.getQueryExecutorImplClassMatcher();
+        return PostgresqlEnhancementHelper.getQueryExecutorImplV2ClassMatcher();
     }
 
     @Override
