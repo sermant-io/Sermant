@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.database.prohibition.common.constant;
+package com.huaweicloud.sermant.database.prohibition.integration.constant;
 
 /**
  * common constant
@@ -24,11 +24,6 @@ package com.huaweicloud.sermant.database.prohibition.common.constant;
  **/
 public class DatabaseConstant {
     /**
-     * database write prohibition sqlexception message prefix
-     */
-    public static final String SQL_EXCEPTION_MESSAGE_PREFIX = "Database prohibit to write";
-
-    /**
      * fail to execute database write operation status code
      */
     public static final String OPERATION_FAIL_CODE = "100";
@@ -37,6 +32,16 @@ public class DatabaseConstant {
      * succeed to execute database write operation status code
      */
     public static final String OPERATION_SUCCEED_CODE = "101";
+
+    /**
+     * database table data count
+     */
+    public static final String DATA_COUNT = "1";
+
+    /**
+     * line separator
+     */
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     private DatabaseConstant() {
     }

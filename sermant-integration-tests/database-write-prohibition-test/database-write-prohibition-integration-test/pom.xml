@@ -21,10 +21,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
-            <artifactId>database-write-prohibition-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
@@ -63,15 +59,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
