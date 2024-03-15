@@ -14,30 +14,26 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.database.prohibition.common.constant;
+package com.huaweicloud.sermant.demo.mongodb;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
 /**
- * common constant
+ * springboot startup class
  *
  * @author daizhenyu
  * @since 2024-03-11
  **/
-public class DatabaseConstant {
+@SpringBootApplication(exclude = MongoAutoConfiguration.class)
+public class MongoDbApplication {
     /**
-     * database write prohibition sqlexception message prefix
+     * startup class
+     *
+     * @param args process startup input parameters
      */
-    public static final String SQL_EXCEPTION_MESSAGE_PREFIX = "Database prohibit to write";
-
-    /**
-     * fail to execute database write operation status code
-     */
-    public static final String OPERATION_FAIL_CODE = "100";
-
-    /**
-     * succeed to execute database write operation status code
-     */
-    public static final String OPERATION_SUCCEED_CODE = "101";
-
-    private DatabaseConstant() {
+    public static void main(String[] args) {
+        SpringApplication.run(MongoDbApplication.class, args);
     }
 }

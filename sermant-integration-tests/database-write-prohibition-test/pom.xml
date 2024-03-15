@@ -14,9 +14,9 @@
     <groupId>com.huaweicloud.sermant</groupId>
     <artifactId>database-write-prohibition-test</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>database-write-prohibition-common</module>
-        <module>database-write-prohibition-integration-test</module>
     </modules>
 
     <properties>
@@ -45,6 +45,18 @@
             <id>postgresql-test</id>
             <modules>
                 <module>postgresql-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mongodb-test</id>
+            <modules>
+                <module>mongodb-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mysql-test</id>
+            <modules>
+                <module>mariadb-demo</module>
             </modules>
         </profile>
     </profiles>
