@@ -66,7 +66,7 @@ public class MongoDbController {
      *
      * @return running status
      */
-    @RequestMapping("createCollection")
+    @RequestMapping("checkStatus")
     public String checkStatus() {
         return "ok";
     }

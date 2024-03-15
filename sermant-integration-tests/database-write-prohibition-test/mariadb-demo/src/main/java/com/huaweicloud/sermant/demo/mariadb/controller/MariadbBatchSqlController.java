@@ -39,6 +39,12 @@ public class MariadbBatchSqlController {
     @Value("${mysql.address}")
     private String mysqlAddress;
 
+    @Value("${mysql.user}")
+    private String user;
+
+    @Value("${mysql.password}")
+    private String password;
+
     /**
      * createTable
      *
@@ -47,7 +53,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("createTable")
     public String createTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String createTableQuery =
                     "CREATE TABLE " + table + " (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),"
@@ -70,7 +76,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("dropTable")
     public String dropTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String dropTableQuery = "DROP TABLE IF EXISTS " + table;
             statement.addBatch(dropTableQuery);
@@ -91,7 +97,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("creatIndex")
     public String createIndex(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String createIndexQuery = "CREATE INDEX idx_name ON " + table + " (name)";
             statement.addBatch(createIndexQuery);
@@ -112,7 +118,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("dropIndex")
     public String dropIndex(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String dropIndexQuery = "DROP INDEX idx_name ON " + table;
             statement.addBatch(dropIndexQuery);
@@ -133,7 +139,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("alterTable")
     public String alterTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String alterTableQuery = "ALTER TABLE " + table + " ADD COLUMN address VARCHAR(255)";
             statement.addBatch(alterTableQuery);
@@ -154,7 +160,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("insert")
     public String insert(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String insertQuery = "INSERT INTO " + table + " (name, age) VALUES ('John Doe', 25)";
             statement.addBatch(insertQuery);
@@ -175,7 +181,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("update")
     public String update(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String updateQuery = "UPDATE " + table + " SET age = 26 WHERE id = 1;";
             statement.addBatch(updateQuery);
@@ -196,7 +202,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("delete")
     public String delete(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String deleteQuery = "DELETE FROM " + table + " WHERE id = 1";
             statement.addBatch(deleteQuery);
@@ -217,7 +223,7 @@ public class MariadbBatchSqlController {
      */
     @RequestMapping("select")
     public String select(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String selectQuery = "SELECT * FROM " + table;
             statement.addBatch(selectQuery);

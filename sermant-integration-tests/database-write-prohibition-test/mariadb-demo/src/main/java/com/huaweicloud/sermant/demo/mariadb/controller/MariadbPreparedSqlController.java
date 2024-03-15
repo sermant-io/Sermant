@@ -46,6 +46,12 @@ public class MariadbPreparedSqlController {
     @Value("${mysql.address}")
     private String mysqlAddress;
 
+    @Value("${mysql.user}")
+    private String user;
+
+    @Value("${mysql.password}")
+    private String password;
+
     /**
      * createTable
      *
@@ -56,7 +62,7 @@ public class MariadbPreparedSqlController {
     public String createTable(String table) {
         String createTableQuery =
                 "CREATE TABLE " + table + " (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), age INT)";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(createTableQuery);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -76,7 +82,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("dropTable")
     public String dropTable(String table) {
         String dropTableQuery = "DROP TABLE IF EXISTS " + table;
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(dropTableQuery);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -96,7 +102,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("creatIndex")
     public String createIndex(String table) {
         String createIndexQuery = "CREATE INDEX idx_name ON " + table + " (name)";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(createIndexQuery);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -116,7 +122,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("dropIndex")
     public String dropIndex(String table) {
         String dropIndexQuery = "DROP INDEX idx_name ON " + table;
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(dropIndexQuery);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -136,7 +142,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("alterTable")
     public String alterTable(String table) {
         String alterTableQuery = "ALTER TABLE " + table + " ADD COLUMN address VARCHAR(255)";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(alterTableQuery);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -156,7 +162,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("insert")
     public String insert(String table) {
         String insertQuery = "INSERT INTO " + table + " (name, age) VALUES (?, ?)";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(insertQuery);
             statement.setString(PARAM_INDEX_FIRST, "John Doe");
             statement.setInt(PARAM_INDEX_SECOND, TABLE_FIELD_AGE);
@@ -178,7 +184,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("update")
     public String update(String table) {
         String updateQuery = "UPDATE " + table + " SET age = ? WHERE id = ?";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(updateQuery);
             statement.setInt(PARAM_INDEX_FIRST, TABLE_FIELD_AGE);
             statement.setInt(PARAM_INDEX_SECOND, 1);
@@ -200,7 +206,7 @@ public class MariadbPreparedSqlController {
     @RequestMapping("delete")
     public String delete(String table) {
         String deleteQuery = "DELETE FROM " + table + " WHERE id = ?";
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(deleteQuery);
             statement.setInt(1, 1);
             statement.executeUpdate();
@@ -222,7 +228,7 @@ public class MariadbPreparedSqlController {
     public int select(String table) {
         int rowCount = 0;
         String selectQuery = "SELECT * FROM " + table;
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             PreparedStatement statement = connection.prepareStatement(selectQuery);
             ResultSet resultSet = statement.executeQuery();
             rowCount = countRows(resultSet);

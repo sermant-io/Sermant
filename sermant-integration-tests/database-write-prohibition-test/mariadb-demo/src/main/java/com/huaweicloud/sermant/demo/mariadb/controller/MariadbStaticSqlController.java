@@ -40,12 +40,18 @@ public class MariadbStaticSqlController {
     @Value("${mysql.address}")
     private String mysqlAddress;
 
+    @Value("${mysql.user}")
+    private String user;
+
+    @Value("${mysql.password}")
+    private String password;
+
     /**
      * check running status
      *
      * @return running status
      */
-    @RequestMapping("createCollection")
+    @RequestMapping("checkStatus")
     public String checkStatus() {
         return "ok";
     }
@@ -58,7 +64,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("createTable")
     public String createTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String createTableQuery =
                     "CREATE TABLE " + table + " (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255),"
@@ -80,7 +86,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("dropTable")
     public String dropTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String dropTableQuery = "DROP TABLE IF EXISTS " + table;
             statement.executeUpdate(dropTableQuery);
@@ -100,7 +106,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("creatIndex")
     public String createIndex(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String createIndexQuery = "CREATE INDEX idx_name ON " + table + " (name)";
             statement.executeUpdate(createIndexQuery);
@@ -120,7 +126,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("dropIndex")
     public String dropIndex(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String dropIndexQuery = "DROP INDEX idx_name ON " + table;
             statement.executeUpdate(dropIndexQuery);
@@ -140,7 +146,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("alterTable")
     public String alterTable(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String alterTableQuery = "ALTER TABLE " + table + " ADD COLUMN address VARCHAR(255)";
             statement.executeUpdate(alterTableQuery);
@@ -160,7 +166,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("insert")
     public String insert(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String insertQuery = "INSERT INTO " + table + " (name, age) VALUES ('John Doe', 25)";
             statement.executeUpdate(insertQuery);
@@ -180,7 +186,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("update")
     public String update(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String updateQuery = "UPDATE " + table + " SET age = 26 WHERE id = 1";
             statement.executeUpdate(updateQuery);
@@ -200,7 +206,7 @@ public class MariadbStaticSqlController {
      */
     @RequestMapping("delete")
     public String delete(String table) {
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String deleteQuery = "DELETE FROM " + table + " WHERE id = 1";
             statement.executeUpdate(deleteQuery);
@@ -221,7 +227,7 @@ public class MariadbStaticSqlController {
     @RequestMapping("select")
     public int select(String table) {
         int rowCount = 0;
-        try (Connection connection = DriverManager.getConnection(mysqlAddress)) {
+        try (Connection connection = DriverManager.getConnection(mysqlAddress, user, password)) {
             Statement statement = connection.createStatement();
             String selectQuery = "SELECT * FROM " + table;
             ResultSet resultSet = statement.executeQuery(selectQuery);
