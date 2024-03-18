@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.cache;
+package com.huaweicloud.sermant.router.common.cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

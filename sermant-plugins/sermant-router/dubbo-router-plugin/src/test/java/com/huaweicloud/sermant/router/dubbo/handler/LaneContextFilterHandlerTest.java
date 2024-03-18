@@ -19,7 +19,6 @@ package com.huaweicloud.sermant.router.dubbo.handler;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
 import com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtilsTest.ApacheInvoker;
 
 import org.apache.dubbo.rpc.RpcInvocation;
 import org.junit.AfterClass;
@@ -52,6 +51,9 @@ public class LaneContextFilterHandlerTest {
     private final RpcInvocation invocation;
 
     private final ApacheInvoker<?> invoker;
+
+    private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
+            .valueOf("dubbo://localhost:8081/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
 
     /**
      * UT执行前进行mock
@@ -128,6 +130,33 @@ public class LaneContextFilterHandlerTest {
 
         public void setReturnEmpty(boolean returnEmpty) {
             this.returnEmpty = returnEmpty;
+        }
+    }
+
+    public static class ApacheInvoker<T> implements org.apache.dubbo.rpc.Invoker<T> {
+        @Override
+        public Class<T> getInterface() {
+            return null;
+        }
+
+        @Override
+        public org.apache.dubbo.rpc.Result invoke(org.apache.dubbo.rpc.Invocation invocation)
+                throws org.apache.dubbo.rpc.RpcException {
+            return null;
+        }
+
+        @Override
+        public org.apache.dubbo.common.URL getUrl() {
+            return APACHE_URL;
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return false;
+        }
+
+        @Override
+        public void destroy() {
         }
     }
 }

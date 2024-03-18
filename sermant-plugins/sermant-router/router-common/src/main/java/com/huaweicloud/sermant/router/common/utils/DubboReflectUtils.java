@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.sermant.router.dubbo.utils;
-
-import com.huaweicloud.sermant.router.common.utils.ReflectUtils;
+package com.huaweicloud.sermant.router.common.utils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,6 +53,12 @@ public class DubboReflectUtils {
     private static final String APACHE_RPC_CONTEXT_CLASS_NAME = "org.apache.dubbo.rpc.RpcContext";
 
     private static final String ATTACHMENTS_FIELD = "attachments";
+
+    private static final String GET_INSTANCE_METHOD_NAME = "getInstance";
+
+    private static final String GET_METADATA_INFO_METHOD_NAME = "getMetadataInfo";
+
+    private static final String GET_PROTOCOL_SERVICE_METHOD_NAME = "getProtocolServiceKey";
 
     private DubboReflectUtils() {
     }
@@ -213,5 +217,38 @@ public class DubboReflectUtils {
         }
         Optional<Object> attachments = ReflectUtils.getFieldValue(context.get(), ATTACHMENTS_FIELD);
         return attachments.map(obj -> (Map<String, Object>) obj).orElse(Collections.emptyMap());
+    }
+
+    /**
+     * 获取ServiceInstance
+     *
+     * @param obj invoker
+     * @return ServiceInstance
+     * @see org.apache.dubbo.rpc.Invoker
+     */
+    public static Object getInstance(Object obj) {
+        return ReflectUtils.invokeWithNoneParameter(obj, GET_INSTANCE_METHOD_NAME);
+    }
+
+    /**
+     * 获取MetadataInfo
+     *
+     * @param obj invoker
+     * @return MetadataInfo
+     * @see org.apache.dubbo.rpc.Invoker
+     */
+    public static Object getMetadataInfo(Object obj) {
+        return ReflectUtils.invokeWithNoneParameter(obj, GET_METADATA_INFO_METHOD_NAME);
+    }
+
+    /**
+     * 获取serviceKey
+     *
+     * @param obj invoker
+     * @return String
+     * @see org.apache.dubbo.rpc.Invoker
+     */
+    public static Object getProtocolServiceKey(Object obj) {
+        return ReflectUtils.invokeWithNoneParameter(obj, GET_PROTOCOL_SERVICE_METHOD_NAME);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,35 @@
 
 package com.huaweicloud.sermant.router.dubbo.declarer;
 
+import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
+import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
+import com.huaweicloud.sermant.router.dubbo.interceptor.Dubbo3AbstractDirectoryInterceptor;
 
 /**
  * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
  *
- * @author provenceee
- * @since 2021-06-28
+ * @author chengyouling
+ * @since 2024-02-20
  */
-public class AbstractDirectoryDeclarer extends AbstractDeclarer {
+public class Dubbo3AbstractDirectoryDeclarer extends AbstractPluginDeclarer {
     private static final String APACHE_ENHANCE_CLASS = "org.apache.dubbo.rpc.cluster.directory.AbstractDirectory";
-
-    private static final String ALIBABA_ENHANCE_CLASS = "com.alibaba.dubbo.rpc.cluster.directory.AbstractDirectory";
-
-    private static final String INTERCEPT_CLASS
-            = "com.huaweicloud.sermant.router.dubbo.interceptor.AbstractDirectoryInterceptor";
 
     private static final String METHOD_NAME = "doList";
 
-    private static final int PARAMETER_COUNT = 1;
-
-    /**
-     * 构造方法
-     */
-    public AbstractDirectoryDeclarer() {
-        super(null, INTERCEPT_CLASS, METHOD_NAME);
-    }
+    private static final int PARAMETER_COUNT = 3;
 
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.isExtendedFrom(APACHE_ENHANCE_CLASS).or(ClassMatcher.isExtendedFrom(ALIBABA_ENHANCE_CLASS));
+        return ClassMatcher.isExtendedFrom(APACHE_ENHANCE_CLASS);
+    }
+
+    @Override
+    public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(getMethodMatcher(), new Dubbo3AbstractDirectoryInterceptor())
+        };
     }
 
     /**
@@ -54,8 +52,7 @@ public class AbstractDirectoryDeclarer extends AbstractDeclarer {
      *
      * @return 方法匹配器
      */
-    @Override
     public MethodMatcher getMethodMatcher() {
-        return super.getMethodMatcher().and(MethodMatcher.paramCountEquals(PARAMETER_COUNT));
+        return MethodMatcher.nameEquals(METHOD_NAME).and(MethodMatcher.paramCountEquals(PARAMETER_COUNT));
     }
 }
