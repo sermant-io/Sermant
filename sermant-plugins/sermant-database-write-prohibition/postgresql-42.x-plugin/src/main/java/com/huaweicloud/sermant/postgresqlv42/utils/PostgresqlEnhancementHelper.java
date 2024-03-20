@@ -20,6 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
+import com.huaweicloud.sermant.postgresqlv42.interceptors.PgStatementInterceptor;
 import com.huaweicloud.sermant.postgresqlv42.interceptors.QueryExecutorImplInterceptor;
 
 /**
@@ -28,7 +29,7 @@ import com.huaweicloud.sermant.postgresqlv42.interceptors.QueryExecutorImplInter
  * @author zhp
  * @since 2024-02-04
  **/
-public class QueryExecutorImplEnhancementHelper {
+public class PostgresqlEnhancementHelper {
     private static final String SEND_ONE_QUERY_METHOD_NAME = "sendOneQuery";
 
     private static final String ENHANCE_CLASS_NAME = "org.postgresql.core.v3.QueryExecutorImpl";
@@ -39,6 +40,22 @@ public class QueryExecutorImplEnhancementHelper {
 
     private static final String SIMPLE_PARAMETER_LIST_CLASS_NAME = "org.postgresql.core.v3.SimpleParameterList";
 
+    private static final String EXECUTE_METHOD_NAME = "execute";
+
+    private static final String EXECUTE_BATCH_METHOD_NAME = "executeBatch";
+
+    private static final String PG_STATEMENT_CLASS_NAME = "org.postgresql.jdbc.PgStatement";
+
+    private static final String QUERY_CLASS_NAME = "org.postgresql.core.Query";
+
+    private static final String PARAMETER_LIST_CLASS_NAME = "org.postgresql.core.ParameterList";
+
+    private static final String[] STATEMENT_EXECUTE_METHOD_PARAMS_TYPE = {
+            QUERY_CLASS_NAME,
+            PARAMETER_LIST_CLASS_NAME,
+            INT_CLASS_NAME
+    };
+
     private static final String[] EXECUTE_METHOD_PARAMS_TYPE = {
             SIMPLE_QUERY_CLASS_NAME,
             SIMPLE_PARAMETER_LIST_CLASS_NAME,
@@ -46,7 +63,7 @@ public class QueryExecutorImplEnhancementHelper {
             INT_CLASS_NAME
     };
 
-    private QueryExecutorImplEnhancementHelper() {
+    private PostgresqlEnhancementHelper() {
     }
 
     private static MethodMatcher getSendOneQueryMethodMatcher() {
@@ -80,5 +97,61 @@ public class QueryExecutorImplEnhancementHelper {
      */
     public static ClassMatcher getQueryExecutorImplClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_CLASS_NAME);
+    }
+
+    private static MethodMatcher getExecuteMethodMatcher() {
+        return MethodMatcher.nameEquals(EXECUTE_METHOD_NAME)
+                .and(MethodMatcher.paramTypesEqual(STATEMENT_EXECUTE_METHOD_PARAMS_TYPE));
+    }
+
+    private static MethodMatcher getExecuteBatchMethodMatcher() {
+        return MethodMatcher.nameEquals(EXECUTE_BATCH_METHOD_NAME);
+    }
+
+    /**
+     * Get ClassMatcher for PgStatement class
+     *
+     * @return ClassMatcher Database write operation handler
+     */
+    public static ClassMatcher getPgStatementClassMatcher() {
+        return ClassMatcher.nameEquals(PG_STATEMENT_CLASS_NAME);
+    }
+
+    /**
+     * Get the non-parameter interceptor declarer for PgStatement execute method
+     *
+     * @return InterceptDeclarer The non-parameter interceptor declarer for PgStatement execute method
+     */
+    public static InterceptDeclarer getPgStatementExecuteInterceptDeclarer() {
+        return InterceptDeclarer.build(getExecuteMethodMatcher(), new PgStatementInterceptor());
+    }
+
+    /**
+     * Get the parameterized interceptor declarer for the PgStatement execute method
+     *
+     * @param handler Database write operation handler
+     * @return InterceptDeclarer The parameterized interceptor declarer for the PgStatement execute method
+     */
+    public static InterceptDeclarer getPgStatementExecuteInterceptDeclarer(DatabaseHandler handler) {
+        return InterceptDeclarer.build(getExecuteMethodMatcher(), new PgStatementInterceptor(handler));
+    }
+
+    /**
+     * Get the non-parameter interceptor declarer for PgStatement executeBatch method
+     *
+     * @return InterceptDeclarer The non-parameter interceptor declarer for PgStatement executeBatch method
+     */
+    public static InterceptDeclarer getPgStatementExecuteBatchInterceptDeclarer() {
+        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new PgStatementInterceptor());
+    }
+
+    /**
+     * Get the parameterized interceptor declarer for PgStatement executeBatch method
+     *
+     * @param handler Database write operation handler
+     * @return InterceptDeclarer The parameterized interceptor declarer for PgStatement executeBatch method
+     */
+    public static InterceptDeclarer getPgStatementExecuteBatchInterceptDeclarer(DatabaseHandler handler) {
+        return InterceptDeclarer.build(getExecuteBatchMethodMatcher(), new PgStatementInterceptor(handler));
     }
 }

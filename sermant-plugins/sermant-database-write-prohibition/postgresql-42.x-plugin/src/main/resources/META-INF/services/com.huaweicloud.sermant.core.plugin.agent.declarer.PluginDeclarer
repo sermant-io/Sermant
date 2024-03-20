@@ -14,3 +14,4 @@
 # limitations under the License.
 #
 com.huaweicloud.sermant.postgresqlv42.declarers.QueryExecutorImplDeclarer
+com.huaweicloud.sermant.postgresqlv42.declarers.PgStatementDeclarer
