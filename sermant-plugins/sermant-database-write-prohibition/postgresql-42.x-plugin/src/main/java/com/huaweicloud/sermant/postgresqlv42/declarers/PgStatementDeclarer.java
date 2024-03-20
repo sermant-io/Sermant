@@ -22,19 +22,20 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.postgresqlv42.utils.PostgresqlEnhancementHelper;
 
 /**
- * QueryExecutorImpl declarer
+ * PgStatement declarer
  *
  * @author zhp
- * @since 2024-02-04
+ * @since 2024-03-19
  **/
-public class QueryExecutorImplDeclarer extends AbstractPluginDeclarer {
+public class PgStatementDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return PostgresqlEnhancementHelper.getQueryExecutorImplClassMatcher();
+        return PostgresqlEnhancementHelper.getPgStatementClassMatcher();
     }
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[]{PostgresqlEnhancementHelper.getSendOneQueryInterceptDeclarer()};
+        return new InterceptDeclarer[]{PostgresqlEnhancementHelper.getPgStatementExecuteInterceptDeclarer(),
+                PostgresqlEnhancementHelper.getPgStatementExecuteBatchInterceptDeclarer()};
     }
 }
