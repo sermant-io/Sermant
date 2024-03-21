@@ -55,3 +55,67 @@ jobs:
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
           mvn package -DskipTests -Ptest --file pom.xml
+  test-for-database-write-prohibition-mongodb:
+    name: Test for database-write-prohibition mongodb
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - mongodbClientVersion: "3.7.0"
+          - mongodbClientVersion: "3.8.2"
+          - mongodbClientVersion: "3.9.1"
+          - mongodbClientVersion: "3.10.2"
+          - mongodbClientVersion: "3.11.3"
+          - mongodbClientVersion: "3.12.14"
+          - mongodbClientVersion: "4.0.6"
+          - mongodbClientVersion: "4.1.2"
+          - mongodbClientVersion: "4.2.3"
+          - mongodbClientVersion: "4.3.4"
+          - mongodbClientVersion: "4.4.2"
+          - mongodbClientVersion: "4.5.1"
+          - mongodbClientVersion: "4.6.1"
+          - mongodbClientVersion: "4.7.2"
+          - mongodbClientVersion: "4.8.2"
+          - mongodbClientVersion: "4.9.1"
+          - mongodbClientVersion: "4.10.2"
+          - mongodbClientVersion: "4.11.1"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/database-write-prohibition
+      - name: database-write-prohibition-mongodb test for mongodbClientVersion=${{ matrix.mongodbClientVersion }}
+        uses: ./.github/actions/scenarios/database-write-prohibition/mongodb
+  test-for-database-write-prohibition-mysql:
+    name: Test for database-write-prohibition mysql
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - mysqlClientVersion: "2.6.2"
+          - mysqlClientVersion: "2.7.6"
+          - mysqlClientVersion: "2.7.12"
+          - mysqlClientVersion: "3.0.6"
+          - mysqlClientVersion: "3.0.11"
+          - mysqlClientVersion: "3.1.4"
+          - mysqlClientVersion: "3.2.0"
+          - mysqlClientVersion: "3.3.3"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/database-write-prohibition
+      - name: database-write-prohibition-mysql test for mysqlClientVersion=${{ matrix.mysqlClientVersion }}
+        uses: ./.github/actions/scenarios/database-write-prohibition/mysql

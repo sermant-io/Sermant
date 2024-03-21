@@ -1,0 +1,58 @@
+name: "Database Write Prohibition Plugin MongoDB Test"
+description: "Auto test for mongodb write prohibition"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/databse-write-prohibition/mongodb
+    - name: start mongodb
+      shell: bash
+      run: |
+        sudo apt-get install gnupg curl
+        curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+           sudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \
+           --dearmor
+        echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+        sudo apt-get update
+        sudo apt-get install -y mongodb-org
+        sudo systemctl start mongod
+        sudo systemctl status mongod
+        nohup mongo test &
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dmongodb.version=${{ matrix.mongodbClientVersion }} -DskipTests -Pmongodb-test --file \
+        sermant-integration-tests/database-write-prohibition-test/pom.xml
+    - name: start mongodb demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/mongodb \
+        sermant-integration-tests/database-write-prohibition-test/mongodb-demo/target/mongodb-demo.jar > ${{ env.logDir }}/mongodb.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9098/checkStatus 120
+    - name: test mongodb
+      shell: bash
+      run: |
+        mvn test -Ddatabase.write.prohibition.integration.test.type=MONGODB --file \
+        sermant-integration-tests/database-write-prohibition-test/database-write-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: mongo
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-database-write-prohibition-mongodb-(${{ matrix.mongodbClientVersion }})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2
