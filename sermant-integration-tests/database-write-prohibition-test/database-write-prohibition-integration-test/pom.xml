@@ -17,6 +17,7 @@
         <curator.version>4.3.0</curator.version>
         <httpclient4x.version>4.5.13</httpclient4x.version>
         <commons-log.version>1.2</commons-log.version>
+        <fastjson.version>1.2.83</fastjson.version>
     </properties>
 
     <dependencies>
@@ -35,6 +36,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient4x.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

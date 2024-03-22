@@ -1,0 +1,66 @@
+name: "Postgresql Database Write Prohibition Plugin Test"
+description: "Auto test for postgresql database write prohibition"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/database-write-prohibition/postgresql
+    - name: install postgresql
+      shell: bash
+      run: |
+        curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+        echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+        sudo apt update
+        sudo apt install postgresql-14 -y
+        sudo service postgresql start
+        sudo service postgresql status
+        sudo -u postgres psql -c "CREATE DATABASE test;"
+        sudo chmod -R 777 /etc/postgresql/14/main/
+        sudo sed -i 's/scram-sha-256/trust/g' /etc/postgresql/14/main/pg_hba.conf
+        sudo sed -i 's/peer/trust/g' /etc/postgresql/14/main/pg_hba.conf
+        sudo echo "host all all all md5" >> /etc/postgresql/14/main/pg_hba.conf
+        sudo sed -i 's/#password_encryption = scram-sha-256/password_encryption = md5/g' /etc/postgresql/14/main/postgresql.conf
+        sudo -u postgres psql -c "SELECT pg_reload_conf();set password_encryption = 'md5';show password_encryption;ALTER USER postgres WITH PASSWORD '${{ env.datasourcePassword }}';"
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Ddatabase.version=${{ matrix.postgresqlVersion }} -Ddatabase.groupId=org.postgresql -Ddatabase.artifactId=postgresql \
+        -DskipTests -Ppostgresql-opengauss-test --file sermant-integration-tests/database-write-prohibition-test/pom.xml
+    - name: start postgresql demo
+      shell: bash
+      env:
+        SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+        SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/test?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: ${{ env.datasourcePassword }}
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/postgresql \
+        sermant-integration-tests/database-write-prohibition-test/postgresql-opengauss-demo/target/postgresql-opengauss-demo.jar > ${{ env.logDir }}/postgresql.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/checkStatus 120
+    - name: test postgresql
+      shell: bash
+      run: |
+        mvn test -Ddatabase.prohibition.integration.test.type=POSTGRESQL_OPENGAUSS --file \
+        sermant-integration-tests/database-write-prohibition-test/database-write-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: postgresql
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-database-write-prohibition-postgresql-${{ matrix.postgresqlVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

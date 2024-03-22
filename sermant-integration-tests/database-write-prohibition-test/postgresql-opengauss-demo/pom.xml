@@ -9,15 +9,17 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>postgresql-demo</artifactId>
+    <artifactId>postgresql-opengauss-demo</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <postgresql.version>9.4.1210</postgresql.version>
         <mybatis.version>3.5.3</mybatis.version>
         <dynamic.version>3.5.2</dynamic.version>
-        <opengauss.version>3.1.0</opengauss.version>
+        <scram.version>1.0.0-beta.2</scram.version>
+        <database.groupId>org.postgresql</database.groupId>
+        <database.artifactId>postgresql</database.artifactId>
+        <database.version>9.4.1211</database.version>
     </properties>
 
     <dependencies>
@@ -26,9 +28,23 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
+            <groupId>com.ongres.scram</groupId>
+            <artifactId>client</artifactId>
+            <version>${scram.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ongres.scram</groupId>
+            <artifactId>common</artifactId>
+            <version>${scram.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${database.groupId}</groupId>
+            <artifactId>${database.artifactId}</artifactId>
+            <version>${database.version}</version>
         </dependency>
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
@@ -38,11 +54,6 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
-            <version>${dynamic.version}</version>
         </dependency>
     </dependencies>
 

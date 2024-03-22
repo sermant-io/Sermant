@@ -24,12 +24,12 @@ package com.huaweicloud.sermant.database.prohibition.integration.constant;
  **/
 public class DatabaseConstant {
     /**
-     * fail to execute database write operation status code
+     * Status code for execute database operation failure
      */
     public static final String OPERATION_FAIL_CODE = "100";
 
     /**
-     * succeed to execute database write operation status code
+     * Status code for successful execute database operation
      */
     public static final String OPERATION_SUCCEED_CODE = "101";
 

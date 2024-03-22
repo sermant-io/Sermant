@@ -36,15 +36,9 @@
 
     <profiles>
         <profile>
-            <id>opengauss-test</id>
+            <id>postgresql-opengauss-test</id>
             <modules>
-                <module>opengauss-demo</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>postgresql-test</id>
-            <modules>
-                <module>postgresql-demo</module>
+                <module>postgresql-opengauss-demo</module>
             </modules>
         </profile>
         <profile>

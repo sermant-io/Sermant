@@ -119,3 +119,91 @@ jobs:
         uses: ./.github/actions/common/database-write-prohibition
       - name: database-write-prohibition-mysql test for mysqlClientVersion=${{ matrix.mysqlClientVersion }}
         uses: ./.github/actions/scenarios/database-write-prohibition/mysql
+  test-for-postgresql:
+    name: Test for postgresql
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - postgresqlVersion: "9.4-1200-jdbc4"
+          - postgresqlVersion: "9.4-1203-jdbc4"
+          - postgresqlVersion: "9.4-1206-jdbc4"
+          - postgresqlVersion: "9.4-1200-jdbc41"
+          - postgresqlVersion: "9.4-1203-jdbc41"
+          - postgresqlVersion: "9.4-1206-jdbc41"
+          - postgresqlVersion: "9.4.1207"
+          - postgresqlVersion: "9.4.1210"
+          - postgresqlVersion: "9.4.1212"
+          - postgresqlVersion: "42.0.0"
+          - postgresqlVersion: "42.1.0"
+          - postgresqlVersion: "42.1.2"
+          - postgresqlVersion: "42.1.4"
+          - postgresqlVersion: "42.2.0"
+          - postgresqlVersion: "42.2.3"
+          - postgresqlVersion: "42.2.6"
+          - postgresqlVersion: "42.2.9"
+          - postgresqlVersion: "42.2.12"
+          - postgresqlVersion: "42.2.15"
+          - postgresqlVersion: "42.2.18"
+          - postgresqlVersion: "42.2.21"
+          - postgresqlVersion: "42.2.24"
+          - postgresqlVersion: "42.2.27"
+          - postgresqlVersion: "42.2.29"
+          - postgresqlVersion: "42.3.0"
+          - postgresqlVersion: "42.3.3"
+          - postgresqlVersion: "42.3.6"
+          - postgresqlVersion: "42.3.8"
+          - postgresqlVersion: "42.3.10"
+          - postgresqlVersion: "42.4.0"
+          - postgresqlVersion: "42.4.3"
+          - postgresqlVersion: "42.4.5"
+          - postgresqlVersion: "42.5.0"
+          - postgresqlVersion: "42.5.3"
+          - postgresqlVersion: "42.5.6"
+          - postgresqlVersion: "42.6.0"
+          - postgresqlVersion: "42.6.2"
+          - postgresqlVersion: "42.7.0"
+          - postgresqlVersion: "42.7.2"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+          datasourcePassword=$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 10)A1a#$
+          echo "datasourcePassword=$datasourcePassword" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/database-write-prohibition
+      - name: database-write-prohibition test for postgresqlVersion=${{ matrix.postgresqlVersion }}
+        uses: ./.github/actions/scenarios/database-write-prohibition/postgresql/
+  test-for-opengauss:
+    name: Test for opengauss
+    runs-on: ubuntu-latest
+    needs: [build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - opengaussVersion: "3.0.0"
+          - opengaussVersion: "3.0.5"
+          - opengaussVersion: "3.0.5-og"
+          - opengaussVersion: "3.1.0"
+          - opengaussVersion: "3.1.0-og"
+          - opengaussVersion: "3.1.1"
+          - opengaussVersion: "3.1.1-og"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+          datasourcePassword=$(openssl rand -base64 16 | tr -dc 'a-zA-Z0-9' | head -c 10)A1a#$
+          echo "datasourcePassword=$datasourcePassword" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/database-write-prohibition
+      - name: database-write-prohibition test for opengaussVersion=${{ matrix.opengaussVersion }}
+        uses: ./.github/actions/scenarios/database-write-prohibition/opengauss/
