@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package com.huaweicloud.sermant.database.prohibition.postgresql;
+package com.huaweicloud.sermant.database.prohibition;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,13 +26,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2024-02-18
  **/
 @SpringBootApplication
-public class PostgresqlApplication {
+public class DatabaseWriteProhibitionApplication {
     /**
      * startup method
      *
      * @param args process startup input parameter
      */
     public static void main(String[] args) {
-        SpringApplication.run(PostgresqlApplication.class, args);
+        SpringApplication.run(DatabaseWriteProhibitionApplication.class, args);
     }
 }

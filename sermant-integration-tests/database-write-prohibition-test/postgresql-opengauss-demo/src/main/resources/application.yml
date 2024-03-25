@@ -7,4 +7,4 @@ spring:
     username:
     password:
   application:
-    name: postgresql-demo
+    name: postgresql-opengauss-demo
