@@ -118,7 +118,7 @@ public class PluginClassLoader extends URLClassLoader {
                 }
 
                 // 确保局部类加载器不是当前类加载器，否则会stackoverflow
-                if (loader != null && !this.equals(loader)) {
+                if (loader != null && !this.equals(loader) && !(loader instanceof ServiceClassLoader)) {
                     try {
                         clazz = loader.loadClass(name);
                     } catch (ClassNotFoundException e) {

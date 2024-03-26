@@ -60,8 +60,7 @@ public class PluginConfigManager {
      */
     public static void loadPluginConfigs(Plugin plugin) {
         File pluginConfigFile = getPluginConfigFile(plugin.getPath());
-        ClassLoader classLoader =
-                plugin.getServiceClassLoader() != null ? plugin.getServiceClassLoader() : plugin.getPluginClassLoader();
+        ClassLoader classLoader = plugin.getPluginClassLoader();
         for (BaseConfig config : ServiceLoader.load(PluginConfig.class, classLoader)) {
             Class<? extends BaseConfig> pluginConfigCls = config.getClass();
             String pluginConfigKey = ConfigKeyUtil.getCLTypeKey(ConfigKeyUtil.getTypeKey(pluginConfigCls),
