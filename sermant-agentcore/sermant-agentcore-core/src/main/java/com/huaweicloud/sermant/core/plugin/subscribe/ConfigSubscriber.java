@@ -18,16 +18,16 @@
 package com.huaweicloud.sermant.core.plugin.subscribe;
 
 /**
- * 配置中心服务订阅
+ * Subscriber for configuration center
  *
  * @author zhouss
  * @since 2022-04-13
  */
 public interface ConfigSubscriber {
     /**
-     * 配置订阅
+     * process subscribe
      *
-     * @return 是否订阅成功
+     * @return subscribe result
      */
     boolean subscribe();
 }

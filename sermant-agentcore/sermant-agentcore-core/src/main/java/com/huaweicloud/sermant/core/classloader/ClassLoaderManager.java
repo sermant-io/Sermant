@@ -57,8 +57,9 @@ public class ClassLoaderManager {
     public static void init(Map<String, Object> argsMap) throws MalformedURLException {
         sermantClassLoader = (SermantClassLoader) ClassLoaderManager.class.getClassLoader();
 
-        // 将Common包中的内容也加载进SermantClassLoader
-        // 这里引入的第三方依赖需要控制当前依赖并非需要在增强中使用的宿主服务依赖，否则，将会出现类型转换错误
+        // Load the contents of the Common package into the SermantClassLoader
+        // The third-party dependencies introduced here need to control that the current dependency is not a host
+        // instance dependency that needs to be used in the enhancement, otherwise, a type conversion error will occur
         sermantClassLoader
                 .appendUrls(listCommonLibUrls(argsMap.get(CommonConstant.COMMON_DEPENDENCY_DIR_KEY).toString()));
         frameworkClassLoader = initFrameworkClassLoader(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString());
@@ -74,7 +75,7 @@ public class ClassLoaderManager {
     }
 
     /**
-     * 创建一个插件类加载器
+     * Create a PluginClassLoader
      *
      * @return PluginClassLoader
      */

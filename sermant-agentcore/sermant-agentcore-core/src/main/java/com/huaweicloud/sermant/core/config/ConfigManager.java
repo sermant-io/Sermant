@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 配置储存器
+ * Configuration manager
  *
  * @author HapThorin
  * @version 1.0.0
@@ -42,13 +42,14 @@ import java.util.logging.Logger;
  */
 public abstract class ConfigManager {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 配置对象集合，键为配置对象的实现类Class，值为加载完毕的配置对象
-     * <p>通过{@link #getConfig(Class)}方法获取配置对象
+     * CONFIG_MAP, key is the implementation Class of the configuration object, and the value is the loaded
+     * configuration object
+     * <p>Get the configuration object using the {@link #getConfig(Class)} method
      */
     private static final Map<String, BaseConfig> CONFIG_MAP = new HashMap<>();
 
@@ -57,7 +58,7 @@ public abstract class ConfigManager {
     private static Map<String, Object> argsMap;
 
     /**
-     * 关闭配置管理器
+     * Close the configuration manager
      */
     public static void shutdown() {
         CONFIG_MAP.clear();
@@ -65,31 +66,34 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 通过配置对象类型获取配置对象
+     * The configuration object is obtained by configuration object type
      *
-     * @param cls 配置对象类型
-     * @param <R> 配置对象泛型
-     * @return 配置对象
+     * @param cls Configuration object type
+     * @param <R> Configuration object generic type
+     * @return Configuration object
      */
     public static <R extends BaseConfig> R getConfig(Class<R> cls) {
         return (R) CONFIG_MAP.get(ConfigKeyUtil.getTypeKey(cls));
     }
 
     /**
-     * 执行初始化，主要包含以下步骤：
+     * Performing initialization mainly involves the following steps
      * <pre>
-     *     1.处理启动配置参数
-     *     2.获取加载配置策略
-     *     3.加载配置文件
-     *     4.查找所有配置对象
-     *     5.加载所有配置对象
-     *     6.将所有加载完毕的配置对象保留于{@code CONFIG_MAP}中
+     *     1.Manage boot configuration parameters
+     *     2.Gets the loading configuration strategy
+     *     3.Load configuration file
+     *     4.Finds all configuration objects
+     *     5.Load all configuration objects
+     *     6.Keep all loaded configuration objects in {@code CONFIG_MAP}
      * </pre>
-     * <p>当加载配置策略不存在时，使用默认的加载策略，将不进行任何配置加载
-     * <p>当配置文件不存在时，仅将{@code agentArgs}中的内容处理为配置信息承载对象
-     * <p>当部分配置对象封装失败时，将不影响他们保存于{@code CONFIG_MAP}中，也不影响其他配置对象的封装
+     * <p>If the loading configuration strategy does not exist, the default loading strategy is used and no
+     * configuration loading is performed
+     * <p>When the configuration file does not exist, only the content in {@code agentArgs} is processed as the
+     * configuration information object
+     * <p>Failure to encapsulate some configuration objects does not affect their saving in {@code CONFIG_MAP}, nor
+     * does it affect the encapsulation of other configuration objects
      *
-     * @param args 启动配置参数
+     * @param args Startup configuration parameter
      */
     public static synchronized void initialize(Map<String, Object> args) {
         argsMap = args;
@@ -101,10 +105,10 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 加载配置文件，将配置信息读取到配置对象中
+     * Load the configuration file and read the configuration information to the configuration object
      *
-     * @param configFile 配置文件
-     * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param configFile configuration file
+     * @param classLoader classLoader, which determines from which class Loader api operations are performed
      */
     protected static void loadConfig(File configFile, ClassLoader classLoader) {
         if (configFile.exists() && configFile.isFile()) {
@@ -115,9 +119,9 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 加载默认配置
+     * Load default configuration
      *
-     * @param classLoader 类加载器，该参数决定从哪个classLoader中进行api操作
+     * @param classLoader classLoader, which determines from which class Loader api operations are performed
      */
     private static synchronized void loadDefaultConfig(ClassLoader classLoader) {
         foreachConfig(new ConfigConsumer() {
@@ -132,10 +136,11 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 配置执行从配置文件中加载
+     * The configuration execution is loaded from the configuration file
      *
-     * @param configFile 配置文件
-     * @param classLoader 类加载器，当前配置加载策略api在agentcore-implement包中，所以使用FrameworkClassLoader加载
+     * @param configFile configuration file
+     * @param classLoader classloader. The loading strategy api is currently configured in the agentcore-implement
+     * package, so use FrameworkClassLoader to load it
      */
     private static synchronized void doLoadConfig(File configFile,
             ClassLoader classLoader) {
@@ -155,14 +160,14 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 加载配置逻辑
+     * Load configuration logic
      *
-     * @param configFile 配置文件
-     * @param baseConfig 配置类
-     * @return 加载后的配置类
+     * @param configFile configuration file
+     * @param baseConfig base config
+     * @return The configuration object after loading
      */
     public static BaseConfig doLoad(File configFile, BaseConfig baseConfig) {
-        // 通过FrameworkClassLoader 获取配置加载策略
+        // Obtain configuration loading strategy using the FrameworkClassLoader
         final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile,
                 ClassLoaderManager.getFrameworkClassLoader());
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
@@ -170,15 +175,19 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 通过spi的方式获取加载配置策略
-     * <p>需要在{@code META-INF/services}目录中添加加载配置策略{@link LoadConfigStrategy}文件，并键入实现
-     * <p>如果声明多个实现，仅第一个有效
-     * <p>如果未声明任何实现，使用默认的加载配置策略{@link LoadConfigStrategy.DefaultLoadConfigStrategy}
-     * <p>该默认策略不会进行任何业务操作
+     * Obtain loading configuration strategy by spi
+     * <p>need to add the load configuration policy {@link LoadConfigStrategy} file in the {@code META-INF/services}
+     * directory and type implementation
+     * <p>If multiple implementations are declared, only the first one is valid
+     * <p>If do not declare any implementation, using the default load strategy
+     * {@link LoadConfigStrategy.DefaultLoadConfigStrategy}
+     * <p>The default strategy does not perform any operations
      *
-     * @param configFile 配置文件
-     * @param classLoader 用于查找加载策略的类加载器，允许在类加载中添加新的配置加载策略
-     * @return 加载配置策略
+     * @param configFile configuration file
+     * @param classLoader A classLoader for finding load strategy that allows new configuration load strategy to be
+     * added to classLoader
+     *
+     * @return load strategy
      */
     private static LoadConfigStrategy<?> getLoadConfigStrategy(File configFile, ClassLoader classLoader) {
         for (LoadConfigStrategy<?> strategy : LOAD_CONFIG_STRATEGIES) {
@@ -200,12 +209,14 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 遍历所有通过spi方式声明的配置对象
-     * <p>需要在{@code META-INF/services}目录中添加配置基类{@link BaseConfig}文件，并添加实现
-     * <p>文件中声明的所有实现都将会进行遍历，每一个实现类都会通过spi获取实例，然后调用{@code configConsumer}进行消费
+     * Iterate over all configuration objects declared by spi
+     * <p>need to add the configuration base class {@link BaseConfig} file in the {@code META-INF/services} directory
+     * and add the implementation
+     * <p>All implementations declared will be iterated, and each implementation class will get an
+     * instance through spi, and then call {@code configConsumer} to consume
      *
-     * @param configConsumer 配置处理方法
-     * @param classLoader 类加载器
+     * @param configConsumer Configuration processing method
+     * @param classLoader classLoader
      */
     private static void foreachConfig(ConfigConsumer configConsumer,
             ClassLoader classLoader) {
@@ -215,13 +226,13 @@ public abstract class ConfigManager {
     }
 
     /**
-     * 配置对象消费者
+     * ConfigConsumer
      *
      * @since 2021-12-31
      */
     public interface ConfigConsumer {
         /**
-         * 处理BaseConfig
+         * Handling BaseConfig
          *
          * @param config BaseConfig
          */

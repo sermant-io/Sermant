@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 通用常量管理类，
+ * CommonConstant
  *
  * @author HapThorin
  * @version 1.0.0
@@ -28,97 +28,97 @@ import java.nio.charset.StandardCharsets;
  */
 public class CommonConstant {
     /**
-     * 框架默认字符集
+     * default character set
      */
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     /**
-     * logback配置文件名
+     * logback file name
      */
     public static final String LOG_SETTING_FILE_NAME = "logback.xml";
 
     /**
-     * 核心包版本键
+     * sermant version
      */
     public static final String CORE_VERSION_KEY = "Sermant-Version";
 
     /**
-     * 启动配置中应用名称的键
+     * key of application name
      */
     public static final String APP_NAME_KEY = "appName";
 
     /**
-     * 启动配置中应用类型的键
+     * key of application type
      */
     public static final String APP_TYPE_KEY = "appType";
 
     /**
-     * 启动配置中服务名称的键
+     * key of service name
      */
     public static final String SERVICE_NAME_KEY = "serviceName";
 
     /**
-     * Sermant核心功能实现包的键
+     * key of Sermant core functions implement package
      */
     public static final String CORE_IMPLEMENT_DIR_KEY = "core.implement.dir";
 
     /**
-     * Sermant公共第三方依赖目录
+     * Sermant public third party dependency directory
      */
     public static final String COMMON_DEPENDENCY_DIR_KEY = "common.dir";
 
     /**
-     * sermant的配置文件名的键
+     * key of Sermant configuration file name
      */
     public static final String CORE_CONFIG_FILE_KEY = "core.config.file";
 
     /**
-     * 插件的设置配置名的键
+     * key of plugin setting file
      */
     public static final String PLUGIN_SETTING_FILE_KEY = "plugin.setting.file";
 
     /**
-     * pluginPackage插件包的键
+     * key of pluginPackage
      */
     public static final String PLUGIN_PACKAGE_DIR_KEY = "plugin.package.dir";
 
     /**
-     * logback配置的键
+     * key of logback setting file
      */
     public static final String LOG_SETTING_FILE_KEY = "log.setting.file";
 
     /**
-     * 插件加载场景键
+     * key of profile
      */
     public static final String PLUGIN_PROFILE = "profile";
 
     /**
-     * 逗号
+     * COMMA
      */
     public static final String COMMA = ",";
 
     /**
-     * 点号
+     * DOT
      */
     public static final String DOT = ".";
 
     /**
-     * 冒号
+     * COLON
      */
     public static final String COLON = ":";
 
     /**
-     * Byte-buddy日志中的错误字段
+     * Byte-buddy error field in the log
      */
     public static final String ERROR = "ERROR";
 
     /**
-     * Byte-buddy日志中的字节码转换成功字段
+     * Bytecode enhancement success field in the byte-buddy log
      */
     public static final String TRANSFORM = "TRANSFORM";
 
     /**
-     * 默认的增强后字节码文件输出路径父目录
+     * Default enhanced bytecode file output path parent directory
      */
     public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
 

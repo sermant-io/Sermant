@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * 配置订阅
+ * Abstract subscriber for configuration center
  *
  * @author zhouss
  * @since 2022-04-13
@@ -38,24 +38,24 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
     private DynamicConfigService dynamicConfigService;
 
     /**
-     * 订阅的插件名称
+     * plugin to subscribe
      */
     private final String pluginName;
 
     /**
-     * 自定义配置实现的构造方法
+     * Custom configuration implementation constructor
      *
-     * @param dynamicConfigService 配置中心实现
+     * @param dynamicConfigService Configuration center implementation
      */
     protected AbstractGroupConfigSubscriber(DynamicConfigService dynamicConfigService) {
         this(dynamicConfigService, null);
     }
 
     /**
-     * 自定义配置实现的构造方法
+     * Custom configuration implementation constructor
      *
-     * @param dynamicConfigService 配置中心实现
-     * @param pluginName 插件名称
+     * @param dynamicConfigService Configuration center implementation
+     * @param pluginName plugin name
      */
     protected AbstractGroupConfigSubscriber(DynamicConfigService dynamicConfigService, String pluginName) {
         if (dynamicConfigService == null) {
@@ -65,7 +65,6 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
                 LOGGER.severe("dynamicConfigService is not enabled!");
                 this.dynamicConfigService = null;
             }
-
         } else {
             this.dynamicConfigService = dynamicConfigService;
         }
@@ -103,16 +102,16 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
     }
 
     /**
-     * 构建组订阅者
+     * Build group subscribers
      *
      * @return 订阅全集
      */
     protected abstract Map<String, DynamicConfigListener> buildGroupSubscribers();
 
     /**
-     * 是否可以订阅
+     * is ready to subscribe
      *
-     * @return 是否可以订阅
+     * @return result
      */
     protected abstract boolean isReady();
 }

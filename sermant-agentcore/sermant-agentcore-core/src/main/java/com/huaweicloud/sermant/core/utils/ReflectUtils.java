@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 反射工具类
+ * ReflectUtils
  *
  * @author zhouss
  * @since 2022-05-20
@@ -45,24 +45,24 @@ public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 字段缓存
+     * Filed cache
      */
     private static final Map<Class<?>, Map<String, Field>> FIELD_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 方法缓存 key: class#method(params) value: method
+     * Method cache, key: class#method(params) value: method
      */
     private static final Map<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
 
     private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 构造方法缓存
+     * Constructor cache
      */
     private static final Map<String, Optional<Constructor<?>>> CONSTRUCTOR_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 针对单个类缓存的Field的初始化容量
+     * The initial capacity of a field cached for a single class
      */
     private static final int INIT_CLASS_FILED_CACHE_SIZE = 4;
 
@@ -72,10 +72,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射调用无参方法
+     * invoke parameterless method via reflection
      *
-     * @param target 目标方法
-     * @param methodName 方法名
+     * @param target Target method
+     * @param methodName Method name
      * @return 结果
      */
     public static Optional<Object> invokeMethodWithNoneParameter(Object target, String methodName) {
@@ -83,13 +83,13 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射调用方法
+     * invoke method via reflection
      *
-     * @param target 目标方法
-     * @param methodName 方法名
-     * @param paramsType 参数类型
-     * @param params 参数
-     * @return 结果
+     * @param target Target method
+     * @param methodName Method name
+     * @param paramsType Parameter type
+     * @param params parameter
+     * @return result
      */
     public static Optional<Object> invokeMethod(Object target, String methodName, Class<?>[] paramsType,
             Object[] params) {
@@ -104,13 +104,13 @@ public class ReflectUtils {
     }
 
     /**
-     * 针对静态方法调用
+     * invoke static methods
      *
-     * @param className 类全限定名
-     * @param methodName 方法名
-     * @param paramsType 参数类型
-     * @param params 参数
-     * @return 调用结果
+     * @param className Class fully qualified name
+     * @param methodName Method name
+     * @param paramsType Parameter type
+     * @param params parameter
+     * @return invoke result
      */
     public static Optional<Object> invokeMethod(String className, String methodName, Class<?>[] paramsType,
             Object[] params) {
@@ -122,13 +122,13 @@ public class ReflectUtils {
     }
 
     /**
-     * 针对静态方法调用
+     * invoke static methods
      *
-     * @param clazz 类对象
-     * @param methodName 方法名
-     * @param paramsType 参数类型
-     * @param params 参数
-     * @return 调用结果
+     * @param clazz Class object
+     * @param methodName Method name
+     * @param paramsType Parameter type
+     * @param params parameter
+     * @return invoke result
      */
     public static Optional<Object> invokeMethod(Class<?> clazz, String methodName, Class<?>[] paramsType,
             Object[] params) {
@@ -140,12 +140,12 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射调用方法
+     * invoke method
      *
-     * @param method 方法
-     * @param target 目标对象
-     * @param params 方法参数
-     * @return 结果
+     * @param method method
+     * @param target Target object
+     * @param params Method parameter
+     * @return result
      */
     public static Optional<Object> invokeMethod(Object target, Method method, Object[] params) {
         try {
@@ -170,19 +170,19 @@ public class ReflectUtils {
             try {
                 return Optional.ofNullable(contextClassLoader.loadClass(className));
             } catch (ClassNotFoundException ignored) {
-                // 找不到类直接返回
+                // directly return when no class found
                 return Optional.empty();
             }
         });
     }
 
     /**
-     * 查找方法, 若子类无法找到, 则会遍历寻找父类
+     * Find method, if the subclass cannot be found, then iterate to find the parent class
      *
-     * @param clazz 对象
-     * @param methodName 方法名称
-     * @param paramsType 方法参数
-     * @return 方法
+     * @param clazz class
+     * @param methodName Method name
+     * @param paramsType Method parameter
+     * @return method
      */
     public static Optional<Method> findMethod(Class<?> clazz, String methodName, Class<?>[] paramsType) {
         if (clazz == null) {
@@ -218,12 +218,12 @@ public class ReflectUtils {
     }
 
     /**
-     * 构造对象
+     * Build with constructor
      *
-     * @param className 类权限定名
-     * @param paramsTypes 构造器参数类型
-     * @param params 构造器参数
-     * @return 实例
+     * @param className Class fully qualified name
+     * @param paramsTypes Constructor parameter types
+     * @param params Constructor parameter
+     * @return instance object
      */
     public static Optional<Object> buildWithConstructor(String className, Class<?>[] paramsTypes, Object[] params) {
         final Class<?> clazz = loadClass(className).orElse(null);
@@ -231,12 +231,12 @@ public class ReflectUtils {
     }
 
     /**
-     * 构造对象
+     * Build with constructor
      *
-     * @param clazz 对象类
-     * @param paramsTypes 构造器参数类型
-     * @param params 构造器参数
-     * @return 实例
+     * @param clazz class
+     * @param paramsTypes Constructor parameter types
+     * @param params Constructor parameter
+     * @return instance object
      */
     public static Optional<Object> buildWithConstructor(Class<?> clazz, Class<?>[] paramsTypes, Object[] params) {
         if (clazz == null) {
@@ -257,18 +257,18 @@ public class ReflectUtils {
     }
 
     /**
-     * 查找构造器
+     * Search constructor
      *
-     * @param clazz 对象类
-     * @param paramsTypes 构造器参数
-     * @return 构造器
+     * @param clazz class
+     * @param paramsTypes Constructor parameter
+     * @return Constructor
      */
     public static Optional<Constructor<?>> findConstructor(Class<?> clazz, Class<?>[] paramsTypes) {
         if (clazz == null) {
             return Optional.empty();
         }
 
-        // 增加构造方法缓存
+        // Add to constructor cache
         return CONSTRUCTOR_CACHE.computeIfAbsent(buildMethodKey(clazz, "<init>", paramsTypes), key -> {
             try {
                 return Optional.of(setObjectAccessible(clazz.getDeclaredConstructor(paramsTypes)));
@@ -293,12 +293,12 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置字段值
+     * Set field value
      *
-     * @param target 对象
-     * @param fieldName 字段
-     * @param value 值
-     * @return 是否成功
+     * @param target target object
+     * @param fieldName field name
+     * @param value value
+     * @return set result
      */
     public static boolean setFieldValue(Object target, String fieldName, Object value) {
         final Optional<Field> fieldOption = getField(target, fieldName);
@@ -320,9 +320,9 @@ public class ReflectUtils {
     }
 
     /**
-     * 更新final 字段
+     * Update final field
      *
-     * @param field 目标字段
+     * @param field Target field
      */
     public static void updateFinalModifierField(Field field) {
         final Field modifiersField = getField(Field.class, "modifiers");
@@ -337,10 +337,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 通过反射获取字段值
+     * Gets the field value by reflection
      *
-     * @param target 目标对象
-     * @param fieldName 字段名称
+     * @param target Target object
+     * @param fieldName Field name
      * @return value
      */
     public static Optional<Object> getFieldValue(Object target, String fieldName) {
@@ -351,11 +351,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 通过反射获取字段值
+     * Gets the field value by reflection
      *
-     * @param className 目标类权限定名
-     * @param target 目标对象
-     * @param fieldName 字段名称
+     * @param className The fully qualified name of the target class
+     * @param target Target object
+     * @param fieldName Field name
      * @return value
      */
     public static Optional<Object> getFieldValue(String className, Object target, String fieldName) {
@@ -367,11 +367,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 通过反射获取字段值
+     * Gets the field value by reflection
      *
-     * @param clazz 目标类
-     * @param target 目标对象
-     * @param fieldName 字段名称
+     * @param clazz Target class
+     * @param target Target object
+     * @param fieldName Field name
      * @return value
      */
     public static Optional<Object> getFieldValueByClazz(Class<?> clazz, Object target, String fieldName) {
@@ -399,10 +399,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 判断当前字段是否为final
+     * Check whether the current field is final
      *
-     * @param field 字段
-     * @return true 为final
+     * @param field filed
+     * @return result
      */
     private static boolean isFinalField(Field field) {
         return Modifier.isFinal(field.getModifiers());
@@ -439,10 +439,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 从缓存获取field, 该方法会从已有缓存中遍历所有父类拿到缓存, 若无则直接采用反射拿
+     * To get the field from the cache, this method will iterate through all the parent classes from the existing cache
+     * to get the cache.If it does not exist, obtain it by reflection
      *
-     * @param clazz 类对象
-     * @param fieldName 字段名
+     * @param clazz class object
+     * @param fieldName field name
      * @return Field
      */
     private static Optional<Field> getFieldFromCache(Class<?> clazz, String fieldName) {
@@ -469,11 +470,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 通过反射获取字段值
+     * Gets the field value by reflection
      *
-     * @param clazz 目标类
-     * @param fieldName 字段名称
-     * @return value 字段值
+     * @param clazz Target class
+     * @param fieldName Field name
+     * @return value Field value
      */
     public static Optional<Object> getStaticFieldValue(Class<?> clazz, String fieldName) {
         if (clazz == null || StringUtils.isBlank(fieldName)) {

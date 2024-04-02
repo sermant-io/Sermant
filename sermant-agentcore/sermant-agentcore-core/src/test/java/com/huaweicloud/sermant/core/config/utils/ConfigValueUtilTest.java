@@ -31,23 +31,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 测试环境变量读取
+ * Test environment variable reading
  *
  * @author zhouss
  * @since 2022-07-04
  */
 public class ConfigValueUtilTest {
     private static final String CONFIG_DEFAULT_VALUE = "test1";
+
     private static final String CONFIG_KEY = "service.meta.applicationName";
 
     private Map<String, String> rawEnvMap;
 
     /**
-     * 测试读取不同格式的环境变量
+     * Tests read environment variables in different formats
      *
-     * @throws NoSuchFieldException     不会抛出
-     * @throws IllegalArgumentException 不会抛出
-     * @throws ClassNotFoundException   不会抛出
+     * @throws NoSuchFieldException
+     * @throws IllegalArgumentException
+     * @throws ClassNotFoundException
      */
     @Test
     public void testReadEnv() throws Exception {
@@ -76,15 +77,16 @@ public class ConfigValueUtilTest {
      */
     private static void setEnv(Map envMap) throws NoSuchFieldException, IllegalAccessException {
         try {
-            // win系统
+            // win os
             Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
             Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
             theEnvironmentField.setAccessible(true);
             Map env = (Map) theEnvironmentField.get(null);
             env.putAll(envMap);
 
-            // linux/macos系统
-            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
+            // linux/macos os
+            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField(
+                    "theCaseInsensitiveEnvironment");
             theCaseInsensitiveEnvironmentField.setAccessible(true);
             Map cienv = (Map) theCaseInsensitiveEnvironmentField.get(null);
             cienv.putAll(envMap);

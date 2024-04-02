@@ -17,18 +17,18 @@
 package com.huaweicloud.sermant.core.common;
 
 /**
- * 描述agent类型
+ * Description agent Type
  *
  * @author luanwenfei
  * @since 2023-09-09
  */
 public enum AgentType {
     /**
-     * premain方式启动的agent
+     * The agent starts in premain mode
      */
     PREMAIN(0),
     /**
-     * agentmain方式启动的agent
+     * The agent starts in agentmain mode
      */
     AGENTMAIN(1);
 

@@ -22,20 +22,23 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import java.lang.reflect.Field;
 
 /**
- * 用于处理统一配置系统键的工具
+ * Tool for handling key of configuration system
  *
  * @author HapThorin
  * @version 1.0.0
  * @since 2021-11-16
  */
 public class ConfigKeyUtil {
+    private ConfigKeyUtil() {
+    }
+
     /**
-     * 获取配置对象的键
-     * <p>如果配置对象被{@link ConfigTypeKey}修饰，取其值
-     * <p>如果不被{@link ConfigTypeKey}修饰，则取类的全限定名
+     * Gets the key of the configuration object
+     * <p>If the configuration object is modified by {@link ConfigTypeKey}, take its value
+     * <p>If not modified by {@link ConfigTypeKey}, take the fully qualified name of the class
      *
-     * @param cls 配置对象类
-     * @return 前缀字符串
+     * @param cls Configuration object class
+     * @return prefix string
      */
     public static String getTypeKey(Class<?> cls) {
         final ConfigTypeKey configTypeKey = cls.getAnnotation(ConfigTypeKey.class);
@@ -47,12 +50,13 @@ public class ConfigKeyUtil {
     }
 
     /**
-     * 获取配置信息键
-     * <p>通过{@link ConfigFieldKey}注解获取成员属性对应配置信息键
-     * <p>不存在注解时，直接取字段名
+     * Obtain the configuration information key
+     * <p>Get the configuration information key corresponding to the member attribute with the {@link ConfigFieldKey}
+     * annotation
+     * <p>When no annotation exists, take the field name directly
      *
-     * @param field 字段
-     * @return 配置信息键
+     * @param field filed
+     * @return Configuration information key
      */
     public static String getFieldKey(Field field) {
         final ConfigFieldKey configFieldKey = field.getAnnotation(ConfigFieldKey.class);
@@ -64,13 +68,13 @@ public class ConfigKeyUtil {
     }
 
     /**
-     * 附带ClassLoader的类型键
+     * Type key with ClassLoader
      *
-     * @param typeKey     类型键
+     * @param typeKey type key
      * @param classLoader ClassLoader
-     * @return 附带ClassLoader的类型键
+     * @return Type key with ClassLoader
      */
-    public static String getCLTypeKey(String typeKey, ClassLoader classLoader) {
+    public static String getTypeKeyWithClassloader(String typeKey, ClassLoader classLoader) {
         return typeKey + "@" + Integer.toHexString(classLoader.hashCode());
     }
 }

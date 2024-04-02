@@ -27,7 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 插件服务管理器，核心服务管理器{@link ServiceManager}的特化，专门用来初始化{@link PluginService}
+ * Plugin service manager, a specialization of the core service manager {@link ServiceManager} to initialize {@link
+ * PluginService}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -41,9 +42,9 @@ public class PluginServiceManager extends ServiceManager {
     }
 
     /**
-     * 初始化插件服务
+     * Initialize plugin services
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public static void initPluginServices(Plugin plugin) {
         ClassLoader classLoader =
@@ -63,9 +64,9 @@ public class PluginServiceManager extends ServiceManager {
     }
 
     /**
-     * 关闭插件服务
+     * Stop plugin services
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public static void shutdownPluginServices(Plugin plugin) {
         for (String serviceName : plugin.getServices()) {
@@ -74,11 +75,11 @@ public class PluginServiceManager extends ServiceManager {
     }
 
     /**
-     * 获取插件服务
+     * Get plugin service
      *
-     * @param serviceClass 插件服务类
-     * @param <T> 插件服务类型
-     * @return 插件服务实例
+     * @param serviceClass Plugin service class
+     * @param <T> Plugin service type
+     * @return Plugin service instance
      */
     public static <T extends PluginService> T getPluginService(Class<T> serviceClass) {
         return getService(serviceClass);

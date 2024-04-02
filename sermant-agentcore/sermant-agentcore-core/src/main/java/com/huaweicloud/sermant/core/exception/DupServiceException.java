@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.exception;
 import java.util.Locale;
 
 /**
- * 重复服务异常
+ * Duplicate service exception
  *
  * @author HapThorin
  * @version 1.0.0
@@ -29,7 +29,7 @@ public class DupServiceException extends RuntimeException {
     private static final long serialVersionUID = 126761488232028879L;
 
     /**
-     * 构造方法
+     * constructor
      *
      * @param clsName clsName
      */

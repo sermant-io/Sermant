@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 字段格式转换测试类
+ * Field format conversion tests
  *
  * @author xzc
  * @since 2022-10-08

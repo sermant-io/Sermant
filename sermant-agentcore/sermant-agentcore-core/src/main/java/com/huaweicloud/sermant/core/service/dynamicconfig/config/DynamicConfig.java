@@ -39,37 +39,37 @@ public class DynamicConfig implements BaseConfig {
     private static final int REQUEST_TIMEOUT = 3000;
 
     /**
-     * 服务器连接超时时间
+     * config read timeout
      */
     @ConfigFieldKey("timeoutValue")
     private int timeoutValue = TIME_OUT_VALUE;
 
     /**
-     * 连接服务器超时时间
+     * connection timeout to server
      */
     @ConfigFieldKey("connectTimeout")
     private int connectTimeout = CONNECT_TIMEOUT;
 
     /**
-     * 连接服务器重试次数
+     * Retry times of connection to server
      */
     @ConfigFieldKey("connectRetryTimes")
     private int connectRetryTimes = CONNECT_RETRY_TIMES;
 
     /**
-     * 默认分组
+     * default group
      */
     @ConfigFieldKey("defaultGroup")
     private String defaultGroup = "sermant";
 
     /**
-     * 服务器地址，必须形如：{@code host:port[(,host:port)...]}
+     * The server address must be in the form of : {@code host:port[(,host:port)...]}
      */
     @ConfigFieldKey("serverAddress")
     private String serverAddress = "127.0.0.1:2181";
 
     /**
-     * 服务实现类型，取NOP、ZOOKEEPER、KIE
+     * The service implementation type can be NOP, ZOOKEEPER, KIE, or NACOS
      */
     @ConfigFieldKey("dynamicConfigType")
     private String serviceType = "NOP";
@@ -83,7 +83,7 @@ public class DynamicConfig implements BaseConfig {
     private boolean enableAuth = false;
 
     /**
-     * 请求超时时间，nacos每次getConfig需要设置一个超时时间
+     * Request timeout. Nacos needs to set one timeout for getting configuration each time
      */
     @ConfigFieldKey("requestTimeout")
     private int requestTimeout = REQUEST_TIMEOUT;

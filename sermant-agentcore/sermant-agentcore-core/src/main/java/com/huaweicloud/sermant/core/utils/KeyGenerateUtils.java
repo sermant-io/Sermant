@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.utils;
 
 /**
- * 生成各类键
+ * Generate all types of keys
  *
  * @author luanwenfei
  * @since 2023-10-19
@@ -27,7 +27,7 @@ public class KeyGenerateUtils {
     }
 
     /**
-     * 通过Class生成携带类加载器信息的键
+     * Use Class to generate keys that carry classloader information
      *
      * @param cls 类
      * @return 键

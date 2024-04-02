@@ -33,10 +33,10 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * 类的匹配器，分为两种类型：
+ * ClassMatcher, contains two types:
  * <pre>
- *     1.类的类型匹配器，将{@link ClassTypeMatcher}
- *     1.类的模糊匹配器，将{@link ClassFuzzyMatcher}
+ *     1.Class type matcher, {@link ClassTypeMatcher}
+ *     1.Class fuzzy matcher, {@link ClassFuzzyMatcher}
  * </pre>
  *
  * @author HapThorin
@@ -45,10 +45,10 @@ import java.util.Set;
  */
 public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     /**
-     * 匹配名称完全一致的类
+     * Match classes with exact name
      *
-     * @param typeName 类全限定名
-     * @return 类的类型匹配器
+     * @param typeName Class fully qualified name
+     * @return ClassTypeMatcher
      */
     public static ClassTypeMatcher nameEquals(String typeName) {
         return new ClassTypeMatcher() {
@@ -65,20 +65,20 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配多个类
+     * Match multiple classes
      *
-     * @param typeNames 类全限定名集
-     * @return 类的类型匹配器
+     * @param typeNames Class fully qualified name set
+     * @return ClassTypeMatcher
      */
     public static ClassTypeMatcher nameContains(String... typeNames) {
         return nameContains(new HashSet<>(Arrays.asList(typeNames)));
     }
 
     /**
-     * 匹配多个类
+     * Match multiple classes
      *
-     * @param typeNames 类全限定名集
-     * @return 类的类型匹配器
+     * @param typeNames Class fully qualified name set
+     * @return ClassTypeMatcher
      */
     public static ClassTypeMatcher nameContains(Set<String> typeNames) {
         return new ClassTypeMatcher() {
@@ -95,10 +95,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配类名前缀满足要求的类
+     * Match classes whose class name prefix meets the requirements
      *
-     * @param prefix 前缀
-     * @return 类的模糊匹配器
+     * @param prefix prefix
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher namePrefixedWith(String prefix) {
         return new ClassFuzzyMatcher() {
@@ -110,10 +110,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配类名后缀满足要求的类
+     * Match classes whose class name suffix meet the requirements
      *
-     * @param suffix 后缀
-     * @return 类的模糊匹配器
+     * @param suffix suffix
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher nameSuffixedWith(String suffix) {
         return new ClassFuzzyMatcher() {
@@ -125,10 +125,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配类名内缀满足要求的类
+     * Match classes whose class name infix meet the requirements
      *
-     * @param infix 内缀
-     * @return 类的模糊匹配器
+     * @param infix infix
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher nameInfixedWith(String infix) {
         return new ClassFuzzyMatcher() {
@@ -140,10 +140,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配满足正则表达式的类
+     * Matches classes that satisfy regular expression
      *
-     * @param pattern 正则表达式
-     * @return 类的模糊匹配器
+     * @param pattern Regular expression
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher nameMatches(String pattern) {
         return new ClassFuzzyMatcher() {
@@ -155,10 +155,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配被传入所有注解修饰的类
+     * Match classes by class annotation
      *
-     * @param annotations 注解集
-     * @return 类的模糊匹配器
+     * @param annotations annotation set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher isAnnotatedWith(String... annotations) {
         return new ClassFuzzyMatcher() {
@@ -175,10 +175,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配被传入所有注解修饰的类
+     * Match classes by class annotation
      *
-     * @param annotations 注解集
-     * @return 类的模糊匹配器
+     * @param annotations annotation set
+     * @return ClassFuzzyMatcher
      */
     @SafeVarargs
     public static ClassFuzzyMatcher isAnnotatedWith(Class<? extends Annotation>... annotations) {
@@ -197,10 +197,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配继承传入所有超类的类
+     * Match classes that inherit the specific superclass
      *
-     * @param superTypes 超类集
-     * @return 类的模糊匹配器
+     * @param superTypes superclass type set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher isExtendedFrom(String... superTypes) {
         return new ClassFuzzyMatcher() {
@@ -212,10 +212,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 匹配继承传入所有超类的类
+     * Match classes that inherit the specific superclass
      *
-     * @param superTypes 超类集
-     * @return 类的模糊匹配器
+     * @param superTypes superclass type set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher isExtendedFrom(Class<?>... superTypes) {
         final Set<String> superTypeNames = new HashSet<String>();
@@ -231,11 +231,11 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 超类检查
+     * superclass check
      *
-     * @param typeDescription 类型描述
-     * @param superTypeNames 超类名称集
-     * @return 检查是否通过
+     * @param typeDescription type description
+     * @param superTypeNames superclass type name set
+     * @return check result
      */
     private static boolean superTypeCheck(TypeDescription typeDescription, Collection<String> superTypeNames) {
         final Set<String> superTypeNameSet = new HashSet<String>(superTypeNames);
@@ -261,10 +261,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 通过byte-buddy的元素匹配器构建类的模糊匹配器
+     * Build ClassFuzzyMatcher through byte-buddy's ElementMatcher
      *
-     * @param elementMatcher 元素匹配器
-     * @return 类的模糊匹配器
+     * @param elementMatcher Element matcher
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher build(ElementMatcher<TypeDescription> elementMatcher) {
         return new ClassFuzzyMatcher() {
@@ -276,10 +276,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 逻辑操作{@code not}，类的匹配器集全为假时返回真，否则返回假
+     * Logical operation {@code not}, returns true if the ClassMatcher set is all false, and false otherwise
      *
-     * @param matchers 类的匹配器集
-     * @return 类的模糊匹配器
+     * @param matchers ClassMatcher set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher not(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {
@@ -296,10 +296,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 逻辑操作{@code and}，类的匹配器集全为真时返回真，否则返回假
+     * Logical operation {@code and}, returns true if the ClassMatcher set is all true, and false otherwise
      *
-     * @param matchers 类的匹配器集
-     * @return 类的模糊匹配器
+     * @param matchers ClassMatcher set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher and(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {
@@ -316,10 +316,10 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
     }
 
     /**
-     * 逻辑操作{@code or}，类的匹配器集其中一个为真时返回真，否则返回假
+     * Logical operation {@code or}, returns true if one of ClassMatchers is true, and false otherwise
      *
-     * @param matchers 类的匹配器集
-     * @return 类的模糊匹配器
+     * @param matchers ClassMatcher set
+     * @return ClassFuzzyMatcher
      */
     public static ClassFuzzyMatcher or(ClassMatcher... matchers) {
         return new ClassFuzzyMatcher() {

@@ -17,19 +17,19 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知类型
+ * Netty Notification Type
  *
  * @author zhp
  * @since 2023-06-16
  */
 public enum NettyNotificationType implements NotificationType {
     /**
-     * netty已链接
+     * netty connected
      */
     CONNECTED("CONNECTED", "notification of netty connected"),
 
     /**
-     * netty链接断开
+     * netty disconnected
      */
     DISCONNECTED("DISCONNECTED", "notification of netty disconnected");
 

@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * 管理事件收集器
+ * Event Manager
  *
  * @author luanwenfei
  * @since 2023-03-02
@@ -51,7 +51,7 @@ public class EventManager {
     }
 
     /**
-     * 初始化，创建定时任务，定时上报事件
+     * Initialize, create scheduled tasks, and report events periodically
      */
     public static void init() {
         EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
@@ -60,44 +60,44 @@ public class EventManager {
             return;
         }
 
-        // 创建定时采集事件线程
+        // Create a thread for periodically collecting events
         executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("event-collect-task"));
 
-        // 初始化事件发送
+        // Initialize event sending
         EventSender.init();
 
-        // 注册框架事件收集器
+        // Register the framework event collector
         EventManager.registerCollector(FrameworkEventCollector.getInstance());
 
-        // 注册日志事件收集器
+        // Register the log event collector
         EventManager.registerCollector(LogEventCollector.getInstance());
 
-        // 开启定时采集上报事件消息
+        // enable periodic collection of reported events
         executorService.scheduleAtFixedRate(EventManager::collectAll, INITIAL_DELAY, eventConfig.getSendInterval(),
                 TimeUnit.MILLISECONDS);
     }
 
     /**
-     * 在程序终止时上报在内存中的事件
+     * Report events in memory upon program termination
      */
     public static void shutdown() {
-        // 关闭定时采集事件线程
+        // shutdown the thread for collecting events
         if (executorService != null) {
             executorService.shutdown();
         }
 
-        // 采集全部事件并上报
+        // collect all events and report them
         collectAll();
 
-        // 清空注册的事件收集器
+        // Clear the registered event collector
         EVENT_COLLECTORS.clear();
     }
 
     /**
-     * 注册事件收集器
+     * Register event collector
      *
-     * @param eventCollector 事件收集器
-     * @return 注册成功｜注册失败
+     * @param eventCollector event collector
+     * @return register result
      */
     public static boolean registerCollector(EventCollector eventCollector) {
         EVENT_COLLECTORS.put(eventCollector.getClass().getCanonicalName(), eventCollector);
@@ -105,10 +105,10 @@ public class EventManager {
     }
 
     /**
-     * 取消注册收集器
+     * Unregister event collector
      *
-     * @param eventCollector 事件收集器
-     * @return 取消注册成功｜取消注册失败
+     * @param eventCollector event collector
+     * @return unregister result
      */
     public static boolean unRegisterCollector(EventCollector eventCollector) {
         if (EVENT_COLLECTORS.remove(eventCollector.getClass().getCanonicalName()) == null) {

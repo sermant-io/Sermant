@@ -54,7 +54,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 插件管理器，在这里将对插件相关的资源或操作进行管理
+ * Plugin manager, where plugin-related resources or operations are managed
  *
  * @author HapThorin
  * @version 1.0.0
@@ -62,7 +62,7 @@ import java.util.logging.Logger;
  */
 public class PluginManager {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -72,18 +72,19 @@ public class PluginManager {
     }
 
     /**
-     * 安装插件
+     * Install plugins
      *
-     * @param pluginNames 插件名集合，插件产物需要存在于pluginPackage中，否则无法安装成功
+     * @param pluginNames plugin name set, the plugin products must exist in the pluginPackage, otherwise it will not be
+     * installed successfully
      */
     public static void install(Set<String> pluginNames) {
         initPlugins(pluginNames, true);
     }
 
     /**
-     * 卸载插件
+     * uninstall plugin
      *
-     * @param pluginNames 插件名集合
+     * @param pluginNames plugin name set
      */
     public static void uninstall(Set<String> pluginNames) {
         if (CollectionUtils.isEmpty(pluginNames)) {
@@ -101,57 +102,57 @@ public class PluginManager {
                 continue;
             }
 
-            // 释放所有的插件占用的锁
+            // Release all locks occupied by plugins
             for (String adviceKey : plugin.getAdviceLocks()) {
                 AdviserScheduler.unLock(adviceKey);
             }
 
-            // 取消字节码增强
+            // Cancel bytecode enhancement
             ByteEnhanceManager.unEnhanceDynamicPlugin(plugin);
 
-            // 清除增强信息
+            // Clear enhancement information
             EnhancementManager.removePluginEnhancements(plugin);
 
-            // 关闭插件服务
+            // Stop plugin services
             PluginServiceManager.shutdownPluginServices(plugin);
 
-            // 移除PluginClassLoaderFinder中plugin对应的PluginClassLoader
+            // Remove the PluginClassLoader corresponding to plugin from the PluginClassLoaderFinder
             ClassLoaderManager.getPluginClassFinder().removePluginClassLoader(plugin);
 
-            // 清理该插件创建的Interceptor
+            // Clean up the Interceptors created by the plugin
             Map<String, List<Interceptor>> interceptorListMap = BaseAdviseHandler.getInterceptorListMap();
             for (List<Interceptor> interceptors : interceptorListMap.values()) {
                 interceptors.removeIf(
                         interceptor -> plugin.getPluginClassLoader().equals(interceptor.getClass().getClassLoader()));
             }
 
-            // 删除缓存的插件配置
+            // Delete the plugin configuration in the cache
             PluginConfigManager.cleanPluginConfigs(plugin);
 
-            // 关闭插件的ClassLoader
+            // Close the classLoader of the plugin
             closePluginLoaders(plugin);
 
-            // 从插件Map中清除该插件
+            // Clear the plugin from the plugin Map
             PLUGIN_MAP.remove(name);
 
-            // 清除插件信息缓存
+            // Clear the plugin information cache
             PluginSchemaValidator.removePluginVersionCache(name);
         }
     }
 
     /**
-     * 卸载全部插件
+     * Uninstall all plugins
      */
     public static void uninstallAll() {
-        // 新建一个Set，避免在清理插件时，删除PLUGIN_MAP缓存导致插件名Set被修改
+        // Create a new Set to prevent the plugin name set from being changed when the PLUGIN_MAP cache is deleted
         uninstall(new HashSet<>(PLUGIN_MAP.keySet()));
     }
 
     /**
-     * 初始化插件包、配置、插件服务包等插件相关的内容
+     * Initialize plugin packages, configurations, and plugin service packages
      *
-     * @param pluginNames 插件名称集
-     * @param isDynamic 插件是否为动态
+     * @param pluginNames plugin name set
+     * @param isDynamic Whether the plugin is dynamic
      */
     public static void initPlugins(Set<String> pluginNames, boolean isDynamic) {
         if (pluginNames == null || pluginNames.isEmpty()) {
@@ -172,7 +173,7 @@ public class PluginManager {
                 continue;
             }
             try {
-                // 去除插件名副本标记，获取实际所需要用到的资源目录
+                // Remove the copy tag of the plugin name to obtain the actual resource directory
                 final String pluginPath = pluginPackage + File.separatorChar + getRealPluginName(pluginName);
                 if (!new File(pluginPath).exists()) {
                     LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
@@ -197,17 +198,18 @@ public class PluginManager {
         PluginConfigManager.loadPluginConfigs(plugin);
         PluginServiceManager.initPluginServices(plugin);
 
-        // 适配逻辑，类加载器需要在字节码增强前加入到插件类检索器中，否则可能会在字节码增强时，找不到拦截器
+        // For adaptation logic, the classloader needs to be added to the plugin class finder before bytecode
+        // enhancement, otherwise the interceptor may not be found during bytecode enhancement
         ClassLoaderManager.getPluginClassFinder().addPluginClassLoader(plugin);
 
-        // 根据插件类型选择不同的字节码增强安装方式
+        // Select different bytecode enhancement installation types based on the plugin type
         if (plugin.isDynamic()) {
             ByteEnhanceManager.enhanceDynamicPlugin(plugin);
         } else {
             ByteEnhanceManager.enhanceStaticPlugin(plugin);
         }
 
-        // 插件成功加载后步骤
+        // Steps after the plugin is successfully loaded
         PLUGIN_MAP.put(plugin.getName(), plugin);
         PluginSchemaValidator.setDefaultVersion(plugin.getName());
         FrameworkEventCollector.getInstance().collectPluginsLoadEvent(plugin.getName());
@@ -215,9 +217,9 @@ public class PluginManager {
     }
 
     /**
-     * 构造插件服务类加载器
+     * Construct ServiceClassLoader of plugin
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     private static void loadServiceLibs(Plugin plugin) {
         URL[] urls = toUrls(plugin.getName(), listJars(getServiceDir(plugin.getPath())));
@@ -227,9 +229,9 @@ public class PluginManager {
     }
 
     /**
-     * 加载所有插件包
+     * Load all plugin packages
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     private static void loadPluginLibs(Plugin plugin) {
         for (File jar : listJars(getPluginDir(plugin.getPath()))) {
@@ -247,11 +249,11 @@ public class PluginManager {
     }
 
     /**
-     * 获取插件所有jar包的URL，将进行jar包的校验和版本的校验
+     * Obtain the URL of all jar packages of the plugin, and verify the jar package and version
      *
-     * @param pluginName 插件名称
-     * @param jars jar包集
-     * @return jar包的URL集
+     * @param pluginName plugin name
+     * @param jars jars
+     * @return jar package URL set
      */
     private static URL[] toUrls(String pluginName, File[] jars) {
         final List<URL> urls = new ArrayList<>();
@@ -265,9 +267,9 @@ public class PluginManager {
     }
 
     /**
-     * 通过文件获取url
+     * Get the url from a file
      *
-     * @param file 文件
+     * @param file file
      * @return url
      */
     private static Optional<URL> toUrl(File file) {
@@ -280,13 +282,13 @@ public class PluginManager {
     }
 
     /**
-     * 将插件包文件转换为jar包，再做处理
+     * Convert the plugin package file to a jar package and then do the processing
      *
-     * @param pluginName 插件名称
-     * @param jar 插件包文件
-     * @param ifCheckSchema 是否做jar包元数据检查
-     * @param consumer jar包消费者
-     * @return 是否无异常处理完毕
+     * @param pluginName plugin name
+     * @param jar plugin package file
+     * @param ifCheckSchema whether to check the jar package schema
+     * @param consumer jar consumer
+     * @return process result
      */
     private static boolean processByJarFile(String pluginName, File jar, boolean ifCheckSchema,
             JarFileConsumer consumer) {
@@ -316,20 +318,22 @@ public class PluginManager {
     }
 
     /**
-     * 形如 plugin-name#1 plugin-name#2 方式标记插件副本，共用资源文件，通过分隔插件名获取实际的插件名，对应插件目录名及Manifest中的插件标识
+     * plugin-name#1 plugin-name#2 marks the copy of the plugin, shares the resource file, and obtains the actual plugin
+     * name by separating the plugin name, which corresponds to the plugin directory name and the plugin identification
+     * in the Manifest
      *
-     * @param pluginName 插件名
-     * @return 实际插件名
+     * @param pluginName plugin name
+     * @return actual plugin name
      */
     private static String getRealPluginName(String pluginName) {
         return pluginName.split("#")[0];
     }
 
     /**
-     * 遍历目录下所有jar包，按文件名字典序排列
+     * Iterate through all jar packages in the directory, sorted by file name dictionary
      *
-     * @param dir 目标文件夹
-     * @return 所有jar包
+     * @param dir target directory
+     * @return all jars
      */
     private static File[] listJars(File dir) {
         if (!dir.exists() || !dir.isDirectory()) {
@@ -354,20 +358,20 @@ public class PluginManager {
     }
 
     /**
-     * 获取插件包目录
+     * Gets the plugin package directory
      *
-     * @param pluginPath 插件根目录
-     * @return 插件包目录
+     * @param pluginPath plugin root directory
+     * @return plugin package directory
      */
     private static File getPluginDir(String pluginPath) {
         return new File(pluginPath + File.separatorChar + PluginConstant.PLUGIN_DIR_NAME);
     }
 
     /**
-     * 获取插件服务包目录
+     * Gets the plugin service package directory
      *
-     * @param pluginPath 插件根目录
-     * @return 插件服务包目录
+     * @param pluginPath plugin root directory
+     * @return plugin service package directory
      */
     private static File getServiceDir(String pluginPath) {
         return new File(pluginPath + File.separatorChar + PluginConstant.SERVICE_DIR_NAME);
@@ -393,15 +397,15 @@ public class PluginManager {
     }
 
     /**
-     * JarFile消费者
+     * Jar file consumer
      *
      * @since 2021-11-12
      */
     private interface JarFileConsumer {
         /**
-         * 消费JarFile
+         * Consume Jar file
          *
-         * @param jarFile JarFile对象
+         * @param jarFile Jar file object
          */
         void consume(JarFile jarFile);
     }

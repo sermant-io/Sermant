@@ -17,22 +17,22 @@
 package com.huaweicloud.sermant.core.service.tracing.common;
 
 /**
- * 链路追踪插入Carrier的Key
+ * Key inserted into the Carrier in link trace
  *
  * @author luanwenfei
  * @since 2022-03-18
  */
 public enum TracingHeader {
     /**
-     * 标识一整条链路
+     * Identifies an entire link
      */
     TRACE_ID("sermant-trace-id"),
     /**
-     * 标识父SpanId
+     * Identifies the parent SpanId
      */
     PARENT_SPAN_ID("sermant-parent-span-id"),
     /**
-     * 标识下一进程的SpanId生成前缀
+     * Identifies the prefix of SpanId of next process
      */
     SPAN_ID_PREFIX("sermant-span-id-prefix");
 

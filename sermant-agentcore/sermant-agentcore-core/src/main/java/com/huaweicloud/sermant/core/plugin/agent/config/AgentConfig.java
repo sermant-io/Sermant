@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 增强配置类
+ * Enhancement configuration
  *
  * @author HapThorin
  * @version 1.0.0
@@ -32,42 +32,47 @@ import java.util.Set;
 @ConfigTypeKey("agent.config")
 public class AgentConfig implements BaseConfig {
     /**
-     * 是否允许字节码增强重转换
+     * Whether to enable bytecode retransform
      */
     private boolean isReTransformEnable = false;
 
     /**
-     * 增强忽略集，该集合中定义的全限定名前缀用于排除增强过程中被忽略的类，默认包含{@code com.huawei.sermant}，非强制
+     * Enhancement ignored set, a set in which the fully qualified name prefix defined is used to exclude classes that
+     * are ignored during enhancement, contains {@code com.huawei.sermant} by default, and is not mandatory
      */
     private Set<String> ignoredPrefixes = Collections.singleton("com.huawei.sermant");
 
     /**
-     * 增强忽略接口集，该集合中定义的接口用于排除增强过程中被忽略的类，默认包含{@org.springframework.cglib.proxy.Factory}，强制，否则会跟spring动态代理产生冲突，导致java.lang.VerifyError
+     * Enhancement ignored interface set, defined in the collection interface is used to exclude enhancement is ignored
+     * in the process of class, the default contains {@org.Springframework.Additional.Proxy.Factory}, mandatory,
+     * otherwise it will cause spring dynamic proxy conflict, throws java.lang.VerifyError
      */
     private Set<String> ignoredInterfaces = Collections.singleton("org.springframework.cglib.proxy.Factory");
 
     /**
-     * 是否在增强过程中输出检索日志
+     * Whether to output a search log during the enhancement process
      */
     private boolean isShowEnhanceLog = false;
 
     /**
-     * 是否输出被增强的类的字节码文件
+     * Whether to output the bytecode file of the enhanced class
      */
     private boolean isOutputEnhancedClasses = false;
 
     /**
-     * 被增强类的输出路径，如果为空，则不输出
+     * The output path of the enhanced class, if empty, is will use agent/enhancedClasses
      */
     private String enhancedClassesOutputPath;
 
     /**
-     * 拦截插件服务名单
+     * List of inject plugin services
      */
     private Set<String> serviceInjectList = Collections.emptySet();
 
     /**
-     * 允许从线程上下文中加载类，主要用于插件类加载器通过线程上下文类加载宿主服务的类，如果不允许可以在拦截器调用过程中指定
+     * Allows classes to be loaded from the thread context, mainly used by the PluginClassLoader to load the
+     * classes of the host instance through the thread context, if not allowed can be specified during the
+     * interceptor call
      */
     private boolean useContextLoader = false;
 

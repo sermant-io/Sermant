@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量相关新信息
+ * TrafficData
  *
  * @author lilai
  * @since 2023-07-26
@@ -31,11 +31,11 @@ public class TrafficData extends TrafficTag {
     private final String httpMethod;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param header 请求头/attachments
-     * @param path 请求路径
-     * @param httpMethod 请求方法
+     * @param header headers/attachments
+     * @param path path
+     * @param httpMethod httpMethod
      */
     public TrafficData(Map<String, List<String>> header, String path, String httpMethod) {
         super(header);

@@ -20,21 +20,21 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
- * 默认配置处理器
+ * Default configuration processor
  *
  * @author provenceee
  * @since 2023-04-11
  */
 public class DefaultConfigProcessor implements ConfigProcessor {
     /**
-     * 原监听器
+     * origin listener
      */
     private final DynamicConfigListener originListener;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param listener 原始监听器
+     * @param listener origin listener
      */
     public DefaultConfigProcessor(DynamicConfigListener listener) {
         this.originListener = listener;

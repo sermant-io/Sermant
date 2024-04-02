@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 事件采集器
+ * Event Collector
  *
  * @author luanwenfei
  * @since 2023-03-02
@@ -37,7 +37,8 @@ import java.util.logging.Logger;
 public class EventCollector {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    // 有界阻塞队列 缓存事件，未满则定时上报，已满则主动上报
+    // BlockingQueue for event cache. If the queue is not full, event is reported periodically. If
+    // the queue is full, event is reported automatically
     private final BlockingQueue<Event> eventQueue = new ArrayBlockingQueue<>(100);
 
     private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
@@ -45,15 +46,16 @@ public class EventCollector {
     private final ConcurrentHashMap<EventInfo, Long> eventInfoOfferTimeCache = new ConcurrentHashMap<>();
 
     /**
-     * 构造方法
+     * constructor
      */
     protected EventCollector() {
     }
 
     /**
-     * 用于事件采集管理器获取当前缓存事件，采集时清理日志及事件上报事件的缓存
+     * It is used by the event collection manager to obtain current cache events and clear the cache of logs and
+     * event reporting events during collection
      *
-     * @return 返回当前事件缓存队列
+     * @return cache queue
      */
     public final BlockingQueue<Event> collect() {
         cleanOfferTimeCacheMap();
@@ -61,10 +63,10 @@ public class EventCollector {
     }
 
     /**
-     * 用于向事件采集器添加事件, 如果满了就会主动发送事件信息
+     * It is used to add events to the event collector. If the collector is full, it sends events
      *
-     * @param event 事件
-     * @return 事件添加状态
+     * @param event event
+     * @return result
      */
     public boolean offerEvent(Event event) {
         if (!eventConfig.isEnable()) {
@@ -100,10 +102,10 @@ public class EventCollector {
     }
 
     /**
-     * 通过上报时间间隔，检查是否可以再次上报该事件
+     * Check whether the event can be reported again based on the reporting interval
      *
-     * @param eventInfo 事件信息
-     * @return boolean 是否可以再次上报
+     * @param eventInfo event information
+     * @return boolean result
      */
     private boolean checkEventInfoOfferInterval(EventInfo eventInfo) {
         Long lastOfferTime = eventInfoOfferTimeCache.get(eventInfo);
@@ -114,7 +116,7 @@ public class EventCollector {
     }
 
     /**
-     * 定时清理事件的上报时间缓存
+     * Periodically clear the event reporting time cache
      */
     protected void cleanOfferTimeCacheMap() {
         long currentTime = System.currentTimeMillis();

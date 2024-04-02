@@ -17,19 +17,19 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知类型
+ * Zookeeper Notification Type
  *
  * @author zhp
  * @since 2023-06-16
  */
 public enum ZookeeperNotificationType implements NotificationType {
     /**
-     * zookeeper已链接
+     * zookeeper connected
      */
     CONNECTED("CONNECTED", "notification of zookeeper connected"),
 
     /**
-     * zookeeper链接断开
+     * zookeeper disconnected
      */
     DISCONNECTED("DISCONNECTED", "notification of zookeeper disconnected");
 

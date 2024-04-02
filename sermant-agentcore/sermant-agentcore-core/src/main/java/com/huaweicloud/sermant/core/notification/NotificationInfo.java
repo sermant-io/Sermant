@@ -17,37 +17,31 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知信息
+ * Notification Information
  *
  * @author zhp
  * @since 2023-06-16
  */
 public class NotificationInfo {
     /**
-     * 通知类型
+     * Notification Type
      */
     private NotificationType notificationType;
 
     /**
-     * 通知内容
+     * Notification Content
      */
     private Object content;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param notificationType 通知类型
-     * @param content 通知内容
+     * @param notificationType notification type
+     * @param content content
      */
     public NotificationInfo(NotificationType notificationType, Object content) {
         this.notificationType = notificationType;
         this.content = content;
-    }
-
-    /**
-     * 无参构造
-     */
-    public NotificationInfo() {
     }
 
     public NotificationType getNotificationType() {

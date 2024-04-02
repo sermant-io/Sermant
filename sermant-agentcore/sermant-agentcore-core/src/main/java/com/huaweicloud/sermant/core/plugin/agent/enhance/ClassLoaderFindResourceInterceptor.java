@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 增强findResource方法
+ * Enhance findResource method
  *
  * @author luanwenfei
  * @since 2023-05-08
@@ -41,7 +41,7 @@ public class ClassLoaderFindResourceInterceptor implements Interceptor {
     private final Set<String> essentialPackage;
 
     /**
-     * 构造函数
+     * constructor
      */
     public ClassLoaderFindResourceInterceptor() {
         essentialPackage = ConfigManager.getConfig(InjectConfig.class).getEssentialPackage();

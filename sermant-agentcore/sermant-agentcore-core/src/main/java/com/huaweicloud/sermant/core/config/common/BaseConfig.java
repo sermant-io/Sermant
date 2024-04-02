@@ -19,10 +19,12 @@ package com.huaweicloud.sermant.core.config.common;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 
 /**
- * 配置基类
- * <p>要求所有配置类都继承该配置基类，同时在{@code META-INF/services}目录创建{@link BaseConfig}文件，并添加所有需要加载的实现类
- * <p>之后，调用{@link ConfigManager#initialize(java.util.Map)}初始化所有配置对象
- * <p>初始化之后，调用{@link ConfigManager#getConfig(Class)}获取配置对象
+ * BaseConfig
+ * <p>All configuration classes are required to inherit from this configuration base class, and the
+ * {@link BaseConfig} file is created in the {@code META-INF/services} directory and all implementation classes that
+ * need to be loaded are added
+ * <p>After that, call {@link ConfigManager#initialize(java.util.Map)} to initialize all configuration objects
+ * <p>After initialization, call {@link ConfigManager#getConfig(Class)} to get the configuration object
  *
  * @author HapThorin
  * @version 1.0.0

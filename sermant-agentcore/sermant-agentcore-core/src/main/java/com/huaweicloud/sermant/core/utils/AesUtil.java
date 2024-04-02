@@ -28,7 +28,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * 加解密工具类
+ * AES encryption and decryption tool class
  *
  * @author zhp
  * @since 2022-10-17
@@ -50,9 +50,9 @@ public class AesUtil {
     }
 
     /**
-     * 生成密钥对
+     * Generate key pair
      *
-     * @return 密钥对
+     * @return key pair
      */
     public static Optional<String> generateKey() {
         try {
@@ -67,11 +67,11 @@ public class AesUtil {
     }
 
     /**
-     * 加密
+     * encrypt
      *
-     * @param key  密钥
-     * @param text 报文
-     * @return 密文
+     * @param key key
+     * @param text text
+     * @return encrypted text
      */
     public static Optional<String> encrypt(String key, String text) {
         try {
@@ -90,11 +90,11 @@ public class AesUtil {
     }
 
     /**
-     * 解密
+     * decrypt
      *
-     * @param key  密钥
-     * @param text 报文
-     * @return 明文
+     * @param key key
+     * @param text text
+     * @return decrypted text
      */
     public static Optional<String> decrypt(String key, String text) {
         try {

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * io工具类
+ * io tools
  *
  * @author HapThorin
  * @version 1.0.0
@@ -34,7 +34,7 @@ import java.util.logging.Logger;
  */
 public class FileUtils {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -44,7 +44,7 @@ public class FileUtils {
             .getLocation().getPath()).getParent()).getParent();
 
     /**
-     * 缓冲区大小
+     * buffer size
      */
     private static final int BUFFER_SIZE = 1024 * 16;
 
@@ -52,19 +52,19 @@ public class FileUtils {
     }
 
     /**
-     * 获取sermant-agent-x.x.x/agent的文件夹绝对路径
+     * Gets the absolute path to the folder of sermant-agent-x.x.x/agent
      *
-     * @return agent路径
+     * @return path
      */
     public static String getAgentPath() {
         return AGENT_PATH;
     }
 
     /**
-     * 检验文件路径
+     * Check file path
      *
-     * @param path 输入路径
-     * @return 校验后路径
+     * @param path input path
+     * @return fixed path
      */
     public static String validatePath(String path) {
         if (!path.startsWith(AGENT_PATH)) {
@@ -79,10 +79,10 @@ public class FileUtils {
     }
 
     /**
-     * 确保一个文件或文件夹的父目录存在
+     * Ensure that the parent directory of a file or folder exists
      *
-     * @param file 文件或文件夹
-     * @return 是否存在或创建成功
+     * @param file file
+     * @return create result
      */
     public static boolean createParentDir(File file) {
         final File parentDir = file.getParentFile();
@@ -90,11 +90,11 @@ public class FileUtils {
     }
 
     /**
-     * 将源文件拷贝到目标路径
+     * Copy the source file to the destination path
      *
-     * @param sourceFile 源文件
-     * @param targetFile 目标文件
-     * @throws IOException 拷贝失败
+     * @param sourceFile source file
+     * @param targetFile target file
+     * @throws IOException copy exception
      */
     public static void copyFile(File sourceFile, File targetFile) throws IOException {
         FileInputStream inputStream = null;
@@ -126,12 +126,12 @@ public class FileUtils {
     }
 
     /**
-     * 拷贝文件夹下所有文件
+     * Copy all files in the folder
      *
-     * @param sourceFile 源文件夹
-     * @param targetPath 目标文件夹
-     * @param isCover 是否覆盖
-     * @throws IOException 拷贝失败
+     * @param sourceFile source file
+     * @param targetPath target path
+     * @param isCover is cover
+     * @throws IOException opy exception
      */
     public static void copyAllFiles(File sourceFile, String targetPath, boolean isCover) throws IOException {
         if (sourceFile.isFile()) {
@@ -150,10 +150,10 @@ public class FileUtils {
     }
 
     /**
-     * 删除文件夹及其内部所有文件
+     * Delete the folder and all files inside it
      *
-     * @param file 文件或文件夹
-     * @return 是否全部删除成功
+     * @param file file
+     * @return delete result
      */
     public static boolean deleteDirs(File file) {
         if (!file.exists()) {
@@ -173,11 +173,11 @@ public class FileUtils {
     }
 
     /**
-     * 通过通配符的方式检索子文件
+     * Retrieve sub files by wildcard
      *
-     * @param dir 文件夹
-     * @param wcStr 通配符模式，允许','拼接多个
-     * @return 子文件集
+     * @param dir directory
+     * @param wcStr Wildcard mode, allowing ',' to concatenate multiple
+     * @return sub file set
      */
     public static File[] getChildrenByWildcard(File dir, String wcStr) {
         if (!dir.exists() || !dir.isDirectory()) {

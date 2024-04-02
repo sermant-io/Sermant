@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigLi
 import java.util.List;
 
 /**
- * 对同某个键做操作
+ * Perform operations on a key
  *
  * @author HapThorin
  * @version 1.0.0
@@ -29,51 +29,51 @@ import java.util.List;
  */
 public interface KeyService {
     /**
-     * 获取某个键的配置值
+     * Get the configuration value for a key
      *
-     * @param key 键
-     * @return 配置值
+     * @param key key
+     * @return config value
      */
     String getConfig(String key);
 
     /**
-     * 设置某个键的配置值
+     * Set the configuration value of a key
      *
-     * @param key     键
-     * @param content 配置值
-     * @return 是否操作成功
+     * @param key key
+     * @param content content
+     * @return publish result
      */
     boolean publishConfig(String key, String content);
 
     /**
-     * 移除某个键的配置值
+     * Remove the configuration value of a key
      *
-     * @param key 键
-     * @return 是否操作成功
+     * @param key key
+     * @return remove result
      */
     boolean removeConfig(String key);
 
     /**
-     * 获取所有键
+     * Get all keys
      *
-     * @return 键集合
+     * @return key list
      */
     List<String> listKeys();
 
     /**
-     * 为某个键添加监听器
+     * Add a listener for a key
      *
-     * @param key      键
-     * @param listener 监听器
-     * @return 是否操作成功
+     * @param key key
+     * @param listener listener
+     * @return add result
      */
     boolean addConfigListener(String key, DynamicConfigListener listener);
 
     /**
-     * 移除某个键的监听器
+     * Remove the listener for a key
      *
-     * @param key 键
-     * @return 是否操作成功
+     * @param key key
+     * @return remove result
      */
     boolean removeConfigListener(String key);
 }

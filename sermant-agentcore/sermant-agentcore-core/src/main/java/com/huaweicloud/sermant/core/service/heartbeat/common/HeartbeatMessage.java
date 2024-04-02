@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 心跳消息
+ * HeartbeatMessage
  *
  * @author luanwenfei
  * @since 2022-03-19
@@ -49,7 +49,7 @@ public class HeartbeatMessage {
     private final Map<String, PluginInfo> pluginInfoMap = new HashMap<>();
 
     /**
-     * 构造函数
+     * constructor
      */
     public HeartbeatMessage() {
         this.hostName = NetworkUtils.getHostName().orElse(null);
@@ -63,7 +63,7 @@ public class HeartbeatMessage {
     }
 
     /**
-     * 更新心跳数据
+     * update Heartbeat Version
      */
     public void updateHeartbeatVersion() {
         this.lastHeartbeatTime = this.heartbeatTime;

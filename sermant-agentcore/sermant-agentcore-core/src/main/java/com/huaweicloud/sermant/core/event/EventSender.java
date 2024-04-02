@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.service.send.api.GatewayClient;
 import java.util.logging.Logger;
 
 /**
- * 事件发送工具类
+ * Event sending tool class
  *
  * @author luanwenfei
  * @since 2023-03-07
@@ -39,16 +39,16 @@ public class EventSender {
     }
 
     /**
-     * 初始化 获取GatewayClient
+     * Initialize to get the GatewayClient
      */
     public static void init() {
         gatewayClient = ServiceManager.getService(GatewayClient.class);
     }
 
     /**
-     * 发送事件消息
+     * Send event message
      *
-     * @param eventMessage 事件消息
+     * @param eventMessage event message
      */
     public static void sendEvent(EventMessage eventMessage) {
         if (gatewayClient == null) {

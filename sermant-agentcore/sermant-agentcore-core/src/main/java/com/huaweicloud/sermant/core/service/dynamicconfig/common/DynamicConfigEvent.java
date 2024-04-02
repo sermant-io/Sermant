@@ -39,12 +39,12 @@ public class DynamicConfigEvent extends EventObject {
     private final DynamicConfigEventType eventType;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param key       配置键
-     * @param group     组
-     * @param content   配置内容
-     * @param eventType 事件类型
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @param eventType event type
      */
     public DynamicConfigEvent(String key, String group, String content, DynamicConfigEventType eventType) {
         super(key + "," + group);
@@ -73,7 +73,7 @@ public class DynamicConfigEvent extends EventObject {
     @Override
     public String toString() {
         return "DynamicConfigEvent{" + "key='" + key + '\'' + ", group='" + group + '\'' + ", content='" + content
-            + '\'' + ", eventType=" + eventType + "} " + super.toString();
+                + '\'' + ", eventType=" + eventType + "} " + super.toString();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DynamicConfigEvent extends EventObject {
         }
         DynamicConfigEvent that = (DynamicConfigEvent) target;
         return Objects.equals(getKey(), that.getKey()) && Objects.equals(getGroup(), that.getGroup())
-            && Objects.equals(getContent(), that.getContent()) && getEventType() == that.getEventType();
+                && Objects.equals(getContent(), that.getContent()) && getEventType() == that.getEventType();
     }
 
     @Override
@@ -95,48 +95,48 @@ public class DynamicConfigEvent extends EventObject {
     }
 
     /**
-     * 构建初始化动态配置事件
+     * Build an initial dynamic configuration event
      *
-     * @param key     配置键
-     * @param group   分组
-     * @param content 配置信息
-     * @return 初始化动态配置事件
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return dynamic configuration event
      */
     public static DynamicConfigEvent initEvent(String key, String group, String content) {
         return new DynamicConfigEvent(key, group, content, DynamicConfigEventType.INIT);
     }
 
     /**
-     * 构建创建配置事件
+     * Build create configuration event
      *
-     * @param key     配置键
-     * @param group   分组
-     * @param content 配置信息
-     * @return 创建配置事件
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return dynamic configuration event
      */
     public static DynamicConfigEvent createEvent(String key, String group, String content) {
         return new DynamicConfigEvent(key, group, content, DynamicConfigEventType.CREATE);
     }
 
     /**
-     * 构建修改配置事件
+     * Build modify configuration events
      *
-     * @param key     配置键
-     * @param group   分组
-     * @param content 配置信息
-     * @return 修改配置事件
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return dynamic configuration event
      */
     public static DynamicConfigEvent modifyEvent(String key, String group, String content) {
         return new DynamicConfigEvent(key, group, content, DynamicConfigEventType.MODIFY);
     }
 
     /**
-     * 构建删除配置事件
+     * Build delete configuration event
      *
-     * @param key     配置键
-     * @param group   分组
-     * @param content 配置信息
-     * @return 删除配置事件
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return dynamic configuration event
      */
     public static DynamicConfigEvent deleteEvent(String key, String group, String content) {
         return new DynamicConfigEvent(key, group, content, DynamicConfigEventType.DELETE);

@@ -33,7 +33,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.List;
 
 /**
- * 字节码增强管理器
+ * Bytecode enhancement manager
  *
  * @author HapThorin
  * @version 1.0.0
@@ -48,7 +48,7 @@ public class ByteEnhanceManager {
     }
 
     /**
-     * 初始化
+     * Initialization
      *
      * @param instrumentation instrumentation
      */
@@ -56,21 +56,22 @@ public class ByteEnhanceManager {
         instrumentationCache = instrumentation;
         builder = BufferedAgentBuilder.build();
 
-        // 初始化完成后，新增Action用于添加框架直接引入的字节码增强
+        // Once initialization is complete, an Action is added to add bytecode enhancements introduced directly by
+        // the framework
         enhanceForFramework();
     }
 
     /**
-     * 安装类加载器增强字节码，仅用于premain方式启动
+     * Install classloader enhanced bytecode for premain only
      */
     public static void enhance() {
         builder.install(instrumentationCache);
     }
 
     /**
-     * 基于支持静态安装的插件进行字节码增强
+     * Bytecode enhancement based on plugins that support static installation
      *
-     * @param plugin 支持静态安装的插件
+     * @param plugin plugin that supports static installation
      */
     public static void enhanceStaticPlugin(Plugin plugin) {
         if (plugin.isDynamic()) {
@@ -80,9 +81,9 @@ public class ByteEnhanceManager {
     }
 
     /**
-     * 基于支持动态安装的插件进行字节码增强
+     * Bytecode enhancement based on plugins that support dynamic installation
      *
-     * @param plugin 支持动态安装的插件
+     * @param plugin plugin that supports dynamic installation
      */
     public static void enhanceDynamicPlugin(Plugin plugin) {
         if (!plugin.isDynamic()) {
@@ -95,9 +96,9 @@ public class ByteEnhanceManager {
     }
 
     /**
-     * 卸载支持动态安装的插件的字节码增强
+     * Uninstall bytecode enhancements for plugins that support dynamic installation
      *
-     * @param plugin 支持动态安装的插件
+     * @param plugin plugin that supports dynamic installation
      */
     public static void unEnhanceDynamicPlugin(Plugin plugin) {
         if (!plugin.isDynamic()) {
@@ -113,7 +114,7 @@ public class ByteEnhanceManager {
     }
 
     /**
-     * 引入对类加载器的增强，帮助inject的类可以使用到Sermant的类
+     * An enhancement to the classloader was introduced to help inject classes work with Sermant classes
      */
     private static void enhanceForInjectService() {
         if (ConfigManager.getConfig(ServiceConfig.class).isInjectEnable()) {

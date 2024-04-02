@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.event;
 import java.util.Objects;
 
 /**
- * 事件信息实体
+ * Event information
  *
  * @author luanwenfei
  * @since 2023-03-02
@@ -30,10 +30,10 @@ public class EventInfo {
     private String description;
 
     /**
-     * 构造函数
+     * constructor
      *
-     * @param name 事件名
-     * @param description 事件描述
+     * @param name event name
+     * @param description event description
      */
     public EventInfo(String name, String description) {
         this.name = name;

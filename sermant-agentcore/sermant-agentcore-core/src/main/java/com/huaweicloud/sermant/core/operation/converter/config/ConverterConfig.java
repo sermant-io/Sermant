@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.operation.converter.config;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * 转换器配置
+ * Converter Config
  *
  * @author luanwenfei
  * @since 2022-06-28

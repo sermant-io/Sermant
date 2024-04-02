@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.command;
 import com.huaweicloud.sermant.core.AgentCoreEntrance;
 
 /**
- * Agent卸载命令执行器
+ *  The command executor for agent installation
  *
  * @author zhp
  * @since 2023-09-09

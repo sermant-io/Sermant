@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.service.dynamicconfig.api;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
- * 对同组下的某个键做操作
+ * Perform operations on a key in the same group
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,49 +27,49 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigLi
  */
 public interface KeyGroupService {
     /**
-     * 获取组下某个键的配置值
+     * Get the configuration value for a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 配置值
+     * @param key key
+     * @param group group
+     * @return configuration value
      */
     String getConfig(String key, String group);
 
     /**
-     * 设置组下某个键的配置值
+     * Set the configuration value of a key under the group
      *
-     * @param key     键
-     * @param group   组
-     * @param content 配置值
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return publish result
      */
     boolean publishConfig(String key, String group, String content);
 
     /**
-     * 移除组下某个键的配置值
+     * Remove the configuration value of a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @return remove result
      */
     boolean removeConfig(String key, String group);
 
     /**
-     * 为组下某个键添加监听器
+     * Adds a listener for a key under the group
      *
-     * @param key      键
-     * @param group    组
-     * @param listener 监听器
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @param listener listener
+     * @return add result
      */
     boolean addConfigListener(String key, String group, DynamicConfigListener listener);
 
     /**
-     * 移除组下某个键的监听器
+     * Remove the listener for a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @return remove result
      */
     boolean removeConfigListener(String key, String group);
 }

@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 类注入核心服务配置,
+ * Class injection service configuration
  *
  * @author luanwenfei
  * @since 2023-08-10
@@ -31,7 +31,8 @@ import java.util.Set;
 @ConfigTypeKey("inject")
 public class InjectConfig implements BaseConfig {
     /**
-     * 在类注入服务使用时，指定注入的类所需不可或缺的包，将会通过对类加载的增强来辅助获取这些包中的类
+     * When the class injection service is used, specifying the packages that are indispensable for the injected
+     * classes will assist in fetching the classes in those packages through enhancements to class loading
      */
     private Set<String> essentialPackage = Collections.singleton("com.huaweicloud.sermant");
 

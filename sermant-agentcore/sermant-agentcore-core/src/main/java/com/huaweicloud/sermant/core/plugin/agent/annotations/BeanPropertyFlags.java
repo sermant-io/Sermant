@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Java Bean标记集，作包装{@link BeanPropertyFlag}用
+ * Java Bean tag set, used as wrapper {@link BeanPropertyFlag}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -32,9 +32,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface BeanPropertyFlags {
     /**
-     * 获取Java Bean标记集
+     * Gets the Java Bean tag set
      *
-     * @return Java Bean标记集
+     * @return Java Bean tag set
      */
     BeanPropertyFlag[] value();
 }

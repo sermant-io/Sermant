@@ -17,16 +17,16 @@
 package com.huaweicloud.sermant.core.exception;
 
 /**
- * 网络接口检查异常
+ * Network Interfaces Check Exception
  *
  * @author luanwenfei
  * @since 2023-12-18
  */
 public class NetworkInterfacesCheckException extends RuntimeException {
     /**
-     * 网络接口检查异常
+     * Constructor
      *
-     * @param message 异常信息
+     * @param message message
      */
     public NetworkInterfacesCheckException(String message) {
         super(message);

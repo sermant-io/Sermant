@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.LogRecord;
 
 /**
- * 日志事件采集器
+ * Log event collector
  *
  * @author luanwenfei
  * @since 2023-03-04
@@ -44,9 +44,9 @@ public class LogEventCollector extends EventCollector {
     }
 
     /**
-     * 获取日志事件采集器单例
+     * Obtain the singleton of the log event collector
      *
-     * @return 日志事件采集器单例
+     * @return singleton
      */
     public static synchronized LogEventCollector getInstance() {
         if (logEventCollector == null) {
@@ -56,9 +56,9 @@ public class LogEventCollector extends EventCollector {
     }
 
     /**
-     * 上报警告日志
+     * Report warning log
      *
-     * @param record 日志记录
+     * @param record log record
      */
     public void offerWarning(LogRecord record) {
         if (!eventConfig.isEnable() || !eventConfig.isOfferWarnLog()) {
@@ -72,9 +72,9 @@ public class LogEventCollector extends EventCollector {
     }
 
     /**
-     * 上报错误日志
+     * Report error log
      *
-     * @param record 日志记录
+     * @param record log record
      */
     public void offerError(LogRecord record) {
         if (!eventConfig.isEnable() || !eventConfig.isOfferErrorLog()) {
@@ -88,10 +88,10 @@ public class LogEventCollector extends EventCollector {
     }
 
     /**
-     * 通过上报时间间隔，检查是否可以再次上报该日志
+     * Check whether the log can be reported again based on the reporting interval
      *
-     * @param logInfo 事件信息
-     * @return boolean 是否可以再次上报
+     * @param logInfo log information
+     * @return boolean Whether it can be reported again
      */
     private boolean checkLogInfoOfferInterval(LogInfo logInfo) {
         Long lastOfferTime = logInfoOfferTimeCache.get(logInfo);
@@ -102,7 +102,7 @@ public class LogEventCollector extends EventCollector {
     }
 
     /**
-     * 定时清理日志的上报时间缓存
+     * Periodically clear the log reporting time cache
      */
     @Override
     protected void cleanOfferTimeCacheMap() {

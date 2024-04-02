@@ -23,8 +23,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Java Bean标记，被该注解修饰的接口，将根据该注解定义的属性在被增强类中实现get、set方法
- * <p>见SuperTypeDeclarer.ForBeanProperty
+ * The Java Bean tag, the interface modified by the annotation, will implement get and set methods in the enhanced
+ * class based on the properties defined by the annotation
+ * <p>see SuperTypeDeclarer.ForBeanProperty
  *
  * @author HapThorin
  * @version 1.0.0
@@ -35,16 +36,16 @@ import java.lang.annotation.Target;
 @Repeatable(BeanPropertyFlags.class)
 public @interface BeanPropertyFlag {
     /**
-     * 声明Java Bean属性名
+     * Declares the Java Bean property name
      *
-     * @return Java Bean属性名
+     * @return Java Bean property name
      */
     String value();
 
     /**
-     * 声明Java Bean属性类型
+     * Declares the Java Bean property type
      *
-     * @return Java Bean属性类型
+     * @return Java Bean property type
      */
     Class<?> type();
 }

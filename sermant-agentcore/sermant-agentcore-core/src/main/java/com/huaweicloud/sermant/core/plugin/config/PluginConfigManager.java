@@ -33,7 +33,8 @@ import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 /**
- * 插件配置管理器，${ConfigManager}统一配置管理器的特化，专门用来加载插件包配置和插件服务包配置
+ * Plugin Configuration Manager for loading plugin package configurations, a specialization of the unified configuration
+ * manager ${ConfigManager}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -41,12 +42,12 @@ import java.util.logging.Logger;
  */
 public class PluginConfigManager {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 配置对象集合，键为配置对象的实现类Class，值为加载完毕的配置对象
+     * configuration object map, key is plugin config key and the value is BaseConfig object
      */
     private static final Map<String, BaseConfig> PLUGIN_CONFIG_MAP = new HashMap<>();
 
@@ -54,16 +55,16 @@ public class PluginConfigManager {
     }
 
     /**
-     * 加载插件配置
+     * Load plugin configuration
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public static void loadPluginConfigs(Plugin plugin) {
         File pluginConfigFile = getPluginConfigFile(plugin.getPath());
         ClassLoader classLoader = plugin.getPluginClassLoader();
         for (BaseConfig config : ServiceLoader.load(PluginConfig.class, classLoader)) {
             Class<? extends BaseConfig> pluginConfigCls = config.getClass();
-            String pluginConfigKey = ConfigKeyUtil.getCLTypeKey(ConfigKeyUtil.getTypeKey(pluginConfigCls),
+            String pluginConfigKey = ConfigKeyUtil.getTypeKeyWithClassloader(ConfigKeyUtil.getTypeKey(pluginConfigCls),
                     pluginConfigCls.getClassLoader());
             final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
             if (pluginConfigFile.exists() && pluginConfigFile.isFile()) {
@@ -90,9 +91,9 @@ public class PluginConfigManager {
     }
 
     /**
-     * 清除插件的配置缓存
+     * Clear the plugin's configuration cache
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public static void cleanPluginConfigs(Plugin plugin) {
         for (String configName : plugin.getConfigs()) {
@@ -101,22 +102,24 @@ public class PluginConfigManager {
     }
 
     /**
-     * 插件端专用的获取配置方法，当插件配置文件不存在时，插件配置将会不初始化出来，该方法将针对这一情况返回一个默认对象
+     * The plugin configuration will not be initialized if the plugin configuration file does not exist. This method
+     * will return a default object for this case
      *
-     * @param cls 插件配置类
-     * @param <R> 插件配置类型
-     * @return 插件配置实例
+     * @param cls Plugin configuration class
+     * @param <R> Plugin configuration type
+     * @return PluginConfig instance
      */
     public static <R extends PluginConfig> R getPluginConfig(Class<R> cls) {
-        String pluginConfigKey = ConfigKeyUtil.getCLTypeKey(ConfigKeyUtil.getTypeKey(cls), cls.getClassLoader());
+        String pluginConfigKey = ConfigKeyUtil.getTypeKeyWithClassloader(ConfigKeyUtil.getTypeKey(cls),
+                cls.getClassLoader());
         return (R) PLUGIN_CONFIG_MAP.get(pluginConfigKey);
     }
 
     /**
-     * 获取插件配置文件
+     * Get the plugin configuration file
      *
-     * @param pluginPath 插件根目录
-     * @return 插件配置文件
+     * @param pluginPath plugin root directory
+     * @return plugin configuration file
      */
     public static File getPluginConfigFile(String pluginPath) {
         return new File(pluginPath + File.separatorChar + CONFIG_DIR_NAME + File.separatorChar + CONFIG_FILE_NAME);

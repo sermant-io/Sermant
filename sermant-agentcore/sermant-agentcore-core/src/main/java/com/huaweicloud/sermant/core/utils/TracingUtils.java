@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.utils;
 import java.util.UUID;
 
 /**
- * 链路追踪工具类
+ * TracingUtils
  *
  * @author luanwenfei
  * @since 2022-03-02
@@ -29,7 +29,7 @@ public class TracingUtils {
     }
 
     /**
-     * 生成TraceId
+     * generate TraceId
      *
      * @return TraceId
      */

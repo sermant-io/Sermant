@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * gateway配置
+ * Gateway Config
  *
  * @author luanwenfei
  * @since 2022-03-24
@@ -42,32 +42,32 @@ public class GatewayConfig implements BaseConfig {
     private static final int DEFAULT_SEND_INTERNAL_TIME = 10;
 
     /**
-     * netty服务端的地址
+     * netty ip address
      */
     private String nettyIp = DEFAULT_NETTY_IP;
 
     /**
-     * netty服务端的端口
+     * netty port
      */
     private int nettyPort = DEFAULT_NETTY_PORT;
 
     /**
-     * netty发送消息的间隔，单位：秒
+     * interval for sending messages, unit: second
      */
     private int sendInternalTime = DEFAULT_SEND_INTERNAL_TIME;
 
     /**
-     * netty连接后断开的初始重连时间，单位：秒
+     * netty initial reconnection time after disconnection, unit: second
      */
     private int initReconnectInternalTime = DEFAULT_INIT_RECONNECT_INTERNAL_TIME;
 
     /**
-     * netty连接后断开的最大重连时间，单位：秒
+     * netty maximum connection reconnection time, unit: second
      */
     private int maxReconnectInternalTime = DEFAULT_MAX_RECONNECT_INTERNAL_TIME;
 
     /**
-     * Netty 需要设置Integer型超时事件，故此处为int非long
+     * netty connect timeout, unit: millisecond
      */
     private int nettyConnectTimeout = DEFAULT_NETTY_CONNECT_TIMEOUT;
 

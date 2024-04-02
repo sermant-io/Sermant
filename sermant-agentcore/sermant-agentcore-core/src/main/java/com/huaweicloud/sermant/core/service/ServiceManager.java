@@ -1,10 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 服务管理器
+ * ServiceManager
  *
  * @author justforstudy-A, beetle-man, HapThorin
  * @version 1.0.0
@@ -49,42 +49,42 @@ import java.util.logging.Logger;
  */
 public class ServiceManager {
     /**
-     * 动态配置服务类名
+     * Class name of dynamic config service
      */
     public static final String BUFFERED_DYNAMIC_CONFIG_SERVICE =
             "com.huaweicloud.sermant.implement.service.dynamicconfig.BufferedDynamicConfigService";
 
     /**
-     * 心跳服务类名
+     * Class name of heartbeat service
      */
     public static final String HEARTBEAT_SERVICE_IMPL =
             "com.huaweicloud.sermant.implement.service.heartbeat.HeartbeatServiceImpl";
 
     /**
-     * 注入服务类名
+     * Class name of inject service
      */
     public static final String INJECT_SERVICE_IMPL =
             "com.huaweicloud.sermant.implement.service.inject.InjectServiceImpl";
 
     /**
-     * netty网关服务类名
+     * Class name of netty gateway service
      */
     public static final String NETTY_GATEWAY_CLIENT =
             "com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient";
 
     /**
-     * 链路追踪服务类名
+     * Class name of tracing service
      */
     public static final String TRACING_SERVICE_IMPL =
             "com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl";
 
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 服务集合
+     * service map
      */
     private static final Map<String, BaseService> SERVICES = new HashMap<>();
 
@@ -95,7 +95,7 @@ public class ServiceManager {
     }
 
     /**
-     * 初始化所有服务
+     * Initialize all services
      */
     public static void initServices() {
         ServiceConfig serviceConfig = ConfigManager.getConfig(ServiceConfig.class);
@@ -109,16 +109,16 @@ public class ServiceManager {
             }
         }
         FrameworkEventCollector.getInstance().collectServiceStartEvent(startServiceArray.toString());
-        addStopHook(); // 加载完所有服务再启动服务
+        addStopHook(); // Start after all services are loaded
     }
 
     /**
-     * 获取服务对象
+     * Get service object
      *
-     * @param serviceClass 服务class
-     * @param <T> 服务泛型
-     * @return 服务实例对象
-     * @throws IllegalArgumentException IllegalArgumentException 找不到对应的服务
+     * @param serviceClass service class
+     * @param <T> service generic type
+     * @return service object
+     * @throws IllegalArgumentException The corresponding service could not be found
      */
     public static <T extends BaseService> T getService(Class<T> serviceClass) {
         String serviceKey = KeyGenerateUtils.generateClassKeyWithClassLoader(serviceClass);
@@ -130,12 +130,12 @@ public class ServiceManager {
     }
 
     /**
-     * 加载服务对象至服务集中
+     * Load the service object to the service map
      *
-     * @param service 服务对象
-     * @param serviceCls 服务class
-     * @param baseCls 服务基class，用于spi
-     * @return 是否加载成功
+     * @param service service object
+     * @param serviceCls service class
+     * @param baseCls base class of service，used for spi
+     * @return load result
      */
     protected static boolean loadService(BaseService service, Class<?> serviceCls,
             Class<? extends BaseService> baseCls) {
@@ -167,16 +167,16 @@ public class ServiceManager {
     }
 
     /**
-     * 关闭服务
+     * stop service
      *
-     * @param serviceName 服务名
+     * @param serviceName service name
      */
     protected static void stopService(String serviceName) {
         SERVICES.remove(serviceName).stop();
     }
 
     /**
-     * 添加关闭服务的钩子
+     * Add a hook for stop service
      */
     private static void addStopHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -192,20 +192,20 @@ public class ServiceManager {
     }
 
     private static void offerEvent() {
-        // 上报服务关闭事件
+        // Report service stop event
         ArrayList<String> stopServiceArray = new ArrayList<>();
         for (BaseService baseService : new HashSet<>(SERVICES.values())) {
             stopServiceArray.add(baseService.getClass().getName());
         }
         FrameworkEventCollector.getInstance().collectServiceStopEvent(stopServiceArray.toString());
 
-        // 上报Sermant关闭的事件
+        // Report Sermant stop event
         FrameworkEventCollector.getInstance().collectAgentStopEvent();
         EventManager.shutdown();
     }
 
     /**
-     * 关闭服务管理器
+     * Close ServiceManager
      */
     public static void shutdown() {
         Set<BaseService> services = new HashSet<>(SERVICES.values());

@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.event;
 import com.huaweicloud.sermant.core.common.BootArgsIndexer;
 
 /**
- * 事件
+ * Event definition
  *
  * @author luanwenfei
  * @since 2023-03-02
@@ -40,15 +40,15 @@ public class Event {
     private LogInfo logInfo;
 
     /**
-     * 用于事件的构造函数
+     * Constructor for event
      *
-     * @param scope 事件触发区域
-     * @param eventLevel 事件级别
-     * @param eventType 事件类型
-     * @param eventInfo 事件信息
+     * @param scope scope
+     * @param eventLevel level
+     * @param eventType type
+     * @param eventInfo information
      */
     public Event(String scope, EventLevel eventLevel, EventType eventType, EventInfo eventInfo) {
-        // 暂用InstanceId
+        // use InstanceId provisionally
         this.metaHash = BootArgsIndexer.getInstanceId();
         this.time = System.currentTimeMillis();
         this.scope = scope;
@@ -58,11 +58,12 @@ public class Event {
     }
 
     /**
-     * 用于日志事件的构造函数(日志信息无法获取打印日志范围，可精确到日志发生的方法)
+     * Constructor for the log event (log message cannot get the print log scope, can be accurate to the method of log
+     * occurrence)
      *
-     * @param eventLevel 事件级别
-     * @param eventType 事件类型
-     * @param logInfo 日志信息
+     * @param eventLevel level
+     * @param eventType type
+     * @param logInfo information
      */
     public Event(EventLevel eventLevel, EventType eventType, LogInfo logInfo) {
         this.metaHash = BootArgsIndexer.getInstanceId();

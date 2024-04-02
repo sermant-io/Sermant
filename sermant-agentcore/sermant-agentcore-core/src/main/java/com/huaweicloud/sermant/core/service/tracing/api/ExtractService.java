@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.service.tracing.api;
 import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 
 /**
- * 将Span上下文提取出载体的函数式接口
+ * Functional interface for extracting Span from a carrier
  *
  * @param <T>
  * @author luanwenfei
@@ -28,11 +28,11 @@ import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 @FunctionalInterface
 public interface ExtractService<T> {
     /**
-     * 跨进程链路追踪，需要将SpanContext从协议载体中取出，
-     * TRACE_ID->TraceId、PARENT_SPAN_ID->ParentSpanId、SPAN_ID_PREFIX->SpanIdPrefix为必选项
+     * For cross-process tracing, the SpanContext needs to be extracted from the protocol carrier,
+     * TRACE_ID->TraceId、PARENT_SPAN_ID->ParentSpanId、SPAN_ID_PREFIX->SpanIdPrefix required
      *
-     * @param tracingRequest SpanStart生命周期所需构建数据
-     * @param carrier 协议载体
+     * @param tracingRequest SpanStart required build data
+     * @param carrier protocol carrier
      */
     void getFromCarrier(TracingRequest tracingRequest, T carrier);
 }

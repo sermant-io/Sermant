@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 插件类加载器，用于加载插件服务包
+ * ServiceClassLoader, used to load the plugin service package
  *
  * @author HapThorin
  * @version 1.0.0
@@ -35,14 +35,14 @@ import java.util.Map;
  */
 public class ServiceClassLoader extends URLClassLoader {
     /**
-     * 对ClassLoader内部已加载的Class的管理
+     * Manages the loaded classes in the ServiceClassLoader
      */
     private final Map<String, Class<?>> serviceClassMap = new HashMap<>();
 
     /**
      * Constructor.
      *
-     * @param urls Url of plugin package
+     * @param urls Url of plugin service package
      * @param parent parent classloader
      */
     public ServiceClassLoader(URL[] urls, ClassLoader parent) {
@@ -50,10 +50,10 @@ public class ServiceClassLoader extends URLClassLoader {
     }
 
     /**
-     * 加载插件服务包中的类并维护
+     * Load and maintain the classes in the plugin service package
      *
-     * @param name 全限定名
-     * @return Class对象
+     * @param name class full qualified name
+     * @return Class object
      */
     private Class<?> loadServiceClass(String name) {
         if (!serviceClassMap.containsKey(name)) {
@@ -78,7 +78,7 @@ public class ServiceClassLoader extends URLClassLoader {
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
 
-                // 把从自身加载的类放入缓存
+                // Put the classes loaded from itself into the cache
                 if (clazz != null && clazz.getClassLoader() == this) {
                     serviceClassMap.put(name, clazz);
                 }
@@ -94,7 +94,8 @@ public class ServiceClassLoader extends URLClassLoader {
     public URL getResource(String name) {
         URL url = null;
 
-        // 针对日志配置文件，定制化getResource方法，首先获取agent/config/logback.xml,其次PluginClassloader下资源文件中的logback.xml
+        // Customize the getResource method for the log configuration file. First get agent/config/logback.xml,
+        // then logback.xml in the resource file under the PluginClassloader
         if (CommonConstant.LOG_SETTING_FILE_NAME.equals(name)) {
             File logSettingFile = BootArgsIndexer.getLogSettingFile();
             if (logSettingFile.exists() && logSettingFile.isFile()) {

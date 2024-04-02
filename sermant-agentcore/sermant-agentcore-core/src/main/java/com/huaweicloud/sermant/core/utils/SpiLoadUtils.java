@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 import java.util.ServiceLoader;
 
 /**
- * 插件spi加载工具
+ * SpiLoadUtils
  *
  * @author HapThorin
  * @version 1.0.0
@@ -34,23 +34,23 @@ public class SpiLoadUtils {
     }
 
     /**
-     * 依权重获取最优实现
+     * Get the optimal implementation by weight
      *
-     * @param clazz spi目标类
-     * @param <T>   目标类型
-     * @return 最优实现
+     * @param clazz spi target class
+     * @param <T> target type
+     * @return best implementation
      */
     public static <T> T getBestImpl(Class<T> clazz) {
         return getBestImpl(clazz, ClassLoader.getSystemClassLoader());
     }
 
     /**
-     * 依权重获取最优实现 、
+     * Get the optimal implementation by weight
      *
-     * @param clazz       spi目标类
-     * @param classLoader 查找的ClassLoader
-     * @param <T>         目标类型
-     * @return 最优实现
+     * @param clazz spi target class
+     * @param classLoader classLoader for searching
+     * @param <T> target type
+     * @return best implementation
      */
     public static <T> T getBestImpl(Class<T> clazz, ClassLoader classLoader) {
         T impl = null;
@@ -61,12 +61,12 @@ public class SpiLoadUtils {
     }
 
     /**
-     * 比较权重，返回真时取后者，否则取前者
+     * Compare weights, taking the latter when returning true and the former otherwise
      *
-     * @param src 比较源
-     * @param dst 比较目标
-     * @param <T> 类型
-     * @return 返回真时取后者，否则取前者
+     * @param src source
+     * @param dst destination
+     * @param <T> type
+     * @return result
      */
     public static <T> T getBetter(T src, T dst) {
         return getBetter(src, dst, new WeightEqualHandler<T>() {
@@ -78,13 +78,13 @@ public class SpiLoadUtils {
     }
 
     /**
-     * 比较权重，返回真时取后者，否则取前者
+     * Compare weights, taking the latter when returning true and the former otherwise
      *
-     * @param src     比较源
-     * @param dst     比较目标
-     * @param handler 相同权重的处理器
-     * @param <T>     类型
-     * @return 返回真时取后者，否则取前者
+     * @param src source
+     * @param dst destination
+     * @param handler WeightEqualHandler
+     * @param <T> type
+     * @return result
      */
     public static <T> T getBetter(T src, T dst, WeightEqualHandler<T> handler) {
         if (dst == null) {
@@ -107,26 +107,35 @@ public class SpiLoadUtils {
     }
 
     /**
-     * spi权重
+     * spi weight
+     *
+     * @since 2021-11-16
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface SpiWeight {
+        /**
+         * weight value
+         *
+         * @return value
+         */
         int value() default 0;
     }
 
     /**
-     * 权重相同时的处理器
+     * WeightEqualHandler
      *
-     * @param <T> 类型
+     * @param <T> type
+     *
+     * @since 2021-11-16
      */
     public interface WeightEqualHandler<T> {
         /**
-         * 处理相同的方法，选择其中之一
+         * Handle the same method, choose one of them
          *
-         * @param source 源
-         * @param target 目标
-         * @return 其中之一
+         * @param source source
+         * @param target target
+         * @return result
          */
         T handle(T source, T target);
     }

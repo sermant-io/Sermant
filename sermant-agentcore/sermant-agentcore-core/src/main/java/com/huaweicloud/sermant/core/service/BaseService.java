@@ -18,14 +18,17 @@
 package com.huaweicloud.sermant.core.service;
 
 /**
- * Agent服务接口
+ * Agent service interface
  * <p>
- * 实现{@link BaseService}的服务实例会在agent启动时被创建， 并在创建完成之后，依次调用的它们的{@link #start()}方法，
- * 同时为他们创建钩子，用于在JVM结束时调用服务是{@link #stop()}方法
+ * Service instances implementing {@link BaseService} is created when the agent starts, and after creating them, call
+ * their {@link #start()} method in turn,
+ * We also create hooks for them to invoke the {@link #stop()} method of the services at the end of the JVM
  * <p>
- * 所有{@link BaseService}实例将由{@link ServiceManager}管理，
- * 可通过{@link ServiceManager#getService(Class)}方法传入{@link BaseService}子类获取服务实例。
- * {@link ServiceManager}将根据传入的{@link BaseService}类型，返回最佳的实现类。 可以通过SpiLoadUtils.SpiWeight注解设置多实现类的权重。
+ * All {@link BaseService} instances will be managed by {@link ServiceManager}，
+ * You can get the service instance by inputting the {@link BaseService} subclass through the
+ * {@link ServiceManager#getService(Class)} method.
+* {@link ServiceManager} returns the best implementation class based on the {@link BaseService} type input. You can set
+ * the weight of multiple implementation classes with the SpiLoadUtils.SpiWeight annotation.
  *
  * @author justforstudy-A, beetle-man, HapThorin
  * @version 1.0.0
@@ -33,13 +36,13 @@ package com.huaweicloud.sermant.core.service;
  */
 public interface BaseService {
     /**
-     * 服务启动方法
+     * Service start method
      */
     default void start() {
     }
 
     /**
-     * 服务关闭方法
+     * Service stop method
      */
     default void stop() {
     }

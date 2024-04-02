@@ -24,7 +24,7 @@ import net.bytebuddy.implementation.bind.annotation.This;
 import java.lang.reflect.Method;
 
 /**
- * 实现委派器，将接口的实现委派给某个实现实例
+ * ImplDelegator, delegates the implementation of the interface to an implementation instance
  *
  * @author HapThorin
  * @version 1.0.0
@@ -32,22 +32,28 @@ import java.lang.reflect.Method;
  */
 public class ImplDelegator {
     /**
-     * 接口实现实例
+     * Interface implementation instance
      */
     private final Object implInstance;
 
+    /**
+     * Constructor
+     *
+     * @param implInstance Interface implementation instance
+     */
     public ImplDelegator(Object implInstance) {
         this.implInstance = implInstance;
     }
 
     /**
-     * 用于实现接口的委派方法，将方法调用代理至接口实现实例的方法
+     * A delegate method used to implement an interface, a method that proxies a method call to an interface
+     * implementation instance
      *
-     * @param rawObject 原生对象
-     * @param rawMethod 原生方法
-     * @param args      方法入参
-     * @return 方法调用结果
-     * @throws Exception 方法执行错误
+     * @param rawObject raw object
+     * @param rawMethod raw method
+     * @param args args
+     * @return result
+     * @throws Exception Exception
      */
     @RuntimeType
     public Object impl(@This Object rawObject, @Origin Method rawMethod, @AllArguments Object[] args) throws Exception {
@@ -59,18 +65,21 @@ public class ImplDelegator {
     }
 
     /**
-     * 接口实现模板类，继承该类的实现实例将可获得被增强的原生对象
+     * Template class for interface implementation. Inheriting an implementation instance of this class will result
+     * in an enhanced raw object
+     *
+     * @since 2022-01-24
      */
     public static class ImplTemplate {
         /**
-         * 原生对象
+         * raw object
          */
         protected Object rawObject;
 
         /**
-         * 设置原生对象
+         * set raw object
          *
-         * @param rawObject 原生对象
+         * @param rawObject raw object
          */
         public void setRawObject(Object rawObject) {
             this.rawObject = rawObject;

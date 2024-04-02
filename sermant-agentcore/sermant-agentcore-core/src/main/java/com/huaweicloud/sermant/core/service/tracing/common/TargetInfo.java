@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.service.tracing.common;
 
 /**
- * 被调用的目的节点信息
+ * Information of the called destination node
  *
  * @author luanwenfei
  * @since 2022-03-01
