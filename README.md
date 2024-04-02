@@ -44,22 +44,12 @@ Sermant中的JavaAgent广泛采用类隔离技术，以消除框架代码、插�
 
 ### 准备工作
 
-- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant包（当前版本推荐1.2.1）
-- [下载](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo应用
+- [下载](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release包（当前版本推荐1.4.0）
+- [下载](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz) Demo二进制产物压缩包
 - [下载](https://zookeeper.apache.org/releases#download) 并启动zookeeper
 
-### 编译打包demo应用
-
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/`目录执行以下命令：
-
-```shell
-# windows linux mac
-mvn clean package
-```
-
-打包成功后，在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`得到`spring-provider.jar`
-
-> 说明：path为demo应用下载所在路径
+### 获取Demo二进制产物
+解压Demo二进制产物压缩包，即可得到spring-provider.jar。
 
 ### 修改Sermant配置
 
@@ -82,9 +72,9 @@ java -jar sermant-backend-x.x.x.jar
 
 > 说明：path为Sermant包下载所在路径
 
-### 启动demo应用
+### 启动Demo应用
 
-在`${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`目录执行以下命令：
+在spring-provider.jar文件所在目录下执行以下命令：
 
 ```shell
 # linux mac
