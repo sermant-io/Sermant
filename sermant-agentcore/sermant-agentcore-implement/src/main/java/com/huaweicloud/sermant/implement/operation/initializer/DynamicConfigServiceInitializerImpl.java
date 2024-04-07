@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.implement.service.dynamicconfig.kie.KieDynamicCon
 import com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper.ZooKeeperDynamicConfigService;
 
 /**
- * 动态配置服务实现初始化
+ * Dynamic configuration service initialization
  *
  * @author luanwenfei
  * @since 2022-06-29

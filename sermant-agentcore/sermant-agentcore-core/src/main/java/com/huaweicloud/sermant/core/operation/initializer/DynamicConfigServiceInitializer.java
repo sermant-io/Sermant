@@ -30,7 +30,7 @@ public interface DynamicConfigServiceInitializer extends BaseOperation {
      * Init kie dynamic config service.
      *
      * @param serverAddress serverAddress
-     * @param project project
+     * @param project namespace
      * @return A KieDynamicConfigService instance
      */
     DynamicConfigService initKieDynamicConfigService(String serverAddress, String project);

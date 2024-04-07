@@ -21,20 +21,19 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Nacos动态配置订阅功能测试
+ * Nacos dynamic configuration subscription function test
  *
  * @author tangle
  * @since 2023-09-08
  */
 public class DynamicConfigSubscribeTest extends NacosBaseTest {
     /**
-     * 订阅器
+     * subscriber
      */
     DynamicConfigSubscribe dynamicConfigSubscribe;
 
@@ -44,7 +43,7 @@ public class DynamicConfigSubscribeTest extends NacosBaseTest {
     @Test
     public void testDynamicConfigSubscribe() throws NoSuchFieldException, IllegalAccessException, InterruptedException {
         try {
-            // 测试订阅
+            // test subscription
             TestListener testListener = new TestListener();
             dynamicConfigSubscribe = new DynamicConfigSubscribe("testServiceName", testListener,
                     "testSubscribeKey");
@@ -75,7 +74,7 @@ public class DynamicConfigSubscribeTest extends NacosBaseTest {
             Assert.assertEquals(3,
                     ((List<NacosListener>) listeners.orElse(Collections.emptyList())).size());
 
-            // 测试删除订阅
+            // test delete subscription
             Assert.assertTrue(dynamicConfigSubscribe.unSubscribe());
             Assert.assertEquals(0,
                     ((List<NacosListener>) listeners.orElse(Collections.emptyList())).size());

@@ -19,29 +19,29 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.kie;
 import java.util.List;
 
 /**
- * 响应结果
+ * KieResponse
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class KieResponse {
     /**
-     * 配置总数
+     * Total
      */
     private Integer total;
 
     /**
-     * kv数据
+     * kv data
      */
     private List<KieConfigEntity> data;
 
     /**
-     * 响应版本
+     * Response version
      */
     private String revision;
 
     /**
-     * 是否改变
+     * Whether changed
      */
     private boolean changed = true;
 

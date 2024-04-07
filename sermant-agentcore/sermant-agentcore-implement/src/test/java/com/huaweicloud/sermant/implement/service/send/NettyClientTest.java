@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * ClientHandler单元测试
+ * ClientHandler Unit Test
  */
 public class NettyClientTest {
     private NettyClient nettyClient;
@@ -40,7 +40,7 @@ public class NettyClientTest {
     }
 
     /**
-     * 测试入站消息
+     * Test write inbound
      */
     @Test
     public void testWriteInBound() {
@@ -54,7 +54,7 @@ public class NettyClientTest {
     }
 
     /**
-     * 测试出站消息
+     * Test write outbound
      */
     @Test
     public void testWriteOutBound() {

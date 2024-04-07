@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.premain.common;
 
 /**
- * 目录检查异常
+ * Directory check exception
  *
  * @author tangle
  * @since 2023-11-03
@@ -26,9 +26,9 @@ public class DirectoryCheckException extends RuntimeException {
     private static final long serialVersionUID = 1623401059405718814L;
 
     /**
-     * 目录检查异常
+     * Directory check exception
      *
-     * @param message 异常信息
+     * @param message Exception message
      */
     public DirectoryCheckException(String message) {
         super(message);

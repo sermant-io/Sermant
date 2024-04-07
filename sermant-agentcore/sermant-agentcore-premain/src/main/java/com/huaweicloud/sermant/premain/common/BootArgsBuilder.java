@@ -29,7 +29,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * 启动参数构建器
+ * Bootstrap Arguments Builder
  *
  * @author HapThorin
  * @version 1.0.0
@@ -39,10 +39,10 @@ public abstract class BootArgsBuilder {
     private static final Logger LOGGER = LoggerUtils.getLogger();
 
     /**
-     * 构建启动参数
+     * Build bootstrap arguments
      *
-     * @param argsMap 入参集
-     * @param agentPath agent路径
+     * @param argsMap argument map
+     * @param agentPath agent path
      */
     public static void build(Map<String, Object> argsMap, String agentPath) {
         final Properties configMap = loadConfig(agentPath);
@@ -52,10 +52,10 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 读取启动配置
+     * Read bootstrap arguments
      *
-     * @param agentPath agent路径
-     * @return 启动配置
+     * @param agentPath agent path
+     * @return bootstrap arguments
      */
     private static Properties loadConfig(String agentPath) {
         String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
@@ -71,11 +71,11 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 通用获取参数值方式，优先从配置获取，在从环境变量获取
+     * Parameter values are generally obtained from configurations and then from environment variables
      *
-     * @param key 参数键
-     * @param configMap 配置集
-     * @return 参数值
+     * @param key Parameter key
+     * @param configMap configuration
+     * @return Parameter value
      */
     private static String getCommonValue(String key, Properties configMap) {
         String value = configMap.getProperty(key);
@@ -83,10 +83,11 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 添加非空的键值对，涉及的参数均不可为空 appName、serviceName、instanceName、appType
+     * Add a non-empty key-value pair. The parameters involved cannot be empty: appName, serviceName, instanceName, and
+     * appType
      *
-     * @param argsMap 参数集
-     * @param configMap 配置集
+     * @param argsMap arguments map
+     * @param configMap configuration map
      */
     private static void addNotNullEntries(Map<String, Object> argsMap, Properties configMap) {
         String key = BootConstant.ARTIFACT_NAME_KEY;
@@ -113,10 +114,10 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 添加普通键值对，为空时不添加
+     * Add a normal key-value pair. If the value is empty, the key-value pair is not added
      *
-     * @param argsMap 参数集
-     * @param configMap 配置集
+     * @param argsMap arguments map
+     * @param configMap configuration map
      */
     private static void addNormalEntries(Map<String, Object> argsMap, Properties configMap) {
         for (Object key : configMap.keySet()) {
@@ -130,10 +131,10 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 获取形如"${}"的配置，环境变量或系统变量
+     * Gets a configuration, environment variable, or system variable in the shape of "${}"
      *
-     * @param configVal 配置值
-     * @return 真实配置
+     * @param configVal Configuration value
+     * @return Real configuration
      */
     private static String getActualValue(String configVal) {
         if (configVal != null && configVal.matches("^.*\\$\\{[\\w.]+(:.*)?}.*$")) {
@@ -144,7 +145,7 @@ public abstract class BootArgsBuilder {
             final String key = separatorIndex >= 0 ? envKey.substring(0, separatorIndex) : envKey;
             final String defaultValue = separatorIndex >= 0 ? envKey.substring(separatorIndex + 1) : "";
 
-            // 优先级为环境变量 > 系统变量
+            // The priority is environment variables > system variables
             if (!StringUtils.isBlank(System.getenv(key))) {
                 return System.getenv(key);
             }
@@ -157,13 +158,13 @@ public abstract class BootArgsBuilder {
     }
 
     /**
-     * 添加路径键值对
+     * Add a path key-value pair
      *
-     * @param argsMap 参数集
-     * @param agentPath agent路径
+     * @param argsMap arguments map
+     * @param agentPath agent path
      */
     public static void addPathEntries(Map<String, Object> argsMap, String agentPath) {
-        // 如果指定的agent路径为空，则通过ProtectionDomain获取
+        // If the specified agentPath is empty, obtain it through the ProtectionDomain
         String realPath = StringUtils.isBlank(agentPath) ? PathDeclarer.getAgentPath() : agentPath;
         argsMap.put(BootConstant.AGENT_ROOT_DIR_KEY, realPath);
         argsMap.put(BootConstant.CORE_IMPLEMENT_DIR_KEY, PathDeclarer.getImplementPath(realPath));

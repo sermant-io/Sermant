@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.implement.service.tracing.sender;
 
 /**
- * 链路追踪向后端发送数据的头部（应用信息、节点信息）
+ * Meaasge headers for tracing (application information, node information) that send data to the backend node
  *
  * @author luanwenfei
  * @since 2022-03-07

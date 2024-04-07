@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * kie配置中心实现
+ * Kie Configuration center implementation
  *
  * @author zhouss
  * @since 2021-11-22
@@ -53,7 +53,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * KieDynamicConfigService
      *
      * @param serverAddress serverAddress
-     * @param project project
+     * @param project namespace
      */
     public KieDynamicConfigService(String serverAddress, String project) {
         subscriberManager = new SubscriberManager(serverAddress, project, CONFIG.getTimeoutValue());
@@ -83,7 +83,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
         String newGroup = group;
         if (!LabelGroupUtils.isLabelGroup(group)) {
-            // 增加标签group判断, 对不规则的group进行适配处理
+            // Add label group judgment to adapt irregular groups
             newGroup = LabelGroupUtils
                     .createLabelGroup(Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
         }
@@ -92,7 +92,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
 
     @Override
     public boolean doRemoveConfigListener(String key, String group) {
-        // 不支持移除单个监听器
+        // Removing a single listener is not supported
         return false;
     }
 
@@ -142,13 +142,15 @@ public class KieDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 更新监听器（删除||添加） 若第一次添加监听器，则会将数据通知给监听器
+     * Update listener (delete or add). If a listener is added for the first time, the listener is notified of the data
      *
-     * @param group 分组， 针对KIE特别处理生成group方法LabelGroupUtils#createLabelGroup(Map)
-     * @param listener 对应改组的监听器
-     * @param forSubscribe 是否为订阅
-     * @param ifNotify 初次添加监听器，是否通知监听的数据
-     * @return 更新是否成功
+     * @param group group. Method of generating groups specifically for KIE processing ->
+     * LabelGroupUtils#createLabelGroup(Map)
+     *
+     * @param listener The listener of the corresponding group
+     * @param forSubscribe whether for subscription
+     * @param ifNotify Whether to notify when the listener is added for the first time
+     * @return update result
      */
     private synchronized boolean updateGroupListener(String group, DynamicConfigListener listener, boolean forSubscribe,
             boolean ifNotify) {
@@ -169,17 +171,17 @@ public class KieDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 去除路径分隔符
+     * Remove the path separator
      *
      * @param str key or group
-     * @param isGroup 是否为组
-     * @return 修正值
+     * @param isGroup Group or not
+     * @return fixed value
      */
     private String fixSeparator(String str, boolean isGroup) {
         String newStr = str;
         if (str == null) {
             if (isGroup) {
-                // 默认分组
+                // default group
                 newStr = CONFIG.getDefaultGroup();
             } else {
                 throw new IllegalArgumentException("Key must not be empty!");

@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 日志初始化的实现类
+ * Implementation class for log initialization
  *
  * @author luanwenfei
  * @since 2022-06-20
@@ -51,8 +51,8 @@ public class LoggerFactoryImpl {
     /**
      * init
      *
-     * @param artifact 归属产品
-     * @return return logger logger for sermant
+     * @param artifact artifact
+     * @return return logger for sermant
      */
     public static Logger init(String artifact) {
         Logger logger = java.util.logging.Logger.getLogger("sermant." + artifact);
@@ -67,7 +67,7 @@ public class LoggerFactoryImpl {
     }
 
     private static Level getLevel() {
-        // 环境变量 > 启动参数
+        // Environment Variables > Startup Parameters
         String level = System.getenv(LOG_LEVEL_KEY);
         if (StringUtils.isBlank(level)) {
             level = System.getProperty(LOG_LEVEL_KEY, INFO);

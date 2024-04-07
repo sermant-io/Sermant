@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * listener封装，关联任务执行器
+ * KieListenerWrapper，associated the task executor
  *
  * @author zhouss
  * @since 2021-11-18
@@ -50,20 +50,21 @@ public class KieListenerWrapper {
     private long currentVersion;
 
     /**
-     * key : 键 VersionListenerWrapper: 单个key监听者集合 单个key映射多个listener， 针对单个key的场景进行监听
+     * key : String, value : VersionListenerWrapper, collection of single key listeners. A single key maps multiple
+     * listeners. Listen to scenarios with a single key
      */
     private final Map<String, VersionListenerWrapper> keyListenerMap = new HashMap<>();
 
     private SubscriberManager.Task task;
 
     /**
-     * 包装构建器
+     * Constructor
      *
-     * @param key 键
-     * @param dynamicConfigListener 监听器
-     * @param kvDataHolder 数据持有器
-     * @param kieRequest 请求
-     * @param ifNotify 是否需要初始化通知
+     * @param key key
+     * @param dynamicConfigListener dynamic config listener
+     * @param kvDataHolder data holder
+     * @param kieRequest kie request
+     * @param ifNotify if notify
      */
     public KieListenerWrapper(String key, DynamicConfigListener dynamicConfigListener,
             KvDataHolder kvDataHolder, KieRequest kieRequest, boolean ifNotify) {
@@ -74,23 +75,23 @@ public class KieListenerWrapper {
     }
 
     /**
-     * 通知监听器
+     * Notify listeners
      *
-     * @param eventDataHolder 改事件的数据持有
-     * @param isFirst 是否为第一次通知
+     * @param eventDataHolder data holder
+     * @param isFirst Whether it is the first notification
      */
     public void notifyListeners(KvDataHolder.EventDataHolder eventDataHolder, boolean isFirst) {
         currentVersion = eventDataHolder.getVersion();
         if (!eventDataHolder.getAdded().isEmpty()) {
-            // 新增事件
+            // Create event
             notifyAdded(eventDataHolder.getAdded(), eventDataHolder.getLatestData(), isFirst);
         }
         if (!eventDataHolder.getDeleted().isEmpty()) {
-            // 删除事件
+            // Delete event
             notify(eventDataHolder.getDeleted(), DynamicConfigEventType.DELETE, null);
         }
         if (!eventDataHolder.getModified().isEmpty()) {
-            // 修改事件
+            // Modify event
             notify(eventDataHolder.getModified(), DynamicConfigEventType.MODIFY, null);
         }
     }
@@ -106,10 +107,10 @@ public class KieListenerWrapper {
     private void notify(Map<String, String> configData, DynamicConfigEventType dynamicConfigEventType,
             Map<String, String> latestData) {
         for (Map.Entry<String, String> entry : configData.entrySet()) {
-            // 通知单个key监听器
+            // Notify listener with a single key
             notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, false, latestData);
 
-            // 通知该Group的监听器做更新
+            // Notify the group's listeners to update
             notifyEvent(entry.getKey(), entry.getValue(), dynamicConfigEventType, true, latestData);
         }
     }
@@ -155,7 +156,8 @@ public class KieListenerWrapper {
         for (VersionListener versionListener : versionListenerWrapper.listeners) {
             try {
                 if (versionListener.version > currentVersion) {
-                    // 已通知的listener不再通知, 避免针对同一个group的多个不同key进行多次重复通知
+                    // The notified listener is not notified again. This prevents multiple notifications for
+                    // different keys of the same group
                     continue;
                 }
                 if (event.getEventType() == DynamicConfigEventType.INIT) {
@@ -175,7 +177,7 @@ public class KieListenerWrapper {
     private void processInit(Map<String, String> latestData, VersionListener versionListener,
             DynamicConfigEvent event) {
         if (versionListener.isNeedInit && !versionListener.isInitializer && latestData != null) {
-            // 需要初始化, 但是未初始化, 全量数据通知
+            // Required to be initialized, but not initialized, full data notification
             for (Map.Entry<String, String> entry : latestData.entrySet()) {
                 versionListener.listener
                         .process(DynamicConfigEvent.initEvent(entry.getKey(), event.getGroup(), entry.getValue()));
@@ -184,7 +186,9 @@ public class KieListenerWrapper {
             versionListener.initVersion = currentVersion;
         } else {
             if (versionListener.initVersion != 0 && versionListener.initVersion != currentVersion) {
-                // 其他已经通知过或者不需要通知的采用add事件, 通知前判断其初始化通知的版本是否为当前版本, 若为当前版本则表示已经全量通知过, 无需再次通知
+                // For other add events that have been notified or do not need to be notified, check whether the
+                // version of the initial notification is the current version before notification. If it is the
+                // current version, it indicates that it has been fully notified and does not need to be notified again
                 versionListener.listener.process(DynamicConfigEvent.createEvent(event.getKey(), event.getGroup(),
                         event.getContent()));
             }
@@ -192,11 +196,11 @@ public class KieListenerWrapper {
     }
 
     /**
-     * 添加key监听器
+     * Add key listener
      *
-     * @param key 键
-     * @param dynamicConfigListener 监听器
-     * @param ifNotify 是否初始化通知
+     * @param key key
+     * @param dynamicConfigListener dynamic config listener
+     * @param ifNotify if notify
      */
     public final void addKeyListener(String key, DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
@@ -208,11 +212,11 @@ public class KieListenerWrapper {
     }
 
     /**
-     * 移除key监听器
+     * Remove key listener
      *
-     * @param key 键
-     * @param listener 监听器
-     * @return 是否移除成功
+     * @param key key
+     * @param listener dynamic config listener
+     * @return remove result
      */
     public boolean removeKeyListener(String key, DynamicConfigListener listener) {
         final VersionListenerWrapper versionListenerWrapper = keyListenerMap.get(key);
@@ -223,9 +227,9 @@ public class KieListenerWrapper {
     }
 
     /**
-     * 当前分组的所有监听器是否全部清空
+     * Whether all listeners of the current group are cleared
      *
-     * @return 为空 返回 true
+     * @return true if empty
      */
     public boolean isEmpty() {
         for (VersionListenerWrapper wrap : keyListenerMap.values()) {
@@ -253,7 +257,7 @@ public class KieListenerWrapper {
     }
 
     /**
-     * listeners包装器
+     * Version listener wrapper
      *
      * @since 2022-01-01
      */
@@ -269,13 +273,13 @@ public class KieListenerWrapper {
         }
 
         boolean removeListener(DynamicConfigListener listener) {
-            // VersionListener基于listener移除
+            // VersionListener is removed based on listener
             return listeners.remove(new VersionListener(-1L, listener, false));
         }
     }
 
     /**
-     * listener包装器, 增加版本号判断
+     * VersionListener, added version judgment
      *
      * @since 2022-01-01
      */
@@ -283,22 +287,22 @@ public class KieListenerWrapper {
         DynamicConfigListener listener;
 
         /**
-         * 已通知的版本号, 基于KIE数据版本号，即revision
+         * The notified version, based on the KIE data version, also called revision
          */
         long version;
 
         /**
-         * 是否被INIT事件通知, 该事件仅通知一次
+         * Whether to be notified by an INIT event. The event is notified only once
          */
         boolean isInitializer = false;
 
         /**
-         * 是否需要首次通知
+         * Whether first notification is required
          */
         boolean isNeedInit;
 
         /**
-         * 被初始化的版本
+         * initial version
          */
         long initVersion;
 

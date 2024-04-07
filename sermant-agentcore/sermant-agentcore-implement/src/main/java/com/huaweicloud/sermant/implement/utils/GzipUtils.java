@@ -31,7 +31,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * 压缩和解压缩工具类
+ * Compression and decompression tools
  *
  * @author lilai
  * @version 0.0.1
@@ -40,7 +40,7 @@ import java.util.zip.GZIPOutputStream;
 public class GzipUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    // 缓冲区大小
+    // Buffer size
     private static final int BUFFER = 1024;
 
     private static final int FLAG = -1;
@@ -49,26 +49,26 @@ public class GzipUtils {
     }
 
     /**
-     * 数据压缩
+     * Data compaction
      *
-     * @param data 待压缩的数据
-     * @return 压缩完成的数据
+     * @param data Data to be compressed
+     * @return Compressed data
      */
     public static byte[] compress(byte[] data) {
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        // 压缩
+        // compress
         compress(bais, baos);
         byte[] output = baos.toByteArray();
         return getBytes(output, bais, baos);
     }
 
     /**
-     * 数据压缩
+     * Data compression
      *
-     * @param is 输入流
-     * @param os 输出流
+     * @param is input stream
+     * @param os output stream
      */
     public static void compress(InputStream is, OutputStream os) {
         try (GZIPOutputStream gos = new GZIPOutputStream(os)) {
@@ -81,30 +81,31 @@ public class GzipUtils {
             gos.flush();
         } catch (IOException e) {
             LOGGER.severe(
-                String.format(Locale.ROOT, "Exception occurs when compress. Exception info: [%s]}", e.getMessage()));
+                    String.format(Locale.ROOT, "Exception occurs when compress. Exception info: [%s]}",
+                            e.getMessage()));
         }
     }
 
     /**
-     * 数据解压缩
+     * Data decompression
      *
-     * @param data 待解压数据
-     * @return 解压完成的数据
+     * @param data Data to be decompressed
+     * @return Decompressed data
      */
     public static byte[] decompress(byte[] data) {
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        // 解压缩
+        // uncompress
         decompress(bais, baos);
         return getBytes(baos.toByteArray(), bais, baos);
     }
 
     /**
-     * 数据解压缩
+     * Data decompression
      *
-     * @param is 输入流
-     * @param os 输出流
+     * @param is input stream
+     * @param os output stream
      */
     public static void decompress(InputStream is, OutputStream os) {
         try (GZIPInputStream gis = new GZIPInputStream(is)) {
@@ -115,7 +116,8 @@ public class GzipUtils {
             }
         } catch (IOException e) {
             LOGGER.severe(
-                String.format(Locale.ROOT, "Exception occurs when decompress. Exception info: [%s]}", e.getMessage()));
+                    String.format(Locale.ROOT, "Exception occurs when decompress. Exception info: [%s]}",
+                            e.getMessage()));
         }
     }
 
@@ -124,7 +126,8 @@ public class GzipUtils {
             baos.flush();
         } catch (IOException e) {
             LOGGER.severe(
-                String.format(Locale.ROOT, "Exception occurs when getBytes. Exception info: [%s]}", e.getMessage()));
+                    String.format(Locale.ROOT, "Exception occurs when getBytes. Exception info: [%s]}",
+                            e.getMessage()));
         } finally {
             IOUtils.closeQuietly(bais);
             IOUtils.closeQuietly(baos);

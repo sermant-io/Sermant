@@ -23,83 +23,82 @@ import org.apache.http.client.config.RequestConfig;
 import java.util.Map;
 
 /**
- * http请求
+ * http request
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public interface HttpClient extends Client {
-
     /**
-     * get请求
+     * get request
      *
-     * @param url 请求地址
-     * @param headers 请求头
-     * @param requestConfig 请求配置
+     * @param url request address
+     * @param headers request headers
+     * @param requestConfig request config
      * @return HttpResult
      */
     HttpResult doGet(String url, Map<String, String> headers, RequestConfig requestConfig);
 
     /**
-     * get请求
+     * get request
      *
-     * @param url 请求地址
+     * @param url request address
      * @return HttpResult
      */
     HttpResult doGet(String url);
 
     /**
-     * get请求
+     * get request
      *
-     * @param url 请求地址
-     * @param requestConfig 请求配置
+     * @param url request address
+     * @param requestConfig request config
      * @return HttpResult
      */
     HttpResult doGet(String url, RequestConfig requestConfig);
 
     /**
-     * post请求
+     * post request
      *
-     * @param url 请求地址
-     * @param params 请求参数
+     * @param url request address
+     * @param params request params
      * @return HttpResult
      */
     HttpResult doPost(String url, Map<String, Object> params);
 
     /**
-     * post请求
+     * post request
      *
-     * @param url 请求地址
-     * @param params 请求参数
-     * @param requestConfig 请求配置
+     * @param url request address
+     * @param params request params
+     * @param requestConfig request config
      * @return HttpResult
      */
     HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig);
 
     /**
-     * post请求
+     * post request
      *
-     * @param url 请求地址
-     * @param params 请求参数
-     * @param headers 请求头
-     * @param requestConfig 请求配置
+     * @param url request address
+     * @param params request params
+     * @param headers request headers
+     * @param requestConfig request config
      * @return HttpResult
      */
     HttpResult doPost(String url, Map<String, Object> params, RequestConfig requestConfig, Map<String, String> headers);
 
     /**
-     * put请求
+     * put request
      *
-     * @param url 请求地址
-     * @param params 请求参数
+     * @param url request address
+     * @param params request params
      * @return HttpResult
      */
     HttpResult doPut(String url, Map<String, Object> params);
 
     /**
-     * delete请求
+     * delete request
      *
-     * @param url 请求地址
+     * @param url request address
      * @return HttpResult
      */
     HttpResult doDelete(String url);

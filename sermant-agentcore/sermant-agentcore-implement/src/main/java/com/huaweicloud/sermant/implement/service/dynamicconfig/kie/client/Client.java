@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client;
 
 /**
- * 客户端
+ * Client
  *
  * @author zhouss
  * @since 2021-11-17

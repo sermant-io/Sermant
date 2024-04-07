@@ -30,14 +30,14 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * kie客户端
+ * Kie Client
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class KieClient extends AbstractClient {
     /**
-     * 缺省版本号
+     * Default version
      */
     private static final String ABSENT_REVISION = "0";
 
@@ -48,33 +48,33 @@ public class KieClient extends AbstractClient {
     private String kieApi;
 
     /**
-     * kei客户端构造器
+     * Kie client constructor
      *
-     * @param clientUrlManager kie url管理器
-     * @param timeout 超时时间
+     * @param clientUrlManager kie url manager
+     * @param timeout timeout
      */
     public KieClient(ClientUrlManager clientUrlManager, int timeout) {
         this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject(), timeout);
     }
 
     /**
-     * kei客户端构造器
+     * Kie client constructor
      *
-     * @param clientUrlManager kie url管理器
-     * @param project 命名空间
-     * @param timeout 超时时间
+     * @param clientUrlManager kie url manager
+     * @param project namespace
+     * @param timeout timeout
      */
     public KieClient(ClientUrlManager clientUrlManager, String project, int timeout) {
         this(clientUrlManager, null, project, timeout);
     }
 
     /**
-     * kei客户端构造器
+     * Kie client constructor
      *
-     * @param clientUrlManager kie url管理器
-     * @param httpClient 指定请求器
-     * @param project 命名空间
-     * @param timeout 超时时间
+     * @param clientUrlManager kie url manager
+     * @param httpClient HttpClient
+     * @param project namespace
+     * @param timeout timeout
      */
     public KieClient(ClientUrlManager clientUrlManager, HttpClient httpClient, String project, int timeout) {
         super(clientUrlManager, httpClient, timeout);
@@ -82,18 +82,18 @@ public class KieClient extends AbstractClient {
     }
 
     /**
-     * 设置kieApi为命名空间
+     * Set the kieApi to project
      *
-     * @param project 命名空间
+     * @param project namespace
      */
     public void setProject(String project) {
         this.kieApi = String.format(KIE_API_TEMPLATE, project);
     }
 
     /**
-     * 插叙Kie配置
+     * Querying Kie Configuration
      *
-     * @param request 请求体
+     * @param request Kie request
      * @return KieResponse
      */
     public KieResponse queryConfigurations(KieRequest request) {
@@ -101,12 +101,12 @@ public class KieClient extends AbstractClient {
     }
 
     /**
-     * 查询Kie配置
+     * Querying Kie Configuration
      *
-     * @param request 请求体
-     * @param responseHandler http结果处理器
-     * @param <T> 转换后的目标类型
-     * @return 响应结果
+     * @param request Kie request
+     * @param responseHandler http result handler
+     * @param <T> The converted target type
+     * @return Response result
      */
     public <T> T queryConfigurations(KieRequest request, ResultHandler<T> responseHandler) {
         if (request == null || responseHandler == null) {
@@ -127,13 +127,13 @@ public class KieClient extends AbstractClient {
     }
 
     /**
-     * 发布配置
+     * Publish configuration
      *
-     * @param key 请求键
-     * @param labels 标签
-     * @param content 配置
-     * @param enabled 配置的状态开关
-     * @return 是否发布成功
+     * @param key request key
+     * @param labels labels
+     * @param content configuration content
+     * @param enabled configuration switch status
+     * @return publish result
      */
     public boolean publishConfig(String key, Map<String, String> labels, String content, boolean enabled) {
         final Map<String, Object> params = new HashMap<>();
@@ -146,12 +146,12 @@ public class KieClient extends AbstractClient {
     }
 
     /**
-     * 更新配置
+     * Update configuration
      *
-     * @param keyId key-id
-     * @param content 更新内容
-     * @param enabled 是否开启
-     * @return 是否更新成功
+     * @param keyId key id
+     * @param content update content
+     * @param enabled enable or not
+     * @return update result
      */
     public boolean doUpdateConfig(String keyId, String content, boolean enabled) {
         final Map<String, Object> params = new HashMap<>();
@@ -167,10 +167,10 @@ public class KieClient extends AbstractClient {
     }
 
     /**
-     * 删除方法
+     * Delete configuration
      *
-     * @param keyId key编号
-     * @return 是否删除成功
+     * @param keyId key id
+     * @return delete result
      */
     public boolean doDeleteConfig(String keyId) {
         final HttpResult httpResult = this.httpClient.doDelete(buildKeyIdUrl(keyId));
@@ -179,7 +179,8 @@ public class KieClient extends AbstractClient {
 
     private String formatNullString(String val) {
         if (val == null || val.trim().length() == 0) {
-            // 当版本号为空时，默认设置版本号为"0", 当有版本更新的数据会立即返回, 避免阻塞问题
+            // When the version number is empty, the default version number is set to "0". When the version is
+            // updated, the data is returned immediately to avoid blocking problems
             return ABSENT_REVISION;
         }
         return val;

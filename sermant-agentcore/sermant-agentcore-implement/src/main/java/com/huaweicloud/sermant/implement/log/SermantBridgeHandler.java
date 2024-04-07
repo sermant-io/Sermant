@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
- * Sermant日志桥接
+ * Sermant Log BridgeHandler
  *
  * @author luanwenfei
  * @since 2023-03-20
@@ -33,14 +33,14 @@ import java.util.logging.LogRecord;
 public class SermantBridgeHandler extends SLF4JBridgeHandler {
     @Override
     protected void callLocationAwareLogger(LocationAwareLogger lal, LogRecord record) {
-        // 覆写SLF4JBridgeHandler的日志转换方法，上报日志事件
+        // Overrides the log conversion method of SLF4JBridgeHandler to report log events
         int julLevelValue = record.getLevel().intValue();
 
         if (julLevelValue > Level.INFO.intValue() && julLevelValue <= Level.WARNING.intValue()) {
-            // 记录警告级别日志
+            // Record warning level logs
             LogEventCollector.getInstance().offerWarning(record);
         } else if (julLevelValue > Level.WARNING.intValue()) {
-            // 记录错误级别日志
+            // Record error level logs
             LogEventCollector.getInstance().offerError(record);
         }
         super.callLocationAwareLogger(lal, record);

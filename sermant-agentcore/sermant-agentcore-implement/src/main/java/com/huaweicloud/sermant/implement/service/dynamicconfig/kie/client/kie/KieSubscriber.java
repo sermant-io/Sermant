@@ -17,14 +17,14 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.kie;
 
 /**
- * 增加是否为长请求判断
+ * Added whether the request is long request judgment
  *
  * @author zhouss
  * @since 2021-11-18
  */
 public class KieSubscriber {
     /**
-     * 最大等待时间
+     * Maximum waiting time
      * 50S
      */
     private static final int MAX_WAIT = 50;
@@ -33,12 +33,17 @@ public class KieSubscriber {
 
     private final KieRequest kieRequest;
 
+    /**
+     * constructor
+     *
+     * @param kieRequest kie request
+     */
     public KieSubscriber(KieRequest kieRequest) {
         this.kieRequest = kieRequest;
     }
 
     /**
-     * 是否为长请求
+     * Whether it is a long request
      *
      * @return boolean
      */
@@ -82,7 +87,7 @@ public class KieSubscriber {
 
     @Override
     public int hashCode() {
-        int result = ((isLongConnectionRequest == null || !isLongConnectionRequest)  ? 1 : 0);
+        int result = (isLongConnectionRequest == null || !isLongConnectionRequest) ? 1 : 0;
         result = 31 * result + (kieRequest != null ? kieRequest.hashCode() : 0);
         return result;
     }
