@@ -44,22 +44,13 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.2.1/sermant-1.2.1.tar.gz) Sermant package (The current version recommended is 1.2.1)
-- [Download](https://github.com/huaweicloud/Sermant-examples/tree/main/flowcontrol-demo/spring-cloud-demo/spring-provider) demo application
+- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release package (The current version recommended is 1.4.0)
+- [Download](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz) Demo binary product compression package
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
-### Compile demo application
+### Obtain Demo binary products
 
-Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/` directory:
-
-```shell
-# windows linux mac
-mvn clean package
-```
-
-After successful packaging，GET `spring-provider.jar` in `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`
-
-> Note: path is the path where the demo application is downloaded
+Decompress the demo binary product compression package to obtain the spring-provider.jar.
 
 ### Modify the Sermant configuration
 
@@ -81,9 +72,9 @@ java -jar sermant-backend-x.x.x.jar
 
 > Note: path is the path where the Sermant package is downloaded
 
-### Start demo application
+### Start Demo application
 
-Execute the following command in the `${path}/Sermant-examples/flowcontrol-demo/spring-cloud-demo/spring-provider/target`directory：
+Execute the following command in the directory where the spring-provider.jar file is located:
 
 ```shell
 # linux mac
