@@ -24,15 +24,16 @@ import lombok.Setter;
 import java.util.HashMap;
 
 /**
- * 飞书推送事件实体
+ * FeiShu Event Notification Entity
  *
- * @since 2023-03-02
  * @author xuezechao
+ * @since 2023-03-02
  */
 @Getter
 @Setter
 public class FeiShuEntity {
     @JSONField(name = "msg_type")
     private String msgType;
+
     private HashMap<String, Object> content;
 }

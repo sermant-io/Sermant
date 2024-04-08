@@ -45,7 +45,7 @@ import java.util.Timer;
 import javax.annotation.PostConstruct;
 
 /**
- * 网关服务端
+ * Netty server
  *
  * @author lilai
  * @version 0.0.1
@@ -55,30 +55,30 @@ import javax.annotation.PostConstruct;
 public class NettyServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(NettyServer.class);
 
-    // 最大的连接等待数量
+    // Maximum connection wait size
     private static final int CONNECTION_SIZE = 1024;
 
-    // 清理缓存数据延时
+    // Delay time of clearing cached data
     private static final int DELETE_TIMEOUT_DATA_DELAY_TIME = 5000;
 
-    // 清理缓存数据间隔时间
+    // Interval for clearing cached data
     private static final int DELETE_TIMEOUT_DATA_PERIOD_TIME = 3000;
 
     private static final Timer TIMER = new Timer();
 
-    // 读等待时间
+    // Read wait time
     @Value("${netty.wait.time}")
     private int readWaitTime;
 
-    // 网关端口
+    // Netty port
     @Value("${netty.port}")
     private int port;
 
-    // 心跳有效时间
+    // Effective heartbeat time
     @Value("${max.effective.time:60000}")
     private long maxEffectiveTime;
 
-    // 心跳缓存时间
+    // Heartbeat cache time
     @Value("${max.cache.time:600000}")
     private long maxCacheTime;
 
@@ -89,41 +89,40 @@ public class NettyServer {
     private VisibilityConfig visibilityConfig;
 
     /**
-     * 服务端核心方法
-     * 随tomcat启动被拉起，处理客户端连接和数据
+     * Server-side core method Is pulled up with tomcat startup to handle client connections and data
      */
     @PostConstruct
     public void start() {
         LOGGER.info("Start netty server...");
 
-        // 清理过期数据
+        // Clear expired data
         TIMER.schedule(new DeleteTimeoutDataTask(maxEffectiveTime, maxCacheTime, visibilityConfig),
-            DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
+                DELETE_TIMEOUT_DATA_DELAY_TIME, DELETE_TIMEOUT_DATA_PERIOD_TIME);
 
-        // 处理连接的线程组
+        // Thread group that handles connections
         EventLoopGroup bossGroup = new NioEventLoopGroup(threadNum);
 
-        // 处理数据的线程组
+        // Thread group that handles data
         EventLoopGroup workerGroup = new NioEventLoopGroup(threadNum);
         try {
             ServerBootstrap serverBootstrap = new ServerBootstrap();
             serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-                .option(ChannelOption.SO_BACKLOG, CONNECTION_SIZE).childHandler(new ChannelInitializer<Channel>() {
-                    @Override
-                    protected void initChannel(Channel channel) {
-                        ChannelPipeline pipeline = channel.pipeline();
+                    .option(ChannelOption.SO_BACKLOG, CONNECTION_SIZE).childHandler(new ChannelInitializer<Channel>() {
+                        @Override
+                        protected void initChannel(Channel channel) {
+                            ChannelPipeline pipeline = channel.pipeline();
 
-                        // 如果超过读等待时间还是没有收到对应客户端，触发读等待事件
-                        pipeline.addLast(new IdleStateHandler(readWaitTime, 0, 0));
-                        pipeline.addLast(new ProtobufVarint32FrameDecoder());
-                        pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
-                        pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
-                        pipeline.addLast(new ProtobufEncoder());
-                        pipeline.addLast(new ServerHandler());
-                    }
-                });
+                            // If no client is received within the read wait period, the read wait event is triggered
+                            pipeline.addLast(new IdleStateHandler(readWaitTime, 0, 0));
+                            pipeline.addLast(new ProtobufVarint32FrameDecoder());
+                            pipeline.addLast(new ProtobufDecoder(Message.NettyMessage.getDefaultInstance()));
+                            pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+                            pipeline.addLast(new ProtobufEncoder());
+                            pipeline.addLast(new ServerHandler());
+                        }
+                    });
 
-            // 同步阻塞等待服务启动
+            // Synchronous blocking waiting for the server to start
             serverBootstrap.bind(port).sync();
             LOGGER.info("Netty server started, port is {}", port);
         } catch (InterruptedException e) {

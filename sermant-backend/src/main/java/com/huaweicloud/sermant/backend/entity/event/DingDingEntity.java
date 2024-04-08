@@ -22,7 +22,7 @@ import lombok.Setter;
 import java.util.HashMap;
 
 /**
- * 钉钉推送事件实体
+ * DingDing Event Entity
  *
  * @since 2023-03-02
  * @author xuezechao

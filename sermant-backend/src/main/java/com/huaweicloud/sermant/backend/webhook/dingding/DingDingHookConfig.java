@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
 import com.huaweicloud.sermant.backend.webhook.WebhookConfigImpl;
 
 /**
- * 钉钉webhook 配置
+ * DingDing webhook configuration
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -32,9 +32,9 @@ public class DingDingHookConfig extends WebhookConfigImpl {
     }
 
     /**
-     * 获取webhook配置单例
+     * Get DingDing webhook configuration
      *
-     * @return webhook配置单例
+     * @return DingDing webhook configuration
      */
     public static WebHookConfig getInstance() {
         return CONFIG;

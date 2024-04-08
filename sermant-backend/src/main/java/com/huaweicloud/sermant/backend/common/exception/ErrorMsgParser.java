@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.common.exception;
 
 /**
- * 错误信息处理器
+ * Error message handler
  *
  * @author lilai
  * @version 0.0.1
@@ -25,10 +25,10 @@ package com.huaweicloud.sermant.backend.common.exception;
  */
 public interface ErrorMsgParser {
     /**
-     * 处理错误信息
+     * Parse error message
      *
-     * @param args 参数
-     * @return 处理后的错误信息
+     * @param args arguments
+     * @return error message
      */
     String parseErrorMsg(Object args);
 }

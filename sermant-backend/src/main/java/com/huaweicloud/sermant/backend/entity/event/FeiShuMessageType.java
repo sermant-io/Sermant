@@ -17,25 +17,24 @@
 package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 飞书支持的支持的数据类型
+ * Message types supported by FeiShu
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public enum FeiShuMessageType {
-
     /**
-     * 文本
+     * Text
      */
     TEXT("text"),
 
     /**
-     * 富文本
+     * Rich text
      */
     POST("post"),
 
     /**
-     * 消息卡片
+     * Message card
      */
     INTERACTIVE("interactive");
 

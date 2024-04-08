@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * redis数据库数据处理
+ * Redis database for event
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -44,9 +44,9 @@ public class EventDaoForRedis implements EventDao {
     private EventDao jedis;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param backendConfig 配置
+     * @param backendConfig configuration
      */
     public EventDaoForRedis(BackendConfig backendConfig) {
         try {
@@ -57,9 +57,9 @@ public class EventDaoForRedis implements EventDao {
     }
 
     /**
-     * 插入事件
+     * Add event
      *
-     * @param event 事件
+     * @param event event
      * @return true/false
      */
     @Override
@@ -68,9 +68,9 @@ public class EventDaoForRedis implements EventDao {
     }
 
     /**
-     * 插入agent实例
+     * Add agent instance
      *
-     * @param instanceMeta agent元数据
+     * @param instanceMeta agent metadata
      * @return true/false
      */
     @Override
@@ -79,10 +79,10 @@ public class EventDaoForRedis implements EventDao {
     }
 
     /**
-     * 事件查询
+     * Event query
      *
-     * @param eventsRequestEntity 查询条件
-     * @return 查询结果
+     * @param eventsRequestEntity query condition
+     * @return query result
      */
     @Override
     public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
@@ -90,11 +90,11 @@ public class EventDaoForRedis implements EventDao {
     }
 
     /**
-     * 获取某一页数据
+     * Query data with specific page
      *
-     * @param sessionId 会话ID
-     * @param page 页码
-     * @return 查询数据
+     * @param sessionId session id
+     * @param page page number
+     * @return query result
      */
     @Override
     public List<QueryResultEventInfoEntity> queryEventPage(String sessionId, int page) {
@@ -102,10 +102,10 @@ public class EventDaoForRedis implements EventDao {
     }
 
     /**
-     * 获取查询数据类型数量
+     * Query the number of data types
      *
-     * @param eventsRequestEntity 事件请求体
-     * @return 查询结果数量
+     * @param eventsRequestEntity Event request entity
+     * @return the cache size in query result
      */
     @Override
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {

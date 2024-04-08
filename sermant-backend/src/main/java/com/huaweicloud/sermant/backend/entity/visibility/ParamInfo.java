@@ -18,19 +18,19 @@
 package com.huaweicloud.sermant.backend.entity.visibility;
 
 /**
- * 参数信息
+ * Parameter information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class ParamInfo {
     /**
-     * 参数类型
+     * Parameter type
      */
     private String paramType;
 
     /**
-     * 参数名称
+     * Parameter name
      */
     private String paramName;
 

@@ -20,24 +20,24 @@ package com.huaweicloud.sermant.backend.entity.visibility;
 import java.util.List;
 
 /**
- * 方法信息
+ * Method information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class MethodInfo {
     /**
-     * 方法名称
+     * Method name
      */
     private String name;
 
     /**
-     * 参数集合
+     * Parameter information list
      */
     private List<ParamInfo> paramInfoList;
 
     /**
-     * 返回值信息
+     * Return information
      */
     private ParamInfo returnInfo;
 

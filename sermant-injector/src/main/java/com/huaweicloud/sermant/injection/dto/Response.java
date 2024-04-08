@@ -39,10 +39,10 @@ public class Response {
     private final String patch;
 
     /**
-     * 允许请求的响应
+     * The response to the request allowed
      *
      * @param uid   uid
-     * @param patch base64 编码的 JSON Patch 操作数组
+     * @param patch base64 encoded JSON Patch operation array
      */
     public Response(String uid, String patch) {
         this.uid = uid;

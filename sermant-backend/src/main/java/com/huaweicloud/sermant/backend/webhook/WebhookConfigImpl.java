@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.webhook;
 
 /**
- * webhook配置
+ * Webhook configuration
  *
  * @since 2023-03-02
  * @author xuezechao
@@ -30,17 +30,17 @@ public class WebhookConfigImpl implements WebHookConfig {
     private int id;
 
     /**
-     * webhook 地址
+     * webhook url
      */
     private String url;
 
     /**
-     * webhook 名称
+     * webhook name
      */
     private String name;
 
     /**
-     * webhook 状态
+     * webhook status
      */
     private boolean enable;
 

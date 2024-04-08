@@ -38,7 +38,7 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 
 /**
- * 事件服务
+ * Event server
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -58,7 +58,7 @@ public class EventServer {
     }
 
     /**
-     * 初始化service
+     * Initialize the server
      */
     @PostConstruct
     public void init() {
@@ -71,61 +71,61 @@ public class EventServer {
     }
 
     /**
-     * 增加事件
+     * Add event
      *
-     * @param event 事件
-     * @return true/falses
+     * @param event event
+     * @return add result
      */
     public boolean addEvent(Event event) {
         return daoService.addEvent(event);
     }
 
     /**
-     * 增加agent实例
+     * Add agent Instance
      *
-     * @param instanceMeta agent实例
-     * @return true/falses
+     * @param instanceMeta agent instance
+     * @return add result
      */
     public boolean addEvent(InstanceMeta instanceMeta) {
         return daoService.addInstanceMeta(instanceMeta);
     }
 
     /**
-     * 事件查询
+     * Query event
      *
-     * @param eventsRequestEntity 查询条件
-     * @return 查询结果
+     * @param eventsRequestEntity Query condition
+     * @return Query result
      */
     public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
         return daoService.queryEvent(eventsRequestEntity);
     }
 
     /**
-     * 查询某一页数据
+     * Query a page of event
      *
-     * @param sessionId 会话id
-     * @param page 页书
-     * @return 查询结果
+     * @param sessionId Session id
+     * @param page Page number
+     * @return Query result
      */
     public List<QueryResultEventInfoEntity> queryEventPage(String sessionId, int page) {
         return daoService.queryEventPage(sessionId, page);
     }
 
     /**
-     * 获取查询结果大小
+     * Get the size of the query result
      *
-     * @param eventsRequestEntity 查询条件
-     * @return 查询结果数量以及不同类型事件数量
+     * @param eventsRequestEntity Query condition
+     * @return Get number of query result and number of different types of events
      */
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {
         return daoService.getQueryCacheSize(eventsRequestEntity);
     }
 
     /**
-     * 获取webhook 通知事件
+     * Get webhook notification event
      *
-     * @param event 上报事件
-     * @return webhook 通知事件
+     * @param event event
+     * @return webhook notification event
      */
     public QueryResultEventInfoEntity getDoNotifyEvent(Event event) {
         return daoService.getDoNotifyEvent(event);

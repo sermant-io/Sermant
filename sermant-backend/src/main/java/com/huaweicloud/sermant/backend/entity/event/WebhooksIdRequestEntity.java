@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * webhook设置请求实体
+ * Webhook Request Entity
  *
  * @since 2023-03-02
  * @author xuezechao
@@ -30,12 +30,12 @@ import lombok.Setter;
 public class WebhooksIdRequestEntity {
 
     /**
-     * webhook 地址
+     * Webhook url
      */
     private String url;
 
     /**
-     * webhook 状态
+     * Webhook status
      */
     private boolean enable;
 

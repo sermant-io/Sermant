@@ -22,7 +22,7 @@ import lombok.Setter;
 import java.util.HashMap;
 
 /**
- * 查询事件结果实体
+ * Event Information Entity
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -30,34 +30,33 @@ import java.util.HashMap;
 @Getter
 @Setter
 public class QueryResultEventInfoEntity {
-
     /**
-     * 元数据
+     * metadata
      */
     HashMap<String, String> meta;
 
     /**
-     * 事件上报事件
+     * Event reporting time
      */
     private long time;
 
     /**
-     * 事件范围
+     * Event scope
      */
     private String scope;
 
     /**
-     * 事件级别
+     * Event level
      */
     private String level;
 
     /**
-     * 事件类型
+     * Event type
      */
     private String type;
 
     /**
-     * 事件信息
+     * Event information
      */
     private Object info;
 }

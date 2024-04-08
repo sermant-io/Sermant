@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 集群实体
+ * Cluster Entity
  *
  * @author xuezechao
  * @since 2023-03-02

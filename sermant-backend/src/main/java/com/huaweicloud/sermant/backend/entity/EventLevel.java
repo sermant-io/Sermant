@@ -17,25 +17,24 @@
 package com.huaweicloud.sermant.backend.entity;
 
 /**
- * 事件等级
+ * Event Level
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public enum EventLevel {
-
     /**
-     * 紧急
+     * EMERGENCY Level
      */
     EMERGENCY(300),
 
     /**
-     * 重要
+     * IMPORTANT Level
      */
     IMPORTANT(200),
 
     /**
-     * 一般
+     * NORMAL Level
      */
     NORMAL(100);
 

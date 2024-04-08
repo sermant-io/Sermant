@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.webhook;
 
 /**
- * webhook配置接口
+ * WebHook config interface
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -25,58 +25,58 @@ package com.huaweicloud.sermant.backend.webhook;
 public interface WebHookConfig {
 
     /**
-     * 设置url
+     * Set url
      *
-     * @param url webhook 地址
+     * @param url webhook url
      */
     void setUrl(String url);
 
     /**
-     * 获取webhook 地址
+     * Get the webhook url
      *
-     * @return 地址
+     * @return webhook url
      */
     String getUrl();
 
     /**
-     * 设置webhook 名称
+     * Set the webhook name
      *
-     * @param name 名称
+     * @param name webhook name
      */
     void setName(String name);
 
     /**
-     * 获取webhook 名称
+     * Get the webhook name
      *
-     * @return 名称
+     * @return webhook name
      */
     String getName();
 
     /**
-     * 设置webhook状态
+     * Set the webhook status
      *
-     * @param enable 状态
+     * @param enable webhook status
      */
     void setEnable(boolean enable);
 
     /**
-     * 获取webhook 状态
+     * Get the webhook status
      *
-     * @return 状态
+     * @return status
      */
     boolean getEnable();
 
     /**
-     * 获取webhook id
+     * Get the webhook id
      *
-     * @return id
+     * @return webhook id
      */
     int getId();
 
     /**
-     * 设置webhook id
+     * Set the webhook id
      *
-     * @param id id
+     * @param id webhook id
      */
     void setId(int id);
 }

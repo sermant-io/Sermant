@@ -1,8 +1,8 @@
-# sermant打包后文件夹名后缀版本号
+# sermant suffix version of the packaged folder name
 sermantVersion=1.0.0
-# sermant-agent镜像名称
+# image name of sermant-agent
 imageName=xxx.huawei.com/sermant/sermant-agent
-# sermant-agent镜像版本
+# image version of sermant-agent
 imageVersion=1.0.0
 
 name=${imageName}:${imageVersion}

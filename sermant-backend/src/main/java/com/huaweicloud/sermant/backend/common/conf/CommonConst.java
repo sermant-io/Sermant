@@ -17,90 +17,89 @@
 package com.huaweicloud.sermant.backend.common.conf;
 
 /**
- * 公共配置常量
+ * Common constant
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public class CommonConst {
-
     /**
-     * 钉钉webhook名称
+     * DingDing webhook name
      */
     public static final String DINGDING_WEBHOOK_NAME = "DingDing";
 
     /**
-     * 钉钉webhook id
+     * DingDing webhook id
      */
     public static final int DINGDING_WEBHOOK_ID = 1;
 
     /**
-     * 飞书webhook名称
+     * FeiShu webhook name
      */
     public static final String FEISHU_WEBHOOK_NAME = "Feishu";
 
     /**
-     * 飞书webhook id
+     * FeiShu webhook id
      */
     public static final int FEISHU_WEBHOOK_ID = 0;
 
     /**
-     * welink WEBHOOK名称
+     * Welink webhook name
      */
     public static final String WELINK_WEBHOOK_NAME = "Welink";
 
     /**
-     * welink WEBHOOK id
+     * Welink webhook id
      */
     public static final int WELINK_WEBHOOK_ID = 2;
 
     /**
-     * 默认redis地址
+     * Default redis address
      */
     public static final String DEFAULT_REDIS_ADDRESS = "127.0.0.1";
 
     /**
-     * 默认redis端口
+     * Default redis port
      */
     public static final int DEFAULT_REDIS_PORT = 6379;
 
     /**
-     * redis 实例元数据key
+     * redis hash key of instance meta
      */
     public static final String REDIS_HASH_KEY_OF_INSTANCE_META = "sermant_meta";
 
     /**
-     * redis 事件key
+     * redis event key
      */
     public static final String REDIS_EVENT_KEY = "sermant_events_hash";
 
     /**
-     * redis 事件field集合的key
+     * key of redis event field set
      */
     public static final String REDIS_EVENT_FIELD_SET_KEY = "sermant_event_keyset";
 
     /**
-     * redis 全匹配字符*
+     * redis fully matched character *
      */
     public static final String FULL_MATCH_KEY = ".*";
 
     /**
-     * 拼接redis key 字符
+     * redis key concatenation character _
      */
     public static final String JOIN_REDIS_KEY = "_";
 
     /**
-     * redis 地址切分字符
+     * redis address segmentation character :
      */
     public static final String REDIS_ADDRESS_SPLIT = ":";
 
     /**
-     * 前端页面事件每页展示默认数量
+     * default page size
      */
     public static final int DEFAULT_PAGE_SIZE = 10;
 
     /**
-     * 钉钉 webhook markdown 事件格式
+     * DingDing webhook markdown event format
      */
     public static final String DINGDING_MARKDOWN_EVENT_FORMAT =
             "### level: <font color=\"#dd0000\">%s</font><br />" + System.lineSeparator()
@@ -115,7 +114,7 @@ public class CommonConst {
                     + "---  " + System.lineSeparator();
 
     /**
-     * 钉钉 webhook markdown 日志格式
+     * DingDing webhook markdown log format
      */
     public static final String DINGDING_MARKDOWN_LOG_FORMAT =
             "### level: <font color=\"#dd0000\">%s</font><br />" + System.lineSeparator()

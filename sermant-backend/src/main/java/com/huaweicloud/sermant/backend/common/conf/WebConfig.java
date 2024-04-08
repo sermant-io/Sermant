@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * web 配置
+ * web configuration
  *
  * @since 2021-12-17
  * @author xuezechao

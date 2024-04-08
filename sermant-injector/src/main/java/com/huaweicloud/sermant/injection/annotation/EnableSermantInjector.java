@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 开启SermantInjector
+ * Enable SermantInjector
  *
  * @author provenceee
  * @since 2022-12-13

@@ -18,24 +18,24 @@
 package com.huaweicloud.sermant.backend.entity.visibility;
 
 /**
- * 服务可见性基础信息
+ * Basic information of service visibility
  *
  * @author zhp
  * @since 2022-12-09
  */
 public class BaseInfo {
     /**
-     * 当前服务IP
+     * IP of current service instance
      */
     private String ip;
 
     /**
-     * 当前服务端口
+     * Port of current service instance
      */
     private String port;
 
     /**
-     * 框架类型
+     * Service type
      */
     private String serviceType;
 

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.TimerTask;
 
 /**
- * 清理过期数据
+ * Clear expired data
  *
  * @author xuezechao
  * @since 2022-03-14
@@ -40,11 +40,11 @@ public class DeleteTimeoutDataTask extends TimerTask {
     private final VisibilityConfig visibilityConfig;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param maxEffectiveTime 最大有效时间
-     * @param maxCacheTime     最大缓存时间
-     * @param visibilityConfig 服务可见性配置
+     * @param maxEffectiveTime Maximum effective time
+     * @param maxCacheTime Maximum cache time
+     * @param visibilityConfig Service visibility configuration
      */
     public DeleteTimeoutDataTask(long maxEffectiveTime, long maxCacheTime, VisibilityConfig visibilityConfig) {
         this.maxEffectiveTime = maxEffectiveTime;
@@ -62,7 +62,7 @@ public class DeleteTimeoutDataTask extends TimerTask {
     private void deleteHeartbeatCache() {
         Map<String, HeartbeatMessage> heartbeatMessages = HeartbeatCache.getHeartbeatMessageMap();
         for (Iterator<Map.Entry<String, HeartbeatMessage>> it = heartbeatMessages.entrySet().iterator();
-            it.hasNext();) {
+                it.hasNext(); ) {
             Map.Entry<String, HeartbeatMessage> heartbeatMessageEntry = it.next();
             long nowTime = System.currentTimeMillis();
             long receiveTime = heartbeatMessageEntry.getValue().getReceiveTime();
@@ -76,15 +76,15 @@ public class DeleteTimeoutDataTask extends TimerTask {
     }
 
     /**
-     * 清理服务可见性采集的信息
+     * Clean the information collected by service visibility
      */
     private void deleteCollectorCache() {
         for (Iterator<Map.Entry<String, ServerInfo>> it =
-            CollectorCache.SERVER_VALIDITY_PERIOD_MAP.entrySet().iterator(); it.hasNext();) {
+                CollectorCache.SERVER_VALIDITY_PERIOD_MAP.entrySet().iterator(); it.hasNext(); ) {
             Map.Entry<String, ServerInfo> heartbeatEntityEntry = it.next();
             long nowTime = System.currentTimeMillis();
             if ((nowTime - heartbeatEntityEntry.getValue().getValidateDate().getTime()) > visibilityConfig
-                .getEffectiveTimes()) {
+                    .getEffectiveTimes()) {
                 CollectorCache.removeServer(heartbeatEntityEntry.getValue());
                 it.remove();
             }

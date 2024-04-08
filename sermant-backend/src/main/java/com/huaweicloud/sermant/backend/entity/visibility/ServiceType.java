@@ -18,19 +18,19 @@
 package com.huaweicloud.sermant.backend.entity.visibility;
 
 /**
- * 服务类型
+ * Service Type
  *
  * @author zhp
  * @since 2022-12-06
  */
 public enum ServiceType {
     /**
-     * DUBBO服务
+     * DUBBO type
      */
     DUBBO("dubbo"),
 
     /**
-     * SpringCloud服务
+     * SpringCloud type
      */
     SPRING_CLOUD("springCloud");
 
