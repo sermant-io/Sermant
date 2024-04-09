@@ -40,7 +40,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 测试http请求拦截
+ * test http request interceptor
  *
  * @author zhouss
  * @since 2022-08-30

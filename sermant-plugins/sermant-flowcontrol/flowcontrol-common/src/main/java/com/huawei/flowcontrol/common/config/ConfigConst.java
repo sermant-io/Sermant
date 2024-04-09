@@ -18,244 +18,249 @@
 package com.huawei.flowcontrol.common.config;
 
 /**
- * 配置常量类
+ * configuration constant class
  *
  * @author zhouss
  * @since 2022-01-28
  */
 public class ConfigConst {
     /**
-     * sentinel版本
+     * sentinel version
      */
     public static final String SENTINEL_VERSION = "sentinel.version";
 
     /**
-     * sentinel配置参数 流控规则zookeeper地址
+     * sentinel configuration parameter: flow control rule zookeeper address
      */
     public static final String ZOOKEEPER_ADDRESS = "flowcontrol.zookeeper.address";
 
     /**
-     * sentinel配置参数 zookeeper流控规则配置路径
+     * sentinel configuration parameter: zookeeper flow control rule configuration path
      */
     public static final String ZOOKEEPER_PATH = "flowcontrol.zookeeper.path";
 
     /**
-     * sentinel配置参数 心跳发送默认间隔时间，单位毫秒
+     * sentinel configuration parameter: Default interval for sending heartbeat messages, in milliseconds
      */
     public static final String DEFAULT_HEARTBEAT_INTERVAL = "default.heartbeat.interval";
 
     /**
-     * sentinel配置参数 流控信息数据发送默认间隔时间，单位毫秒
+     * sentinel configuration parameter: The default interval for sending flow control information, in milliseconds
      */
     public static final String DEFAULT_METRIC_INTERVAL = "default.metric.interval";
 
     /**
-     * sentinel配置参数 启动后初始加载流控信息数据的时间段时长
+     * sentinel configuration parameter: Specifies the period during which flow control information data
+     * is initially loaded after startup
      */
     public static final String METRIC_INITIAL_DURATION = "metric.initial.duration";
 
     /**
-     * sentinel配置参数 未提供查询流控信息数据结束时间的默认加载数据条数
+     * sentinel configuration parameter: The default number of data loaded at the end time of querying
+     * flow control information is not provided
      */
     public static final String METRIC_MAX_LINE = "metric.maxLine";
 
     /**
-     * sentinel配置参数 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询
+     * sentinel configuration parameter: When querying flow control data, sleep for a period of time and wait
+     * until the flow limiting data is written into the file
      */
     public static final String METRIC_SLEEP_TIME = "metric.sleep.time";
 
     /**
-     * kafka配置参数 连接服务端地址
+     * kafka configuration parameter: connect to the server address
      */
     public static final String KAFKA_BOOTSTRAP_SERVERS = "kafka.bootstrap.servers";
 
     /**
-     * kafka配置参数 key序列化
+     * kafka configuration parameter: key serialization
      */
     public static final String KAFKA_KEY_SERIALIZER = "kafka.key.serializer";
 
     /**
-     * kafka配置参数 value序列化
+     * kafka configuration parameter: value serialization
      */
     public static final String KAFKA_VALUE_SERIALIZER = "kafka.value.serializer";
 
     /**
-     * kafka配置参数 流控信息数据发送topic名称
+     * kafka configuration parameter: The name of the topic to which flow control information is sent
      */
     public static final String KAFKA_METRIC_TOPIC = "kafka.metric.topic";
 
     /**
-     * kafka配置参数 心跳数据发送topic名称
+     * kafka configuration parameter: name of the topic for sending heartbeat data
      */
     public static final String KAFKA_HEARTBEAT_TOPIC = "kafka.heartbeat.topic";
 
     /**
-     * kafka配置参数 producer需要server接收到数据之后发出的确认接收的信号 ack 0,1,all
+     * kafka configuration parameter: The producer requires a signal from the server acknowledging receipt of the data
+     * ack 0,1,all
      */
     public static final String KAFKA_ACKS = "kafka.acks";
 
     /**
-     * kafka配置参数 控制生产者发送请求最大大小,默认1M （这个参数和Kafka主机的message.max.bytes 参数有关系）
+     * kafka configuration parameter: Control the maximum size of requests sent by the producer. The default is 1 M
+     * （This parameter is related to the message.max.bytes parameter of the Kafka host）
      */
     public static final String KAFKA_MAX_REQUEST_SIZE = "kafka.max.request.size";
 
     /**
-     * kafka配置参数 生产者内存缓冲区大小
+     * kafka configuration parameter: producer memory buffer size
      */
     public static final String KAFKA_BUFFER_MEMORY = "kafka.buffer.memory";
 
     /**
-     * kafka配置参数 重发消息次数
+     * kafka configuration parameter: the number of times the message was resold
      */
     public static final String KAFKA_RETRIES = "kafka.retries";
 
     /**
-     * kafka配置参数 客户端将等待请求的响应的最大时间
+     * kafka configuration parameter: The maximum time the client will wait for a response to the request
      */
     public static final String KAFKA_REQUEST_TIMEOUT_MS = "kafka.request.timeout.ms";
 
     /**
-     * kafka配置参数 最大阻塞时间，超过则抛出异常
+     * kafka configuration parameter: Maximum blocking time, beyond which an exception is thrown
      */
     public static final String KAFKA_MAX_BLOCK_MS = "kafka.max.block.ms";
 
     /**
-     * jaas配置常量
+     * jaas configuration constant
      */
     public static final String KAFKA_JAAS_CONFIG_CONST = "sasl.jaas.config";
 
     /**
-     * kafka认证配置
+     * kafka authentication configuration
      */
     public static final String KAFKA_JAAS_CONFIG = "";
 
     /**
-     * SASL鉴权方式常量
+     * sasl authentication mode constant
      */
     public static final String KAFKA_SASL_MECHANISM_CONST = "sasl.mechanism";
 
     /**
-     * SASL鉴权机制
+     * sasl authentication mechanism
      */
     public static final String KAFKA_SASL_MECHANISM = "";
 
     /**
-     * 加密协议常量
+     * encryption protocol constant
      */
     public static final String KAFKA_SECURITY_PROTOCOL_CONST = "security.protocol";
 
     /**
-     * 加密协议，目前支持SASL_SSL协议
+     * The encryption protocol supports the SASL_SSL protocol
      */
     public static final String KAFKA_SECURITY_PROTOCOL = "";
 
     /**
-     * ssl truststore文件存放位置常量
+     * ssl truststore file location constant
      */
     public static final String KAFKA_SSL_TRUSTSTORE_LOCATION_CONST = "ssl.truststore.location";
 
     /**
-     * ssl truststore文件存放位置
+     * location of the ssl truststore file
      */
     public static final String KAFKA_SSL_TRUSTSTORE_LOCATION = "";
 
     /**
-     * ssl truststore密码常量
+     * ssl truststore password constant
      */
     public static final String KAFKA_SSL_TRUSTSTORE_PASSWORD_CONST = "ssl.truststore.password";
 
     /**
-     * ssl truststore密码配置
+     * ssl truststore password configuration
      */
     public static final String KAFKA_SSL_TRUSTSTORE_PASSWORD = "";
 
     /**
-     * 域名常量
+     * domain constant
      */
     public static final String KAFKA_IDENTIFICATION_ALGORITHM_CONST = "ssl.endpoint.identification.algorithm";
 
     /**
-     * 域名不校验
+     * domain uncheck
      */
     public static final String KAFKA_IDENTIFICATION_ALGORITHM = "";
 
     /**
-     * 是否通过ssl认证
+     * whether to pass the ssl authentication
      */
     public static final boolean IS_KAFKA_SSL = false;
 
     /**
-     * 配置中心 zookeeper路径
+     * configuration center zookeeper path
      */
     public static final String CONFIG_ZOOKEEPER_PATH = "config.zookeeper.path";
 
     /**
-     * 默认环境
+     * default environment
      */
     public static final String CONFIG_PROFILE_ACTIVE_DEFAULT = "config.profile.active.default";
 
     /**
-     * 对接的配置中心类型
+     * type of the connected configuration center
      */
     public static final String CONFIG_CENTER_TYPE = "flowcontrol.configCenter.type";
 
     /**
-     * 配置中心servicecomb-kie地址
+     * the address of the central servicecomb kie
      */
     public static final String CONFIG_KIE_ADDRESS = "config.kie.address";
 
     /**
-     * servicecomb-kie获取配置的URL
+     * servicecomb kie obtains the configured url
      */
     public static final String KIE_RULES_URI = "/v1/default/kie/kv";
 
     /**
-     * spring应用名称
+     * spring application name
      */
     public static final String SPRING_APPLICATION_NAME = "spring.application.name";
 
     /**
-     * 项目名称
+     * project name
      */
     public static final String PROJECT_NAME = "project.name";
 
     /**
-     * 默认最大的缓存数
+     * default maximum number of caches
      */
     public static final int DEFAULT_MAX_CACHE_SIZE = 1000;
 
     /**
-     * 默认的缓存过期检查时间, 单位秒, 默认一个小时
+     * Default cache expiration check time, in seconds, one hour by default
      */
     public static final long DEFAULT_TIME_CACHE_CHECK_INTERVAL = 3600L;
 
     /**
-     * 连接超时时间
+     * connection timeout
      */
     public static final long CONNECT_TIMEOUT_MS = 1000L;
 
     /**
-     * 响应超时时间
+     * response timeout
      */
     public static final long SOCKET_READ_TIMEOUT_MS = 1000L;
 
     /**
-     * rest template OKHTTP 协议
+     * rest template OKHTTP protocol
      */
     public static final String REST_TEMPLATE_REQUEST_FACTORY_OK_HTTP = "okHttp";
 
     /**
-     * rest template NETTY 协议
+     * rest template NETTY protocol
      */
     public static final String REST_TEMPLATE_REQUEST_FACTORY_NETTY = "netty";
 
     /**
-     * 请求httpclient协议
+     * request the httpclient protocol
      */
     public static final String REST_TEMPLATE_REQUEST_FACTORY_HTTP = "http";
 
     /**
-     * 调用传递上游服务名
+     * the call passes the upstream service name
      */
     public static final String FLOW_REMOTE_SERVICE_NAME_HEADER_KEY = "sermant.flowcontrol.header.remote.service.name";
 

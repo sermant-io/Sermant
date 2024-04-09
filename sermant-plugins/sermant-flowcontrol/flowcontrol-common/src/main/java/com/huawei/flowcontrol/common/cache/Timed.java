@@ -18,23 +18,23 @@
 package com.huawei.flowcontrol.common.cache;
 
 /**
- * 标记时间
+ * mark time
  *
  * @author zhouss
  * @since 2022-07-21
  */
 public interface Timed {
     /**
-     * 设置时间戳
+     * set timestamp
      *
-     * @param timestamp 当前时间
+     * @param timestamp current time
      */
     void setTimestamp(long timestamp);
 
     /**
-     * 获取时间戳
+     * get timestamp
      *
-     * @return 最近更新时间
+     * @return last updated time
      */
     long getTimestamp();
 }

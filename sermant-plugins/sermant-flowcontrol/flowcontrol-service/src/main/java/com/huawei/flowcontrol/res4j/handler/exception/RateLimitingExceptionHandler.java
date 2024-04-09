@@ -24,7 +24,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
 /**
- * 流控异常处理
+ * flow control exception handler
  *
  * @author zhouss
  * @since 2022-08-08

@@ -29,7 +29,7 @@
         <google.guava>31.1-jre</google.guava>
     </properties>
     <dependencies>
-        <!--compile依赖-->
+        <!--compile-->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-retry</artifactId>
@@ -52,7 +52,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--Provider依赖-->
+        <!--Provided-->
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
@@ -111,7 +111,7 @@
             <version>${google.guava}</version>
             <scope>provided</scope>
         </dependency>
-        <!--测试依赖-->
+        <!--test-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

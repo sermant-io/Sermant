@@ -32,7 +32,7 @@ import io.github.resilience4j.retry.RetryRegistry;
 import java.util.Optional;
 
 /**
- * 基于resilience4j重试
+ * based on resilience4j retry
  *
  * @author zhouss
  * @since 2022-02-18
@@ -57,12 +57,13 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     }
 
     /**
-     * 获取最大重试次数, 此处做了不同执行方式的最大重试次数修正, 针对拦截的方式由于本身已执行过一次, 因此此处无需+1
-     * 目前基于拦截的方式为{@link FeignRetry}, 其他均为注入方式
+     * Obtain the maximum number of retries. The maximum number of retries in different execution modes is modified, The
+     * method for intercepting has already been executed once, so there is no need for +1 here the current interception
+     * based approach is{@link FeignRetry}, others are injection
      *
-     * @param retry 重试类型
-     * @param rule 规则
-     * @return 最大重试次数
+     * @param retry retry type
+     * @param rule rule
+     * @return maximum retry
      */
     private int getMaxAttempts(com.huawei.flowcontrol.common.handler.retry.Retry retry, RetryRule rule) {
         if (retry instanceof FeignRetry || retry instanceof HttpRetry) {

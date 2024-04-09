@@ -37,7 +37,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 重试处理器测试
+ * retry handler test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -64,7 +64,7 @@ public class RetryHandlerV2Test {
     }
 
     /**
-     * 测试流程
+     * Test process
      */
     @Test
     public void test() {

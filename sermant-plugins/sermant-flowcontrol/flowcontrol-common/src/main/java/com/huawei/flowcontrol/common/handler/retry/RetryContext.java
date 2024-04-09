@@ -27,14 +27,14 @@ import com.huawei.flowcontrol.common.handler.retry.policy.RetryPolicy;
 import java.util.List;
 
 /**
- * 重试上下文，用于管理重试策略 基于不同的宿主框架类型
+ * Retry context, used to manage retry policies based on different host framework types
  *
  * @author zhouss
  * @since 2022-01-26
  */
 public enum RetryContext {
     /**
-     * 单例
+     * single case
      */
     INSTANCE;
 
@@ -43,25 +43,25 @@ public enum RetryContext {
     private final ThreadLocal<RetryPolicy> policyThreadLocal = new ThreadLocal<>();
 
     /**
-     * 获取当前线程的重试机制
+     * gets the retry mechanism for the current thread
      *
-     * @return 当前线程的重试机制
+     * @return the retry mechanism for the current thread
      */
     public Retry getRetry() {
         return retryThreadLocal.get();
     }
 
     /**
-     * 标记当前线程重试
+     * mark the current thread retry
      *
-     * @param retry 重试器
+     * @param retry retry
      */
     public void markRetry(Retry retry) {
         retryThreadLocal.set(retry);
     }
 
     /**
-     * 移除线程变量
+     * remove thread variable
      */
     public void remove() {
         retryThreadLocal.remove();
@@ -69,18 +69,18 @@ public enum RetryContext {
     }
 
     /**
-     * 是否标记重试
+     * mark or not retry
      *
-     * @return 是否标记重试
+     * @return mark or not retry
      */
     public boolean isMarkedRetry() {
         return retryThreadLocal.get() != null;
     }
 
     /**
-     * 当前重试策略是需执行重试
+     * Whether to perform retry in the current retry policy
      *
-     * @return 是否在重试
+     * @return Whether to perform retry in the current retry policy
      */
     public boolean isPolicyNeedRetry() {
         final RetryPolicy retryPolicy = getRetryPolicy();
@@ -91,18 +91,18 @@ public enum RetryContext {
     }
 
     /**
-     * 获取当前线程的重试策略
+     * gets the retry policy for the current thread
      *
-     * @return 当前线程的重试策略
+     * @return the retry policy for the current thread
      */
     public RetryPolicy getRetryPolicy() {
         return policyThreadLocal.get();
     }
 
     /**
-     * 更新重试策略的调用服务实例
+     * Update the call service instance of the retry policy
      *
-     * @param serviceInstance 服务实例
+     * @param serviceInstance service instance
      */
     public void updateServiceInstance(Object serviceInstance) {
         final RetryPolicy retryPolicy = getRetryPolicy();
@@ -114,18 +114,18 @@ public enum RetryContext {
     }
 
     /**
-     * 构建重试策略
+     * buildRetryPolicy
      *
-     * @param retryRule 重试规则
+     * @param retryRule retry rule
      */
     public void buildRetryPolicy(RetryRule retryRule) {
         policyThreadLocal.set(new RetryOnSamePolicy(retryRule.getRetryOnSame()));
     }
 
     /**
-     * 构建测试策略
+     * build test strategy
      *
-     * @param requestEntity 请求体
+     * @param requestEntity request body
      */
     public void buildRetryPolicy(HttpRequestEntity requestEntity) {
         final List<RetryRule> rule = RuleUtils.getRule(requestEntity, RetryResolver.CONFIG_KEY,

@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 比较器测试
+ * comparator test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -36,7 +36,7 @@ public class OperatorTest {
     private static final String TARGET = "test";
 
     /**
-     * 测试数字比较
+     * test digital comparison
      */
     @Test
     public void testCompare() {
@@ -50,7 +50,7 @@ public class OperatorTest {
     }
 
     /**
-     * 测试字符串包含
+     * test string contains
      */
     @Test
     public void testContains() {
@@ -60,7 +60,7 @@ public class OperatorTest {
     }
 
     /**
-     * 测试相等
+     * test equality
      */
     @Test
     public void testExact() {
@@ -71,7 +71,7 @@ public class OperatorTest {
     }
 
     /**
-     * 测试前缀
+     * test prefix
      */
     @Test
     public void testPrefix() {
@@ -82,7 +82,7 @@ public class OperatorTest {
     }
 
     /**
-     * 测试后缀
+     * test suffix
      */
     @Test
     public void testSuffix() {

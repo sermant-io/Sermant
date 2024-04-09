@@ -28,14 +28,14 @@ import org.junit.Test;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 定时清理缓存测试
+ * periodically clear cache tests
  *
  * @author zhouss
  * @since 2022-08-29
  */
 public class TimedConcurrentMapCacheTest {
     /**
-     * 测试
+     * test
      */
     @Test
     public void test() throws InterruptedException {
@@ -45,7 +45,7 @@ public class TimedConcurrentMapCacheTest {
         String value = "val";
         final TimedConcurrentMapCache<Key, String> cache = new TimedConcurrentMapCache<>(maxSize, evictMs);
 
-        // 基本测试
+        // basicTest
         cache.put(key, value);
         assertEquals(cache.get(key), value);
         cache.evict(key);
@@ -56,7 +56,7 @@ public class TimedConcurrentMapCacheTest {
         assertEquals(0, cache.size());
         assertTrue(cache.getCacheTarget() instanceof ConcurrentHashMap);
 
-        // 过期测试
+        // expiredTest
         cache.put(new Key(), value);
         cache.put(new Key(), value);
         cache.put(new Key(), value);

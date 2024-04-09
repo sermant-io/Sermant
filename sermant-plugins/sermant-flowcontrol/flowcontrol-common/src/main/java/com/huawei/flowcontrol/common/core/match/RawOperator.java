@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,29 +26,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 用于kv格式数据存储
+ * for kv format data storage
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class RawOperator extends HashMap<String, String> {
     /**
-     * 默认初始化大小
+     * default initialization size
      */
     private static final int DEFAULT_CAPACITY = 4;
     private static final long serialVersionUID = 1930797351862384146L;
 
     /**
-     * 构造器
+     * constructor
      */
     public RawOperator() {
         super(DEFAULT_CAPACITY);
     }
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param source 数据
+     * @param source data
      */
     public RawOperator(Map<String, String> source) {
         super(source);

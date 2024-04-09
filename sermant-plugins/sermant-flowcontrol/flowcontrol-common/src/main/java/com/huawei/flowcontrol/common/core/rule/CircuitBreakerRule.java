@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,129 +20,129 @@ package com.huawei.flowcontrol.common.core.rule;
 import com.huawei.flowcontrol.common.util.StringUtils;
 
 /**
- * 熔断规则
+ * Circuit Breaker Rule
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public class CircuitBreakerRule extends AbstractRule {
     /**
-     * 基于时间统计的时间窗口类型
+     * time window type based on time statistics
      */
     public static final String SLIDE_WINDOW_TIME_TYPE = "time";
 
     /**
-     * 基于请求次数的时间窗口类型
+     * The type of time window based on the number of requests
      */
     public static final String SLIDE_WINDOW_COUNT_TYPE = "count";
 
     /**
-     * 默认失败错误率阈值
+     * default failure error rate threshold
      */
     public static final float DEFAULT_FAILURE_RATE_THRESHOLD = 50f;
 
     /**
-     * 默认慢调用阈值
+     * default slow call threshold
      */
     public static final float DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100f;
 
     /**
-     * 默认熔断间隔 60S
+     * default Circuit Breaker interval 60s
      */
     public static final long DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS = 60000L;
 
     /**
-     * 慢调用默认阈值 60S
+     * default threshold for slow calls 60S
      */
     public static final long DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS = 60000L;
 
     /**
-     * 半打开状态允许通过的请求数
+     * The number of requests allowed through the half-open state
      */
     public static final int DEFAULT_PERMITTED = 10;
 
     /**
-     * 默认最小调用数
+     * default minimum number of calls
      */
     public static final int DEFAULT_MINIMUM_NUMBER_CALLS = 100;
 
     /**
-     * 默认窗口大小 支持时间与请求数
+     * The default window size supports time and number of requests
      */
     public static final long DEFAULT_SLIDING_WINDOW_SIZE = 100L;
 
     /**
-     * 最大比例
+     * maximum ratio
      */
     private static final float MAX_PERCENT = 100.0f;
 
     /**
-     * 最小比例
+     * minimum proportion
      */
     private static final float MIN_PERCENT = 0.0f;
 
     /**
-     * 错误率，达到该错误率触发熔断
+     * Error rate, reaching the error rate triggers the circuit breaker
      */
     private float failureRateThreshold = DEFAULT_FAILURE_RATE_THRESHOLD;
 
     /**
-     * 慢调用率
+     * slow call rate
      */
     private float slowCallRateThreshold = DEFAULT_SLOW_CALL_RATE_THRESHOLD;
 
     /**
-     * 熔断后尝试请求间隔
+     * try requesting interval after circuit breaker
      */
     private String waitDurationInOpenState = String.valueOf(DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS);
 
     /**
-     * 转换后的间隔
+     * the interval after conversion
      */
     private long parsedWaitDurationInOpenState = DEFAULT_WAIT_DURATION_IN_OPEN_STATUS_MS;
 
     /**
-     * 慢调用熔断后请求间隔
+     * slow call request interval after circuit breaker
      */
     private String slowCallDurationThreshold = String.valueOf(DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS);
 
     /**
-     * 转换后慢调用熔断后请求间隔
+     * Slow call after conversion request interval after circuit breaker
      */
     private long parsedSlowCallDurationThreshold = DEFAULT_SLOW_CALL_DURATION_THRESHOLD_MS;
 
     /**
-     * 半打开状态请求数
+     * number of half open requests
      */
     private int permittedNumberOfCallsInHalfOpenState = DEFAULT_PERMITTED;
 
     /**
-     * 最小调用请求基数
+     * minimum call request base
      */
     private int minimumNumberOfCalls = DEFAULT_MINIMUM_NUMBER_CALLS;
 
     /**
-     * 滑动窗口类型，请求数（count）与时间（time）
+     * moving window type: count and time
      */
     private String slidingWindowType;
 
     /**
-     * 滑动窗口大小
+     * sliding window size
      */
     private String slidingWindowSize = String.valueOf(DEFAULT_SLIDING_WINDOW_SIZE);
 
     /**
-     * 转换后的滑动窗口大小
+     * converted sliding window size
      */
     private long parsedSlidingWindowSize = DEFAULT_SLIDING_WINDOW_SIZE;
 
     /**
-     * 强制关闭熔断
+     * force off the circuit breaker
      */
     private boolean forceClosed = false;
 
     /**
-     * 强制开启熔断
+     * force open the circuit breaker
      */
     private boolean forceOpen = false;
 

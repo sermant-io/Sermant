@@ -34,7 +34,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * ribbon测试
+ * ribbon test
  *
  * @author zhouss
  * @since 2022-08-31
@@ -52,7 +52,7 @@ public class SpringRibbonChooseServerInterceptorTest {
         RetryContext.INSTANCE.buildRetryPolicy(retryRule);
         final Object instance = new Object();
 
-        // 模拟更新实例
+        // simulated update instance
         RetryContext.INSTANCE.updateServiceInstance(instance);
         interceptor.before(context);
         assertTrue(context.getResult() instanceof Optional && ((Optional<?>) context.getResult()).isPresent());

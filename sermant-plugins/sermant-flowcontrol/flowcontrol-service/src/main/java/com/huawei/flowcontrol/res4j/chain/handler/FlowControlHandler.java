@@ -23,19 +23,20 @@ import com.huawei.flowcontrol.res4j.chain.context.ChainContext;
 import java.util.List;
 
 /**
- * 流控基础处理器
+ * flow control basic handler
  *
- * @param <T> 对应流控处理单元
+ * @param <T> corresponds to the flow control processing unit
  * @author zhouss
  * @since 2022-07-18
  */
 public abstract class FlowControlHandler<T> extends AbstractChainHandler {
     /**
-     * 获取流控处理单元 {@link io.github.resilience4j.ratelimiter.RateLimiter} {@link io.github.resilience4j.bulkhead.Bulkhead}
+     * gets the flow control processing unit {@link io.github.resilience4j.ratelimiter.RateLimiter}
+     * {@link io.github.resilience4j.bulkhead.Bulkhead}
      * {@link io.github.resilience4j.circuitbreaker.CircuitBreaker}
      *
-     * @param sourceName 发起源
-     * @param cacheName 缓存名称
+     * @param sourceName source name
+     * @param cacheName cache name
      * @return handlers
      */
     protected List<T> getHandlersFromCache(String sourceName, String cacheName) {
@@ -43,7 +44,7 @@ public abstract class FlowControlHandler<T> extends AbstractChainHandler {
     }
 
     /**
-     * 获取上下文缓存名称
+     * gets the context cache name
      *
      * @return contextName
      */

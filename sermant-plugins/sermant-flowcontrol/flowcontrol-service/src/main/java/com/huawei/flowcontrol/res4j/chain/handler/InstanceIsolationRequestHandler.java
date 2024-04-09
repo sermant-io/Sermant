@@ -28,7 +28,7 @@ import com.huawei.flowcontrol.res4j.handler.InstanceIsolationHandler;
 import java.util.Set;
 
 /**
- * 实例隔离，实例隔离仅对客户端生效
+ * Instance isolation. Instance isolation applies only to clients
  *
  * @author zhouss
  * @since 2022-07-05

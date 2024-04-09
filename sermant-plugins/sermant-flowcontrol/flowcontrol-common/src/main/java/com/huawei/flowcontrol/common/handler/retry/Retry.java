@@ -20,53 +20,53 @@ package com.huawei.flowcontrol.common.handler.retry;
 import java.util.Set;
 
 /**
- * 定义重试
+ * define retry
  *
  * @author zhouss
  * @since 2022-01-26
  */
 public interface Retry {
     /**
-     * 是否需要重试
+     * needToRetry
      *
-     * @param statusList 状态码列表， 仅http应用有效
-     * @param result 响应结果
-     * @return 是否重试
+     * @param statusList List of status codes, valid only for http applications
+     * @param result responseResult
+     * @return retryOrNot
      */
     boolean needRetry(Set<String> statusList, Object result);
 
     /**
-     * 定义哪些异常需要重试
+     * define which exceptions need to be retried
      *
-     * @return 需重试的异常
+     * @return exception that needs to be retried
      */
     Class<? extends Throwable>[] retryExceptions();
 
     /**
-     * 重试框架类型
+     * retry frame type
      *
-     * @return 框架
+     * @return frame
      */
     RetryFramework retryType();
 
     /**
-     * 重试框架
+     * retryFrame
      *
      * @since 2022-01-22
      */
     enum RetryFramework {
         /**
-         * spring重试
+         * spring retry
          */
         SPRING_CLOUD,
 
         /**
-         * alibaba dubbo 重试
+         * alibaba dubbo retry
          */
         ALIBABA_DUBBO,
 
         /**
-         * apache dubbo 重试
+         * apache dubbo retry
          */
         APACHE_DUBBO
     }

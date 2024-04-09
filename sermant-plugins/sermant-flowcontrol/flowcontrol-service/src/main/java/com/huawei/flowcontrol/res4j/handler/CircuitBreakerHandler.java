@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 熔断处理器
+ * CircuitBreakerHandler
  *
  * @author zhouss
  * @since 2022-01-24
@@ -46,13 +46,13 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
     protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
         final SlidingWindowType slidingWindowType = getSlidingWindowType(rule.getSlidingWindowType());
         CircuitBreaker circuitBreaker = CircuitBreakerRegistry.of(CircuitBreakerConfig.custom()
-                        .failureRateThreshold(rule.getFailureRateThreshold())
-                        .slowCallRateThreshold(rule.getSlowCallRateThreshold())
-                        .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
-                        .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
-                        .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
-                        .minimumNumberOfCalls(rule.getMinimumNumberOfCalls()).slidingWindowType(slidingWindowType)
-                        .slidingWindowSize(getWindowSize(slidingWindowType, rule.getParsedSlidingWindowSize())).build())
+                .failureRateThreshold(rule.getFailureRateThreshold())
+                .slowCallRateThreshold(rule.getSlowCallRateThreshold())
+                .waitDurationInOpenState(Duration.ofMillis(rule.getParsedWaitDurationInOpenState()))
+                .slowCallDurationThreshold(Duration.ofMillis(rule.getParsedSlowCallDurationThreshold()))
+                .permittedNumberOfCallsInHalfOpenState(rule.getPermittedNumberOfCallsInHalfOpenState())
+                .minimumNumberOfCalls(rule.getMinimumNumberOfCalls()).slidingWindowType(slidingWindowType)
+                .slidingWindowSize(getWindowSize(slidingWindowType, rule.getParsedSlidingWindowSize())).build())
                 .circuitBreaker(businessName);
         if (MonitorUtils.isStartMonitor()) {
             addEventConsumers(circuitBreaker);
@@ -62,9 +62,9 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
     }
 
     /**
-     * 增加事件消费处理
+     * increased event consumption processing
      *
-     * @param circuitBreaker 熔断器
+     * @param circuitBreaker circuitBreaker
      */
     private static void addEventConsumers(CircuitBreaker circuitBreaker) {
         Map<String, MetricEntity> monitors = ServiceCollectorService.MONITORS;
@@ -92,7 +92,8 @@ public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker
             return (int) parsedSlidingWindowSize;
         }
 
-        // rest4j暂且仅支持秒作为时间窗口, 这里 parsedSlidingWindowSize为毫秒, 因此此处需转换成秒
+        // For the time being, rest4j only supports seconds as a time window,
+        // where the parsedSlidingWindowSize is milliseconds, so convert to seconds here
         return (int) Duration.ofMillis(parsedSlidingWindowSize).getSeconds();
     }
 

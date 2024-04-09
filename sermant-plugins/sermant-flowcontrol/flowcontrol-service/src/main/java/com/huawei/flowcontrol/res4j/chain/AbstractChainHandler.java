@@ -23,8 +23,8 @@ import com.huawei.flowcontrol.res4j.chain.context.RequestContext;
 import java.util.Set;
 
 /**
- * 抽象处理链, 执行顺序如下:
- * <p>onBefore -> onThrow(存在异常时执行) -> onResult</p>
+ * abstract handler chain, the order of execution is as follows:
+ * <p>onBefore -> onThrow(executed when an exception exists) -> onResult</p>
  *
  * @author zhouss
  * @since 2022-07-11
@@ -33,7 +33,6 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
     private static final int EXTRA_LENGTH_FOR_METHOD_CACHE_KEY = 11;
 
     private AbstractChainHandler next;
-
 
     @Override
     public void onBefore(RequestContext context, Set<String> businessNames) {
@@ -88,7 +87,7 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
         String className = tmp.getClass().getName();
         RequestType direct = tmp.direct();
 
-        // 初始化StringBuilder的长度是为了性能
+        // The length of the String Builder is initialized for performance
         StringBuilder sb =
                 new StringBuilder(className.length() + direct.name().length() + EXTRA_LENGTH_FOR_METHOD_CACHE_KEY);
         sb.append(direct).append("_").append(className).append("_skip_flag");
@@ -96,7 +95,8 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
     }
 
     /**
-     * 请求方向, 默认均可处理, 在实际处理中将根据请求方向判断是否需要由当前的处理器处理
+     * request direction, both are processed by default, In actual processing, the request direction determines whether
+     * it needs to be processed by the current handler
      *
      * @return RequestType
      */
@@ -105,11 +105,11 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
     }
 
     /**
-     * 是否跳过当前handler
+     * whether to skip the current handler
      *
-     * @param context 请求上下文
-     * @param businessNames 匹配的场景名
-     * @return 是否跳过
+     * @param context requestContext
+     * @param businessNames matching scene name
+     * @return skip or not
      */
     protected boolean isSkip(RequestContext context, Set<String> businessNames) {
         return false;

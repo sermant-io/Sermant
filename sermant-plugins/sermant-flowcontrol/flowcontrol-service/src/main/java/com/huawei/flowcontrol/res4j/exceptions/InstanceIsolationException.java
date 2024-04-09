@@ -20,18 +20,18 @@ package com.huawei.flowcontrol.res4j.exceptions;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 
 /**
- * 实例隔离异常
+ * instance isolation exception
  *
  * @author zhouss
  * @since 2022-07-22
  */
 public class InstanceIsolationException extends CircuitBreakerException {
     /**
-     * 实例异常
+     * instance isolation exception
      *
-     * @param circuitBreaker 熔断器
-     * @param message 熔断信息
-     * @param writableStackTrace 是否堆栈
+     * @param circuitBreaker circuit breaker
+     * @param message circuit breaker information
+     * @param writableStackTrace stack or not
      */
     public InstanceIsolationException(CircuitBreaker circuitBreaker,
             String message, boolean writableStackTrace) {
@@ -39,10 +39,10 @@ public class InstanceIsolationException extends CircuitBreakerException {
     }
 
     /**
-     * 构建异常信息
+     * construct exception message
      *
-     * @param circuitBreaker 熔断配置
-     * @return 异常
+     * @param circuitBreaker circuit breaker configuration
+     * @return exception
      */
     public static CircuitBreakerException createException(CircuitBreaker circuitBreaker) {
         return new InstanceIsolationException(circuitBreaker, createMsg(circuitBreaker),

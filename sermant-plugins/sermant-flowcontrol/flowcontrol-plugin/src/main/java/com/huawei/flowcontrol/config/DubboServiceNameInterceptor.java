@@ -17,15 +17,15 @@
 
 package com.huawei.flowcontrol.config;
 
-import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
+import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * dubbo服务拦截
+ * dubbo service interception
  *
  * @author zhouss
  * @since 2022-01-28

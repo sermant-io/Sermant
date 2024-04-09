@@ -28,7 +28,7 @@ import com.huawei.flowcontrol.common.handler.AbstractRequestHandler;
 import java.util.Optional;
 
 /**
- * 隔离仓处理器
+ * isolation bin handler
  *
  * @author zhouss
  * @since 2022-01-24

@@ -23,22 +23,23 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 用于重试拦截获取调用实例, 当前拦截器仅对SpringCloud loadbalancer生效
+ * Used to retry interceptor to obtain the call instance. The current interceptor is only valid for SpringCloud
+ * loadbalancer
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class SpringLbDeclarer extends AbstractPluginDeclarer {
     /**
-     * 负载均衡增强
+     * load balancing enhancement
      */
     private static final String[] ENHANCE_CLASSES = {
-        "org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer",
-        "org.springframework.cloud.loadbalancer.core.RandomLoadBalancer"
+            "org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer",
+            "org.springframework.cloud.loadbalancer.core.RandomLoadBalancer"
     };
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = SpringLbChooseServerInterceptor.class.getCanonicalName();
 

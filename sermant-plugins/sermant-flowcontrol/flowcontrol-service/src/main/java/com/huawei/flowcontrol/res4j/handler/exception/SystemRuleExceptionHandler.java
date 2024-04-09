@@ -22,13 +22,12 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.res4j.exceptions.SystemRuleException;
 
 /**
- * 系统流控异常处理
+ * system flow control exception handler
  *
  * @author xuezechao1
  * @since 2022-12-06
  */
 public class SystemRuleExceptionHandler extends AbstractExceptionHandler<SystemRuleException> {
-
     @Override
     protected FlowControlResponse getFlowControlResponse(SystemRuleException ex, FlowControlResult flowControlResult) {
         return new FlowControlResponse(ex.getMsg(), ex.getSystemRule().getErrorCode());

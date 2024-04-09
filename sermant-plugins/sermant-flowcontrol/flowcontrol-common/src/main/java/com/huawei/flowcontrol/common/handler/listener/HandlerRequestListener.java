@@ -20,17 +20,17 @@ package com.huawei.flowcontrol.common.handler.listener;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 /**
- * 处理器配置关联请求更新监听器
+ * Processor configuration associated request update listeners
  *
  * @author zhouss
  * @since 2022-02-28
  */
 public interface HandlerRequestListener {
     /**
-     * 通知配置变更
+     * notify configuration changes
      *
-     * @param entity    关联请求
-     * @param updateKey 更新的业务场景
+     * @param entity association request
+     * @param updateKey updated business scenarios
      */
     void notify(RequestEntity entity, String updateKey);
 }

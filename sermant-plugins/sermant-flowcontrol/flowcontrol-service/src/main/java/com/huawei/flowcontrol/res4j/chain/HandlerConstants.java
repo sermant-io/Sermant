@@ -18,74 +18,74 @@
 package com.huawei.flowcontrol.res4j.chain;
 
 /**
- * 处理器常量
+ * handler constant
  *
  * @author zhouss
  * @since 2022-07-05
  */
 public class HandlerConstants {
     /**
-     * 监控优先级
+     * monitoring priority
      */
     public static final int MONITOR_ORDER = -2000;
 
     /**
-     * 业务处理优先级
+     * service processing priority
      */
     public static final int BUSINESS_ORDER = -1000;
 
     /**
-     * 错误注入优先级
+     * fault injection priority
      */
     public static final int FAULT_ORDER = 3000;
 
     /**
-     * 限流优先级
+     * rate limiting priority
      */
     public static final int RATE_LIMIT_ORDER = 4000;
 
     /**
-     * 隔离仓优先级
+     * isolation bin priority
      */
     public static final int BULK_HEAD_ORDER = 5000;
 
     /**
-     * 实例隔离优先级, 该优先级必须大于熔断优先级
+     * Instance isolation priority, which must be greater than the circuit breaker priority
      */
     public static final int INSTANCE_ISOLATION_ORDER = 9000;
 
     /**
-     * 熔断优先级
+     * circuit breaker priority
      */
     public static final int CIRCUIT_BREAKER_ORDER = 10000;
 
     /**
-     * 系统规则流控优先级
+     * system rule flow control priority
      */
     public static final int SYSTEM_RULE_FLOW_CONTROL = 11000;
 
     /**
-     * 标记当前线程是否发生流控异常
+     * Flags whether the current thread has a flow control exception
      */
     public static final String OCCURRED_FLOW_EXCEPTION = "__OCCURRED_FLOW_EXCEPTION__";
 
     /**
-     * 标记当前线程是否触发请求异常
+     * Flags whether the current thread triggers a request exception
      */
     public static final String OCCURRED_REQUEST_EXCEPTION = "__OCCURRED_REQUEST_EXCEPTION__";
 
     /**
-     * 线程变量provider端key前缀
+     * thread variable provider key prefix
      */
     public static final String THREAD_LOCAL_DUBBO_PROVIDER_PREFIX = "PROVIDER:";
 
     /**
-     * 线程变量consumer端key前缀
+     * thread variable consumer key prefix
      */
     public static final String THREAD_LOCAL_DUBBO_CONSUMER_PREFIX = "CONSUMER:";
 
     /**
-     * 键前缀
+     * key prefix
      */
     public static final String THREAD_LOCAL_KEY_PREFIX = HandlerConstants.class.getName()
             + "___THREAD_LOCAL_KEY_PREFIX___";

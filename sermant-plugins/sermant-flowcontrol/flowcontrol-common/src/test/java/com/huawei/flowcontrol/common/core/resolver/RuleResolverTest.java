@@ -29,7 +29,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 规则解析测试
+ * RuleResolverTest
  *
  * @author zhouss
  * @since 2022-03-03
@@ -49,7 +49,7 @@ public class RuleResolverTest {
     }
 
     /**
-     * 测试规则解析配置通知
+     * test rule resolution configuration notification
      */
     @Test
     public void test() {

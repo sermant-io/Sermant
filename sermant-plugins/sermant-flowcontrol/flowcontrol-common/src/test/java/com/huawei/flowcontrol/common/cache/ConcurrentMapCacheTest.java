@@ -25,14 +25,14 @@ import org.junit.Test;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 缓存测试
+ * cache test
  *
  * @author zhouss
  * @since 2022-08-29
  */
 public class ConcurrentMapCacheTest {
     /**
-     * 缓存测试
+     * cache test
      */
     @Test
     public void test() {

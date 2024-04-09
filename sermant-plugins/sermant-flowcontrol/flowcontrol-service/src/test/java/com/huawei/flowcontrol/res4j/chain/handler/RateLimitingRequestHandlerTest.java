@@ -27,7 +27,7 @@ import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import org.junit.Assert;
 
 /**
- * 限流测试
+ * rate limiting test
  *
  * @author zhouss
  * @since 2022-08-30
@@ -37,7 +37,7 @@ public class RateLimitingRequestHandlerTest extends BaseEntityTest implements Re
     private String sourceName;
 
     /**
-     * 测试限流
+     * test rate limiting
      */
     @Override
     public void test(HandlerChainEntry entry, String sourceName) {

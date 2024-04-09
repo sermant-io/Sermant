@@ -23,25 +23,25 @@ import com.huawei.flowcontrol.common.handler.retry.Retry;
 import java.util.function.Predicate;
 
 /**
- * 重试Predicate创建
+ * retry predicate creation
  *
  * @author zhouss
  * @since 2022-04-11
  */
 public interface RetryPredicateCreator {
     /**
-     * 创建异常Predicate
+     * Create exception Predicate
      *
-     * @param retryExceptions 重试异常集合
+     * @param retryExceptions retry exception set
      * @return Predicate
      */
     Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions);
 
     /**
-     * 创建重试结果Predicate
+     * create retry result predicate
      *
-     * @param retry 重试器
-     * @param rule  重试规则
+     * @param retry retry
+     * @param rule retry rule
      * @return Predicate
      */
     Predicate<Object> createResultPredicate(Retry retry, RetryRule rule);

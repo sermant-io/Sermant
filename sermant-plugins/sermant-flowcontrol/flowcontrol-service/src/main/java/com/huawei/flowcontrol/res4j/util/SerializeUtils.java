@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 序列化工具
+ * serialization tool
  *
  * @author zhouss
  * @since 2022-08-08
@@ -49,9 +49,9 @@ public class SerializeUtils {
     }
 
     /**
-     * 序列化对象为字符串
+     * serialize objects to strings
      *
-     * @param obj 目标对象
+     * @param obj target object
      * @return string
      */
     public static Optional<String> serialize2String(Object obj) {
@@ -68,7 +68,7 @@ public class SerializeUtils {
     }
 
     /**
-     * 消息mapper, 主要做些配置预设
+     * Message mapper, mainly do some configuration presets
      *
      * @since 2022-08-08
      */

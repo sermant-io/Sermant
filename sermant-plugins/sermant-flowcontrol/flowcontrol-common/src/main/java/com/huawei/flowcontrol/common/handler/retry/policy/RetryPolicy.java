@@ -18,43 +18,42 @@
 package com.huawei.flowcontrol.common.handler.retry.policy;
 
 /**
- * 重试策略
+ * retry strategy
  *
  * @author zhouss
  * @since 2022-07-25
  */
 public interface RetryPolicy {
-
     /**
-     * 是否需要重试
+     * need to retry
      *
-     * @return 是否重试
+     * @return retry or not
      */
     boolean needRetry();
 
     /**
-     * 重试标记
+     * retry mark
      */
     void retryMark();
 
     /**
-     * 当前是否处于重试状态
+     * whether the system is in retry state
      *
-     * @return 是否为重试状态
+     * @return whether the status is retry
      */
     boolean isRetry();
 
     /**
-     * 获取上一个重试的实例
+     * Gets the last retry instance
      *
-     * @return 重试实例
+     * @return retry instance
      */
     Object getLastRetryServer();
 
     /**
-     * 更新重试实例
+     * update retry instance
      *
-     * @param instance 实例
+     * @param instance instance
      */
     void update(Object instance);
 }

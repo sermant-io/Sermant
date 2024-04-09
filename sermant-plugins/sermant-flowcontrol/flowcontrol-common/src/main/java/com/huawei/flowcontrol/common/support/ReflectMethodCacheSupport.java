@@ -24,31 +24,31 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- * 提供反射方法缓存
+ * provides a reflection method cache
  *
  * @author zhouss
  * @since 2022-02-10
  */
 public class ReflectMethodCacheSupport {
     /**
-     * 占位方法
+     * placeholder method
      */
     protected final Method placeHolderMethod = null;
 
     /**
-     * 用于缓存反射获取的方法
+     * method for caching reflection acquisition
      */
     private final Map<String, Method> cacheMethods = new ConcurrentHashMap<>();
 
     /**
-     * 获取调用方法
+     * get call method
      *
-     * @param methodName 方法名称
-     * @param mappingFunction 如何构造方法
-     * @return 方法
+     * @param methodName method name
+     * @param mappingFunction how to construct a method
+     * @return method
      */
     protected final Optional<Method> getInvokerMethod(String methodName,
-        Function<? super String, ? extends Method> mappingFunction) {
+            Function<? super String, ? extends Method> mappingFunction) {
         if (methodName == null) {
             return Optional.empty();
         }

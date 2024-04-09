@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * spring相关配置注入
+ * spring related configuration injection
  *
  * @author zhouss
  * @since 2022-06-28

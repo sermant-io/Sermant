@@ -20,14 +20,14 @@ package com.huawei.flowcontrol;
 import com.alibaba.dubbo.common.URL;
 
 /**
- * 测试常量
+ * test constant
  *
  * @author zhouss
  * @since 2022-03-03
  */
 public class TestConstants {
     /**
-     * alibaba公共URL
+     * alibaba common URL
      */
     public static final URL DUBBO_URL = URL.valueOf("dubbo://localhost:8900");
 

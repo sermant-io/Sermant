@@ -20,41 +20,41 @@ package com.huawei.flowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 
 /**
- * 测试接口
+ * test interface
  *
  * @author zhouss
  * @since 2022-08-30
  */
 public interface RequestTest {
     /**
-     * 业务场景名
+     * service scenario name
      */
     String BUSINESS_NAME = "test";
 
     /**
-     * 测试路径
+     * test path
      */
     String API_PATH = "/test";
 
     /**
-     * 执行测试
+     * execute the test
      */
     void test(HandlerChainEntry entry, String sourceName);
 
     /**
-     * 发布规则
+     * publishing rule
      */
     void publishRule();
 
     /**
-     * 清理
+     * clear
      */
     void clear();
 
     /**
-     * 构建key
+     * build key
      *
-     * @param prefix 前缀
+     * @param prefix prefix
      * @return key
      */
     default String buildKey(String prefix) {

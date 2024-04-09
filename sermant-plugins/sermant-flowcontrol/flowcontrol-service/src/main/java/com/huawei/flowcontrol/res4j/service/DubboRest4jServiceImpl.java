@@ -17,13 +17,13 @@
 
 package com.huawei.flowcontrol.res4j.service;
 
-import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.service.rest4j.DubboRest4jService;
 
 /**
- * dubbo请求拦截
+ * dubbo request interception
  *
  * @author zhouss
  * @since 2022-01-25
@@ -40,7 +40,8 @@ public class DubboRest4jServiceImpl extends DubboRest4jService {
     @Override
     public void onAfter(String sourceName, Object result, boolean isProvider, boolean hasException) {
         if (hasException) {
-            // 此处主要标记异常状态，具体异常信息与记录结果无关
+            // The exception status is marked here,
+            // and the specific exception information has nothing to do with the record result
             HandlerChainEntry.INSTANCE.onDubboThrow(sourceName, dubboException, isProvider);
         }
         HandlerChainEntry.INSTANCE.onDubboResult(sourceName, result, isProvider);

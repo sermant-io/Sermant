@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 请求上下文
+ * RequestContext
  *
  * @author zhouss
  * @since 2022-07-11
@@ -44,10 +44,10 @@ public class RequestContext {
     private RequestEntity requestEntity;
 
     /**
-     * 构造函数
+     * constructor
      *
-     * @param threadLocal 线程变量
-     * @param sourceName  源名称
+     * @param threadLocal thread variable
+     * @param sourceName source name
      */
     public RequestContext(ThreadLocal<Map<String, RequestContext>> threadLocal, String sourceName) {
         this.threadLocal = threadLocal;
@@ -55,10 +55,10 @@ public class RequestContext {
     }
 
     /**
-     * 保存线程变量
+     * save thread variable
      *
-     * @param name   变量名称
-     * @param target 保存对象
+     * @param name variable name
+     * @param target save object
      */
     public void save(String name, Object target) {
         if (name == null || target == null) {
@@ -69,21 +69,21 @@ public class RequestContext {
     }
 
     /**
-     * 获取线程变量
+     * get thread variable
      *
-     * @param name  名称
-     * @param <T>   返回类型
-     * @param clazz 指定类型
-     * @return 结果
+     * @param name name
+     * @param <T> return type
+     * @param clazz specified type
+     * @return result
      */
     public <T> T get(String name, Class<T> clazz) {
         return (T) localMap.get(formatKey(name));
     }
 
     /**
-     * 移除线程变量
+     * remove thread variable
      *
-     * @param name 变量名称
+     * @param name variable name
      */
     public void remove(String name) {
         localMap.remove(formatKey(name));
@@ -93,7 +93,7 @@ public class RequestContext {
     }
 
     /**
-     * 清理说有数据
+     * clean all data
      */
     public void clear() {
         localMap.clear();
@@ -127,10 +127,10 @@ public class RequestContext {
     }
 
     /**
-     * 线程变量中是否存在指定key
+     * Whether the specified key exists in the thread variable
      *
-     * @param key 线程变量key
-     * @return 是否存在
+     * @param key thread variable key
+     * @return existence or not
      */
     public boolean hasKey(String key) {
         return localMap.containsKey(key);

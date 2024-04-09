@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * 流控插件 公共能力 统一初始化入口
+ * Flow control plug-in public capability unified initialization entry
  *
  * @author zhouss
  * @since 2022-01-25
@@ -54,7 +54,8 @@ public class FlowControlInitServiceImpl implements PluginService {
     private final FlowControlLifeCycle flowControlLifeCycle = new FlowControlLifeCycle();
 
     /**
-     * 启动初始化任务 此处脱离service生命周期，通过拦截点控制，以便获取准确数据
+     * Start the initialization task. This task is removed from the service life cycle and controlled through the
+     * interception point to obtain accurate data
      */
     public void doStart() {
         executor.execute(flowControlLifeCycle);
@@ -66,12 +67,11 @@ public class FlowControlInitServiceImpl implements PluginService {
     }
 
     /**
-     * 流控初始化逻辑生命周期
+     * Flow control initialization logic life cycle
      *
      * @since 2022-03-22
      */
     static class FlowControlLifeCycle implements Runnable {
-
         @Override
         public void run() {
             DynamicConfigService dynamicConfigService = getDynamicConfigService();
@@ -83,13 +83,13 @@ public class FlowControlInitServiceImpl implements PluginService {
             ConfigSubscriber configSubscriber;
             final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
             if (pluginConfig.isUseCseRule()) {
-                // 适配cse, 开始适配cse的专用配置监听器
+                // Adapting to the cse starts to adapt the dedicated configuration listener of the cse
                 configSubscriber = new CseGroupConfigSubscriber(FlowControlServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), dynamicConfigService, "FlowControl");
+                        new RuleDynamicConfigListener(), dynamicConfigService, "FlowControl");
             } else {
                 configSubscriber = new DefaultGroupConfigSubscriber(
                         FlowControlServiceMeta.getInstance().getServiceName(),
-                    new RuleDynamicConfigListener(), dynamicConfigService,
+                        new RuleDynamicConfigListener(), dynamicConfigService,
                         "FlowControl");
             }
             configSubscriber.subscribe();
@@ -100,7 +100,7 @@ public class FlowControlInitServiceImpl implements PluginService {
             DynamicConfigService dynamicConfigService;
 
             try {
-                // 根据使用需求选择是否使用自身配置中心
+                // Determine whether to use the configuration center based on requirements
                 if (pluginConfig.isUseAgentConfigCenter()) {
                     dynamicConfigService = ServiceManager.getService(DynamicConfigService.class);
                 } else {

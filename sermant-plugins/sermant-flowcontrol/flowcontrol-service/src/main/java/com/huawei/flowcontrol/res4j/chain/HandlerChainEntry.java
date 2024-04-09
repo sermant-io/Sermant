@@ -29,30 +29,30 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 请求链入口类
+ * request chain entry class
  *
  * @author zhouss
  * @since 2022-07-11
  */
 public enum HandlerChainEntry {
     /**
-     * 单例
+     * single case
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 处理链
+     * HandlerChain
      */
     private final HandlerChain chain = HandlerChainBuilder.INSTANCE.build();
 
     /**
-     * 前置方法
+     * pre-method
      *
-     * @param sourceName 发起源
-     * @param requestEntity 请求体
-     * @param flowControlResult 流控结果
+     * @param sourceName source name
+     * @param requestEntity request body
+     * @param flowControlResult flow control result
      */
     public void onBefore(String sourceName, RequestEntity requestEntity, FlowControlResult flowControlResult) {
         try {
@@ -68,12 +68,12 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * dubbo前置方法, 此处区分生产端与消费端
+     * dubbo pre-method, This distinguishes between the production end and the consumption end
      *
-     * @param sourceName 发起源
-     * @param requestEntity 请求体
-     * @param flowControlResult 流控结果
-     * @param isProvider 是否为生产端
+     * @param sourceName source name
+     * @param requestEntity request body
+     * @param flowControlResult flow control result
+     * @param isProvider whether it is the production end
      */
     public void onDubboBefore(String sourceName, RequestEntity requestEntity, FlowControlResult flowControlResult,
             boolean isProvider) {
@@ -84,19 +84,19 @@ public enum HandlerChainEntry {
 
     private String formatSourceName(String sourceName, boolean isProvider) {
         String prefix = isProvider ? HandlerConstants.THREAD_LOCAL_DUBBO_PROVIDER_PREFIX
-            : HandlerConstants.THREAD_LOCAL_DUBBO_CONSUMER_PREFIX;
+                : HandlerConstants.THREAD_LOCAL_DUBBO_CONSUMER_PREFIX;
 
-        // 初始化StringBuilder的长度是为了性能
+        // The length of the String Builder is initialized for performance
         StringBuilder sb = new StringBuilder(prefix.length() + sourceName.length());
         sb.append(prefix).append(sourceName);
         return sb.toString();
     }
 
     /**
-     * 后置方法
+     * postset method
      *
-     * @param sourceName 发起源
-     * @param result 执行结果
+     * @param sourceName source name
+     * @param result execution result
      */
     public void onResult(String sourceName, Object result) {
         try {
@@ -115,11 +115,11 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * 后置方法
+     * postset method
      *
-     * @param sourceName 发起源
-     * @param result 执行结果
-     * @param isProvider 是否为生产端
+     * @param sourceName source name
+     * @param result execution result
+     * @param isProvider whether it is the production end
      */
     public void onDubboResult(String sourceName, Object result, boolean isProvider) {
         final String formatSourceName = formatSourceName(sourceName, isProvider);
@@ -128,10 +128,10 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * 异常方法
+     * exception method
      *
-     * @param sourceName 发起源
-     * @param throwable 异常信息
+     * @param sourceName source name
+     * @param throwable exception message
      */
     public void onThrow(String sourceName, Throwable throwable) {
         final RequestContext context = ChainContext.getThreadLocalContext(sourceName);
@@ -140,11 +140,11 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * 异常方法
+     * exceptionMethod
      *
-     * @param sourceName 发起源
-     * @param throwable 异常信息
-     * @param isProvider 是否为生产端
+     * @param sourceName source name
+     * @param throwable exception message
+     * @param isProvider is provider
      */
     public void onDubboThrow(String sourceName, Throwable throwable, boolean isProvider) {
         final String formatSourceName = formatSourceName(sourceName, isProvider);

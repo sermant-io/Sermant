@@ -43,7 +43,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * apache dubbo 测试
+ * apache dubbo test
  *
  * @author zhouss
  * @since 2022-03-03

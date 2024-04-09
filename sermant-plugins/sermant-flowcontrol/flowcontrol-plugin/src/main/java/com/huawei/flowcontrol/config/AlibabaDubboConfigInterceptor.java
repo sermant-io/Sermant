@@ -25,19 +25,20 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * apache dubbo配置拦截
+ * apache dubbo configuration interceptor
  *
  * @author zhouss
  * @since 2022-01-28
  */
 public class AlibabaDubboConfigInterceptor extends AbstractInterceptor {
     /**
-     * 此处代码与{@link ApacheDubboConfigInterceptor}相同
-     * <p>由于使用的是不同的权限定名框架，因此<h3>不可抽出，且不可放在除拦截器之外的类执行该段逻辑（类加载器问题）</h3></p>
+     * the code is related to alike{@link ApacheDubboConfigInterceptor}
+     * <p>Because a different permission naming framework is used, it cannot be extracted.
+     * <h3>This section of logic cannot be executed by a class other than an interceptor (class loader problem)</h3></p>
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context context
+     * @return ExecuteContext
+     * @throws Exception execute exception
      */
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {

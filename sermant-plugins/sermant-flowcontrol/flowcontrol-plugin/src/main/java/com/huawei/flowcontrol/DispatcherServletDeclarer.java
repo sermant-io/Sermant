@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * HTTP拦截定义
+ * HTTP DispatcherServletDeclarer
  *
  * @author zhouss
  * @since 2022-02-09
  */
 public class DispatcherServletDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.springframework.web.servlet.DispatcherServlet";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = DispatcherServletInterceptor.class.getCanonicalName();
 
@@ -47,7 +47,7 @@ public class DispatcherServletDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("doService"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("doService"), INTERCEPT_CLASS)
         };
     }
 }

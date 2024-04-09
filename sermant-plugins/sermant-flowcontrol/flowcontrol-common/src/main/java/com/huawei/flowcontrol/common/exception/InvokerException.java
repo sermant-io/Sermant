@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.exception;
 
 /**
- * 调用异常
+ * call exception
  *
  * @author zhouss
  * @since 2022-03-15
@@ -27,9 +27,9 @@ public class InvokerException extends RuntimeException {
     private static final long serialVersionUID = -7001064555588186407L;
 
     /**
-     * 调用异常
+     * call exception
      *
-     * @param cause 异常堆栈信息
+     * @param cause exception stack information
      */
     public InvokerException(Throwable cause) {
         super(cause);

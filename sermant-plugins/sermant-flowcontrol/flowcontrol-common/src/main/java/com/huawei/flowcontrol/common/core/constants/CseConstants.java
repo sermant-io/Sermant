@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,59 +18,59 @@
 package com.huawei.flowcontrol.common.core.constants;
 
 /**
- * CSE适配相关参数
+ * cse adaptation parameters
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class CseConstants {
     /**
-     * 服务版本切割分块数
+     * number of blocks cut by service version
      */
     public static final int SERVICE_VERSION_PARTS = 2;
 
     /**
-     * 服务分隔符
+     * service separator
      */
     public static final String SERVICE_SEPARATOR = ",";
 
     /**
-     * 服务版本分隔符
+     * service version separator
      */
     public static final String SERVICE_VERSION_SEPARATOR = ":";
 
     /**
-     * project 缺省值
+     * project default value
      */
     public static final String DEFAULT_PROJECT = "default";
 
     /**
-     * 自定义标签缺省值
+     * user defined label default values
      */
     public static final String DEFAULT_CUSTOM_LABEL = "public";
 
     /**
-     * 自定义标签缺省值
+     * user defined label default values
      */
     public static final String DEFAULT_CUSTOM_LABEL_VALUE = "";
 
     /**
-     * dubbo默认服务名称
+     * dubbo default service name
      */
     public static final String DEFAULT_DUBBO_SERVICE_NAME = "defaultMicroserviceName";
 
     /**
-     * dubbo版本缺省值
+     * default value of dubbo version
      */
     public static final String DEFAULT_DUBBO_VERSION = "";
 
     /**
-     * Dubbo默认环境
+     * default dubbo environment
      */
     public static final String DEFAULT_DUBBO_ENVIRONMENT = "";
 
     /**
-     * dubbo默认appname
+     * dubbo default appname
      */
     public static final String DEFAULT_DUBBO_APP_NAME = "default";
 
@@ -80,32 +80,32 @@ public class CseConstants {
     public static final String KEY_DUBBO_KIE_PROJECT = "dubbo.servicecomb.service.project";
 
     /**
-     * 服务名键
+     * service name key
      */
     public static final String KEY_DUBBO_SERVICE_NAME = "dubbo.servicecomb.service.name";
 
     /**
-     * app名 键
+     * app name key
      */
     public static final String KEY_DUBBO_APP_NAME = "dubbo.servicecomb.service.application";
 
     /**
-     * 环境 键
+     * environment key
      */
     public static final String KEY_DUBBO_ENVIRONMENT = "dubbo.servicecomb.service.environment";
 
     /**
-     * 自定义标签 键
+     * customize the label key
      */
     public static final String KEY_DUBBO_CUSTOM_LABEL = "dubbo.servicecomb.config.customLabel";
 
     /**
-     * 自定义标签 值
+     * custom label values
      */
     public static final String KEY_DUBBO_CUSTOM_LABEL_VALUE = "dubbo.servicecomb.config.customLabelValue";
 
     /**
-     * 版本
+     * version
      */
     public static final String KEY_DUBBO_VERSION = "dubbo.servicecomb.service.version";
 
@@ -115,32 +115,32 @@ public class CseConstants {
     public static final String KEY_SPRING_KIE_PROJECT = "spring.cloud.servicecomb.credentials.project";
 
     /**
-     * 服务名键
+     * service name key
      */
     public static final String KEY_SPRING_SERVICE_NAME = "spring.cloud.servicecomb.discovery.serviceName";
 
     /**
-     * app名 键
+     * app name key
      */
     public static final String KEY_SPRING_APP_NAME = "spring.cloud.servicecomb.discovery.appName";
 
     /**
-     * 环境 键
+     * environment key
      */
     public static final String KEY_SPRING_ENVIRONMENT = "server.env";
 
     /**
-     * 自定义标签 键
+     * customize the label key
      */
     public static final String KEY_SPRING_CUSTOM_LABEL = "spring.cloud.servicecomb.config.kie.customLabel";
 
     /**
-     * 自定义标签 值
+     * custom label values
      */
     public static final String KEY_SPRING_CUSTOM_LABEL_VALUE = "spring.cloud.servicecomb.config.kie.customLabelValue";
 
     /**
-     * 版本
+     * version
      */
     public static final String KEY_SPRING_VERSION = "spring.cloud.servicecomb.discovery.version";
 

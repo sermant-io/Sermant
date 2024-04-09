@@ -25,42 +25,41 @@ import java.lang.management.ManagementFactory;
 import java.util.TimerTask;
 
 /**
- * 滑动窗口定时任务
+ * sliding window scheduling tasks
  *
  * @author xuezechao1
  * @since 2022-12-07
  */
 public class SystemStatusTask extends TimerTask {
-
     private final SystemStatus systemStatus = SystemStatus.getInstance();
 
     @Override
     public void run() {
-        // 新一轮窗口初始化数据
+        // new window initialization data
         if (WindowsArray.INSTANCE.calculateCurrentWindowsIndex() == 0) {
             initMinRtAndMaxThreadNum();
         }
 
-        // 更新系统负载和CPU使用率
+        // update system load and cpu usage
         OperatingSystemMXBean operatingSystemMxBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         systemStatus.setCurrentLoad(operatingSystemMxBean.getSystemLoadAverage());
         systemStatus.setCurrentCpuUsage(operatingSystemMxBean.getSystemCpuLoad());
 
-        // 更新最小响应时间 最大线程数
+        // Update minimum response time and maximum number of threads
         updateMinRtAndMaxThreadNum();
 
-        // 更新qps 平均响应时间
+        // updated qps and average response time
         updateQpsAndAveRt();
 
-        // 重置下一秒数据
+        // reset next second data
         WindowsArray.INSTANCE.resetNextWindows();
     }
 
     /**
-     * 检查数据项
+     * check data item
      *
-     * @param windowsBucket 数据窗口
-     * @return 窗口是否有效
+     * @param windowsBucket data window
+     * @return whether the window is valid
      */
     private boolean checkBucket(WindowsBucket windowsBucket) {
         if (windowsBucket == null || windowsBucket.success.sum() == 0
@@ -71,7 +70,7 @@ public class SystemStatusTask extends TimerTask {
     }
 
     /**
-     * 初始化最小响应时间 最大线程数
+     * Initializes the minimum response time and maximum number of threads
      */
     private void initMinRtAndMaxThreadNum() {
         systemStatus.setMinRt(Double.MAX_VALUE);
@@ -79,18 +78,18 @@ public class SystemStatusTask extends TimerTask {
     }
 
     /**
-     * 更新最小响应时间 最大线程数
+     * Update the minimum response time and maximum number of threads
      */
     private void updateMinRtAndMaxThreadNum() {
         WindowsBucket windowsBucket = WindowsArray.INSTANCE.getCurrentWindow();
 
-        // 调用成功总数
+        // total number of successful calls
         long successNum = windowsBucket.success.sum();
 
-        // 响应时间总数
+        // total response time
         double rt = windowsBucket.rt.sum();
 
-        // 现存线程数
+        // number of threads in existence
         double threadNum = windowsBucket.threadNum.sum();
         if (0 != successNum) {
             systemStatus.setMinRt(Math.min(systemStatus.getMinRt(), rt / successNum));
@@ -99,7 +98,7 @@ public class SystemStatusTask extends TimerTask {
     }
 
     /**
-     * 更新qps 平均响应时间
+     * updated qps and average response time
      */
     private void updateQpsAndAveRt() {
         WindowsBucket previousWindowsBucket = WindowsArray.INSTANCE.getPreviousWindow();

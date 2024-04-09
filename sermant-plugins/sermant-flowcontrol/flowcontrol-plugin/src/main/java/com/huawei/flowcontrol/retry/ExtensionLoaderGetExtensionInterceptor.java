@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * ExtensionLoader 拦截器， 用于注入cluster
+ * ExtensionLoader Interceptor， for injection cluster
  *
  * @author zhouss
  * @since 2022-03-04

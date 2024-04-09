@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,109 +21,110 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 重试规则
+ * retry rule
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public class RetryRule extends AbstractRule {
     /**
-     * 重试策略
+     * retry strategy
      */
     public static final String STRATEGY_RANDOM_BACKOFF = "RandomBackoff";
 
     /**
-     * 默认最大尝试次数
+     * default maximum number of attempts
      */
     public static final int DEFAULT_MAX_ATTEMPTS = 3;
 
     /**
-     * 默认等待下次请求时间
+     * default wait time for next request
      */
     public static final long DEFAULT_WAIT_DURATION_MS = 10L;
 
     /**
-     * 默认重试状态码
+     * default retry status code
      */
     public static final String DEFAULT_RETRY_ON_RESPONSE_STATUS = "502";
 
     /**
-     * 默认初始基数
+     * default initial base
      */
     private static final long DEFAULT_INITIAL_INTERVAL_MS = 1000L;
 
     /**
-     * 默认指数
+     * default index
      */
     private static final float DEFAULT_MULTIPLIER = 2f;
 
     /**
-     * 默认随机因子
+     * default random factor
      */
     private static final double DEFAULT_RANDOMIZATION_FACTOR = 0.5d;
 
     /**
-     * 默认重试策略
+     * default retry policy
      */
     private static final String DEFAULT_RETRY_STRATEGY = "FixedInterval";
 
     /**
-     * 最小基准时间
+     * Minimum reference time
      */
     private static final long MIN_INITIAL_INTERVAL_MS = 10L;
 
     /**
-     * 最大尝试次数
+     * maximum attempts
      */
     private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
 
     /**
-     * 每次重试尝试等待的时间。
+     * time to wait for each retry attempt。
      */
     private String waitDuration = String.valueOf(DEFAULT_WAIT_DURATION_MS);
 
     /**
-     * 转换后的尝试等待时间
+     * the attempt wait time after conversion
      */
     private long parsedWaitDuration = DEFAULT_WAIT_DURATION_MS;
 
     /**
-     * 需要重试的http status, 逗号分隔
+     * http status that needs to be retried, separated by commas
      */
     private List<String> retryOnResponseStatus = new ArrayList<>();
 
     /**
-     * 重试策略
+     * retry strategy
      */
     private String retryStrategy = DEFAULT_RETRY_STRATEGY;
 
     /**
-     * 基准时间
+     * reference time
      */
     private String initialInterval = String.valueOf(DEFAULT_INITIAL_INTERVAL_MS);
 
     /**
-     * 转换后的基准时间
+     * the converted base time
      */
     private long parsedInitialInterval = DEFAULT_INITIAL_INTERVAL_MS;
 
     /**
-     * 指数基数
+     * exponential basis
      */
     private float multiplier = DEFAULT_MULTIPLIER;
 
     /**
-     * 随机因数
+     * random factor
      */
     private double randomizationFactor = DEFAULT_RANDOMIZATION_FACTOR;
 
     /**
-     * 最大重试后失败
+     * failed after maximum retry
      */
     private boolean failAfterMaxAttempts = false;
 
     /**
-     * 是否在在同一台机器重试, 该配置作用到负载均衡, 当前基于agent则采用拦截方式替换
+     * Whether to try again on the same machine, this configuration is used for load balancing,
+     * and the current agent-based interceptor is used instead
      */
     private int retryOnSame = 0;
 
@@ -173,9 +174,9 @@ public class RetryRule extends AbstractRule {
     }
 
     /**
-     * 重试等待间隔
+     * retry waiting interval
      *
-     * @param waitDuration 等待间隔
+     * @param waitDuration waiting interval
      */
     public void setWaitDuration(String waitDuration) {
         this.waitDuration = waitDuration;
@@ -203,9 +204,9 @@ public class RetryRule extends AbstractRule {
     }
 
     /**
-     * 基数
+     * base
      *
-     * @param initialInterval 基数
+     * @param initialInterval base
      */
     public void setInitialInterval(String initialInterval) {
         this.initialInterval = initialInterval;

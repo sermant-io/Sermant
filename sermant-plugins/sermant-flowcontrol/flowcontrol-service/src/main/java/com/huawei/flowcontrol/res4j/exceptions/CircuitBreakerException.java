@@ -24,7 +24,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import java.util.Locale;
 
 /**
- * 熔断异常
+ * CircuitBreaker exception
  *
  * @author zhouss
  * @since 2022-08-09
@@ -33,11 +33,11 @@ public class CircuitBreakerException extends RuntimeException {
     private final CircuitBreaker circuitBreaker;
 
     /**
-     * 熔断异常
+     * CircuitBreaker exception
      *
-     * @param circuitBreaker 熔断器
-     * @param message 熔断信息
-     * @param writableStackTrace 是否堆栈
+     * @param circuitBreaker CircuitBreaker
+     * @param message circuit breaker information
+     * @param writableStackTrace stackOrNot
      */
     public CircuitBreakerException(CircuitBreaker circuitBreaker, String message, boolean writableStackTrace) {
         super(message, null, false, writableStackTrace);
@@ -45,10 +45,10 @@ public class CircuitBreakerException extends RuntimeException {
     }
 
     /**
-     * 构建异常信息
+     * construct exception message
      *
-     * @param circuitBreaker 熔断配置
-     * @return 异常
+     * @param circuitBreaker CircuitBreaker configuration
+     * @return exception
      */
     public static CircuitBreakerException createException(CircuitBreaker circuitBreaker) {
         return new CircuitBreakerException(circuitBreaker, createMsg(circuitBreaker),
@@ -56,10 +56,10 @@ public class CircuitBreakerException extends RuntimeException {
     }
 
     /**
-     * 创建提示信息
+     * create prompt
      *
-     * @param circuitBreaker 熔断器
-     * @return 提示信息
+     * @param circuitBreaker CircuitBreaker
+     * @return promptMessage
      */
     protected static String createMsg(CircuitBreaker circuitBreaker) {
         String msg;

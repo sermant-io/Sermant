@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 /**
  * apache dubbo invoker
  *
- * @param <T> 返回类型
+ * @param <T> return type
  * @author zhouss
  * @since 2022-03-04
  */
@@ -72,7 +72,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     private final Invoker<T> delegate;
 
     /**
-     * apache dubbo 集群调用
+     * apache dubbo cluster call
      *
      * @param directory service
      */
@@ -81,10 +81,10 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * apache dubbo 集群调用
+     * apache dubbo cluster call
      *
      * @param directory service
-     * @param delegate 原始调用器, 需开启配置{@link FlowControlConfig#isUseOriginInvoker()}
+     * @param delegate original invoker, need to enable configuration{@link FlowControlConfig#isUseOriginInvoker()}
      */
     public ApacheDubboClusterInvoker(Directory<T> directory, Invoker<T> delegate) {
         super(directory);
@@ -103,7 +103,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 loadbalance, selected));
         io.github.resilience4j.retry.Retry retryRule = null;
         if (!handlers.isEmpty()) {
-            // 重试仅支持一种策略
+            // only one policy is supported for retry
             retryRule = handlers.get(0);
             dcs.withRetry(retryRule);
         }
@@ -127,7 +127,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
             return (GenericException) ex;
         }
 
-        // 注意这里新版本可能会逐渐将该类淘汰掉, dubbo3.1.0目前还在使用
+        // Note that this class may be phased out by the new version; dubbo3.1.0 is still in use
         final Optional<Class<?>> isExist = ClassUtils
                 .loadClass("com.alibaba.dubbo.rpc.service.GenericException", Thread.currentThread()
                         .getContextClassLoader());
@@ -171,10 +171,11 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * Convert apache dubbo. Note that this method is not extractable，Because host dependencies can only be loaded by
+     * this interceptor, pulling out results in classes not being found.
      *
-     * @param invocation 调用信息
-     * @param invoker 调用者
+     * @param invocation invoker information
+     * @param invoker invoker
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToApacheDubboEntity(Invocation invocation, Invoker<T> invoker) {
@@ -187,7 +188,8 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
             version = url.getParameter(CommonConst.URL_VERSION_KEY, ConvertUtils.ABSENT_VERSION);
         }
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
-            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            // For generalized interfaces, you can obtain the actual interface and version name from the url,
+            // The method name is obtained based on parameters and is the first parameter of the requested method
             isGeneric = true;
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
@@ -196,7 +198,8 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
             }
         }
 
-        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
+        // High version using API invocation.getTargetServiceUniqueName access path，
+        // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         return new DubboRequestEntity(apiPath, DubboAttachmentsHelper.resolveAttachments(invocation, true),
                 RequestType.CLIENT, getRemoteApplication(url, interfaceName), isGeneric);
@@ -208,14 +211,14 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * apache dubbo重试
+     * apache dubbo retry
      *
      * @since 2022-02-21
      */
     public static class ApacheDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
-            // dubbo不支持状态码
+            // dubbo does not support status codes
             return false;
         }
 

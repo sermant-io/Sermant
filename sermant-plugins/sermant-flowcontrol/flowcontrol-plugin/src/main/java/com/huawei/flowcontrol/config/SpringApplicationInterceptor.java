@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 结束阶段开始初始化流控配置监听
+ * End Phase Starts to initialize flow control configuration listening
  *
  * @author zhouss
  * @since 2022-01-28

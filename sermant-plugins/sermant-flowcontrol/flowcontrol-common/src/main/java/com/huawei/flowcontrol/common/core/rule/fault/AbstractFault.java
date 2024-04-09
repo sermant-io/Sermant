@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.common.core.rule.fault;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 抽象层fault, 做一层公共处理
+ * The abstraction layer is fault and does a common layer of processing
  *
  * @author zhouss
  * @since 2022-08-05
@@ -29,7 +29,8 @@ public abstract class AbstractFault implements Fault {
     private static final int PERCENT_UNIT = 100;
 
     /**
-     * 请求基数缓冲, 防止多并发场景导致请求溢出(请求溢出不会导致问题, 只是数据会重置, 存在部分线程统计数据被忽略)
+     * Request base buffering prevents requests from overflowing in multiple concurrent scenarios
+     * (Request overflow does not cause problems, but the data is reset and some thread statistics are ignored)
      */
     private static final long COUNT_BUFFER = 10000000L;
 
@@ -38,10 +39,10 @@ public abstract class AbstractFault implements Fault {
     private final FaultRule rule;
 
     /**
-     * 创建错误注入
+     * create error injection
      *
-     * @param rule 错误注入规则
-     * @throws IllegalArgumentException rule为空抛出
+     * @param rule error injection rule
+     * @throws IllegalArgumentException thrown if rule is null
      */
     protected AbstractFault(FaultRule rule) {
         if (rule == null) {
@@ -69,10 +70,10 @@ public abstract class AbstractFault implements Fault {
     }
 
     /**
-     * 朴素贝叶斯概率模型
+     * naive bayesian probability model
      *
-     * @param curReqCount 当前请求数量
-     * @return 核对触发概率
+     * @param curReqCount current number of requests
+     * @return check trigger probability
      */
     private boolean checkPercent(long curReqCount) {
         final int percentage = rule.getPercentage();
@@ -82,9 +83,9 @@ public abstract class AbstractFault implements Fault {
     }
 
     /**
-     * 执行错误注入
+     * execution error injection
      *
-     * @param faultRule 错误注入规则
+     * @param faultRule error injection rule
      */
     protected abstract void exeFault(FaultRule faultRule);
 }

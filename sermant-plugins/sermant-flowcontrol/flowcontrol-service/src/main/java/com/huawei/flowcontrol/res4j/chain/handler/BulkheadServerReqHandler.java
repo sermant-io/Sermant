@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
 /**
- * 隔离仓服务端处理器
+ * isolation bin server handler
  *
  * @author zhouss
  * @since 2022-07-23

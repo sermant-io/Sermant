@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 线程工厂测试
+ * thread factory test
  *
  * @author zhouss
  * @since 2022-08-29

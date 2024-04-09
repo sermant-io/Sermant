@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 用于重试拦截获取调用实例-ribbon
+ * Used to retry intercepts to get call instances -ribbon
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class SpringRibbonLbDeclarer extends AbstractPluginDeclarer {
     /**
-     * 通用自动注册类
+     * generic automatic registration class
      */
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.AbstractServerPredicate";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = SpringRibbonChooseServerInterceptor.class.getCanonicalName();
 

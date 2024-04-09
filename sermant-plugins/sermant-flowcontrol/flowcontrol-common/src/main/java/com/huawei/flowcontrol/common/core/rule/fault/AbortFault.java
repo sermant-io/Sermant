@@ -20,17 +20,17 @@ package com.huawei.flowcontrol.common.core.rule.fault;
 import com.huawei.flowcontrol.common.core.constants.RuleConstants;
 
 /**
- * 请求放弃错误注入
+ * request to abandon error injection
  *
  * @author zhouss
  * @since 2022-08-05
  */
 public class AbortFault extends AbstractFault {
     /**
-     * 错误注入
+     * fault injection
      *
-     * @param rule 错误注入规则
-     * @throws IllegalArgumentException rule为空抛出
+     * @param rule error injection rule
+     * @throws IllegalArgumentException thrown if rule is null
      */
     public AbortFault(FaultRule rule) {
         super(rule);

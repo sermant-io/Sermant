@@ -26,14 +26,14 @@ import org.junit.Test;
 import java.util.Optional;
 
 /**
- * 序列化工具测试
+ * serialization tool test
  *
  * @author zhouss
  * @since 2022-08-30
  */
 public class SerializeUtilsTest {
     /**
-     * 测试序列化各类对象
+     * test serializing various types of objects
      */
     @Test
     public void test() {

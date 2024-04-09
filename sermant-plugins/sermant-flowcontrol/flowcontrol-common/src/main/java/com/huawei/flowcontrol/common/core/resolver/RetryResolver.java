@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.core.resolver;
 import com.huawei.flowcontrol.common.core.rule.RetryRule;
 
 /**
- * 隔熔断配置解析
+ * retry resolver
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class RetryResolver extends AbstractResolver<RetryRule> {
     /**
-     * 重试配置 键
+     * Retry key
      */
     public static final String CONFIG_KEY = "servicecomb.retry";
 
     /**
-     * 重试解析器构造
+     * constructor
      */
     public RetryResolver() {
         super(CONFIG_KEY);

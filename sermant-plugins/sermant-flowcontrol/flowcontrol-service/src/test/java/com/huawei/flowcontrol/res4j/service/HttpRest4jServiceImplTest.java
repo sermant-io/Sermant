@@ -34,7 +34,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * http请求测试
+ * http request test
  *
  * @author zhouss
  * @since 2022-08-30
@@ -54,7 +54,7 @@ public class HttpRest4jServiceImplTest {
     }
 
     /**
-     * 测试流程
+     * test process
      */
     @Test
     public void test() {

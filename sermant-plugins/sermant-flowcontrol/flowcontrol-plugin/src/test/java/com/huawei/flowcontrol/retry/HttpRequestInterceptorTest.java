@@ -44,7 +44,7 @@ import java.net.URI;
 import java.util.Collections;
 
 /**
- * HTTP请求重试逻辑测试
+ * HTTP request retry logic test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -61,9 +61,9 @@ public class HttpRequestInterceptorTest {
     private Interceptor interceptor;
 
     /**
-     * 前置初始化
+     * preinitialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {
@@ -96,9 +96,9 @@ public class HttpRequestInterceptorTest {
     }
 
     /**
-     * 测试流程
+     * testing process
      *
-     * @throws Exception 执行失败抛出
+     * @throws Exception execution failure throw
      */
     @Test
     public void test() throws Exception {

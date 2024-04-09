@@ -20,10 +20,10 @@ package com.huawei.flowcontrol.common.cache;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 基于ConcurrentMap实现
+ * implemented based on ConcurrentHashMap
  *
- * @param <K> 键
- * @param <V> 值
+ * @param <K> key
+ * @param <V> value
  * @author zhouss
  * @since 2022-07-21
  */

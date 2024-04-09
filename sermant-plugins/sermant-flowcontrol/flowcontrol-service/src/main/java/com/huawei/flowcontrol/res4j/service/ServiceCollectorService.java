@@ -35,19 +35,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 服务指标监控
+ * service indicator monitoring
  *
  * @author zhp
  * @since 2022-08-30
  */
 public class ServiceCollectorService extends Collector implements PluginService {
     /**
-     * 熔断器集合，用于获取熔断器指标信息
+     * Circuit breaker collection, used to obtain CircuitBreaker indicator information
      */
     public static final Map<String, CircuitBreaker> CIRCUIT_BREAKER_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 请求数据
+     * request data
      */
     public static final Map<String, MetricEntity> MONITORS = new ConcurrentHashMap<>();
 
@@ -89,11 +89,11 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 采集熔断指标
+     * collect the circuit breaker indicator
      *
-     * @param metricMap 指标采集Map
-     * @param metricLabel 指标标签值
-     * @param metricInfo 指标信息
+     * @param metricMap index collection map
+     * @param metricLabel metric tag value
+     * @param metricInfo metric message
      */
     private void collectFuseMetric(Map<String, GaugeMetricFamily> metricMap, String metricLabel,
             MetricEntity metricInfo) {
@@ -130,9 +130,9 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 采集熔断器指标
+     * collect circuit breaker indicators
      *
-     * @param metricMap 指标Map
+     * @param metricMap metricMap
      */
     private void collectCircuitBreakerMetric(Map<String, GaugeMetricFamily> metricMap) {
         if (!CIRCUIT_BREAKER_MAP.isEmpty()) {
@@ -157,10 +157,10 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 构造指标收集器
+     * construct metric collector
      *
-     * @param metricType 指标类型
-     * @return 收集器
+     * @param metricType metric type
+     * @return collector
      */
     private GaugeMetricFamily buildGaugeMetric(MetricType metricType) {
         return new GaugeMetricFamily(metricType.getName(), metricType.getDesc(),
@@ -168,12 +168,12 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 增加指标信息
+     * adding metric information
      *
-     * @param metricMap 指标信息存储MAP
-     * @param type 指标类型
-     * @param value 指标值
-     * @param labelValue 指标标签值
+     * @param metricMap metric information store map
+     * @param type metric type
+     * @param value metric value
+     * @param labelValue metric tag value
      */
     private void addMetric(Map<String, GaugeMetricFamily> metricMap, MetricType type, double value, String labelValue) {
         GaugeMetricFamily metric = metricMap.computeIfAbsent(type.getName(), key -> buildGaugeMetric(type));
@@ -181,9 +181,9 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 暂存当前数据，防止数据在后续收集指标过程中被更新
+     * The current data is temporarily stored to prevent data from being updated during subsequent metric collection
      *
-     * @return 当前指标信息
+     * @return current metric information
      */
     private Map<String, MetricEntity> getCurrentMap() {
         Map<String, MetricEntity> target = new ConcurrentHashMap<>();
@@ -199,10 +199,10 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 数据copy
+     * data copy
      *
-     * @param metricEntity 待拷贝数据
-     * @param sourceMetric 元数据
+     * @param metricEntity data to be copied
+     * @param sourceMetric source metric
      */
     private void copy(MetricEntity metricEntity, MetricEntity sourceMetric) {
         if (sourceMetric == null) {
@@ -229,10 +229,10 @@ public class ServiceCollectorService extends Collector implements PluginService 
     }
 
     /**
-     * 值拷贝
+     * value copy
      *
-     * @param source 来源
-     * @param target 赋值的对象
+     * @param source source
+     * @param target the object to which the value is assigned
      */
     private void copyValue(AtomicLong source, AtomicLong target) {
         if (source != null) {

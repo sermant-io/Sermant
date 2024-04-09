@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试注入cluster
+ * test inject cluster
  *
  * @author zhouss
  * @since 2022-08-31

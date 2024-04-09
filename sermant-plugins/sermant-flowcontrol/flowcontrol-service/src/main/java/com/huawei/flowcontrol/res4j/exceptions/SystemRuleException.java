@@ -20,20 +20,21 @@ package com.huawei.flowcontrol.res4j.exceptions;
 import com.huawei.flowcontrol.common.core.rule.SystemRule;
 
 /**
- * 系统流控异常
+ * System flow control exception
  *
  * @author xuezechao1
  * @since 2022-12-06
  */
 public class SystemRuleException extends RuntimeException {
     private final String msg;
+
     private final SystemRule systemRule;
 
     /**
-     * 系统策略异常
+     * system policy exception
      *
-     * @param msg 异常信息
-     * @param systemRule 系统规则
+     * @param msg exception message
+     * @param systemRule system rule
      */
     public SystemRuleException(String msg, SystemRule systemRule) {
         this.msg = msg;
@@ -47,5 +48,4 @@ public class SystemRuleException extends RuntimeException {
     public SystemRule getSystemRule() {
         return systemRule;
     }
-
 }

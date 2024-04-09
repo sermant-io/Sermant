@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.util;
 import com.huawei.flowcontrol.common.config.CommonConst;
 
 /**
- * 转换工具类
+ * conversion tool class
  *
  * @author zhouss
  * @since 2022-01-22
  */
 public class ConvertUtils {
     /**
-     * 从dubbo attachment获取version版本
+     * obtain the version version from dubbo attachment
      */
     public static final String DUBBO_ATTACHMENT_VERSION = "version";
 
     /**
-     * dubbo默认缺省值版本号
+     * dubbo default default version
      */
     public static final String ABSENT_VERSION = "0.0.0";
 
@@ -40,28 +40,28 @@ public class ConvertUtils {
     }
 
     /**
-     * 是否为泛化接口 泛化接口
+     * Whether the interface is a generalization interface
      * <p></p>
-     * {@link org.apache.dubbo.rpc.service.GenericService}、 {@link com.alibaba.dubbo.rpc.service.GenericService}
-     * 采用包装代理进行调用, 需要比对类全限定名与方法名进行比较
+     * {@link org.apache.dubbo.rpc.service.GenericService}、 {@link com.alibaba.dubbo.rpc.service.GenericService} To make
+     * a call using a wrapper proxy, need to compare the class fully qualified name with the method name
      *
-     * @param interfaceName 接口名
-     * @param methodName    方法名
-     * @return 是否为泛化接口
+     * @param interfaceName interface name
+     * @param methodName method name
+     * @return Whether the interface is a generalization interface
      */
     public static boolean isGenericService(String interfaceName, String methodName) {
         return (CommonConst.ALIBABA_DUBBO_GENERIC_SERVICE_CLASS.equals(interfaceName)
-            || CommonConst.APACHE_DUBBO_GENERIC_SERVICE_CLASS.equals(interfaceName))
-            && CommonConst.GENERIC_METHOD_NAME.equals(methodName);
+                || CommonConst.APACHE_DUBBO_GENERIC_SERVICE_CLASS.equals(interfaceName))
+                && CommonConst.GENERIC_METHOD_NAME.equals(methodName);
     }
 
     /**
-     * 构建API路径
+     * buildAPIPath
      *
-     * @param interfaceName 接口名
-     * @param version       版本
-     * @param methodName    方法名
-     * @return api路径
+     * @param interfaceName interface name
+     * @param version version
+     * @param methodName method name
+     * @return api path
      */
     public static String buildApiPath(String interfaceName, String version, String methodName) {
         if (version == null || "".equals(version) || ABSENT_VERSION.equals(version)) {

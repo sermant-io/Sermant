@@ -36,24 +36,24 @@ import java.util.ServiceLoader;
 import java.util.Set;
 
 /**
- * 解析器管理
+ * Resolver Manager
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public enum ResolverManager {
     /**
-     * 单例
+     * single case
      */
     INSTANCE;
 
     /**
-     * 基于SPI加载所有Resolver
+     * All resolvers are loaded based on SPI
      */
     private final Map<String, AbstractResolver<?>> resolversMap = new HashMap<>();
 
     /**
-     * 解析器配置前缀集合
+     * parser configuration prefix collection
      */
     private Set<String> resolverConfigPrefix;
 
@@ -62,29 +62,29 @@ public enum ResolverManager {
     }
 
     /**
-     * 判断该键是否为流控规则配置
+     * Check whether the key is configured for a flow control rule
      *
-     * @param key 配置键
-     * @return 是否符合要求的配置
+     * @param key configuration key
+     * @return is the configuration meets the requirements
      */
     public boolean isTarget(String key) {
         return resolverConfigPrefix.stream().anyMatch(key::startsWith);
     }
 
     /**
-     * 解析配置
+     * parsing configuration
      *
-     * @param rulesMap 配置中心获取的规则数据
+     * @param rulesMap the rule data obtained by the configuration center
      */
     public void resolve(Map<String, String> rulesMap) {
         resolve(rulesMap, false);
     }
 
     /**
-     * 解析配置
+     * parsing configuration
      *
-     * @param rulesMap    配置中心获取的规则数据
-     * @param isForDelete 是否是为了移除场景
+     * @param rulesMap the rule data obtained by the configuration center
+     * @param isForDelete whether to remove the scene
      */
     public void resolve(Map<String, String> rulesMap, boolean isForDelete) {
         final Set<String> configKeyPrefixDic = resolverConfigPrefix;
@@ -100,11 +100,11 @@ public enum ResolverManager {
     }
 
     /**
-     * 单个kv解析
+     * single kv analysis
      *
-     * @param key         键
-     * @param value       值
-     * @param isForDelete 是否是删除键
+     * @param key key
+     * @param value value
+     * @param isForDelete whether it's a delete key
      */
     public void resolve(String key, String value, boolean isForDelete) {
         final Set<Map.Entry<String, AbstractResolver<?>>> resolvers = resolversMap.entrySet();
@@ -114,12 +114,12 @@ public enum ResolverManager {
             }
             String businessKey = key.substring(resolverEntry.getKey().length());
 
-            // 匹配以该配置打头的解析器，更新解析器内容
+            // Matches the parser that starts with this configuration and updates the parser content
             final Optional<?> rule = resolverEntry.getValue().parseRule(businessKey, value, true, isForDelete);
             if (rule.isPresent() || isForDelete) {
                 resolverEntry.getValue().notifyListeners(businessKey);
                 LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
-                    "Config [%s] has been updated or deleted successfully, raw content: [%s]", key, value));
+                        "Config [%s] has been updated or deleted successfully, raw content: [%s]", key, value));
             }
         }
     }
@@ -150,15 +150,15 @@ public enum ResolverManager {
     }
 
     /**
-     * 基于yaml转换器转换相关流控规则
+     * Transform the relevant flow control rules based on yaml converter
      *
-     * @param value 规则
-     * @return 转换后的配置
+     * @param value rule
+     * @return the converted configuration
      */
     private Map<String, Object> tryResolveWithYaml(String value) {
         final Map<String, Object> kvMap = new HashMap<>();
         final Optional<Map<String, Object>> convert = OperationManager.getOperation(YamlConverter.class)
-                .convert(value,Map.class);
+                .convert(value, Map.class);
         if (convert.isPresent()) {
             final Map<String, Object> map = convert.get();
             MapUtils.resolveNestMap(kvMap, map, null);
@@ -167,9 +167,9 @@ public enum ResolverManager {
     }
 
     /**
-     * 判断是否由对应的业务场景规则
+     * Check whether the corresponding service scenario rules exist
      *
-     * @param businessKey 业务场景名
+     * @param businessKey service scenario name
      * @return boolean
      */
     public boolean hasMatchedRule(String businessKey) {
@@ -186,10 +186,10 @@ public enum ResolverManager {
     }
 
     /**
-     * 注册监听器
+     * registerListener
      *
-     * @param configKey 监听的规则类型
-     * @param listener  监听器
+     * @param configKey type of the listening rule
+     * @param listener listener
      */
     public void registerListener(String configKey, ConfigUpdateListener listener) {
         String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(configKey);
@@ -204,11 +204,11 @@ public enum ResolverManager {
     }
 
     /**
-     * 根据配置键获取解析器
+     * get the resolver according to the configuration key
      *
-     * @param configKey 配置键
-     * @param <R>       解析类型
-     * @return 解析器
+     * @param configKey configurationKey
+     * @param <R> parsingType
+     * @return Resolver
      */
     public <R extends AbstractResolver<?>> R getResolver(String configKey) {
         return (R) resolversMap.get(AbstractResolver.getConfigKeyPrefix(configKey));
@@ -216,10 +216,10 @@ public enum ResolverManager {
 
     private void loadSpiResolvers() {
         for (AbstractResolver<?> resolver : ServiceLoader.load(AbstractResolver.class,
-            ResolverManager.class.getClassLoader())) {
+                ResolverManager.class.getClassLoader())) {
             final String configKeyPrefix = AbstractResolver.getConfigKeyPrefix(resolver.getConfigKey());
             if (".".equals(configKeyPrefix)) {
-                // 空配置跳过
+                // skip empty configuration
                 continue;
             }
             resolversMap.put(configKeyPrefix, resolver);

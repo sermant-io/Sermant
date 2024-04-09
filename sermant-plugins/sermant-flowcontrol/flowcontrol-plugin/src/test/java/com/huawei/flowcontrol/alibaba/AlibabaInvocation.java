@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * alibaba 参数类
+ * alibaba parameterClass
  *
  * @author zhouss
  * @since 2022-03-03

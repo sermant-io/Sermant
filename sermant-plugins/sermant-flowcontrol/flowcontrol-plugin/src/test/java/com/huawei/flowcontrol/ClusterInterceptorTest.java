@@ -25,7 +25,7 @@ import org.junit.Test;
 import java.util.HashMap;
 
 /**
- * 集群拦截点上下文测试
+ * cluster intercept point context test
  *
  * @author zhouss
  * @since 2022-09-13

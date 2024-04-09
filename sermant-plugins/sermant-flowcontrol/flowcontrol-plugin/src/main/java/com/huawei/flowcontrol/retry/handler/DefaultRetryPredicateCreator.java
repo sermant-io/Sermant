@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * 默认异常predicate创建器
+ * default exception predicate creator
  *
  * @author zhouss
  * @since 2022-04-11
@@ -48,16 +48,16 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
     private static final String APACHE_GENERIC_EXCEPTION = "org.apache.dubbo.rpc.service.GenericException";
 
     /**
-     * 默认重试状态码
+     * default retry status code
      */
     private static final Collection<String> DEFAULT_RETRY_ON_RESPONSE_STATUS = Arrays.asList("502", "503");
 
     /**
-     * 默认重试异常
+     * default retry exception
      */
     private static final List<Class<? extends Throwable>> STRICT_RETRYABLE = Collections.unmodifiableList(
-        Arrays.asList(ConnectException.class, SocketTimeoutException.class, IOException.class,
-            NoRouteToHostException.class)
+            Arrays.asList(ConnectException.class, SocketTimeoutException.class, IOException.class,
+                    NoRouteToHostException.class)
     );
 
     @Override
@@ -65,7 +65,7 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
         final List<Class<? extends Throwable>> exceptions = new ArrayList<>(Arrays.asList(retryExceptions));
         exceptions.addAll(STRICT_RETRYABLE);
         return exceptions.stream().distinct().map(this::createExceptionPredicate).reduce(Predicate::or)
-            .orElseGet(() -> throwable -> true);
+                .orElseGet(() -> throwable -> true);
     }
 
     private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable> retryClass) {
@@ -79,18 +79,18 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
     }
 
     /**
-     * 针对包装异常处理
+     * handling of packaging exceptions
      * <p></p>
-     * 当前仅支持GenericException
+     * currently only GenericException is supported
      *
-     * @param ex 业务异常
-     * @return 异常名称
+     * @param ex service exception
+     * @return exception name
      */
     private Optional<String> getRealExceptionClassName(Throwable ex) {
         String mayBeRealClassName = null;
         if (isGenericException(ex.getClass().getName())) {
             final Optional<Object> getExceptionClass = ReflectUtils
-                .invokeMethod(ex, "getExceptionClass", null, null);
+                    .invokeMethod(ex, "getExceptionClass", null, null);
             if (getExceptionClass.isPresent()) {
                 mayBeRealClassName = (String) getExceptionClass.get();
             }
@@ -104,7 +104,7 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
 
     private Class<? extends Throwable> getRealExceptionClass(Throwable ex) {
         if (ex instanceof InvokerWrapperException) {
-            // 判断是否是目标包装异常
+            // Determine whether it is an exception in the target wrapper
             InvokerWrapperException invokerWrapperException = (InvokerWrapperException) ex;
             if (invokerWrapperException.getRealException() != null) {
                 return invokerWrapperException.getRealException().getClass();

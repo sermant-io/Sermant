@@ -46,7 +46,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * 处理器测试
+ * HandlerTest
  *
  * @author zhouss
  * @since 2022-03-03
@@ -80,7 +80,7 @@ public class HandlerTest {
                 .thenReturn(flowControlConfig);
     }
 
-    // mock 静态方法用完后需要关闭
+    // The mock static method needs to be closed when it is finished
     @After
     public void tearDown() throws Exception {
         operationManagerMockedStatic.close();
@@ -88,7 +88,7 @@ public class HandlerTest {
     }
 
     /**
-     * 测试隔离仓
+     * test Bulkhead
      */
     @Test
     public void testBulkhead() {
@@ -103,7 +103,7 @@ public class HandlerTest {
     }
 
     /**
-     * 测试限流
+     * test rate limiting
      */
     @Test
     public void testRateLimiting() {
@@ -118,7 +118,7 @@ public class HandlerTest {
     }
 
     /**
-     * 测试熔断
+     * test circuit breaker
      */
     @Test
     public void testCircuitBreaker() {
@@ -126,7 +126,7 @@ public class HandlerTest {
     }
 
     /**
-     * 测试实例隔离
+     * test instance isolation
      */
     @Test
     public void testInstanceIsolation() {

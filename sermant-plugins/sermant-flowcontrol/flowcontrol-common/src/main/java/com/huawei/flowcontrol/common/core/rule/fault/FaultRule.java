@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 错误注入
+ * fault injection
  *
  * @author zhouss
  * @since 2022-08-05
@@ -37,41 +37,41 @@ public class FaultRule extends AbstractRule {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 错误注入类型,当前支持
-     * delay : 延迟
-     * abort : 丢弃
+     * error injection type currently supported
+     * delay
+     * abort
      */
     private String type = RuleConstants.FAULT_RULE_DELAY_TYPE;
 
     /**
-     * 延迟时间, 默认0
+     * the default delay time is 0
      */
     private String delayTime = "0";
 
     /**
-     * 解析后的延迟时间
+     * the delay time after resolution
      */
     private long parsedDelayTime;
 
     /**
-     * 注入概率
+     * injection probability
      */
     private int percentage = -1;
 
     /**
-     * 抛异常时错误码
+     * error code when throwing an exception
      */
     private int errorCode = CommonConst.INTERVAL_SERVER_ERROR;
 
     /**
-     * 是否强制关闭, 设置为true时, 永远不会生效
+     * Whether to force shutdown. When set to true, it never takes effect
      */
     private boolean forceClosed = false;
 
     /**
-     * 反馈类型,当前支持以下两种
-     * ThrowException: 直接抛异常
-     * ReturnNull: 直接返回null
+     * Feedback type: The following two types are supported
+     * ThrowException: direct throw exception
+     * ReturnNull: return null directly
      */
     private String fallbackType = RuleConstants.FAULT_RULE_FALLBACK_THROW_TYPE;
 
@@ -106,9 +106,9 @@ public class FaultRule extends AbstractRule {
     }
 
     /**
-     * 设置延迟时间, 并转换为long
+     * set the delay time and convert it to long
      *
-     * @param delayTime 延迟时间
+     * @param delayTime delay time
      */
     public void setDelayTime(String delayTime) {
         this.delayTime = delayTime;

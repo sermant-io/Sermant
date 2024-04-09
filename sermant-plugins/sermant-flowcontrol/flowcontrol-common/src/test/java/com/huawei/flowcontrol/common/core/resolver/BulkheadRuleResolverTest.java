@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 import org.junit.Assert;
 
 /**
- * bulkhead测试
+ * bulkhead test
  *
  * @author zhouss
  * @since 2022-08-29

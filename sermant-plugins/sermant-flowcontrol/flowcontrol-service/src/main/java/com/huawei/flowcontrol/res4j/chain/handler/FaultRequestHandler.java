@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 错误注入请求处理器
+ * error injection request handler
  *
  * @author zhouss
  * @since 2022-08-08

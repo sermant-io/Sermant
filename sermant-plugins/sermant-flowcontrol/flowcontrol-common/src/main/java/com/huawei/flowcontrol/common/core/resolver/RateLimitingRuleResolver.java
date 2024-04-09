@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.core.resolver;
 import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
 
 /**
- * 限流解析类
+ * rate limiting parsing class
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class RateLimitingRuleResolver extends AbstractResolver<RateLimitingRule> {
     /**
-     * 限流配置 键
+     * traffic limiting configuration key
      */
     public static final String CONFIG_KEY = "servicecomb.rateLimiting";
 
     /**
-     * 限流解析构造器
+     * current limiting analytic constructor
      */
     public RateLimitingRuleResolver() {
         super(CONFIG_KEY);

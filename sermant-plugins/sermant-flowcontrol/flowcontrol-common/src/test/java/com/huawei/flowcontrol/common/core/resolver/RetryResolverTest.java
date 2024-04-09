@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.common.core.rule.RetryRule;
 import org.junit.Assert;
 
 /**
- * 重试规则
+ * retry rule
  *
  * @author zhouss
  * @since 2022-08-29

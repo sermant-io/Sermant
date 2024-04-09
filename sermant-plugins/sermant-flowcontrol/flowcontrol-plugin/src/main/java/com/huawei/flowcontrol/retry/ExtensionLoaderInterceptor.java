@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * ExtensionLoader 拦截器， 用于注入cluster
+ * ExtensionLoader Interceptor， for injection cluster
  *
  * @author zhouss
  * @since 2022-03-04
@@ -42,14 +42,14 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * 后置方法, 注入cluster invoker
+     * postsetMethod, for injection cluster
      * <p>{@link com.huawei.flowcontrol.retry.cluster.AlibabaDubboCluster}</p>
      * <p>{@link com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker}</p>
      * <p>{@link com.huawei.flowcontrol.retry.cluster.ApacheDubboCluster}</p>
      * <p>{@link com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker}</p>
      *
-     * @param context 执行上下文
-     * @return 上下文
+     * @param context execution context
+     * @return execution context
      */
     @Override
     protected ExecuteContext doAfter(ExecuteContext context) {
@@ -70,14 +70,14 @@ public class ExtensionLoaderInterceptor extends InterceptorSupporter {
             final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
             if (APACHE_DUBBO_CLUSTER_CLASS_NAME.equals(type.getName())) {
                 ClassUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker", contextClassLoader);
+                        "com.huawei.flowcontrol.retry.cluster.ApacheDubboClusterInvoker", contextClassLoader);
                 retryInvokerClass = ClassUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.ApacheDubboCluster", contextClassLoader);
+                        "com.huawei.flowcontrol.retry.cluster.ApacheDubboCluster", contextClassLoader);
             } else if (ALIBABA_DUBBO_CLUSTER_CLASS_NAME.equals(type.getName())) {
                 ClassUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker", contextClassLoader);
+                        "com.huawei.flowcontrol.retry.cluster.AlibabaDubboClusterInvoker", contextClassLoader);
                 retryInvokerClass = ClassUtils.defineClass(
-                    "com.huawei.flowcontrol.retry.cluster.AlibabaDubboCluster", contextClassLoader);
+                        "com.huawei.flowcontrol.retry.cluster.AlibabaDubboCluster", contextClassLoader);
             } else {
                 return context;
             }

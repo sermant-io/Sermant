@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.res4j.handler;
 import com.huawei.flowcontrol.common.core.resolver.InstanceIsolationRuleResolver;
 
 /**
- * 实例隔离, 客户端层次调用隔离
+ * instance isolation: client level call isolation
  *
  * @author zhouss
  * @since 2022-07-20

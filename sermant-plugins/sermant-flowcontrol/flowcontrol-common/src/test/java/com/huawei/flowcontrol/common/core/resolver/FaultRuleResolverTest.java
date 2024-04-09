@@ -23,7 +23,7 @@ import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 import org.junit.Assert;
 
 /**
- * 错误注入解析器测试
+ * error injection parser test
  *
  * @author zhouss
  * @since 2022-08-29

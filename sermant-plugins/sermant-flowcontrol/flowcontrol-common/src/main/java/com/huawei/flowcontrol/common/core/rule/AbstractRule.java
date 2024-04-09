@@ -27,24 +27,24 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * 抽象规则
+ * abstract rule
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public abstract class AbstractRule extends Configurable implements Rule, Comparable<AbstractRule> {
     /**
-     * 时间格式
+     * time format
      */
     private static final String DIGIT_MATCH = "-?[0-9]{1,10}";
 
     /**
-     * duration转换前缀
+     * duration translation prefix
      */
     private static final String DURATION_PREFIX = "PT";
 
     /**
-     * 规则优先级, 越小则优先级越高
+     * Rule priority. A smaller rule has a higher priority
      */
     protected int order = 0;
 
@@ -77,12 +77,12 @@ public abstract class AbstractRule extends Configurable implements Rule, Compara
     }
 
     /**
-     * 字符串转long类型毫秒
+     * the string is converted to long milliseconds
      *
-     * @param time 时间字符串 1000->1000毫秒 -1000->负1000毫秒 1000S(s) 1000秒->1000000毫秒
-     * @param defaultValue 默认值
+     * @param time timeString 1000->1000milliseconds -1000->-1000milliseconds 1000S(s) 1000seconds->1000000milliseconds
+     * @param defaultValue default
      * @return 转换值
-     * @throws IllegalArgumentException 参数不合法抛出
+     * @throws IllegalArgumentException thrown if the argument is not valid
      */
     protected long parseLongTime(String time, long defaultValue) {
         if (StringUtils.isEmpty(time)) {
@@ -100,9 +100,9 @@ public abstract class AbstractRule extends Configurable implements Rule, Compara
     }
 
     /**
-     * duration格式转换
+     * duration format conversion
      *
-     * @param time 原始格式
+     * @param time raw format
      * @return duration
      */
     private Optional<Duration> tryParseWithDuration(String time) {
