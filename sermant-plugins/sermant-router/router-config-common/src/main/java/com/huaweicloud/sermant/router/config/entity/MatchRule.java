@@ -17,24 +17,24 @@
 package com.huaweicloud.sermant.router.config.entity;
 
 /**
- * 参数匹配
+ * Parameter matching
  *
  * @author provenceee
  * @since 2021-10-27
  */
 public class MatchRule {
     /**
-     * 值匹配规则
+     * Value matching rules
      */
     private ValueMatch valueMatch;
 
     /**
-     * 是否区分大小写
+     * Whether it is case-sensitive
      */
     private boolean caseInsensitive;
 
     /**
-     * dubbo获取参数的类型: [留空], [.name], [.isEnabled()], [[0]], [.get(0)], [.get("key")]
+     * Dubbo obtains the type of the parameter: [], [.name], [.isEnabled()], [[0]], [.get(0)], [.get("key")]
      */
     private String type;
 

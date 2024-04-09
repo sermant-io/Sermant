@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试类
+ * Test class
  *
  * @since 2022-03-18
  */
@@ -38,19 +38,19 @@ public class AlibabaInvoker<T> implements Invoker<T> {
     private final URL url;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param version 版本
+     * @param version version
      */
     public AlibabaInvoker(String version) {
         this(version, null);
     }
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param version 版本
-     * @param zone 区域
+     * @param version version
+     * @param zone region
      */
     public AlibabaInvoker(String version, String zone) {
         Map<String, String> map = new HashMap<>();

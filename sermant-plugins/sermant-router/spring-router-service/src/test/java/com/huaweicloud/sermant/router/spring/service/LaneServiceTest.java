@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LaneServiceImpl
+ * Test LaneServiceImpl
  *
  * @author provenceee
  * @since 2023-02-27
@@ -59,7 +59,7 @@ public class LaneServiceTest {
     }
 
     /**
-     * 测试规则无效时
+     * When the test rule is invalid
      */
     @Test
     public void testWithInvalidConfiguration() {
@@ -71,7 +71,7 @@ public class LaneServiceTest {
     }
 
     /**
-     * 测试没有命中的规则时
+     * When the test doesn't have a hit rule
      */
     @Test
     public void testWithEmptyRules() {
@@ -84,7 +84,7 @@ public class LaneServiceTest {
     }
 
     /**
-     * 测试规则不匹配时
+     * When the test rules do not match
      */
     @Test
     public void testWithEmptyRoutes() {
@@ -99,7 +99,7 @@ public class LaneServiceTest {
     }
 
     /**
-     * 测试getLane方法
+     * Test the getLane method
      */
     @Test
     public void testGetLane() {

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 增强ApplicationConfig类的setName方法，用来获取应用名
+ * Enhance the setName method of the ApplicationConfig class to obtain the application name
  *
  * @author provenceee
  * @since 2021-11-08
@@ -38,7 +38,7 @@ public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);

@@ -19,16 +19,17 @@ package com.huaweicloud.sermant.router.dubbo.service;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * ClusterUtils的service
+ * The service of ClusterUtils
  *
  * @author provenceee
  * @since 2022-03-09
  */
 public interface ClusterUtilsService extends PluginService {
     /**
-     * 从url中缓存接口与下游服务名的映射关系，从map中删除标签相关的参数
+     * Cache the mapping relationship between the interface and downstream service names from the URL,
+     * and remove label related parameters from the map
      *
-     * @param arguments 请求参数
+     * @param arguments request parameters
      */
     void doBefore(Object[] arguments);
 }

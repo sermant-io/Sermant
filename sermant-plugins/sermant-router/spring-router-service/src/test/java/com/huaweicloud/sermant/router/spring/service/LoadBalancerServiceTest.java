@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LoadBalancerServiceImpl
+ * Test LoadBalancerServiceImpl
  *
  * @author provenceee
  * @since 2022-09-13
@@ -55,7 +55,7 @@ public class LoadBalancerServiceTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -69,7 +69,7 @@ public class LoadBalancerServiceTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -77,7 +77,7 @@ public class LoadBalancerServiceTest {
     }
 
     /**
-     * 重置
+     * Reset
      */
     @Before
     public void reset() {
@@ -85,7 +85,7 @@ public class LoadBalancerServiceTest {
     }
 
     /**
-     * 测试getGetTargetInstances方法(flow匹配规则)
+     * Test the getGetTargetExamples method (flow matching rule)
      */
     @Test
     public void testGetGetTargetInstancesByFlowMatchRules() {
@@ -105,7 +105,7 @@ public class LoadBalancerServiceTest {
     }
 
     /**
-     * 测试getGetTargetInstances方法(tag匹配规则)
+     * Test the getGetTargetExamples method (tag matching rule)
      */
     @Test
     public void testGetTargetInstancesByTagMatchRules() {
@@ -126,7 +126,7 @@ public class LoadBalancerServiceTest {
     }
 
     /**
-     * 测试getGetTargetInstances方法(同时下发flow和tag匹配规则)
+     * Test the getGetTargetExamples method (simultaneously issuing flow and tag matching rules)
      */
     @Test
     public void testGetTargetInstancesByAllRules() {

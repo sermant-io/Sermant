@@ -28,7 +28,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * 测试ZuulServletInterceptor
+ * Test ZuulServletInterceptor
  *
  * @author provenceee
  * @since 2023-02-28
@@ -41,7 +41,7 @@ public class ZuulServletInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -50,15 +50,15 @@ public class ZuulServletInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
-        // requestTag为null
+        // RequestTag is null
         interceptor.before(null);
         Assert.assertEquals(0, RequestContext.getCurrentContext().getZuulRequestHeaders().size());
 
-        // requestTag不为null
+        // rRequestTag is not null
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         interceptor.before(null);
         Assert.assertEquals(1, RequestContext.getCurrentContext().getZuulRequestHeaders().size());

@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * 配置类型处理器（兼容1.0.x版本使用）
+ * Configuration type processor (compatible with version 1.0. x)
  *
  * @author provenceee
  * @since 2024-01-11
@@ -65,10 +65,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     private final String kind;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param prefix 服务级key的前缀，用来截取服务名
-     * @param kind 配置类型
+     * @param prefix The prefix of the service-level key, which is used to intercept the service name
+     * @param kind Configuration type
      */
     public AbstractKindHandler(String prefix, String kind) {
         this.yaml = new Yaml(new SafeConstructor(null));
@@ -77,10 +77,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     }
 
     /**
-     * 路由配置类型处理
+     * Route configuration type processing
      *
-     * @param event 配置监听事件
-     * @param cacheName 缓存名
+     * @param event Configure listening events
+     * @param cacheName Cache name
      */
     @Override
     public void handle(DynamicConfigEvent event, String cacheName) {
@@ -94,10 +94,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     }
 
     /**
-     * 是否需要兼容性处理
+     * Whether compatibility processing is required
      *
-     * @param key 配置key
-     * @return 是否需要处理
+     * @param key Configuration key
+     * @return Whether it needs to be processed
      */
     @Override
     public boolean shouldHandle(String key) {
@@ -106,10 +106,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     }
 
     /**
-     * 解析全局配置
+     * Resolve the global configuration
      *
-     * @param event 事件
-     * @param cacheName 缓存key
+     * @param event event
+     * @param cacheName Cache key
      */
     private void handleGlobalRules(DynamicConfigEvent event, String cacheName) {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
@@ -134,10 +134,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     }
 
     /**
-     * 解析服务级配置（全集）
+     * Parsing Service-Level Configurations (Complete Set)
      *
-     * @param event 事件
-     * @param cacheName 缓存key
+     * @param event Event
+     * @param cacheName Cache key
      */
     private void handleRouterRules(DynamicConfigEvent event, String cacheName) {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);
@@ -170,10 +170,10 @@ public abstract class AbstractKindHandler implements AbstractHandler {
     }
 
     /**
-     * 解析服务级配置
+     * Resolve service-level configurations
      *
-     * @param event 事件
-     * @param cacheName 缓存key
+     * @param event Event
+     * @param cacheName Cache key
      */
     private void handleServiceRules(DynamicConfigEvent event, String cacheName) {
         RouterConfiguration configuration = ConfigCache.getLabel(cacheName);

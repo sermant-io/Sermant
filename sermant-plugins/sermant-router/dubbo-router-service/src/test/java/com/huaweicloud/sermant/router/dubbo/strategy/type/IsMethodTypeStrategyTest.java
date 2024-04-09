@@ -22,14 +22,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * enabled匹配策略测试
+ * enabled matching strategy test
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class IsMethodTypeStrategyTest {
     /**
-     * 测试enabled策略
+     * test the enabled policy
      */
     @Test
     public void testValue() {
@@ -38,22 +38,22 @@ public class IsMethodTypeStrategyTest {
         entity.setEnabled(true);
         entity.setExist(true);
 
-        // 正常情况
+        // normal
         Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isEnabled()").orElse(null));
 
-        // 测试找不到方法
+        // the test could not find a way
         Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()").orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertNull(strategy.getValue(new Entity(), ".isEnabled()").orElse(null));
 
-        // 正常情况
+        // normal
         Assert.assertEquals(Boolean.TRUE.toString(), strategy.getValue(entity, ".isExist()").orElse(null));
 
-        // 测试找不到方法
+        // the test couldn't find a way
         Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(entity, ".foo()").orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertEquals(Boolean.FALSE.toString(), strategy.getValue(new Entity(), ".isExist()").orElse(null));
     }
 }

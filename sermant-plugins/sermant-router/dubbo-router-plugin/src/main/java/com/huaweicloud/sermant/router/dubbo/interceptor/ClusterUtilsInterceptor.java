@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.dubbo.service.ClusterUtilsService;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法
+ * Enhance the mergeUrl method of the ClusterUtils class
  *
  * @author provenceee
  * @since 2021-06-28
@@ -31,7 +31,7 @@ public class ClusterUtilsInterceptor extends AbstractInterceptor {
     private final ClusterUtilsService clusterUtilsService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ClusterUtilsInterceptor() {
         clusterUtilsService = PluginServiceManager.getPluginService(ClusterUtilsService.class);

@@ -19,21 +19,21 @@ package com.huaweicloud.sermant.router.spring.cache;
 import java.util.Map;
 
 /**
- * 缓存
+ * Cache
  *
  * @author provenceee
  * @since 2022-07-13
  */
 public enum AppCache {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
-    // 应用名
+    // The name of the app
     private String appName;
 
-    // 元数据
+    // Metadata
     private Map<String, String> metadata;
 
     public String getAppName() {

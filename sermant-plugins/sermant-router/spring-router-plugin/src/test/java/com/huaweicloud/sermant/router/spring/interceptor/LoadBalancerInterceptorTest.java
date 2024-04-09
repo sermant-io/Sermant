@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试LoadBalancerInterceptor
+ * Test LoadBalancerInterceptor
  *
  * @author provenceee
  * @since 2024-01-16
@@ -60,7 +60,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     private final TestLoadBalancer loadBalancer;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -70,7 +70,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -85,7 +85,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void reset() {
@@ -99,7 +99,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试路由规则无效时
+     * When the test routing rule is invalid
      */
     @Test
     public void testBeforeWhenServiceIdIsNull() {
@@ -111,7 +111,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试实例列表为空时
+     * When the test instance list is empty
      */
     @Test
     public void testBeforeWithEmptyInstances() {
@@ -124,7 +124,7 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试正常情况
+     * Test for normal conditions
      */
     @Test
     public void testBefore() {

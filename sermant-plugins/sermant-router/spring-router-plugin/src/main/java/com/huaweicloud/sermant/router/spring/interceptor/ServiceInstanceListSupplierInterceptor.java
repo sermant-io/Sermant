@@ -35,7 +35,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * CachingServiceInstanceListSupplier/DiscoveryClientServiceInstanceListSupplier增强类，筛选下游实例
+ * CachingServiceInstance List Supplier/DiscoveryClientServiceInstance List Supplier enhanced class, filtering
+ * downstream instances
  *
  * @author provenceee
  * @since 2022-07-12
@@ -44,7 +45,7 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
     private final LoadBalancerService loadBalancerService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ServiceInstanceListSupplierInterceptor() {
         loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);
@@ -88,7 +89,7 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
                 return flux.collectList().toProcessor().block();
             }
 
-            // 这种情况不处理，所以返回emptyList
+            // This case is not handled, so an empty list is returned
             return Collections.emptyList();
         }
         return (List<Object>) flux.next().toProcessor().block();

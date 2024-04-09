@@ -20,16 +20,16 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.router.common.mapper.AbstractMetadataMapper;
 
 /**
- * 设置InvokerRuleStrategy的service
+ * Set InvokerRuleStrategy's service
  *
  * @author chengyouling
  * @since 2024-02-23
  */
 public interface InvokerRuleStrategyService extends PluginService {
     /**
-     * 设置dubbo3注册实例类型时的invokerRuleStrategy
+     * Set the invokerRuleStrategy when registering an instance type in dubbo 3
      *
-     * @param mapper 元数据meta处理mapper
+     * @param mapper Meta processing of metadata mapper
      */
     void builedDubbo3RuleStrategy(AbstractMetadataMapper<Object> mapper);
 }

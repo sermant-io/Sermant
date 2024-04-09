@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * dubbo3.x instance注册类型时元数据处理测试
+ * Dubbo3.x instance is tested for metadata processing when registering types
  *
  * @author chengyouling
  * @since 2024-03-18
@@ -44,7 +44,7 @@ public class Dubbo3InstanceMapperTest {
     private final InstanceAddressURL instanceAddressURL;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public Dubbo3InstanceMapperTest() {
         RpcContext.getServiceContext().setConsumerUrl(APACHE_URL);
@@ -67,7 +67,7 @@ public class Dubbo3InstanceMapperTest {
     }
 
     /**
-     * 测试获取metadata
+     * test to obtain metadata
      */
     @Test
     public void testApply() {

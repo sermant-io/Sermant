@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.dubbo.strategy.TypeStrategy;
 import java.util.Optional;
 
 /**
- * 数据匹配策略
+ * data matching policies
  *
  * @author provenceee
  * @since 2021-10-13

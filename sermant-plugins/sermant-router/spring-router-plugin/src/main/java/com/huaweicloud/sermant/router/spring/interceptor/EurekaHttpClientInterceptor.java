@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 import com.netflix.appinfo.InstanceInfo;
 
 /**
- * EurekaHttpClient增强类，eureka注册方法
+ * EurekaHttpClient Enhancement Class, Eureka Registration Method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -40,7 +40,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
     private final SpringConfigService configService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public EurekaHttpClientInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * ClientHttpRequestInterceptor增强类，发起restTemplate请求方法
+ * ClientHttpRequestInterceptor enhancement class, initiate restTemplate request method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -70,7 +70,7 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
         if (requestTag != null) {
             Map<String, List<String>> header = requestTag.getTag();
             for (Entry<String, List<String>> entry : header.entrySet()) {
-                // 使用上游传递的header
+                // Use the header passed upstream
                 headers.putIfAbsent(entry.getKey(), entry.getValue());
             }
         }

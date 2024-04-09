@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.dubbo.strategy.TypeStrategy;
 import java.util.Optional;
 
 /**
- * 空匹配策略
+ * Empty matching strategy
  *
  * @author provenceee
  * @since 2021-10-13

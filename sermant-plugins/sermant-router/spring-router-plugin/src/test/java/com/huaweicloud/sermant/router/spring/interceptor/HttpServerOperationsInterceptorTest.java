@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 测试HttpServerOperationsInterceptor
+ * Test HttpServerOperationsInterceptor
  *
  * @author provenceee
  * @since 2024-01-16

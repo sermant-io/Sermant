@@ -36,7 +36,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * dubbo3.x instance注册类型时设置应用名
+ * Set the application name when registering a dubbo3.x instance
  *
  * @author chengyouling
  * @since 2024-03-18
@@ -61,7 +61,7 @@ public class ServiceDiscoveryRegistryDirectoryInterceptorTest {
     }
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ServiceDiscoveryRegistryDirectoryInterceptorTest() {
         RpcContext.getServiceContext().setConsumerUrl(APACHE_URL);
@@ -90,7 +90,7 @@ public class ServiceDiscoveryRegistryDirectoryInterceptorTest {
     }
 
     /**
-     * 测试设置应用名
+     * Test setting application name
      */
     @Test
     public void testBefore() {

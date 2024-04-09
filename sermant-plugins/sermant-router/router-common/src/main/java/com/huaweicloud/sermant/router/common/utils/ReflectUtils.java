@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 反射工具类
+ * Reflection tool class
  *
  * @author provenceee
  * @since 2022-02-07
@@ -48,22 +48,22 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取私有字段值
+     * Get private field values
      *
-     * @param obj 对象
-     * @param fieldName 字段名
-     * @return 私有字段值
+     * @param obj Object
+     * @param fieldName The name of the field
+     * @return Private field values
      */
     public static Optional<Object> getFieldValue(Object obj, String fieldName) {
         return com.huaweicloud.sermant.core.utils.ReflectUtils.getFieldValue(obj, fieldName);
     }
 
     /**
-     * 获取权限检查类
+     * Get the permission check class
      *
-     * @param object 权限检查对象
-     * @param <T> 权限检查对象
-     * @return 返回setAccessible(true)之后的对象
+     * @param object Permission check object
+     * @param <T> Permission check object
+     * @return Returns the object after setAccessible(true).
      */
     public static <T extends AccessibleObject> T getAccessibleObject(T object) {
         return (T) ACCESSIBLE_OBJECT_MAP.computeIfAbsent(object.toString(), key ->
@@ -76,11 +76,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射调用无参方法并且返回字符串
+     * Reflection calls a parameterless method and returns a string
      *
-     * @param obj 对象
-     * @param name 方法名
-     * @return 值
+     * @param obj Object
+     * @param name Method Name
+     * @return The return value of the method execution
      */
     public static String invokeWithNoneParameterAndReturnString(Object obj, String name) {
         Object result = invokeWithNoneParameter(obj, name);
@@ -88,24 +88,24 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射调用无参方法
+     * Reflection calls the parameter-free method
      *
-     * @param obj 对象
-     * @param name 方法名
-     * @return 值
+     * @param obj Object
+     * @param name Method Name
+     * @return The return value of the method execution
      */
     public static Object invokeWithNoneParameter(Object obj, String name) {
         return invoke(obj.getClass(), obj, name, null, null).orElse(null);
     }
 
     /**
-     * 反射调用有一个参数的方法
+     * Reflection calls a method that has a parameter
      *
-     * @param obj 对象
-     * @param name 方法名
-     * @param parameter 参数
-     * @param parameterClass 参数类型
-     * @return 值
+     * @param obj Object
+     * @param name method name
+     * @param parameter Parameter
+     * @param parameterClass Parameter type
+     * @return Value
      */
     public static Object invokeWithParameter(Object obj, String name, Object parameter, Class<?> parameterClass) {
         return invoke(obj.getClass(), obj, name, parameter, parameterClass).orElse(null);
@@ -120,7 +120,8 @@ public class ReflectUtils {
                 }
                 return Optional.of(getAccessibleObject(invokeClass.getMethod(name, parameterClass)));
             } catch (NoSuchMethodException noSuchMethodException) {
-                // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+                // Due to version limitations, it is possible that methods may not be found,
+                // so these errors can be ignored
                 LOGGER.log(Level.WARNING, "Method {0} for class {1} is not found.",
                         new Object[]{name, invokeClass.getCanonicalName()});
             }
@@ -133,7 +134,8 @@ public class ReflectUtils {
                 }
                 return Optional.ofNullable(method.get().invoke(obj, parameter));
             } catch (IllegalAccessException | InvocationTargetException operationException) {
-                // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+                // Due to version limitations, it is possible that methods may not be found,
+                // so these errors can be ignored
                 LOGGER.log(Level.WARNING, "Method {0} for class {1} is not found.",
                         new Object[]{name, invokeClass.getCanonicalName()});
             }
@@ -148,7 +150,7 @@ public class ReflectUtils {
         }
         String className = clazz.getName();
 
-        // 初始化StringBuilder的长度是为了性能
+        // Initialize the length of the StringBuilder for performance purposes
         StringBuilder sb = new StringBuilder(
                 className.length() + methodName.length() + parameterClassName.length() + EXTRA_LENGTH_FOR_METHOD_KEY);
         sb.append(className).append("#").append(methodName).append("(").append(parameterClassName).append(")");

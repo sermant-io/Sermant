@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
- * Policy事件上报工具类
+ * Policy event reporting tool class
  *
  * @author robotLJW
  * @since 2023-04-06
@@ -42,11 +42,11 @@ public class PolicyEventUtils {
     }
 
     /**
-     * 通知相同TAG匹配上的事件
+     * Notify events on the same TAG match
      *
-     * @param newState 新匹配状态
-     * @param tags match里的tags信息
-     * @param serviceName 服务名
+     * @param newState New match status
+     * @param tags Tags in match
+     * @param serviceName Service name
      */
     public static void notifySameTagMatchedEvent(PolicyEvent newState, Map<String, List<MatchRule>> tags,
             String serviceName) {
@@ -59,11 +59,11 @@ public class PolicyEventUtils {
     }
 
     /**
-     * 通知相同TAG未匹配上的事件
+     * Notify the same TAG of the event on which it is not matched
      *
-     * @param newState 新匹配状态
-     * @param tags match里的tags信息
-     * @param serviceName 服务名
+     * @param newState New match status
+     * @param tags Tags in match
+     * @param serviceName Service name
      */
     public static void notifySameTagMisMatchedEvent(PolicyEvent newState, Map<String, List<MatchRule>> tags,
                                                     String serviceName) {

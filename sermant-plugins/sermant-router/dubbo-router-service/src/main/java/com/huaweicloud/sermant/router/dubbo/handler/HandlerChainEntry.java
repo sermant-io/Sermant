@@ -23,14 +23,14 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
- * 路由处理器链入口
+ * route handler chain entry
  *
  * @author lilai
  * @since 2023-02-24
  */
 public enum HandlerChainEntry {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
@@ -49,13 +49,13 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * 调用路由处理器链
+     * invoke the route handler chain
      *
-     * @param targetService 目标服务
+     * @param targetService target service
      * @param invokers invokers
      * @param invocation invocation
-     * @param queryMap RegistryDirectory的queryMap
-     * @param serviceInterface 接口名
+     * @param queryMap RegistryDirectory's queryMap
+     * @param serviceInterface the name of the interface
      * @return invokers
      * @see org.apache.dubbo.registry.integration.RegistryDirectory
      * @see com.alibaba.dubbo.rpc.Invoker

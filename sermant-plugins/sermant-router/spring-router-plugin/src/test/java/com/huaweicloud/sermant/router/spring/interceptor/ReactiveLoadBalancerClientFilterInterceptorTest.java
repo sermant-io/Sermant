@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试ReactiveLoadBalancerClientFilterInterceptor
+ * Test ReactiveLoadBalancerClientFilterInterceptor
  *
  * @author provenceee
  * @since 2024-01-16
@@ -61,7 +61,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void initTransmitConfig() {
@@ -73,7 +73,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void closeMock() {
@@ -81,7 +81,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -90,11 +90,11 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
-        // RequestTag为null时
+        // When RequestTag is null
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
@@ -105,7 +105,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
 
-        // RequestTag不为null时
+        // When RequestTag is not null
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar-foo", Collections.singletonList("foo2")));
         interceptor.before(context);
         requestData = ThreadLocalUtils.getRequestData();
@@ -120,7 +120,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {
@@ -130,7 +130,7 @@ public class ReactiveLoadBalancerClientFilterInterceptorTest {
     }
 
     /**
-     * 测试onThrow方法
+     * Test the onThrow method
      */
     @Test
     public void testOnThrow() {

@@ -21,9 +21,9 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * org.springframework.web.client.RestTemplate的拦截点定义<br>
+ * Definition of interception points for org.springframework.web.client.RestTemplate<br>
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-27
  */
 public class RestTemplateDeclarer extends BaseRegistryPluginAdaptationDeclarer {

@@ -29,7 +29,7 @@ import org.apache.dubbo.registry.client.InstanceAddressURL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 增强ServiceDiscoveryRegistryDirectory类的overrideWithConfigurator方法
+ * Enhance the OverrideWithConfiguration method of the ServiceDiscoveryRegistryDirectory class
  *
  * @author chengyouling
  * @since 2024-02-20

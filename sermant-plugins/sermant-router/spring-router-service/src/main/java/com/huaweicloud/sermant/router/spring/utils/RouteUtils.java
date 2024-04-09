@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * 路由插件工具类
+ * Routing plug-in utility class
  *
  * @author provenceee
  * @since 2021-06-21
@@ -40,12 +40,12 @@ public class RouteUtils {
     }
 
     /**
-     * 获取匹配的泳道
+     * Get matching swimlanes
      *
-     * @param list 有效的规则
+     * @param list Valid rules
      * @param headers header
      * @param parameters parameters
-     * @return 匹配的泳道标记
+     * @return Matching swimlane markers
      */
     public static List<Route> getLaneRoutesByParameterArray(List<Rule> list, Map<String, List<String>> headers,
             Map<String, String[]> parameters) {
@@ -63,12 +63,12 @@ public class RouteUtils {
     }
 
     /**
-     * 获取匹配的泳道
+     * Get matching swimlanes
      *
-     * @param list 有效的规则
+     * @param list Valid rules
      * @param headers header
      * @param parameters parameters
-     * @return 匹配的泳道标记
+     * @return Matching swimlane markers
      */
     public static List<Route> getLaneRoutesByParameterList(List<Rule> list, Map<String, List<String>> headers,
             Map<String, List<String>> parameters) {
@@ -100,7 +100,7 @@ public class RouteUtils {
                 List<String> list = headers.get(key);
                 String arg = list == null ? null : list.get(0);
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 只要一个匹配不上，那就是不匹配
+                    // As long as one of them doesn't match, it's a mismatch
                     return false;
                 }
             }
@@ -123,7 +123,7 @@ public class RouteUtils {
                 String[] arr = parameters.get(key);
                 String arg = (arr == null || arr.length == 0) ? null : arr[0];
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 只要一个匹配不上，那就是不匹配
+                    // As long as one of them doesn't match, it's a mismatch
                     return false;
                 }
             }
@@ -146,7 +146,7 @@ public class RouteUtils {
                 List<String> list = parameters.get(key);
                 String arg = CollectionUtils.isEmpty(list) ? null : list.get(0);
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 只要一个匹配不上，那就是不匹配
+                    // As long as one of them doesn't match, it's a mismatch
                     return false;
                 }
             }

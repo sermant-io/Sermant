@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * Ribbon BaseLoadBalancer负载均衡增强类，筛选下游实例
+ * The Ribbon BaseLoadBalancer enhanced load balancer class filters downstream instances
  *
  * @author provenceee
  * @since 2022-07-12
@@ -34,7 +34,7 @@ public class BaseLoadBalancerDeclarer extends AbstractDeclarer {
     private static final String[] METHOD_NAME = {"getReachableServers", "getAllServers"};
 
     /**
-     * 构造方法
+     * Constructor
      */
     public BaseLoadBalancerDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, null);
@@ -46,9 +46,9 @@ public class BaseLoadBalancerDeclarer extends AbstractDeclarer {
     }
 
     /**
-     * 获取方法匹配器
+     * Get the method matcher
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     @Override
     public MethodMatcher getMethodMatcher() {

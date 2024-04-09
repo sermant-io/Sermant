@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.concurrent.Callable;
 
 /**
- * 测试ScheduledExecutorService
+ * Test ScheduledExecutorService
  *
  * @author provenceee
  * @since 2024-01-16
@@ -52,40 +52,40 @@ public class ScheduledExecutorServiceInterceptorTest extends BaseTest {
 
     @Test
     public void testBefore() {
-        // 测试null
+        // Test null
         interceptor.before(context);
         Assert.assertNull(context.getArguments()[0]);
 
-        // 测试没有路由数据
+        // The test has no routing data
         Runnable runnable = () -> {
         };
         arguments[0] = runnable;
         interceptor.before(context);
         Assert.assertEquals(runnable, context.getArguments()[0]);
 
-        // 存入路由数据
+        // The test has no routing data
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("foo", Collections.singletonList("bar")));
 
-        // 测试已经包装过了
+        // The test has already been packaged
         RunnableWrapper<?> runnableWrapper = new RunnableWrapper<>(null, null, null, false);
         arguments[0] = runnableWrapper;
         interceptor.before(context);
         Assert.assertEquals(runnableWrapper, context.getArguments()[0]);
 
-        // 包装RunnableAndCallable
+        // Wrap RunnableAndCallable
         RunnableAndCallable runnableAndCallable = new RunnableAndCallable();
         arguments[0] = runnableAndCallable;
         interceptor.before(context);
         Assert.assertTrue(context.getArguments()[0] instanceof RunnableAndCallableWrapper);
 
-        // 包装Runnable
+        // Wrap Runnable
         Runnable runnable1 = () -> {
         };
         arguments[0] = runnable1;
         interceptor.before(context);
         Assert.assertTrue(context.getArguments()[0] instanceof RunnableWrapper);
 
-        // 包装Callable
+        // Wrap Callable
         Callable<Object> callable = () -> null;
         arguments[0] = callable;
         interceptor.before(context);

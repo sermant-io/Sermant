@@ -22,14 +22,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 实体匹配策略测试
+ * entity matching strategy testing
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class ObjectTypeStrategyTest {
     /**
-     * 测试实体策略
+     * test entity strategy
      */
     @Test
     public void testValue() {
@@ -37,20 +37,20 @@ public class ObjectTypeStrategyTest {
         Entity entity = new Entity();
         entity.setTest("bar");
 
-        // 正常情况
+        // Normal
         Assert.assertEquals("bar", strategy.getValue(entity, ".test").orElse(null));
 
-        // 测试null
+        // Test null
         Assert.assertNotEquals("bar", strategy.getValue(new Entity(), ".test").orElse(null));
 
-        // 测试找不到方法
+        // The test couldn't find methods
         Assert.assertNull(strategy.getValue(new Entity(), ".foo").orElse(null));
 
         Assert.assertNull(strategy.getValue(new Entity(), ".Foo").orElse(null));
 
         Assert.assertNull(strategy.getValue(new Entity(), ".$oo").orElse(null));
 
-        // 测试不等于
+        // The test is not equal
         entity.setTest("foo");
         Assert.assertNotEquals("bar", strategy.getValue(entity, ".test").orElse(null));
     }

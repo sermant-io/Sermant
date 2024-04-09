@@ -28,7 +28,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 import java.util.Collections;
 
 /**
- * HystrixContexSchedulerAction增强类，设置线程参数
+ * HystrixContexSchedulerAction enhancement class, setting thread parameters
  *
  * @author provenceee
  * @since 2022-07-12
@@ -46,7 +46,7 @@ public class HystrixActionInterceptor extends AbstractInterceptor {
             HystrixRequestVariableDefault<RequestTag> hystrixRequest = new HystrixRequestVariableDefault<>();
             RequestTag requestTag = ThreadLocalUtils.getRequestTag();
 
-            // 禁止存入null，否则会有严重的性能问题
+            // It is forbidden to deposit null, otherwise there will be serious performance problems
             hystrixRequest.set(requestTag == null ? EMPTY_REQUEST_HEADER : requestTag);
         }
         return context;

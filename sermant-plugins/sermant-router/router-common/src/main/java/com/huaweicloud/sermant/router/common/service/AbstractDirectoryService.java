@@ -19,17 +19,17 @@ package com.huaweicloud.sermant.router.common.service;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * AbstractDirectory的service
+ * AbstractDirectory's service
  *
  * @author provenceee
  * @since 2021-11-24
  */
 public interface AbstractDirectoryService extends PluginService {
     /**
-     * 筛选标签invoker
+     * filter the label invoker
      *
      * @param obj RegistryDirectory
-     * @param invocation 参数
+     * @param invocation parameter
      * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory

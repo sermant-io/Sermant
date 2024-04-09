@@ -131,7 +131,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--    zuul自身引入的commons-io有漏洞，排除后引入无漏洞版本    -->
+        <!--    The commons io introduced by zuul itself has vulnerabilities, and after troubleshooting,
+        a vulnerability-free version will be introduced    -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>

@@ -20,21 +20,21 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 判断实例是否匹配的标签路由策略
+ * This is the label routing policy used to determine whether the instance matches
  *
- * @param <I> 实例泛型
- * @param <T> 标签泛型
+ * @param <I> Instance generics
+ * @param <T> Label generics
  * @author provenceee
  * @since 2021-12-08
  */
 public interface InstanceStrategy<I, T> {
     /**
-     * 判断实例是否匹配
+     * Check whether the instances match
      *
-     * @param instance 实例
-     * @param tags 标签
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param instance Instance
+     * @param tags Label
+     * @param mapper Methods to obtain metadata
+     * @return Whether it matches or not
      */
     boolean isMatch(I instance, T tags, Function<I, Map<String, String>> mapper);
 }

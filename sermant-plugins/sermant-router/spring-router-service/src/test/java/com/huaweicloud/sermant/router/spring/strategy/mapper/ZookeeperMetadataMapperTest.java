@@ -27,14 +27,14 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 测试ZookeeperMetadataMapper
+ * Test ZookeeperMetadataMapper
  *
  * @author provenceee
  * @since 2022-09-30
  */
 public class ZookeeperMetadataMapperTest {
     /**
-     * 测试ZookeeperServer获取元数据方法
+     * Test the method of obtaining metadata from the ZookeeperServer
      *
      * @throws Exception 异常
      */

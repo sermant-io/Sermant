@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * dubbo3.x all/interface注册类型时设置应用名
+ * Set the application name when registering the dubbo3.x all/interface type
  *
  * @author chengyouling
  * @since 2024-03-18
@@ -42,7 +42,7 @@ public class RegistryDirectoryInterceptorTest {
     private final RegistryDirectoryInterceptor interceptor;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryDirectoryInterceptorTest() {
         RpcContext.getServiceContext().setConsumerUrl(APACHE_URL);
@@ -50,7 +50,7 @@ public class RegistryDirectoryInterceptorTest {
     }
 
     /**
-     * 测试设置应用名
+     * Test setting application name
      */
     @Test
     public void testBefore() {

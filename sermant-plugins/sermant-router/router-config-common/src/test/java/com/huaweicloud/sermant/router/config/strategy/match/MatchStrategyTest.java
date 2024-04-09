@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 值匹配策略测试
+ * Value matching strategy test
  *
  * @author provenceee
  * @since 2021-12-01
@@ -64,7 +64,7 @@ public class MatchStrategyTest {
     private List<String> nullValueList;
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void before() {
@@ -91,419 +91,419 @@ public class MatchStrategyTest {
     }
 
     /**
-     * 等值匹配策略
+     * Equal-value matching strategy
      */
     @Test
     public void testExact() {
-        // 正常情况，不区分大小写
+        // Normally, test not case-sensitive
         Assert.assertTrue(exact.isMatch(new ArrayList<>(strValues), "FoO", false));
 
-        // 正常情况，区分大小写
+        // Normally, test case-sensitive
         Assert.assertTrue(exact.isMatch(new ArrayList<>(strValues), "foo", true));
 
-        // 测试大小写不一致
+        // Test case inconsistencies
         Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), "foO", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(exact.isMatch(new ArrayList<>(strValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(exact.isMatch(null, "FoO", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(exact.isMatch(null, "foo", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(exact.isMatch(emptyList, "FoO", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(exact.isMatch(emptyList, "foo", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(exact.isMatch(nullValueList, "FoO", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(exact.isMatch(nullValueList, "foo", true));
     }
 
     /**
-     * 正则表达式匹配策略
+     * Regular expression matching strategy
      */
     @Test
     public void testRegex() {
-        // 正常情况，不区分大小写
+        // Normally, it is not case sensitive
         Assert.assertTrue(regex.isMatch(new ArrayList<>(regexValues), "BaR", false));
 
-        // 正常情况，区分大小写
+        // Normally, it is case-sensitive
         Assert.assertTrue(regex.isMatch(new ArrayList<>(regexValues), "bar", true));
 
-        // 测试大小写不一致
+        // Test case inconsistencies
         Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), "Bar", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(regex.isMatch(new ArrayList<>(regexValues), null, true));
 
-        // 测试无效正则
+        // Invalid regex for testing
         Assert.assertFalse(regex.isMatch(new ArrayList<>(invalidRegexValues), "a", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(regex.isMatch(null, "BaR", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(regex.isMatch(null, "bar", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(regex.isMatch(emptyList, "BaR", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(regex.isMatch(emptyList, "bar", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(regex.isMatch(nullValueList, "BaR", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(regex.isMatch(nullValueList, "bar", true));
     }
 
     /**
-     * 不等于匹配策略
+     * Not equal to a matching strategy
      */
     @Test
     public void testNoEqu() {
-        // 正常情况，不区分大小写
+        // Normally, it is not case sensitive
         Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), "FoO", false));
 
-        // 正常情况，不区分大小写
+        // Normally, it is not case sensitive
         Assert.assertTrue(noEqu.isMatch(new ArrayList<>(strValues), "BaR", false));
 
-        // 正常情况，区分大小写
+        // Normally, it is case-sensitive
         Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), "foo", true));
 
-        // 测试大小写不一致
+        // Test case inconsistencies
         Assert.assertTrue(noEqu.isMatch(new ArrayList<>(strValues), "Foo", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noEqu.isMatch(new ArrayList<>(strValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noEqu.isMatch(null, "FoO", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noEqu.isMatch(null, "foo", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noEqu.isMatch(emptyList, "FoO", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noEqu.isMatch(emptyList, "foo", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noEqu.isMatch(nullValueList, "FoO", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noEqu.isMatch(nullValueList, "foo", true));
     }
 
     /**
-     * 不小于匹配策略
+     * Not less than the matching policy
      */
     @Test
     public void testNoLess() {
-        // 正常情况，等于，不区分大小写
+        // Normally, equals, is not case-sensitive
         Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "10", false));
 
-        // 正常情况，等于，区分大小写
+        // Normally, equals, case-sensitive
         Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "10", true));
 
-        // 正常情况，大于，不区分大小写
+        // Normally, greater than, is not case sensitive
         Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "11", false));
 
-        // 正常情况，大于，区分大小写
+        // Normally, greater than, case-sensitive
         Assert.assertTrue(noLess.isMatch(new ArrayList<>(intValues), "11", true));
 
-        // 测试小于，不区分大小写
+        // The test is smaller and case-insensitive
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "9", false));
 
-        // 测试小于，区分大小写
+        // The test is smaller than and case-sensitive
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "9", true));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "foo", false));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), "foo", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noLess.isMatch(new ArrayList<>(intValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noLess.isMatch(null, "10", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noLess.isMatch(null, "10", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noLess.isMatch(emptyList, "10", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noLess.isMatch(emptyList, "10", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noLess.isMatch(nullValueList, "10", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noLess.isMatch(nullValueList, "10", true));
     }
 
     /**
-     * 不大于匹配策略
+     * Not greater than the matching policy
      */
     @Test
     public void testNoGreater() {
-        // 正常情况，等于，不区分大小写
+        // Normally, equals, is not case-sensitive
         Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "10", false));
 
-        // 正常情况，等于，区分大小写
+        // Normally, equals, case-sensitive
         Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "10", true));
 
-        // 正常情况，小于，不区分大小写
+        // Normally, less than, not case-sensitive
         Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "9", false));
 
-        // 正常情况，小于，区分大小写
+        // Normally, less than, case-sensitive
         Assert.assertTrue(noGreater.isMatch(new ArrayList<>(intValues), "9", true));
 
-        // 测试大于，不区分大小写
+        // The test is larger than and is not case-sensitive
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "11", false));
 
-        // 测试大于，区分大小写
+        // The test is larger than and case-sensitive
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "11", true));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "foo", false));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), "foo", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(noGreater.isMatch(new ArrayList<>(intValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noGreater.isMatch(null, "10", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(noGreater.isMatch(null, "10", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noGreater.isMatch(emptyList, "10", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(noGreater.isMatch(emptyList, "10", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noGreater.isMatch(nullValueList, "10", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(noGreater.isMatch(nullValueList, "10", true));
     }
 
     /**
-     * 大于匹配策略
+     * Greater than the matching strategy
      */
     @Test
     public void testGreater() {
-        // 正常情况，大于，不区分大小写
+        // Normally, greater than, is not case sensitive
         Assert.assertTrue(greater.isMatch(new ArrayList<>(intValues), "11", false));
 
-        // 正常情况，大于，区分大小写
+        // Normally, greater than, case-sensitive
         Assert.assertTrue(greater.isMatch(new ArrayList<>(intValues), "11", true));
 
-        // 测试等于，不区分大小写
+        // The test is equal and case-insensitive
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "10", false));
 
-        // 测试等于，小于，区分大小写
+        // The test is equal to, less than, and case-sensitive
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "10", true));
 
-        // 测试小于，不区分大小写
+        // The test is smaller and case-insensitive
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "9", false));
 
-        // 测试小于，区分大小写
+        // The test is smaller than and case-sensitive
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "9", true));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "foo", false));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), "foo", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(greater.isMatch(new ArrayList<>(intValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(greater.isMatch(null, "11", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(greater.isMatch(null, "11", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(greater.isMatch(emptyList, "11", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(greater.isMatch(emptyList, "11", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(greater.isMatch(nullValueList, "11", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(greater.isMatch(nullValueList, "11", true));
     }
 
     /**
-     * 小于匹配策略
+     * Less than the matching policy
      */
     @Test
     public void testLess() {
-        // 正常情况，小于，不区分大小写
+        // Normally, less than, not case-sensitive
         Assert.assertTrue(less.isMatch(new ArrayList<>(intValues), "9", false));
 
-        // 正常情况，小于，区分大小写
+        // Normally, less than, case-sensitive
         Assert.assertTrue(less.isMatch(new ArrayList<>(intValues), "9", true));
 
-        // 测试等于，不区分大小写
+        // The test is equal and case-insensitive
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "10", false));
 
-        // 测试等于，小于，区分大小写
+        // The test is equal to, less than, and case-sensitive
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "10", true));
 
-        // 测试大于，不区分大小写
+        // The test is larger than and is not case-sensitive
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "11", false));
 
-        // 测试大于，区分大小写
+        // The test is larger than and case-sensitive
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "11", true));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "foo", false));
 
-        // 测试非数字
+        // Test non-numeric
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), "foo", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(less.isMatch(new ArrayList<>(intValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(less.isMatch(null, "9", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(less.isMatch(null, "9", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(less.isMatch(emptyList, "9", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(less.isMatch(emptyList, "9", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(less.isMatch(nullValueList, "9", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(less.isMatch(nullValueList, "9", true));
     }
 
     /**
-     * 包含匹配策略
+     * Contains a matching policy
      */
     @Test
     public void testIn() {
-        // 正常情况，不区分大小写
+        // Normally, it is not case sensitive
         Assert.assertTrue(in.isMatch(new ArrayList<>(strValues), "BaR", false));
 
-        // 正常情况，区分大小写
+        // Normally, it is case-sensitive
         Assert.assertTrue(in.isMatch(new ArrayList<>(strValues), "foo", true));
 
-        // 测试大小写不一致
+        // Test case inconsistencies
         Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), "foO", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(in.isMatch(new ArrayList<>(strValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(in.isMatch(null, "BaR", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(in.isMatch(null, "foo", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(in.isMatch(emptyList, "BaR", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(in.isMatch(emptyList, "foo", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(in.isMatch(nullValueList, "BaR", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(in.isMatch(nullValueList, "foo", true));
     }
 
     /**
-     * 前缀匹配策略
+     * Prefix matching policy
      */
     @Test
     public void testPrefix() {
-        // 正常情况，不区分大小写
+        // Normally, it is not case sensitive
         Assert.assertTrue(prefix.isMatch(new ArrayList<>(strValues), "FoOBar", false));
 
-        // 正常情况，区分大小写
+        // Normally, it is case-sensitive
         Assert.assertTrue(prefix.isMatch(new ArrayList<>(strValues), "fooBar", true));
 
-        // 测试大小写不一致
+        // Test case inconsistencies
         Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), "foOBar", true));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), null, false));
 
-        // 测试null arg
+        // Test null arg
         Assert.assertFalse(prefix.isMatch(new ArrayList<>(strValues), null, true));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(prefix.isMatch(null, "FoOBar", false));
 
-        // 测试null values
+        // Test null values
         Assert.assertFalse(prefix.isMatch(null, "fooBar", true));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(prefix.isMatch(emptyList, "FoOBar", false));
 
-        // 测试empty values
+        // Test empty values
         Assert.assertFalse(prefix.isMatch(emptyList, "fooBar", true));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(prefix.isMatch(nullValueList, "FoOBar", false));
 
-        // 测试values.get(0) == null
+        // Test values.get(0) == null
         Assert.assertFalse(prefix.isMatch(nullValueList, "fooBar", true));
     }
 }

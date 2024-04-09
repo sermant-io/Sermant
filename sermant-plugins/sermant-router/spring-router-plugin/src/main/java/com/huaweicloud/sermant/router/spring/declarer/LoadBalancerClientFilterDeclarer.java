@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * spring cloud gateway LoadBalancerClientFilter增强类，获取请求数据
+ * Spring cloud gateway LoadBalancerClientFilter enhancement class, obtaining request data
  *
  * @author provenceee
  * @since 2022-07-12
@@ -33,7 +33,7 @@ public class LoadBalancerClientFilterDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "filter";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LoadBalancerClientFilterDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);

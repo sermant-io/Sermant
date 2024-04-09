@@ -25,7 +25,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * mock TransmitConfig测试基类
+ * mock TransmitConfig Test Base Class
  *
  * @author provenceee
  * @since 2024-01-16
@@ -34,7 +34,7 @@ public abstract class BaseTransmitConfigTest {
     protected static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void initTransmitConfig() {
@@ -44,7 +44,7 @@ public abstract class BaseTransmitConfigTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void closeMock() {

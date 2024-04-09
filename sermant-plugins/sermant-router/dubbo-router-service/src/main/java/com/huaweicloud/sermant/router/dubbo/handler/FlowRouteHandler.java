@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 流量匹配方式的路由处理器
+ * Routing processor for traffic matching method
  *
  * @author lilai
  * @since 2023-02-24
@@ -52,22 +52,23 @@ import java.util.Optional;
 public class FlowRouteHandler extends AbstractRouteHandler {
     private final RouterConfig routerConfig;
 
-    // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+    // A set of tags used to filter instances, where value is null, indicating that all instances containing the tag
+    // are filtered without determining the value value
     private final Map<String, String> allMismatchTags;
 
     /**
-     * 构造方法
+     * Construction method
      */
     public FlowRouteHandler() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
         allMismatchTags = new HashMap<>();
         for (String requestTag : routerConfig.getRequestTags()) {
-            // dubbo会把key中的"-"替换成"."
+            // Dubbo will replace the "-" in the key with "."
             allMismatchTags.put(RuleUtils.getMetaKey(requestTag.replace(RouterConstant.DASH, RouterConstant.POINT)),
                     null);
         }
 
-        // 所有实例都含有version，所以不能存入null值
+        // All instances contain version, so null values cannot be stored
         allMismatchTags.remove(RouterConstant.META_VERSION_KEY);
     }
 
@@ -121,10 +122,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return invokers;
         }
 
-        // 用于匹配实例的tags集合
+        // Set of tags used to match instances
         Map<String, String> tags = new HashMap<>();
 
-        // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+        // A set of tags used to filter instances, where value is null, indicating that all instances containing the
+        // tag are filtered without determining the value value
         Map<String, String> mismatchTags = new HashMap<>();
         for (Map.Entry<String, Object> entry : attachments.entrySet()) {
             String key = entry.getKey();
@@ -133,7 +135,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             }
             String replaceDashKey = key;
             if (replaceDashKey.contains(RouterConstant.DASH)) {
-                // dubbo会把key中的"-"替换成"."
+                // Dubbo will replace the "-" in the key with "."
                 replaceDashKey = replaceDashKey.replace(RouterConstant.DASH, RouterConstant.POINT);
             }
             mismatchTags.put(RuleUtils.getMetaKey(replaceDashKey), null);
@@ -145,7 +147,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (StringUtils.isExist(tags.get(RouterConstant.META_VERSION_KEY))) {
             mismatchTags.put(RouterConstant.META_VERSION_KEY, tags.get(RouterConstant.META_VERSION_KEY));
         } else {
-            // 所有实例都含有version，所以不能存入null值
+            // All instances contain version, so null values cannot be stored
             mismatchTags.remove(RouterConstant.META_VERSION_KEY);
         }
         boolean isReturnAllInstancesWhenMismatch = false;
@@ -162,9 +164,9 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 解析下dubbo的附件信息
+     * Analyze the attachment information of Dubbo
      *
-     * @param invocation dubbo的invocation
+     * @param invocation Dubbo's invoice
      * @return {@link Map}<{@link String}, {@link Object}>
      */
     private Map<String, Object> parseAttachments(Object invocation) {
@@ -173,10 +175,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 获取dubbo应用 group
+     * Get Dubbo application group
      *
      * @param queryMap queryMap
-     * @return 值
+     * @return value
      */
     private String getGroup(Map<String, String> queryMap) {
         String group = queryMap.get(RouterConstant.DUBBO_GROUP_KEY);
@@ -184,10 +186,10 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 获取dubbo 应用 version
+     * Get Dubbo application version
      *
      * @param queryMap queryMap
-     * @return 值
+     * @return value
      */
     private String getVersion(Map<String, String> queryMap) {
         String version = queryMap.get(RouterConstant.DUBBO_VERSION_KEY);
@@ -195,12 +197,12 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 获取匹配的路由
+     * Get matching routes
      *
-     * @param list 有效的规则
-     * @param arguments dubbo的arguments参数
-     * @param attachments dubbo的attachments参数
-     * @return 匹配的路由
+     * @param list valid rules
+     * @param arguments The arguments parameter of dubbo
+     * @param attachments Dubbo's attachments parameter
+     * @return Matching Routes
      */
     private static Optional<Rule> getRule(List<Rule> list, Object[] arguments, Map<String, Object> attachments) {
         for (Rule rule : list) {
@@ -224,11 +226,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 根据arguments参数获取匹配的路由
+     * Obtain matching routes based on the arguments parameter
      *
-     * @param arguments dubbo的arguments参数
-     * @param rule 规则
-     * @return 匹配的路由
+     * @param arguments The argument parameter of dubbo
+     * @param rule rule
+     * @return matching routes
      */
     private static List<Route> getRoutesByArguments(Object[] arguments, Rule rule) {
         Match match = rule.getMatch();
@@ -246,30 +248,31 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = TypeStrategyChooser.INSTANCE.getValue(matchRule.getType(), key, arguments).orElse(null);
                 if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，那么直接return
+                    // If it is not all matched, and one is matched, then return directly
                     return rule.getRoute();
                 }
                 if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
+                    // If it is a full match and there is one mismatch, proceed to the next rule
                     return Collections.emptyList();
                 }
             }
         }
         if (isFullMatch) {
-            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
+            // If it's an all-match, go here, it means that there is no mismatch, just return
             return rule.getRoute();
         }
 
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
+        // If it is not an all-match, if you go to this point, it means that none of the rules can be matched,
+        // then move on to the next rule
         return Collections.emptyList();
     }
 
     /**
-     * 根据attachments参数获取匹配的路由
+     * Get the matching route based on the attachment parameter
      *
-     * @param attachments dubbo的attachments参数
-     * @param rule 规则
-     * @return 匹配的路由
+     * @param attachments Dubbo's attachments parameter
+     * @param rule rule
+     * @return matching routes
      */
     private static List<Route> getRoutesByAttachments(Map<String, Object> attachments, Rule rule) {
         Match match = rule.getMatch();
@@ -290,21 +293,21 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
                 if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，直接返回
+                    // If it is not all matched, and one is matched, it will be returned directly
                     return rule.getRoute();
                 }
                 if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且又一个不匹配，继续下一个规则
+                    // If it's an all-match and another mismatch, move on to the next rule
                     return Collections.emptyList();
                 }
             }
         }
         if (isFullMatch) {
-            // 如果是全匹配，走到这里说明全部匹配，直接返回
+            // If it's an all-match, go here and say that all are matched, and go back directly
             return rule.getRoute();
         }
 
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配，继续下一个规则
+        // If it's not an all-match, go here, it means that none of the rules can match, move on to the next rule
         return Collections.emptyList();
     }
 }

@@ -20,25 +20,25 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * 路由插件事件定义
+ * Route plug-in event definitions
  *
  * @author lilai
  * @since 2023-03-28
  */
 public enum RouterEventDefinition {
     /**
-     * 路由插件规则刷新事件
+     * Route plug-in rule refresh events
      */
 
     ROUTER_RULE_REFRESH("ROUTER_RULE_REFRESH", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * 同TAG优先规则匹配生效
+     * matches the same tag priority rules to take effect
      */
     SAME_TAG_RULE_MATCH("SAME_TAG_RULE_MATCH", EventType.GOVERNANCE, EventLevel.NORMAL),
 
     /**
-     * 同TAG优先规则匹配失效
+     * Matches with TAG priority rules fail
      */
     SAME_TAG_RULE_MISMATCH("SAME_TAG_RULE_MISMATCH", EventType.GOVERNANCE,
             EventLevel.NORMAL);
@@ -68,9 +68,9 @@ public enum RouterEventDefinition {
     }
 
     /**
-     * 获取事件触发区域
+     * Get the event trigger area
      *
-     * @return 事件触发区域
+     * @return The area where the event is triggered
      */
     public String getScope() {
         return "router-plugin";

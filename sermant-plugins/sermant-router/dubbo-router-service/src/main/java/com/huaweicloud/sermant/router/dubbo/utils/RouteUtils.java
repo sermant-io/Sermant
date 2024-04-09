@@ -33,7 +33,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 /**
- * 路由插件工具类
+ * routing plug-in utility class
  *
  * @author provenceee
  * @since 2021-06-21
@@ -43,12 +43,12 @@ public class RouteUtils {
     }
 
     /**
-     * 获取匹配的泳道
+     * get matching swimlanes
      *
-     * @param list 有效的规则
-     * @param attachments dubbo的attachments参数
-     * @param arguments dubbo的arguments参数
-     * @return 匹配的泳道标记
+     * @param list valid rules
+     * @param attachments Dubbo's attachments parameter
+     * @param arguments The argument parameter of dubbo
+     * @return Matching lane markers
      */
     public static List<Route> getLaneRoutes(List<Rule> list, Map<String, Object> attachments, Object[] arguments) {
         for (Rule rule : list) {
@@ -78,7 +78,7 @@ public class RouteUtils {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = Optional.ofNullable(attachments.get(key)).map(String::valueOf).orElse(null);
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 只要一个匹配不上，那就是不匹配
+                    // As long as one of them doesn't match, it's a mismatch
                     return false;
                 }
             }
@@ -102,7 +102,7 @@ public class RouteUtils {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String arg = TypeStrategyChooser.INSTANCE.getValue(matchRule.getType(), key, arguments).orElse(null);
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 只要一个匹配不上，那就是不匹配
+                    // As long as one of them doesn't match, it's a mismatch
                     return false;
                 }
             }

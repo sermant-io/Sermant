@@ -21,9 +21,9 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 定义JDK 1.8版本的java.net.HttpURLConnection的拦截点信息<br>
+ * Define the interception point information of java.net.HttpURLConnection of JDK 1.8<br>
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-25
  */
 public class HttpUrlConnectionConnectDeclarer extends BaseRegistryPluginAdaptationDeclarer {

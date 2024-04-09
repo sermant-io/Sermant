@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * ClusterUtils的service
+ * The service of ClusterUtils
  *
  * @author provenceee
  * @since 2022-03-09
@@ -36,9 +36,10 @@ public class ClusterUtilsServiceImpl implements ClusterUtilsService {
     private static final int EXPECT_LENGTH = 2;
 
     /**
-     * 从url中缓存接口与下游服务名的映射关系，从map中删除标签相关的参数
+     * Cache the mapping between the API and the downstream service name from the URL, and delete the tag-related
+     * parameters from the map
      *
-     * @param arguments 请求参数
+     * @param arguments request parameters
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -48,11 +49,13 @@ public class ClusterUtilsServiceImpl implements ClusterUtilsService {
             return;
         }
 
-        // 保存接口与服务名之间的映射
+        // Saves the mapping between the interface and the service name
         DubboCache.INSTANCE.putApplication(DubboReflectUtils.getServiceInterface(arguments[0]),
                 DubboReflectUtils.getParameter(arguments[0], APPLICATION_KEY));
         if (arguments[1] instanceof Map<?, ?>) {
-            // 本地参数的map，需要把这个map中的标签删除，才能让下游invoker的标签不被本地参数覆盖，即保留下游invoker的标签
+            // For maps with local parameters, you need to delete the tags in this map so that the tags of the
+            // downstream invoker are not overwritten by the local parameters,
+            // that is, the tags of the downstream invoker are retained
             Map<String, String> localMap = new HashMap<>((Map<String, String>) arguments[1]);
             localMap.entrySet().removeIf(this::isRemove);
             arguments[1] = localMap;

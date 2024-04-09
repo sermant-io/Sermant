@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import com.huaweicloud.sermant.router.transmit.interceptor.ScheduledExecutorServiceInterceptor;
 
 /**
- * ScheduledExecutorService拦截点
+ * SchedulingExecutorService interception point
  *
  * @author provenceee
  * @since 2024-01-16

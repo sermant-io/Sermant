@@ -19,18 +19,18 @@ package com.huaweicloud.sermant.router.config.strategy;
 import java.util.List;
 
 /**
- * 值匹配策略
+ * Value matching strategy
  *
  * @author provenceee
  * @since 2021-10-14
  */
 public interface ValueMatchStrategy {
     /**
-     * 是否匹配
+     * Whether it matches or not
      *
-     * @param values 期望值
-     * @param arg 参数值
-     * @return 是否匹配
+     * @param values Expectations
+     * @param arg Parameter value
+     * @return Whether it matches or not
      */
     boolean isMatch(List<String> values, String arg);
 }

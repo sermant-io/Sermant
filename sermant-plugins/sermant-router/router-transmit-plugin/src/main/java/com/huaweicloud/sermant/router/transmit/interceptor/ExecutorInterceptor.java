@@ -20,14 +20,14 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 /**
- * 拦截Executor
+ * Intercept the Executor
  *
  * @author provenceee
  * @since 2024-01-16
  */
 public class ExecutorInterceptor extends AbstractExecutorInterceptor {
     /**
-     * 构造方法
+     * Constructor
      */
     public ExecutorInterceptor() {
         super(!PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool());

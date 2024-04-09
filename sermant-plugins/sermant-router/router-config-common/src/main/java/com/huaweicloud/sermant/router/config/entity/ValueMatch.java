@@ -19,19 +19,19 @@ package com.huaweicloud.sermant.router.config.entity;
 import java.util.List;
 
 /**
- * 值匹配
+ * Values match
  *
  * @author provenceee
  * @since 2021-10-28
  */
 public class ValueMatch {
     /**
-     * 值匹配策略
+     * Value matching strategy
      */
     private MatchStrategy matchStrategy;
 
     /**
-     * 期望值
+     * Expectations
      */
     private List<String> values;
 

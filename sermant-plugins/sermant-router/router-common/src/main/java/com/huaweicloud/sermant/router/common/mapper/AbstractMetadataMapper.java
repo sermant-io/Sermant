@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * metadata获取mapper
+ * Obtain mapper from metadata
  *
- * @param <I> 实例泛型
+ * @param <I> instance generics
  * @author chengyouling
  * @since 2024-03-13
  */

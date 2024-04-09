@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * 测试HystrixActionInterceptor
+ * Test HystrixActionInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -55,7 +55,7 @@ public class HystrixActionInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -64,7 +64,7 @@ public class HystrixActionInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {

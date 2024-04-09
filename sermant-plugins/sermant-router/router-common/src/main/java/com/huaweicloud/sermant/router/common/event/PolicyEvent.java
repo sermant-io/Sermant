@@ -17,12 +17,15 @@
 package com.huaweicloud.sermant.router.common.event;
 
 /**
- * Policy事件包含三件：
- * 1.相同标签规则匹配成功: 全部实例最小可用阈值大于全部可用实例数，则同TAG优先
- * 2.相同标签规则匹配成功:
- *     未设置全部实例最小可用阈值，超过(大于等于)同TAG比例阈值，则同TAG优先
- *     设置了全部实例最小可用阈值，但其小于全部TAG可用实例，超过(大于等于)同TAG比例阈值，则同TAG优先
- * 3.相同标签规则匹配失败
+ * The Policy event consists of three pieces:
+ * 1.If the same tag rule is successfully matched, the minimum available threshold of all instances is greater than the
+ * number of all available instances
+ * 2.The same tag rule is successfully matched:
+ *     If the minimum availability threshold for all instances is not set and exceeds (greater than or equal to) the
+ *     threshold of the same TAG, the same TAG takes precedence
+ *     If the minimum available threshold for all instances is set, but it is less than all TAG available instances and
+ *     exceeds (greater than or equal to) the threshold of the same TAG, the same TAG takes precedence
+ * 3.Failed to match the same tag rule
  *
  * @author robotLJW
  * @since 2023-04-03
@@ -30,24 +33,26 @@ package com.huaweicloud.sermant.router.common.event;
  */
 public enum PolicyEvent {
     /**
-     * 符合相同Tag规则匹配：全部可用实例数小于全部实例最小可用阈值，则同TAG优先
+     * If the same tag rule matches: If the number of all available instances is less than the minimum available
+     * threshold of all instances, the same TAG takes precedence
      */
     SAME_TAG_MATCH_LESS_MIN_ALL_INSTANCES("According to the policy in the rule, same tag rule match that less"
             + " than the minimum available threshold for all instances"),
 
     /**
-     * 符合相同Tag规则匹配：超过同TAG比例阈值，则同TAG优先
+     * Matching matches that meet the same tag rules:
+     * If the ratio of the same TAG exceeds the threshold, the same TAG takes precedence
      */
     SAME_TAG_MATCH_EXCEEDED_TRIGGER_THRESHOLD("According to the policy in the rule, same tag rule match that"
             + " exceeded trigger threshold"),
 
     /**
-     * 相同Tag规则匹配没匹配上
+     * The same tag rule does not match
      */
     SAME_TAG_MISMATCH("According to the policy in the rule, same tag rule mismatch");
 
     /**
-     * 事件描述
+     * description of the event
      */
     private String desc;
 

@@ -22,17 +22,17 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * metadata获取mapper
+ * Obtain mapper from metadata
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2022-09-27
  */
 public abstract class AbstractMetadataMapper<I> implements Function<I, Map<String, String>> {
     /**
-     * 获取策略名
+     * Obtain the policy name
      *
-     * @return 策略名
+     * @return The name of the policy
      */
     public List<String> getName() {
         return Collections.emptyList();

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.declarer;
 
 /**
- * ClientHttpRequest增强类，发起restTemplate请求方法
+ * ClientHttpRequest enhancement class, initiate restTemplate request method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -31,7 +31,7 @@ public class ClientHttpRequestDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "execute";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ClientHttpRequestDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

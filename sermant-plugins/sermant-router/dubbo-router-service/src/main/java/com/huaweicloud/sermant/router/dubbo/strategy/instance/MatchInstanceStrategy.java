@@ -22,19 +22,19 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 匹配目标版本号的invoker
+ * Match the invoker with the target version number
  *
  * @author provenceee
  * @since 2021-12-08
  */
 public class MatchInstanceStrategy extends AbstractInstanceStrategy<Object, Map<String, String>> {
     /**
-     * 匹配目标版本号的invoker
+     * Match the invoker with the target version number
      *
      * @param invoker Invoker
-     * @param tag 匹配上的标签
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param tag Matching labels
+     * @param mapper Method for obtaining metadata
+     * @return whether it matches or not
      */
     @Override
     public boolean isMatch(Object invoker, Map<String, String> tag, Function<Object, Map<String, String>> mapper) {

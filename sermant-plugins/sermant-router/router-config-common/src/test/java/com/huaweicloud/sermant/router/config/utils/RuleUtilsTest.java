@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 测试规则工具类
+ * Test Rules tool class
  *
  * @author provenceee
  * @since 2022-08-11
@@ -54,7 +54,7 @@ public class RuleUtilsTest {
     }
 
     /**
-     * 测试获取所有标签
+     * Test to get all the tags
      */
     @Test
     public void testGetTags() {
@@ -65,7 +65,7 @@ public class RuleUtilsTest {
     }
 
     /**
-     * 测试初始化需要缓存的key
+     * Test: Initialize the key that needs to be cached
      */
     @Test
     public void testInitMatchKeys() {
@@ -84,7 +84,7 @@ public class RuleUtilsTest {
     }
 
     /**
-     * 测试初始化需要缓存的key
+     * Test: Initialize the key that needs to be cached
      */
     @Test
     public void testGetMetaKey() {

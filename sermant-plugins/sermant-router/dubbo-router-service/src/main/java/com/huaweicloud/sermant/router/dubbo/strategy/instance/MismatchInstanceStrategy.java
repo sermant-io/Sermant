@@ -23,24 +23,25 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 匹配不在mismatch中的invoker
+ * Matching invoker Not in Mismatch
  *
  * @author provenceee
  * @since 2021-12-08
  */
 public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, List<Map<String, String>>> {
     /**
-     * 匹配不在mismatch中的invoker
+     * Matching invoker Not in Mismatch
      *
      * @param invoker Invoker
-     * @param tags 没有匹配上的标签
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param tags Unmatched tags
+     * @param mapper methods to obtain metadata
+     * @return whether it matches or not
      */
     @Override
     public boolean isMatch(Object invoker, List<Map<String, String>> tags,
             Function<Object, Map<String, String>> mapper) {
-        // 由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
+        // Since the tags in mismatch have been matched and have not been matched, they must be eliminated and cannot
+        // participate in load balancing, otherwise the traffic ratio will be incorrect (it will be high)
         Map<String, String> metaData = getMetadata(invoker, mapper);
         for (Map<String, String> mismatchTag : tags) {
             for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {

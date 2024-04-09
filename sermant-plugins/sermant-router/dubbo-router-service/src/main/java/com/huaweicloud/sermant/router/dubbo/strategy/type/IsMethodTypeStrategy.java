@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * enabled匹配策略
+ * enabled matching policy
  *
  * @author provenceee
  * @since 2021-10-13
@@ -61,7 +61,7 @@ public class IsMethodTypeStrategy extends TypeStrategy {
 
     @Override
     public String getKey(String type) {
-        // type形如.isXxx()，切掉"."与"()"，即为方法名
+        // The type takes the form of .isXxx(). Cut out the "." and "()" to obtain the method name
         return type.substring(1, type.length() - getEndFlag().length());
     }
 }

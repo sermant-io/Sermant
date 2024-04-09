@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 /**
- * spring cloud gateway LoadBalancerClientFilter增强类，获取请求数据
+ * spring cloud gateway LoadBalancerClientFilter enhancement class， to get the request data
  *
  * @author provenceee
  * @since 2022-07-12
@@ -46,7 +46,7 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
     private final BiFunction<ServerWebExchange, RequestTag, ServerWebExchange> function;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LoadBalancerClientFilterInterceptor() {
         Optional<Method> method = ReflectUtils
@@ -105,7 +105,7 @@ public class LoadBalancerClientFilterInterceptor extends AbstractInterceptor {
         Builder builder = httpRequest.mutate();
         requestTag.getTag().forEach((key, value) -> {
             if (!readOnlyHttpHeaders.containsKey(key)) {
-                // 使用反射兼容Spring Cloud Finchley.RELEASE
+                // Using reflection compatibility with Spring Cloud Finchley.RELEASE
                 ReflectUtils.invokeMethod(builder, HEADER_FIELD_NAME, new Class[]{String.class, String.class},
                         new Object[]{key, value.get(0)});
             }

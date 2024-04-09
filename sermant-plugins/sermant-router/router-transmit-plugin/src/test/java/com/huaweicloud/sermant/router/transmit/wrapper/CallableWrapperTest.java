@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试CallableWrapper
+ * Test CallableWrapper
  *
  * @author provenceee
  * @since 2024-01-16
@@ -52,7 +52,7 @@ public class CallableWrapperTest extends BaseTest {
 
     @Test
     public void testCannotTransmit() throws Exception {
-        // 初始条件
+        // Initial conditions
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 

@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试RunnableWrapper
+ * Test RunnableWrapper
  *
  * @author provenceee
  * @since 2024-01-16
@@ -50,7 +50,7 @@ public class RunnableWrapperTest extends BaseTest {
 
     @Test
     public void testCannotTransmit() {
-        // 初始条件
+        // Initial conditions
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 

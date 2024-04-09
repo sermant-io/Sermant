@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.router.dubbo.strategy.TypeStrategy;
 import java.util.Optional;
 
 /**
- * 实体匹配策略
+ * entity matching policies
  *
  * @author provenceee
  * @since 2021-10-13
@@ -60,11 +60,11 @@ public class ObjectTypeStrategy extends TypeStrategy {
     private String getMethodNameByFieldName(String fieldName) {
         char[] chars = fieldName.toCharArray();
         if (Character.getType(chars[0]) == Character.LOWERCASE_LETTER) {
-            // 首字母转大写
+            // Capitalize the first letter
             chars[0] -= INDEX_BETWEEN_LOWERCASE_LETTER_AND_UPPERCASE_LETTER;
         }
 
-        // 字段名为xxx，转为方法名getXxx
+        // Field name is xxx, converted to method name getXxx
         return GET_METHOD_NAME_PREFIX + String.valueOf(chars);
     }
 }

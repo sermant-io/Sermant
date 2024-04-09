@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.config.EventConfig;
 
 /**
- * 路由插件事件采集器
+ * Routing plug-in event collector
  *
  * @author lilai
  * @since 2023-03-28
@@ -38,9 +38,9 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * 获取路由插件事件采集器单例
+     * Obtain the singleton of the event collector of the routing plug-in
      *
-     * @return 路由插件事件采集器单例
+     * @return Routing plug-in event collector singleton
      */
     public static RouterEventCollector getInstance() {
         if (routerEventCollector == null) {
@@ -55,9 +55,9 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * 采集服务粒度规则生效事件
+     * Collect the events when the service granularity rule takes effect
      *
-     * @param rule 路由插件的规则
+     * @param rule Rules for routing plug-ins
      */
     public void collectServiceRouteRuleEvent(String rule) {
         if (!eventConfig.isEnable()) {
@@ -71,9 +71,9 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * 采集全局粒度规则生效事件
+     * Collect events for global granularity rules to take effect
      *
-     * @param rule 路由插件的规则
+     * @param rule Rules for routing plug-ins
      */
     public void collectGlobalRouteRuleEvent(String rule) {
         if (!eventConfig.isEnable()) {
@@ -87,11 +87,11 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * 采集选取下游serviceName匹配有效事件
+     * Collect and select the downstream service name to match valid events
      *
-     * @param tagMsg tags信息
-     * @param serviceName service名
-     * @param reason 原因
+     * @param tagMsg tags message
+     * @param serviceName service name
+     * @param reason cause
      */
     public void collectSameTagMatchedEvent(String tagMsg, String serviceName, String reason) {
         if (!eventConfig.isEnable()) {
@@ -106,11 +106,11 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * 采集选取下游serviceName匹配无效事件
+     * Collect and select invalid events for downstream service name matching
      *
-     * @param tagMsg tags信息
-     * @param serviceName service名
-     * @param reason 原因
+     * @param tagMsg tags message
+     * @param serviceName service name
+     * @param reason cause
      */
     public void collectSameTagMisMatchedEvent(String tagMsg, String serviceName, String reason) {
         if (!eventConfig.isEnable()) {

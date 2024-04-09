@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试EurekaHttpClientInterceptor
+ * Test EurekaHttpClientInterceptor
  *
  * @author provenceee
  * @since 2022-09-06
@@ -57,7 +57,7 @@ public class EurekaHttpClientInterceptorTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -67,7 +67,7 @@ public class EurekaHttpClientInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -98,13 +98,13 @@ public class EurekaHttpClientInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
         interceptor.before(context);
 
-        // ek会把服务名转为大写，所以这里期望值也是大写
+        // ek will capitalize the service name, so the expected value here is also capitalized
         Assert.assertEquals("FOO", AppCache.INSTANCE.getAppName());
         InstanceInfo instanceInfo = (InstanceInfo) context.getArguments()[0];
         Map<String, String> metadata = instanceInfo.getMetadata();
@@ -114,7 +114,7 @@ public class EurekaHttpClientInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {

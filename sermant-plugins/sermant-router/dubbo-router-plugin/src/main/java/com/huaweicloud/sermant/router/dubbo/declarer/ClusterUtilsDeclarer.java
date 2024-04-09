@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.dubbo.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法
+ * Enhance the mergeUrl method of the ClusterUtils class
  *
  * @author provenceee
  * @since 2021-06-28
@@ -34,7 +34,7 @@ public class ClusterUtilsDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "mergeUrl";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ClusterUtilsDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

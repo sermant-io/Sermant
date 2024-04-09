@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 仅针对4.x版本得http拦截
+ * HTTP interception only for version 4. x
  *
  * @author yangrh
  * @since 2022-10-31
@@ -40,11 +40,11 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     private static final int HTTPCONTEXT_INDEX = 2;
 
     /**
-     * 前置触发点
+     * Pre trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
@@ -78,12 +78,15 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 后置触发点 说明：该方法后置拦截点不移除线程变量，为了在 NopInstanceFilterInterceptor前置拦截点获取线程变量做流量路由， 在
-     * NopInstanceFilterInterceptor后置拦截点移除线程变量. 使用注意事项：httpasyncclient使用必须有同步线程的future.get()逻辑，否则线程变量无法remove有问题
+     * Post-Interception Point Note: This method does not remove thread variables from the post-interception point,
+     * but obtains thread variables at the NopInstanceFilterInterceptor pre-interceptor point for traffic routing，
+     * Remove thread variables from the NopInstanceFilterInterceptor interceptor end.
+     * Note: httpasyncclient uses the future.get() logic that must have a synchronous thread, otherwise the thread
+     * variable cannot be removed
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {

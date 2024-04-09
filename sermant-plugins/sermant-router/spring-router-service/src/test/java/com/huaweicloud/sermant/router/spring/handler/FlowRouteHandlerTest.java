@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * FlowRouteHandler单元测试
+ * FlowRouteHandler Unit tests
  *
  * @author lilai
  * @since 2023-02-27
@@ -54,7 +54,7 @@ public class FlowRouteHandlerTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -68,7 +68,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -76,7 +76,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 重置
+     * Reset
      */
     @Before
     public void reset() {
@@ -84,7 +84,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法
+     * Test the getTargetInstancesByRules method
      */
     @Test
     public void testGetTargetInstancesByRules() {
@@ -104,7 +104,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRequest方法(没有标签)
+     * Test the getTargetInstancesByRequest method (without label)
      */
     @Test
     public void testGetTargetInstancesByRequestWithNoTags() {
@@ -121,13 +121,13 @@ public class FlowRouteHandlerTest {
         instances.add(instance3);
         Map<String, List<String>> header = new HashMap<>();
 
-        // 测试无tags时
+        // When the test is not tags
         List<Object> targetInstances = flowRouteHandler.handle("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(instances, targetInstances);
     }
 
     /**
-     * 测试getTargetInstancesByRequest方法(有标签)
+     * Test the getTargetInstancesByRequest method (labeled)
      */
     @Test
     public void testGetTargetInstancesByRequestWithTags() {
@@ -144,7 +144,7 @@ public class FlowRouteHandlerTest {
         instances.add(instance3);
         Map<String, List<String>> header = new HashMap<>();
 
-        // 匹配foo: bar2实例
+        // Match the foo:bar2 instance
         header.clear();
         header.put("foo", Collections.singletonList("bar2"));
         header.put("foo1", Collections.singletonList("bar2"));
@@ -152,7 +152,7 @@ public class FlowRouteHandlerTest {
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance2, targetInstances.get(0));
 
-        // 匹配1.0.0版本实例
+        // The instance that matches version 1.0.0 is matched
         header.clear();
         header.put("version", Collections.singletonList("1.0.0"));
         targetInstances = flowRouteHandler.handle("foo", instances, new RequestData(header, null, null));
@@ -161,7 +161,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRequest方法不匹配时
+     * When testing getTargetInstancesByRequest method mismatch
      */
     @Test
     public void testGetTargetInstancesByRequestWithMismatch() {
@@ -177,14 +177,15 @@ public class FlowRouteHandlerTest {
         ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.2");
         instances.add(instance3);
 
-        // 不匹配bar: bar1实例时，匹配没有bar标签的实例
+        // Bar does not match: If the bar1 instance does not match, the instance without the bar label is matched
         Map<String, List<String>> header = new HashMap<>();
         header.put("bar", Collections.singletonList("bar1"));
         List<Object> targetInstances = flowRouteHandler.handle("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(2, targetInstances.size());
         Assert.assertFalse(targetInstances.contains(instance2));
 
-        // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
+        // If the bar: bar1 instance does not match, the instance without the bar tag is preferentially matched,
+        // and if there is no instance without the bar tag, an empty list is returned
         List<Object> sameInstances = new ArrayList<>();
         ServiceInstance sameInstance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0",
                 Collections.singletonMap("bar", "bar3"));
@@ -197,26 +198,27 @@ public class FlowRouteHandlerTest {
         targetInstances = flowRouteHandler.handle("foo", sameInstances, new RequestData(header, null, null));
         Assert.assertEquals(0, targetInstances.size());
 
-        // 不匹配version: 1.0.3实例时，返回所有版本的实例
+        // If the version: 1.0.3 instance does not match, all versions of the instance are returned
         header.clear();
         header.put("version", Collections.singletonList("1.0.3"));
         targetInstances = flowRouteHandler.handle("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(3, targetInstances.size());
 
-        // 不传入header时，匹配无标签实例
+        // If no header is passed, the instance without a tag is matched
         header.clear();
         targetInstances = flowRouteHandler.handle("foo", instances, new RequestData(header, null, null));
         Assert.assertEquals(1, targetInstances.size());
         Assert.assertEquals(instance3, targetInstances.get(0));
 
-        // 不传入header时，优先匹配无标签实例，没有无标签实例时，返回全部实例
+        // If no header is passed, the instance without a label is matched first,
+        // and if there are no instances without a label, all instances are returned
         header.clear();
         targetInstances = flowRouteHandler.handle("foo", sameInstances, new RequestData(header, null, null));
         Assert.assertEquals(sameInstances, targetInstances);
     }
 
     /**
-     * 测试handle方法只有一个下游时
+     * Test handle method when there is only one downstream
      */
     @Test
     public void testGetTargetInstancesWithOneInstance() {
@@ -231,7 +233,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试为匹配到下游服务实例时
+     * When tested to match a downstream service instance
      */
     @Test
     public void testGetMismatchInstances() {
@@ -251,7 +253,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法, 同时配置服务维度规则和全局维度规则
+     * Test the getTargetInstancesByRules method and configure both the service dimension rule and the global dimension rule
      */
     @Test
     public void testGetTargetInstancesByFlowRulesWithGlobalRules() {
@@ -272,7 +274,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法, 配置全局维度规则
+     * Test the getTargetInstancesByRules method to configure global dimension rules
      */
     @Test
     public void testGetTargetInstancesByGlobalRules() {

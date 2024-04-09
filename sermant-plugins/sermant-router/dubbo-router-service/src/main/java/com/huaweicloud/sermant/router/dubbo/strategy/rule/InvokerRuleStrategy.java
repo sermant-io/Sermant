@@ -22,16 +22,16 @@ import com.huaweicloud.sermant.router.dubbo.strategy.instance.MatchInstanceStrat
 import com.huaweicloud.sermant.router.dubbo.strategy.instance.MismatchInstanceStrategy;
 
 /**
- * 路由规则匹配策略
+ * Routing rule matching strategy
  *
  * @author provenceee
  * @since 2021-10-14
  */
 public class InvokerRuleStrategy extends AbstractRuleStrategy<Object> {
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param mapper metadata处理
+     * @param mapper metadata processing
      */
     public InvokerRuleStrategy(AbstractMetadataMapper<Object> mapper) {
         super("dubbo", new MatchInstanceStrategy(), new MismatchInstanceStrategy(), mapper);

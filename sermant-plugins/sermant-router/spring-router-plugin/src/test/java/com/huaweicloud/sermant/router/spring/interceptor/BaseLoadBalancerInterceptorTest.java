@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试BaseLoadBalancerInterceptor
+ * Test BaseLoadBalancerInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -60,7 +60,7 @@ public class BaseLoadBalancerInterceptorTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -76,7 +76,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -92,7 +92,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void reset() {
@@ -106,7 +106,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * 测试路由规则无效时
+     * When the test routing rule is invalid
      */
     @Test
     public void testBeforeWhenInvalid() {
@@ -119,7 +119,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * 测试实例列表为空时
+     * When the test instance list is empty
      */
     @Test
     public void testBeforeWithEmptyServers() {
@@ -133,7 +133,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * 测试从ThreadLocal获取请求数据
+     * The test fetches the request data from the ThreadLocal
      */
     @Test
     public void testBeforeWithThreadLocal() {
@@ -148,7 +148,7 @@ public class BaseLoadBalancerInterceptorTest {
     }
 
     /**
-     * 测试从RequestContext获取请求数据
+     * The test gets the request data from the RequestContext
      */
     @Test
     public void testBeforeWithRequestContext() {

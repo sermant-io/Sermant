@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 线程变量
+ * Thread variables
  *
  * @author provenceee
  * @since 2022-07-08
@@ -50,45 +50,45 @@ public class ThreadLocalUtils {
     }
 
     /**
-     * 获取线程变量
+     * Get thread variables
      *
-     * @return 线程变量
+     * @return Thread variables
      */
     public static RequestData getRequestData() {
         return DATA.get();
     }
 
     /**
-     * 获取线程变量
+     * Get thread variables
      *
-     * @return 线程变量
+     * @return Thread variables
      */
     public static RequestTag getRequestTag() {
         return TAG.get();
     }
 
     /**
-     * 存入线程变量
+     * Deposit thread variables
      *
-     * @param value 线程变量
+     * @param value Thread variables
      */
     public static void setRequestData(RequestData value) {
         DATA.set(value);
     }
 
     /**
-     * 存入线程变量
+     * Deposit thread variables
      *
-     * @param value 线程变量
+     * @param value Thread variables
      */
     public static void setRequestTag(RequestTag value) {
         TAG.set(value);
     }
 
     /**
-     * 增加线程中的请求标记
+     * Add request flags in threads
      *
-     * @param tag 请求标记
+     * @param tag Request tags
      */
     public static void addRequestTag(Map<String, List<String>> tag) {
         if (CollectionUtils.isEmpty(tag)) {
@@ -103,14 +103,14 @@ public class ThreadLocalUtils {
     }
 
     /**
-     * 删除线程变量
+     * Delete thread variables
      */
     public static void removeRequestData() {
         DATA.remove();
     }
 
     /**
-     * 删除线程变量
+     * Delete thread variables
      */
     public static void removeRequestTag() {
         TAG.remove();

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 import java.util.List;
 
 /**
- * 测试负载均衡服务
+ * Test the load balancing service
  *
  * @author provenceee
  * @since 2022-09-08

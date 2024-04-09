@@ -22,19 +22,19 @@ import com.huaweicloud.sermant.router.common.request.RequestData;
 import java.util.List;
 
 /**
- * BaseLoadBalancerInterceptor服务
+ * BaseLoadBalancerInterceptor service
  *
  * @author provenceee
  * @since 2022-07-20
  */
 public interface LoadBalancerService extends PluginService {
     /**
-     * 获取目标实例
+     * Obtain the target instance
      *
-     * @param targetName 目标服务
-     * @param instances 实例
-     * @param requestData 请求数据
-     * @return 目标实例
+     * @param targetName Target service
+     * @param instances Instance
+     * @param requestData Request data
+     * @return Target instance
      */
     List<Object> getTargetInstances(String targetName, List<Object> instances, RequestData requestData);
 }

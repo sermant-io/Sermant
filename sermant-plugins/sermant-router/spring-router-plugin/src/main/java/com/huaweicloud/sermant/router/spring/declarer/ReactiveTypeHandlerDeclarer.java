@@ -19,7 +19,8 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * ReactiveTypeHandler拦截点，同时引入spring-boot-starter-web、spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * When the ReactiveTypeHandler intercepts the point and introduces spring-boot-starter-web and
+ * spring-boot-starter-webflux for reactive programming, you need to remove the thread variable in the post-method
  * <p>spring cloud Finchley.RELEASE+
  *
  * @author provenceee
@@ -35,7 +36,7 @@ public class ReactiveTypeHandlerDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "handleValue";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ReactiveTypeHandlerDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);

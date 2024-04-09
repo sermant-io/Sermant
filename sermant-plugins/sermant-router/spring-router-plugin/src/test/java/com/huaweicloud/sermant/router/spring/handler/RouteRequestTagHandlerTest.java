@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 测试RouteInterceptorHandler
+ * Test RouteInterceptorHandler
  *
  * @author provenceee
  * @since 2023-02-28
@@ -42,11 +42,11 @@ public class RouteRequestTagHandlerTest {
     }
 
     /**
-     * 测试getRequestTag方法
+     * Test the getRequestTag method
      */
     @Test
     public void testGetRequestTag() {
-        // 正常情况
+        // Normal
         Map<String, List<String>> headers = new HashMap<>();
         Set<String> matchKeys = new HashSet<>();
         matchKeys.add("bar");
@@ -59,7 +59,7 @@ public class RouteRequestTagHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试matchKeys为空
+        // Test matchKeys as empty
         requestTag = handler.getRequestTag("", "", null, null, new Keys(null, null));
         Assert.assertEquals(Collections.emptyMap(), requestTag);
     }

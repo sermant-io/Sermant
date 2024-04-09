@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 配置服务
+ * Configuration service
  *
  * @author provenceee
  * @since 2022-07-14
@@ -56,7 +56,7 @@ public abstract class ConfigService {
     private final Set<String> requestTags;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ConfigService() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
@@ -64,10 +64,10 @@ public abstract class ConfigService {
     }
 
     /**
-     * 初始化通知
+     * Initialize the notification
      *
-     * @param cacheName 缓存名
-     * @param serviceName 服务名
+     * @param cacheName Cache name
+     * @param serviceName Service name
      */
     public void init(String cacheName, String serviceName) {
         if (StringUtils.isBlank(cacheName) || StringUtils.isBlank(serviceName)) {
@@ -84,18 +84,18 @@ public abstract class ConfigService {
     }
 
     /**
-     * 获取规则key
+     * Obtain the rule key
      *
-     * @return 规则key
+     * @return Rule key
      */
     public Set<String> getMatchKeys() {
         return routerConfig.isUseRequestRouter() ? requestTags : RuleUtils.getMatchKeys();
     }
 
     /**
-     * 获取染色的key
+     * Obtain the staining key
      *
-     * @return 染色的key
+     * @return The key of the staining
      */
     public Set<String> getInjectTags() {
         return RuleUtils.getInjectTags();

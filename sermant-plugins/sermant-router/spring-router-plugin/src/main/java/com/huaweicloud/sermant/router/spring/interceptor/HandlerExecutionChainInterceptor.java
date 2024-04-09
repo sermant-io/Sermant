@@ -24,7 +24,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * 通过拦截增加注入拦截器，注入spring web拦截器
+ * Add an injection interceptor by intercepting and inject a spring web interceptor
  *
  * @author provenceee
  * @since 2022-07-12

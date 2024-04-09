@@ -21,22 +21,22 @@ package com.huaweicloud.sermant.router.config.handler;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 处理器接口
+ * Processor interface
  *
  * @author provenceee
  * @since 2024-01-16
  */
 public interface AbstractHandler {
     /**
-     * 配置处理
+     * Configure processing
      *
-     * @param event 配置监听事件
-     * @param cacheName 缓存名
+     * @param event Configure listening events
+     * @param cacheName Cache name
      */
     void handle(DynamicConfigEvent event, String cacheName);
 
     /**
-     * 是否需要处理
+     * Whether it needs to be processed
      *
      * @param key 配置key
      * @return 是否需要处理

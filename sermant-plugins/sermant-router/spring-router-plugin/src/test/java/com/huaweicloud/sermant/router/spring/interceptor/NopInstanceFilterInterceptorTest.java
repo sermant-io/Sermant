@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试NopInstanceFilterInterceptor
+ * Test NopInstanceFilterInterceptor
  *
  * @author provenceee
  * @since 2022-10-09
@@ -56,7 +56,7 @@ public class NopInstanceFilterInterceptorTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -72,7 +72,7 @@ public class NopInstanceFilterInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -87,7 +87,7 @@ public class NopInstanceFilterInterceptorTest {
     }
 
     /**
-     * 测试getTargetInstances方法
+     * Test the getTargetExamples method
      */
     @Test
     public void testGetTargetInstances() {

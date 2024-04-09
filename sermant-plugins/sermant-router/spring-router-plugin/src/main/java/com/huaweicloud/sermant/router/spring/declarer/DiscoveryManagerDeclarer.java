@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * 注册插件拦截点
+ * Register plug-in intercept point
  *
  * @author provenceee
  * @since 2022-10-13
@@ -34,7 +34,7 @@ public class DiscoveryManagerDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "registry";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public DiscoveryManagerDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
