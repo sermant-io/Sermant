@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 处理器上下文
+ * Chain context
  *
  * @author zhouss
  * @since 2022-07-11
@@ -38,11 +38,11 @@ public class ChainContext {
     }
 
     /**
-     * 获取指定名称的线程变量缓存
+     * Gets a cache of thread variables with the specified name
      *
-     * @param name 名称
+     * @param name name
      * @return ThreadLocalContext
-     * @throws IllegalArgumentException 当现场变量超过最大size抛出异常
+     * @throws IllegalArgumentException Throw an exception when the thread variable exceeds the maximum size
      */
     public static RequestContext getThreadLocalContext(String name) {
         Map<String, RequestContext> contextMap = THREAD_LOCAL_CONTEXT_MAP.get();
@@ -57,7 +57,7 @@ public class ChainContext {
     }
 
     /**
-     * 清除线程变量
+     * clear thread variable
      */
     public static void remove() {
         final Map<String, RequestContext> contextMap = THREAD_LOCAL_CONTEXT_MAP.get();
@@ -68,9 +68,9 @@ public class ChainContext {
     }
 
     /**
-     * 移除指定缓存
+     * remove specified cache
      *
-     * @param name 名称
+     * @param name name
      */
     public static void remove(String name) {
         final Map<String, RequestContext> contextMap = THREAD_LOCAL_CONTEXT_MAP.get();
@@ -83,15 +83,14 @@ public class ChainContext {
     }
 
     /**
-     * 针对线程变量添加前置
+     * add presets for thread variables
      * <p>
-     * {@link RequestContext#get(String, Class)}
-     * {@link RequestContext#save(String, Object)}
-     * {@link RequestContext#remove(String)}
+     * {@link RequestContext#get(String, Class)} {@link RequestContext#save(String, Object)} {@link
+     * RequestContext#remove(String)}
      * </p>
      *
-     * @param sourceName 发起源
-     * @param keyPrefix 前缀
+     * @param sourceName source name
+     * @param keyPrefix prefix
      */
     public static void setKeyPrefix(String sourceName, String keyPrefix) {
         if (keyPrefix != null) {
@@ -100,9 +99,9 @@ public class ChainContext {
     }
 
     /**
-     * 获取当前线程变量的key前缀
+     * gets the key prefix of the current thread variable
      *
-     * @param sourceName 发起源
+     * @param sourceName source name
      * @return keyPrefix
      */
     public static Optional<String> getKeyPrefix(String sourceName) {

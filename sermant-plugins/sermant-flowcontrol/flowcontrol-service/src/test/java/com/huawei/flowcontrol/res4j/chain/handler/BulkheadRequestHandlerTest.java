@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 隔离仓测试
+ * BulkheadRequestHandlerTest
  *
  * @author zhouss
  * @since 2022-08-30
@@ -39,7 +39,7 @@ public class BulkheadRequestHandlerTest extends BaseEntityTest implements Reques
     private String sourceName;
 
     /**
-     * 测试限流
+     * test current limiting
      */
     @Override
     public void test(HandlerChainEntry entry, String sourceName) {
@@ -101,6 +101,6 @@ public class BulkheadRequestHandlerTest extends BaseEntityTest implements Reques
     private String getRule() {
         return "maxConcurrentCalls: \"1\"\n"
                 + "maxWaitDuration: 1\n"
-                + "name: 测试隔离仓";
+                + "name: testBulkhead";
     }
 }

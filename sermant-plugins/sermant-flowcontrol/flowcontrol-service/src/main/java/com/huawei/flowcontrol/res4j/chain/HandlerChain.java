@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.res4j.chain;
 
 /**
- * 执行器链
+ * HandlerChain
  *
  * @author zhouss
  * @since 2022-07-11
@@ -27,9 +27,9 @@ public class HandlerChain extends AbstractChainHandler {
     private AbstractChainHandler tail;
 
     /**
-     * 添加执行器
+     * add Handler
      *
-     * @param handler 执行器
+     * @param handler handler
      */
     public void addLastHandler(AbstractChainHandler handler) {
         if (tail == null) {

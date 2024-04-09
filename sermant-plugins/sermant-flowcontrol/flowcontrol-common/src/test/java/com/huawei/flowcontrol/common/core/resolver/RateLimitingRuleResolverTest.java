@@ -17,14 +17,12 @@
 
 package com.huawei.flowcontrol.common.core.resolver;
 
-import static org.junit.Assert.*;
-
 import com.huawei.flowcontrol.common.core.rule.RateLimitingRule;
 
 import org.junit.Assert;
 
 /**
- * 限流规则解析
+ * Analysis of rate limiting rules
  *
  * @author zhouss
  * @since 2022-08-29

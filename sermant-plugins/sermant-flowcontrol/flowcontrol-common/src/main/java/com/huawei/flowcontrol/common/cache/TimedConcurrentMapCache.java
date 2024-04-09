@@ -30,10 +30,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
- * 定时清理缓存
+ * periodic cache clearing
  *
- * @param <K> 键
- * @param <V> 值
+ * @param <K> key
+ * @param <V> value
  * @author zhouss
  * @since 2022-07-21
  */
@@ -41,32 +41,32 @@ public class TimedConcurrentMapCache<K extends Timed, V> extends ConcurrentMapCa
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 默认检查间隔
+     * default check interval
      */
     private static final long CHECK_INTERVAL = 60000L;
 
     /**
-     * 最大缓存数目
+     * maximum cache number
      */
     private final int maxSize;
 
     /**
-     * 缓存过期时间
+     * cache expiration time
      */
     private final long evictTimeMs;
 
     /**
-     * 最老的键
+     * the oldest key
      */
     private K lastOldestKey;
 
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
     /**
-     * 定时缓存构造器
+     * timed cache constructor
      *
-     * @param maxSize 最大缓存数
-     * @param evictTimeMs 过期时间, 单位毫秒
+     * @param maxSize maximum cache number
+     * @param evictTimeMs expiration time in milliseconds
      */
     public TimedConcurrentMapCache(int maxSize, long evictTimeMs) {
         this.maxSize = maxSize;
@@ -92,7 +92,7 @@ public class TimedConcurrentMapCache<K extends Timed, V> extends ConcurrentMapCa
             return false;
         }
 
-        // 移除最后一个最老的键
+        // remove the last oldest key
         evict(lastOldestKey);
         lastOldestKey = null;
         return super.size() <= maxSize;

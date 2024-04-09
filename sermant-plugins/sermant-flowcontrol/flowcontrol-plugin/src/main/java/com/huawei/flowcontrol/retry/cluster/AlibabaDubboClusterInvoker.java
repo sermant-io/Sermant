@@ -58,7 +58,7 @@ import java.util.logging.Logger;
 /**
  * alibaba dubbo invoker
  *
- * @param <T> 返回类型
+ * @param <T> returnType
  * @author zhouss
  * @since 2022-03-04
  */
@@ -72,7 +72,7 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     private final Invoker<T> delegate;
 
     /**
-     * alibaba集群调用器构造
+     * constructor
      *
      * @param directory service
      */
@@ -81,10 +81,10 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * alibaba集群调用器构造
+     * constructor
      *
      * @param directory service
-     * @param delegate 原集群调用器
+     * @param delegate original cluster caller
      */
     public AlibabaDubboClusterInvoker(Directory<T> directory, Invoker<T> delegate) {
         super(directory);
@@ -102,7 +102,7 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 .ofCheckedSupplier(buildFunc(invocation, invokers, loadbalance));
         io.github.resilience4j.retry.Retry retryRule = null;
         if (!handlers.isEmpty()) {
-            // 重试仅支持一种策略
+            // only one policy is supported for retry
             retryRule = handlers.get(0);
             dcs.withRetry(retryRule);
         }
@@ -161,10 +161,11 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * Convert alibaba dubbo. Note that this method is not extractable，Because host dependencies can only be loaded by
+     * this interceptor, pulling out results in classes not being found.
      *
-     * @param invocation 调用信息
-     * @param invoker 调用者
+     * @param invocation call information
+     * @param invoker invoker
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation, Invoker<T> invoker) {
@@ -177,7 +178,8 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
             version = url.getParameter(CommonConst.URL_VERSION_KEY, ConvertUtils.ABSENT_VERSION);
         }
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
-            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            // For generalized interfaces, you can obtain the actual interface and version name from the url,
+            // The method name is obtained based on parameters and is the first parameter of the requested method
             isGeneric = true;
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
@@ -186,7 +188,8 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
             }
         }
 
-        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
+        // High version using API invocation.getTargetServiceUniqueName access path，
+        // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         return new DubboRequestEntity(apiPath, DubboAttachmentsHelper.resolveAttachments(invocation, false),
                 RequestType.CLIENT, getRemoteApplication(url, interfaceName), isGeneric);
@@ -204,14 +207,14 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     /**
-     * 阿里巴巴重试器
+     * alibaba retry
      *
      * @since 2022-02-22
      */
     public static class AlibabaDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
-            // dubbo不支持状态码
+            // dubbo does not support status codes
             return false;
         }
 

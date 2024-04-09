@@ -21,14 +21,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 字符串工具测试类
+ * string tool test class
  *
  * @author zhouss
  * @since 2022-03-03
  */
 public class StringUtilsTest {
     /**
-     * 测试相等
+     * test equality
      */
     @Test
     public void testEqual() {

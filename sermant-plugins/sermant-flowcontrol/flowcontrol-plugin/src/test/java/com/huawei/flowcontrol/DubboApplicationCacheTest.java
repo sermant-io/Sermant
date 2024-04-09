@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 缓存简单测试
+ * cache test
  *
  * @author zhouss
  * @since 2022-09-13

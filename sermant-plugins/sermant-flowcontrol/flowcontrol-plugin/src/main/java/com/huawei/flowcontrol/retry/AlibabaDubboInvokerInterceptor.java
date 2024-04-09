@@ -49,7 +49,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * alibaba dubbo拦截后的增强类,埋点定义sentinel资源
+ * An enhanced class after the alibaba dubbo intercept, buried to define sentinel resources
  *
  * @author zhouss
  * @since 2022-02-10
@@ -62,9 +62,10 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
     private final Retry retry = new AlibabaDubboRetry();
 
     /**
-     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * Convert alibaba dubbo. Note that this method is not extractable，Because host dependencies can only be loaded by
+     * this interceptor, pulling out results in classes not being found.
      *
-     * @param invocation 调用信息
+     * @param invocation invoke information
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation) {
@@ -73,7 +74,8 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         String methodName = invocation.getMethodName();
         String version = invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION);
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
-            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            // For generalized interfaces, you can obtain the actual interface and version name from the url,
+            // The method name is obtained based on parameters and is the first parameter of the requested method
             final URL url = invoker.getUrl();
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
@@ -83,14 +85,15 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             version = url.getParameter(CommonConst.URL_VERSION_KEY, version);
         }
 
-        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
+        // High version using API invocation.getTargetServiceUniqueName access path，
+        // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()),
                 RequestType.CLIENT, invoker.getUrl().getParameter(CommonConst.DUBBO_REMOTE_APPLICATION));
     }
 
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
-        boolean isRetry) {
+            boolean isRetry) {
         try {
             if (obj instanceof AbstractClusterInvoker) {
                 final Invocation invocation = (Invocation) allArguments[0];
@@ -100,7 +103,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
 
                 if (!checkInvokersOption.isPresent() || !selectOption.isPresent()) {
                     LOGGER.warning(String.format(Locale.ENGLISH, "It does not support retry for class %s",
-                        obj.getClass().getCanonicalName()));
+                            obj.getClass().getCanonicalName()));
                     return ret;
                 }
                 final Method checkInvokers = checkInvokersOption.get();
@@ -109,14 +112,14 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
                     invocation.getAttachments().put(RETRY_KEY, RETRY_VALUE);
                 }
 
-                // 校验invokers
+                // verify invokers
                 checkInvokers.invoke(obj, invokers, invocation);
                 LoadBalance loadBalance = (LoadBalance) allArguments[LOADER_BALANCE_INDEX];
 
-                // 选择invoker
+                // select invoker
                 final Invoker<?> invoke = (Invoker<?>) select.invoke(obj, loadBalance, invocation, invokers, null);
 
-                // 执行调用
+                // execute invoke
                 final Result result = invoke.invoke(invocation);
                 if (result.hasException() && isNeedThrow) {
                     final Throwable exception = result.getException();
@@ -130,7 +133,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         } catch (IllegalAccessException ex) {
             LOGGER.warning("No such Method ! " + ex.getMessage());
         } catch (InvocationTargetException ex) {
-            // 针对该异常，需拿到目标异常（真正的方法异常）
+            // For this exception, you need to get the target exception (true method exception)
             throw new InvokerWrapperException(ex.getTargetException());
         }
         return ret;
@@ -140,7 +143,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return getInvokerMethod("select", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
-                    .getDeclaredMethod("select", LoadBalance.class, Invocation.class, List.class, List.class);
+                        .getDeclaredMethod("select", LoadBalance.class, Invocation.class, List.class, List.class);
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException ex) {
@@ -154,7 +157,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         return getInvokerMethod("checkInvokers", func -> {
             try {
                 final Method method = AbstractClusterInvoker.class
-                    .getDeclaredMethod("checkInvokers", List.class, Invocation.class);
+                        .getDeclaredMethod("checkInvokers", List.class, Invocation.class);
                 method.setAccessible(true);
                 return method;
             } catch (NoSuchMethodException ex) {
@@ -176,16 +179,16 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
         final Invocation invocation = (Invocation) allArguments[0];
         Object result = context.getResult();
         try {
-            // 标记当前线程执行重试
+            // marks the current thread to perform retry
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
             if (invocation.getInvoker() != null) {
                 final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
-                    .getHandlers(convertToAlibabaDubboEntity(invocation));
+                        .getHandlers(convertToAlibabaDubboEntity(invocation));
                 if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
                     result = handlers.get(0).executeCheckedSupplier(
-                        () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
-                            true));
+                            () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
+                                    true));
                 }
             } else {
                 LOGGER.warning("Not found down stream invoker, it will skip retry check!");
@@ -205,7 +208,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             realException = ((InvokerWrapperException) throwable).getRealException();
         }
         LOGGER.warning(String.format(Locale.ENGLISH, "Invoking method [%s] failed, reason : %s",
-            invocation.getMethodName(), realException.getMessage()));
+                invocation.getMethodName(), realException.getMessage()));
         return new RpcResult(realException);
     }
 
@@ -215,14 +218,14 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * alibaba重试
+     * alibaba retry
      *
      * @since 2022-02-22
      */
     public static class AlibabaDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
-            // dubbo不支持状态码
+            // dubbo does not support status codes
             return false;
         }
 

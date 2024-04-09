@@ -45,7 +45,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * Apache dubbo重试调用逻辑测试
+ * Apache dubbo retry invoke test
  *
  * @author zhouss
  * @since 2022-08-31
@@ -59,9 +59,9 @@ public class ApacheDubboClusterInterceptorTest {
     }
 
     /**
-     * 前置初始化
+     * preinitialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {

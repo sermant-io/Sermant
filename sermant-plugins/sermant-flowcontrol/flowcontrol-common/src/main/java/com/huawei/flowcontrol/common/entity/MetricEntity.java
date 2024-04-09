@@ -18,104 +18,104 @@ package com.huawei.flowcontrol.common.entity;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 指标信息
+ * index information
  *
  * @author zhp
  * @since 2022-09-14
  */
 public class MetricEntity {
     /**
-     * 名称
+     * name
      */
     private String name;
 
     /**
-     * 服务端请求数量
+     * number of server requests
      */
     private AtomicLong serverRequest;
 
     /**
-     * 客户端请求数量
+     * number of client requests
      */
     private AtomicLong clientRequest;
 
     /**
-     * 客户端请求耗时
+     * client requests take time
      */
     private AtomicLong consumeClientTime;
 
     /**
-     * 服务段请求耗时
+     * server requests take time
      */
     private AtomicLong consumeServerTime;
 
     /**
-     * 服务端请求成功数量
+     * number of successful requests on the server
      */
     private AtomicLong successServerRequest;
 
     /**
-     * 客户端请求成功数量
+     * number of successful client requests
      */
     private AtomicLong successClientRequest;
 
     /**
-     * 服务段请求失败数量
+     * number of server request failures
      */
     private AtomicLong failedServerRequest;
 
     /**
-     * 客户端请求失败数量
+     * number of failed client requests
      */
     private AtomicLong failedClientRequest;
 
     /**
-     * 上次采集时间
+     * last collection time
      */
     private AtomicLong lastTime;
 
     /**
-     * 熔断耗时
+     * circuit breaker time
      */
     private AtomicLong fuseTime;
 
     /**
-     * 熔断失败请求数量
+     * number of failed circuit breaker requests
      */
     private AtomicLong failedFuseRequest;
 
     /**
-     * 熔断成功数量
+     * number of successful circuit breaker
      */
     private AtomicLong successFulFuseRequest;
 
     /**
-     * 熔断断开数量
+     * number of circuit breaker breaks
      */
     private AtomicLong permittedFulFuseRequest;
 
     /**
-     * 熔断忽略异常数量
+     * The number of exceptions ignored by circuit breaker
      */
     private AtomicLong ignoreFulFuseRequest;
 
     /**
-     * 熔断慢调用数量
+     * Number of circuit breaker slow calls
      */
     private AtomicLong slowFuseRequest;
 
     /**
-     * 熔断调用数量
+     * number of circuit breaker calls
      */
     private AtomicLong fuseRequest;
 
     /**
-     * 熔断调用数量
+     * circuit breaker report time
      */
     private long reportTime;
 
     /**
-     * 构造初始化
+     * construction initialization
      */
     public MetricEntity() {
         this.serverRequest = new AtomicLong();

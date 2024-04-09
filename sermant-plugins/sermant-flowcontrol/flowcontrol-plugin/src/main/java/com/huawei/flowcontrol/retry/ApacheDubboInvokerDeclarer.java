@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * apche dubbo invoker请求拦截
+ * apche dubbo invoker declarer
  *
  * @author zhouss
  * @since 2022-01-27
  */
 public class ApacheDubboInvokerDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = ApacheDubboInvokerInterceptor.class.getCanonicalName();
 
@@ -47,7 +47,7 @@ public class ApacheDubboInvokerDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("doInvoke"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("doInvoke"), INTERCEPT_CLASS)
         };
     }
 }

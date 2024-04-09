@@ -39,7 +39,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 链调用入口测试
+ * chain call entry test
  *
  * @author zhouss
  * @since 2022-08-30
@@ -67,7 +67,7 @@ public class HandlerChainEntryTest {
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     /**
-     * mock配置
+     * mock configuration
      */
     @Before
     public void setUp() {
@@ -80,7 +80,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 关闭mock
+     * close mock
      */
     @After
     public void close() {
@@ -90,7 +90,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试前置调用
+     * Test pre-call
      */
     @Test
     public void onBefore() {
@@ -98,7 +98,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试dubbo前置调用
+     * test the dubbo pre-call
      */
     @Test
     public void onDubboBefore() {
@@ -107,7 +107,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试响应调用
+     * test response call
      */
     @Test
     public void onResult() {
@@ -115,7 +115,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试dubbo响应调用
+     * test the dubbo response call
      */
     @Test
     public void onDubboResult() {
@@ -124,7 +124,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试异常调用
+     * test exception call
      */
     @Test
     public void onThrow() {
@@ -132,7 +132,7 @@ public class HandlerChainEntryTest {
     }
 
     /**
-     * 测试dubbo异常调用
+     * test the dubbo exception call
      */
     @Test
     public void onDubboThrow() {

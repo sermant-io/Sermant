@@ -28,21 +28,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 集群调用器参数缓存
+ * cluster caller parameter cache
  *
  * @author zhouss
  * @since 2022-09-08
  */
 public enum ClusterInvokerCreator {
     /**
-     * 单例
+     * single case
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 集群调用器缓存 key: 集群名称 value: 对应实现类 eg: failover: org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker
+     * cluster caller cache key: clusterName value: corresponding implementation class eg: failover:
+     * org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker
      *
      * @see org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker
      * @see com.alibaba.dubbo.rpc.cluster.Cluster
@@ -53,7 +54,7 @@ public enum ClusterInvokerCreator {
     private final AtomicBoolean isBuilt = new AtomicBoolean();
 
     /**
-     * 构建树
+     * build tree
      *
      * @see com.alibaba.dubbo.rpc.cluster.Directory
      * @see org.apache.dubbo.rpc.cluster.Directory
@@ -63,12 +64,12 @@ public enum ClusterInvokerCreator {
     private Object cluster;
 
     /**
-     * 原始invoker对应的名称
+     * the name corresponding to the original invoker
      */
     private String originInvokerName;
 
     /**
-     * 构建invoker
+     * build invoker
      *
      * @return cluster
      */

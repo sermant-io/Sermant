@@ -17,12 +17,10 @@
 
 package com.huawei.flowcontrol.common.core.resolver;
 
-import static org.junit.Assert.*;
-
 import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 
 /**
- * 隔离仓测试
+ * isolation chamber test
  *
  * @author zhouss
  * @since 2022-08-29

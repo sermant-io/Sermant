@@ -20,49 +20,49 @@ package com.huawei.flowcontrol.common.core.rule;
 import com.huawei.flowcontrol.common.config.CommonConst;
 
 /**
- * 系统规则
+ * system rule
  *
  * @author xuezechao1
  * @since 2022-12-05
  */
 public class SystemRule extends AbstractRule {
     /**
-     * 默认系统负载
+     * default system load
      */
     private static final double DEFAULT_SYSTEM_LOAD = Double.MAX_VALUE;
 
     /**
-     * 默认CPU使用率 [0, 1]
+     * default cpu usage [0, 1]
      */
     private static final double DEFAULT_CPU_USAGE = 1.0D;
 
     /**
-     * 默认qps
+     * default qps
      */
     private static final double DEFAULT_QPS = Double.MAX_VALUE;
 
     /**
-     * 默认平均响应时间
+     * default average response time
      */
     private static final long DEFAULT_AVE_RT = Long.MAX_VALUE;
 
     /**
-     * 默认并发线程
+     * default concurrent thread
      */
     private static final long DEFAULT_THREAD_NUM = Long.MAX_VALUE;
 
     /**
-     * 默认限流错误码
+     * default limiting error code
      */
     private static final int DEFAULT_ERROR_CODE = CommonConst.INTERVAL_SERVER_ERROR;
 
     /**
-     * 系统负载
+     * system load
      */
     private double systemLoad = DEFAULT_SYSTEM_LOAD;
 
     /**
-     * CPU使用率 [0, 1]
+     * cpu usage [0, 1]
      */
     private double cpuUsage = DEFAULT_CPU_USAGE;
 
@@ -72,17 +72,17 @@ public class SystemRule extends AbstractRule {
     private double qps = DEFAULT_QPS;
 
     /**
-     * 平均响应时间
+     * average response time
      */
     private long aveRt = DEFAULT_AVE_RT;
 
     /**
-     * 并发线程
+     * concurrent thread
      */
     private long threadNum = DEFAULT_THREAD_NUM;
 
     /**
-     * 限流错误码
+     * limiting error code
      */
     private int errorCode = DEFAULT_ERROR_CODE;
 

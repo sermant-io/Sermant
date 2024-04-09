@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.service.HttpService;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * Http拦截实现
+ * Http interception implementation
  *
  * @author zhouss
  * @since 2022-01-25

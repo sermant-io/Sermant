@@ -24,25 +24,28 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 请求体转换工具类, 主要基于反射
+ * Request body conversion tool class, mainly based on reflection
  *
  * @author zhouss
  * @since 2022-09-19
  */
 public class DubboAttachmentsHelper {
     private static final String APACHE_RPC_CONTEXT = "org.apache.dubbo.rpc.RpcContext";
+
     private static final String ALIBABA_RPC_CONTEXT = "com.alibaba.dubbo.rpc.RpcContext";
+
     private static final String ATTACHMENTS_FIELD = "attachments";
+
     private static final String GET_CONTEXT_METHOD = "getContext";
 
     private DubboAttachmentsHelper() {
     }
 
     /**
-     * 获取attachments
+     * get attachments
      *
-     * @param invocation 调用信息
-     * @param isApache 是否为apache Dubbo
+     * @param invocation call information
+     * @param isApache whether it is apache dubbo
      * @return Map
      */
     public static Map<String, String> resolveAttachments(Object invocation, boolean isApache) {

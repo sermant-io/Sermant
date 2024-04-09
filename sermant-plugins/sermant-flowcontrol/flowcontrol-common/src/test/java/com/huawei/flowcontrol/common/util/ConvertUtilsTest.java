@@ -21,14 +21,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 转换工具类测试
+ * convert tool class tests
  *
  * @author zhouss
  * @since 2022-03-03
  */
 public class ConvertUtilsTest {
     /**
-     * 测试构建api路径
+     * test the build api path
      */
     @Test
     public void testBuildPath() {

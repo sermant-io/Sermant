@@ -20,35 +20,35 @@ package com.huawei.flowcontrol.common.cache;
 import java.util.function.Supplier;
 
 /**
- * 缓存
+ * cache
  *
  *
  * @author zhouss
  * @since 2022-07-21
- * @param <K> 键
- * @param <V> 值
+ * @param <K> key
+ * @param <V> value
  */
 public interface Cache<K, V> {
     /**
-     * 返回真正缓存的对象
+     * returns the actual cached object
      *
-     * @return 缓存对象
+     * @return cache object
      */
     Object getCacheTarget();
 
     /**
-     * 获取缓存
+     * fetch cache
      *
-     * @param key 键
-     * @return 值
+     * @param key key
+     * @return value
      */
     V get(K key);
 
     /**
-     * 获取值, 若为空使用supplier提供的值返回
+     * Gets the value, and returns it using the value provided by supplier if it is empty
      *
-     * @param key 键
-     * @param supplier 值提供器
+     * @param key key
+     * @param supplier value provider
      * @return 值
      */
     default V get(K key, Supplier<V> supplier) {
@@ -60,30 +60,30 @@ public interface Cache<K, V> {
     }
 
     /**
-     * 设定值
+     * setValue
      *
-     * @param key 键
-     * @param value 值
+     * @param key key
+     * @param value value
      */
     void put(K key, V value);
 
     /**
-     * 移除缓存key
+     * removeCacheKey
      *
-     * @param key 需要移除的缓存键
-     * @return V 返回删除的值
+     * @param key cache key to be removed
+     * @return V returns the deleted value
      */
     V evict(K key);
 
     /**
-     * 是否资源
+     * release
      */
     void release();
 
     /**
-     * 缓存数量
+     * cache quantity
      *
-     * @return 缓存数
+     * @return cache quantity
      */
     int size();
 }

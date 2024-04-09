@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ import com.huawei.flowcontrol.common.core.rule.Configurable;
 import java.util.Map;
 
 /**
- * CSE规则配置更新通知
+ * cse rule configuration update notification
  *
- * @param <T> 规则实体
+ * @param <T> ruleEntity
  * @author zhouss
  * @since 2021-11-24
  */
 public interface ConfigUpdateListener<T extends Configurable> {
     /**
-     * 规则配置更新通知
+     * rule configuration update notification
      *
-     * @param updateKey 更新键
-     * @param rules 所有规则
+     * @param updateKey update key
+     * @param rules all rules
      */
     void notify(String updateKey, Map<String, T> rules);
 }

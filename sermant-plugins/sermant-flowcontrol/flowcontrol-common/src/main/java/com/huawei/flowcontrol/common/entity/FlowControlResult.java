@@ -20,38 +20,38 @@ package com.huawei.flowcontrol.common.entity;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
 /**
- * 修正结果, 该结果确定返回数据
+ * fix the result that determines the returned data
  *
  * @author zhouss
  * @since 2022-02-09
  */
 public class FlowControlResult {
     /**
-     * 流控响应
+     * flow control response
      */
     private FlowControlResponse response;
 
     /**
-     * 是否需要跳过调用
+     * whether to skip the call
      */
     private boolean isSkip = false;
 
     /**
-     * 请求方向
+     * request direction
      */
     private RequestType requestType;
 
     /**
-     * 构建响应提示, requestType
+     * build response prompt, requestType
      *
-     * @return 响应信息
+     * @return response message
      */
     public String buildResponseMsg() {
         if (response == null) {
             return "";
         }
         if (response.isReplaceResult()) {
-            // 替换场景, 直接使用序列化结果
+            // Replace the scenario and use the serialized result directly
             return response.getSerializeResult();
         } else {
             return response.getMsg();
@@ -79,9 +79,9 @@ public class FlowControlResult {
     }
 
     /**
-     * 更改流控响应结果, 并告知跳过本身方法调用
+     * Changes the result of the flow control response and is told to skip the method call itself
      *
-     * @param response 响应
+     * @param response response
      */
     public void setResponse(FlowControlResponse response) {
         this.response = response;

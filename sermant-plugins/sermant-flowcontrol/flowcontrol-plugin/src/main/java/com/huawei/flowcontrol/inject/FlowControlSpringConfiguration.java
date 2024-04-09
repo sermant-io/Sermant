@@ -17,10 +17,10 @@
 
 package com.huawei.flowcontrol.inject;
 
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.ResolverManager;
 import com.huawei.flowcontrol.common.core.constants.CseConstants;
 import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
-import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PostConstruct;
 
 /**
- * 基于spring配置
+ * spring based configuration
  *
  * @author zhouss
  * @since 2022-06-28
@@ -57,7 +57,7 @@ public class FlowControlSpringConfiguration {
     private Environment environment;
 
     /**
-     * 初始化流控先关配置
+     * Initialize flow control and turn off configuration first
      */
     @PostConstruct
     public void init() {
@@ -90,7 +90,7 @@ public class FlowControlSpringConfiguration {
     }
 
     /**
-     * 从spring环境变量读取流控策略
+     * Read the flow control policy from the spring environment variable
      */
     private void loadRuleFromEnvironment() {
         if (!(environment instanceof ConfigurableEnvironment)) {
@@ -105,10 +105,11 @@ public class FlowControlSpringConfiguration {
     }
 
     /**
-     * 这里对配置源倒序排序，保证获取的配置优先级与spring一致
+     * The configuration sources are sorted in reverse order to ensure that the
+     * obtained configuration priorities are consistent with spring
      *
-     * @param propertySources 配置源
-     * @return 倒序后的配置源
+     * @param propertySources configuration source
+     * @return configuration source in reverse order
      */
     private List<PropertySource<?>> getPropertySources(MutablePropertySources propertySources) {
         final LinkedList<PropertySource<?>> result = new LinkedList<>();

@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.entity;
 
 /**
- * 流控响应
+ * flow control response
  *
  * @author zhouss
  * @since 2022-08-05
@@ -29,25 +29,25 @@ public class FlowControlResponse {
     private final int code;
 
     /**
-     * 响应结果, 直接替换接口返回值
+     * In response to the result, directly replace the interface return value
      */
     private Object result;
 
     /**
-     * 是否替代实际响应结果, 若为true则替换
+     * Whether to replace the actual response result, if true, replace
      */
     private boolean isReplaceResult;
 
     /**
-     * 序列化之后的结果
+     * the result after serialization
      */
     private String serializeResult;
 
     /**
-     * 流控响应结果
+     * flow control response results
      *
-     * @param msg 提示信息
-     * @param code 响应码
+     * @param msg prompt message
+     * @param code response code
      */
     public FlowControlResponse(String msg, int code) {
         this.msg = msg;
@@ -55,11 +55,11 @@ public class FlowControlResponse {
     }
 
     /**
-     * 流控响应结果
+     * flow control response results
      *
-     * @param msg 提示信息
-     * @param code 响应码
-     * @param result 响应结果
+     * @param msg prompt message
+     * @param code response code
+     * @param result response result
      */
     public FlowControlResponse(String msg, int code, Object result) {
         this.msg = msg;

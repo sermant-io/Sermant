@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * 匹配缓存, 针对已经匹配的请求体进行缓存
+ * matching cache, cache the request body that already matches
  *
  * @author zhouss
  * @since 2022-07-21
@@ -45,7 +45,7 @@ public class MatchedCache {
     private volatile Cache<RequestEntity, Set<String>> cache;
 
     /**
-     * 构造器
+     * constructor
      */
     public MatchedCache() {
         final CacheListener cacheListener = new CacheListener();
@@ -56,7 +56,7 @@ public class MatchedCache {
     }
 
     /**
-     * 获取缓存代理类
+     * gets the cache proxy class
      *
      * @return Cache
      */
@@ -75,7 +75,7 @@ public class MatchedCache {
     }
 
     /**
-     * 释放资源
+     * release resource
      */
     public void release() {
         if (cache != null) {
@@ -84,7 +84,7 @@ public class MatchedCache {
     }
 
     /**
-     * 缓存监听器, 监听所有策略变更
+     * cache listeners that listen for all policy changes
      *
      * @since 2022-07-21
      */

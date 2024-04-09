@@ -23,7 +23,7 @@ import com.huawei.flowcontrol.common.core.rule.fault.Fault;
 import com.huawei.flowcontrol.res4j.util.SystemRuleUtils;
 
 /**
- * 处理限流异常
+ * Handling current limit exceptions
  *
  * @author xuezechao1
  * @since 2022-12-07
@@ -32,9 +32,9 @@ public class SystemRuleFault implements Fault {
     private SystemRule rule;
 
     /**
-     * 系统流控错误
+     * system rule fault
      *
-     * @param systemRule 系统规则
+     * @param systemRule system rule
      */
     public SystemRuleFault(SystemRule systemRule) {
         this.rule = systemRule;
@@ -71,9 +71,9 @@ public class SystemRuleFault implements Fault {
     }
 
     /**
-     * 系统负载自适应检测
+     * system load adaptive detection
      *
-     * @return 是否流控
+     * @return Whether to flow control
      */
     private boolean checkHistoryData() {
         long threadNum = SystemRuleUtils.getThreadNum();

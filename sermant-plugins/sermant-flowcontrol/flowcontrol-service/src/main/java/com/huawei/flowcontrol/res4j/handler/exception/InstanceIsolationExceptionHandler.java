@@ -23,7 +23,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.res4j.exceptions.InstanceIsolationException;
 
 /**
- * 熔断异常处理
+ * circuit breaker exception handling
  *
  * @author zhouss
  * @since 2022-08-05

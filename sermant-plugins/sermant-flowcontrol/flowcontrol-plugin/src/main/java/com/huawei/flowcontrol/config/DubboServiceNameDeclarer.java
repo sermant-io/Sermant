@@ -23,24 +23,24 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * alibaba dubbo 初始化配置拦截
+ * alibaba dubbo initialize the configuration intercept
  *
  * @author zhouss
  * @since 2022-01-27
  */
 public class DubboServiceNameDeclarer extends AbstractPluginDeclarer {
     /**
-     * alibaba dubbo配置类
+     * alibaba dubbo configuration class
      */
     private static final String ALIBABA_ENHANCE_CLASS = "com.alibaba.dubbo.config.ApplicationConfig";
 
     /**
-     * apache dubbo配置类
+     * apache dubbo configuration class
      */
     private static final String APACHE_ENHANCE_CLASS = "org.apache.dubbo.config.ApplicationConfig";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = DubboServiceNameInterceptor.class.getCanonicalName();
 

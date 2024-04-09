@@ -36,9 +36,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 抽象解析类
+ * abstract analytic class
  *
- * @param <T> 规则实体
+ * @param <T> ruleEntity
  * @author zhouss
  * @since 2022-08-11
  */
@@ -46,24 +46,24 @@ public abstract class AbstractResolver<T extends Configurable> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 各类规则配置前缀
+     * configure prefixes for all types of rules
      */
     private final String configKey;
 
     /**
-     * 规则数据 map 业务场景名, 规则数据
+     * regularData map serviceScenarioName, regularData
      */
     private final Map<String, T> rules;
 
     /**
-     * 配置更新监听 进行解析后再通知
+     * Configure the update listener to be parsed and then notified
      */
     private final List<ConfigUpdateListener<T>> listeners = new ArrayList<>();
 
     /**
-     * 解析器构造器
+     * the parser constructor
      *
-     * @param configKey 解析器配置键
+     * @param configKey parser configuration key
      */
     public AbstractResolver(String configKey) {
         this.configKey = configKey;
@@ -71,18 +71,18 @@ public abstract class AbstractResolver<T extends Configurable> {
     }
 
     /**
-     * 注册监听器
+     * register listener
      *
-     * @param listener 监听器
+     * @param listener listener
      */
     public synchronized void registerListener(ConfigUpdateListener<T> listener) {
         listeners.add(listener);
     }
 
     /**
-     * 配置更新通知
+     * configuration update notification
      *
-     * @param updateKey 更新业务场景名key
+     * @param updateKey updated the service scenario name key
      */
     public void notifyListeners(String updateKey) {
         for (ConfigUpdateListener<T> listener : listeners) {
@@ -90,19 +90,19 @@ public abstract class AbstractResolver<T extends Configurable> {
                 listener.notify(updateKey, rules);
             } catch (Exception ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Notified listener failed when updating rule! %s",
-                    ex.getMessage()));
+                        ex.getMessage()));
             }
         }
     }
 
     /**
-     * 格式化规则
+     * formatting rule
      *
-     * @param businessKey 业务场景名
-     * @param value       业务规则
-     * @param isOverride  是否覆盖规则， 用于单个业务场景更新时
-     * @param isForDelete 为了删除的场景，则直接移除该业务配置
-     * @return 转换后的规则
+     * @param businessKey service Scenario name
+     * @param value business rule
+     * @param isOverride Whether to override the rule when updating a single business scenario
+     * @param isForDelete To delete the service, delete the service configuration directly
+     * @return converted rules
      */
     public Optional<T> parseRule(String businessKey, String value, boolean isOverride, boolean isForDelete) {
         if (StringUtils.isEmpty(businessKey)) {
@@ -113,16 +113,16 @@ public abstract class AbstractResolver<T extends Configurable> {
             return Optional.empty();
         }
 
-        // 值为空场景，用户删除了该业务场景名
+        // The value is null, and the user deletes the service scenario name
         if (StringUtils.isEmpty(value) && isOverride) {
             rules.remove(businessKey);
             return Optional.empty();
         }
 
-        // 1、移除旧的配置
+        // 1、remove the old configuration
         rules.remove(businessKey);
 
-        // 2、转换配置
+        // 2、convert this configuration
         final Optional<T> optionalRule = OperationManager.getOperation(YamlConverter.class)
                 .convert(value,getRuleClass());
         if (!optionalRule.isPresent()) {
@@ -130,10 +130,10 @@ public abstract class AbstractResolver<T extends Configurable> {
         }
         final T rule = optionalRule.get();
 
-        // 3、设置名称以及服务名
+        // 3、set the name and service name
         rule.setName(businessKey);
 
-        // 4、判断规则是否合法
+        // 4、determine whether the rule is legal
         if (rule.isInValid()) {
             return Optional.empty();
         }
@@ -147,27 +147,27 @@ public abstract class AbstractResolver<T extends Configurable> {
     }
 
     /**
-     * 获取规则实体类型
+     * gets the rule entity type
      *
-     * @return 类型
+     * @return type
      */
     protected abstract Class<T> getRuleClass();
 
     /**
-     * 获取解析器配置前缀
+     * gets the parser configuration prefix
      *
-     * @param configKey 解析器配置键
-     * @return 配置前缀
+     * @param configKey parser configuration key
+     * @return configuration prefix
      */
     public static String getConfigKeyPrefix(String configKey) {
         return configKey + ".";
     }
 
     /**
-     * 匹配服务名与版本 此处版本需拦截sdk获取
+     * Matching Service name and Version The version must be obtained by blocking the sdk
      *
-     * @param services 服务，多个服务逗号隔开
-     * @return 是否匹配版本
+     * @param services Services. Multiple services are separated by commas (,)
+     * @return match the version
      */
     private boolean isServicesMatch(String services) {
         if (StringUtils.isEmpty(services)) {
@@ -176,16 +176,16 @@ public abstract class AbstractResolver<T extends Configurable> {
         for (String service : services.split(CseConstants.SERVICE_SEPARATOR)) {
             String[] serviceAndVersion = service.split(CseConstants.SERVICE_VERSION_SEPARATOR);
 
-            // 服务名匹配
+            // service name matching
             if (serviceAndVersion.length == 1 && serviceAndVersion[0]
-                .equals(FlowControlServiceMeta.getInstance().getServiceName())) {
+                    .equals(FlowControlServiceMeta.getInstance().getServiceName())) {
                 return true;
             }
 
-            // 服务加版本匹配
+            // service plus version matching
             if (serviceAndVersion.length == CseConstants.SERVICE_VERSION_PARTS && serviceAndVersion[0]
-                .equals(FlowControlServiceMeta.getInstance().getServiceName())
-                && serviceAndVersion[1].equals(FlowControlServiceMeta.getInstance().getVersion())) {
+                    .equals(FlowControlServiceMeta.getInstance().getServiceName())
+                    && serviceAndVersion[1].equals(FlowControlServiceMeta.getInstance().getVersion())) {
                 return true;
             }
         }

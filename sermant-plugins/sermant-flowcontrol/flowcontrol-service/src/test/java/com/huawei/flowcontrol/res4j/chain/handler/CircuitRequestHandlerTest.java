@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 熔断测试
+ * circuit breaker test
  *
  * @author zhouss
  * @since 2022-08-30
@@ -71,7 +71,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
                 .thenReturn(flowControlConfig);
     }
 
-    // mock 静态方法用完后需要关闭
+    // The mock static method needs to be closed when it is finished
     @After
     public void tearDown() throws Exception {
         pluginConfigManagerMockedStatic.close();
@@ -91,7 +91,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 获取结果信息
+     * get result information
      *
      * @return msg
      */
@@ -100,10 +100,10 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 测试http
+     * test http
      *
-     * @param requestEntity 请求体
-     * @return 响应结果
+     * @param requestEntity request body
+     * @return responseResult
      */
     protected FlowControlResult checkHttp(RequestEntity requestEntity) {
         final FlowControlResult flowControlResult = new FlowControlResult();
@@ -116,11 +116,11 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 测试dubbo
+     * test dubbo
      *
-     * @param requestEntity 请求体
-     * @param isProvider    是否为生产端
-     * @return 响应结果
+     * @param requestEntity request body
+     * @param isProvider    is provider
+     * @return responseResult
      */
     protected FlowControlResult checkDubbo(RequestEntity requestEntity, boolean isProvider) {
         final FlowControlResult flowControlResult = new FlowControlResult();
@@ -143,14 +143,14 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 规则
+     * rule
      *
-     * @return 规则
+     * @return rule
      */
     protected String getRule() {
         return "failureRateThreshold: 80\n"
                 + "minimumNumberOfCalls: 2\n"
-                + "name: 熔断\n"
+                + "name: circuit breaker\n"
                 + "slidingWindowSize: 10000\n"
                 + "slidingWindowType: time\n"
                 + "slowCallDurationThreshold: \"100\"\n"
@@ -159,7 +159,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 测试事件处理
+     * test event processing
      */
     @Test
     public void testAddPublishEvent() {
@@ -167,13 +167,13 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     }
 
     /**
-     * 测试事件消费
+     * test event consumption
      */
     private static void testEventConsume() {
         CircuitBreakerRule rule = new CircuitBreakerRule();
         rule.setFailureRateThreshold(80);
         rule.setMinimumNumberOfCalls(2);
-        rule.setName("熔断指标测试");
+        rule.setName("fuse");
         rule.setSlidingWindowSize("10000");
         rule.setSlidingWindowType("time");
         rule.setSlowCallDurationThreshold("100");

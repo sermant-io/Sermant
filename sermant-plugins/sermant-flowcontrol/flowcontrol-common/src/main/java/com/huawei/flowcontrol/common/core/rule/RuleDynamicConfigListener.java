@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 规则同步监听器
+ * rule synchronization listener
  *
  * @author zhouss
  * @since 2022-01-25
@@ -41,8 +41,8 @@ public class RuleDynamicConfigListener implements DynamicConfigListener {
     @Override
     public void process(DynamicConfigEvent event) {
         LOGGER.log(Level.INFO, String.format(Locale.ENGLISH, "Config [%s] has been received, operator type: [%s] ",
-            event.getKey(), event.getEventType()));
+                event.getKey(), event.getEventType()));
         ResolverManager.INSTANCE.resolve(Collections.singletonMap(event.getKey(), event.getContent()),
-            event.getEventType() == DynamicConfigEventType.DELETE);
+                event.getEventType() == DynamicConfigEventType.DELETE);
     }
 }

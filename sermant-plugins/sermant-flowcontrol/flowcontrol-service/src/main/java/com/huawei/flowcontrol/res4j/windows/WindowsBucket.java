@@ -20,25 +20,24 @@ package com.huawei.flowcontrol.res4j.windows;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * 滑动窗口元素
+ * sliding window element
  *
  * @author xuezechao1
  * @since 2022-12-07
  */
 class WindowsBucket {
-
     /**
-     * 响应时间
+     * response time
      */
     LongAdder rt = new LongAdder();
 
     /**
-     * 线程数
+     * thread count
      */
     LongAdder threadNum = new LongAdder();
 
     /**
-     * 成功数
+     * number of successes
      */
     LongAdder success = new LongAdder();
 }

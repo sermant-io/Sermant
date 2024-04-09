@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.res4j.windows.WindowsArray;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 配置工具类
+ * configuration tool class
  *
  * @author xuezechao1
  * @since 2022-12-12
@@ -34,25 +34,25 @@ public class SystemRuleUtils {
     }
 
     /**
-     * 获取系统自适应开关情况
+     * obtain the system adaptive switch status
      *
-     * @return 开关
+     * @return switch
      */
     public static boolean isEnableSystemAdaptive() {
         return CONFIG.isEnableSystemAdaptive();
     }
 
     /**
-     * 获取系统规则流控开关情况
+     * Obtain the system rule flow control switch information
      *
-     * @return 开发
+     * @return isEnableSystemRule
      */
     public static boolean isEnableSystemRule() {
         return CONFIG.isEnableSystemRule();
     }
 
     /**
-     * 获取qps
+     * get qps
      *
      * @return qps
      */
@@ -61,57 +61,56 @@ public class SystemRuleUtils {
     }
 
     /**
-     * 获取线程数
+     * get thread count
      *
-     * @return 线程数
+     * @return thread count
      */
     public static long getThreadNum() {
         return WindowsArray.INSTANCE.getThreadNum();
     }
 
     /**
-     * 获取平均响应时间
+     * get the average response time
      *
-     * @return 平均响应时间
+     * @return average response time
      */
     public static double getAveRt() {
         return SystemStatus.getInstance().getAveRt();
     }
 
     /**
-     * 获取系统负载
+     * get system load
      *
-     * @return 系统负载
+     * @return system load
      */
     public static double getCurrentLoad() {
         return SystemStatus.getInstance().getCurrentLoad();
     }
 
     /**
-     * 获取cpu使用率
+     * get cpu usage
      *
-     * @return cpu使用率
+     * @return cpu usage
      */
     public static double getCurrentCpuUsage() {
         return SystemStatus.getInstance().getCurrentCpuUsage();
     }
 
     /**
-     * 获取最大线程数
+     * gets the maximum number of threads
      *
-     * @return 最大线程数
+     * @return the maximum number of threads
      */
     public static double getMaxThreadNum() {
         return SystemStatus.getInstance().getMaxThreadNum();
     }
 
     /**
-     * 获取最小响应时间
+     * gets the minimum response time
      *
-     * @return 最小响应时间
+     * @return minimum response time
      */
     public static double getMinRt() {
         return SystemStatus.getInstance().getMinRt();
     }
-
 }

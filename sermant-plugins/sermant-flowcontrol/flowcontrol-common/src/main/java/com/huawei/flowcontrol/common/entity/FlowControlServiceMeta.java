@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@
 package com.huawei.flowcontrol.common.entity;
 
 /**
- * 服务原信息类 - 单例 如果依赖sdk的话，可考虑直接替换为MicroserviceMeta {@see org.apache.servicecomb.governance.MicroserviceMeta}
+ * service source information class - If the singleton relies on the sdk, consider replacing
+ * it directly with MicroserviceMeta {@see org.apache.servicecomb.governance.MicroserviceMeta}
  *
  * @author zhouss
  * @since 2021-11-16
@@ -27,32 +28,32 @@ public class FlowControlServiceMeta {
     private static final FlowControlServiceMeta INSTANCE = new FlowControlServiceMeta();
 
     /**
-     * sc app名
+     * sc appName
      */
     private String app;
 
     /**
-     * 服务名
+     * service name
      */
     private String serviceName;
 
     /**
-     * 版本
+     * version
      */
     private String version;
 
     /**
-     * 环境
+     * environment
      */
     private String environment;
 
     /**
-     * sc自定义值
+     * sc custom value
      */
     private String customLabelValue;
 
     /**
-     * sc自定义标签
+     * sc custom tag
      */
     private String customLabel;
 
@@ -62,7 +63,7 @@ public class FlowControlServiceMeta {
     private String project;
 
     /**
-     * 是否为dubbo应用
+     * whether it is a dubbo application
      */
     private boolean isDubboService;
 
@@ -138,7 +139,7 @@ public class FlowControlServiceMeta {
     }
 
     /**
-     * 当前数据是否都已经获取
+     * whether all current data is obtained
      *
      * @return boolean
      */

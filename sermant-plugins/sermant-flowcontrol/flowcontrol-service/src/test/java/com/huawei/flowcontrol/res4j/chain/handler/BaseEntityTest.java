@@ -25,7 +25,7 @@ import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 import java.util.Collections;
 
 /**
- * 提供请求实体
+ * provide request entity
  *
  * @author zhouss
  * @since 2022-08-30

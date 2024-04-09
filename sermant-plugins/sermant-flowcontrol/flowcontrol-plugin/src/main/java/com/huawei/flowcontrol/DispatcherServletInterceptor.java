@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
+ * The API interface of DispatcherServlet is enhanced to define sentinel resources.
  *
  * @author zhouss
  * @since 2022-02-11
@@ -44,9 +44,11 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
     private final String className = DispatcherServletInterceptor.class.getName();
 
     /**
-     * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * http request data conversion adapts to plugin -> service data transfer Note that this method is not
+     * extractable，Because host dependencies can only be loaded by this interceptor, pulling out results in classes not
+     * being found.
      *
-     * @param request 请求
+     * @param request request
      * @return HttpRequestEntity
      */
     private Optional<HttpRequestEntity> convertToHttpEntity(HttpServletRequest request) {
@@ -65,9 +67,9 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * 获取http请求头信息
+     * gets http request header information
      *
-     * @param request 请求信息
+     * @param request request information
      * @return headers
      */
     private Map<String, String> getHeaders(HttpServletRequest request) {

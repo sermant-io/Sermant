@@ -36,7 +36,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * rest4j测试
+ * rest4j test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -45,7 +45,7 @@ public class FlowControlExceptionUtilsTest {
     private static final String RULE_NAME = "test";
 
     /**
-     * 测试异常处理
+     * test exception handling
      */
     @Test
     public void testExceptionHandler() {
@@ -92,7 +92,7 @@ public class FlowControlExceptionUtilsTest {
     }
 
     /**
-     * 判断是否需是否隔离仓资源
+     * Determine whether warehouse resources need to be isolated
      */
     @Test
     public void testCheckFlowControlException() {

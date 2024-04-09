@@ -20,14 +20,14 @@ package com.huawei.flowcontrol.common.util;
 import java.util.Locale;
 
 /**
- * 字符串工具类
+ * string utility class
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public class StringUtils {
     /**
-     * 空串
+     * empty
      */
     public static final String EMPTY = "";
 
@@ -35,20 +35,20 @@ public class StringUtils {
     }
 
     /**
-     * 判断字符串是否为空
+     * determines whether the string is empty
      *
-     * @param val 字符串
-     * @return 当字符串为空或者未空串返回true
+     * @param val string
+     * @return return true if the string is empty or null
      */
     public static boolean isEmpty(String val) {
         return val == null || "".equals(val.trim());
     }
 
     /**
-     * 两个字符串是否相等
+     * whether two strings are equal
      *
-     * @param str1 字符串1
-     * @param str2 字符串2
+     * @param str1 string1
+     * @param str2 string2
      * @return boolean
      */
     public static boolean equal(String str1, String str2) {
@@ -62,10 +62,10 @@ public class StringUtils {
     }
 
     /**
-     * 两个字符串是否相等 - 不区分大小写
+     * whether two strings are equal case insensitive
      *
-     * @param str1 字符串1
-     * @param str2 字符串2
+     * @param str1 string1
+     * @param str2 string2
      * @return boolean
      */
     public static boolean equalIgnoreCase(String str1, String str2) {
@@ -79,10 +79,10 @@ public class StringUtils {
     }
 
     /**
-     * 字符串是否包含
+     * whether the string contains
      *
-     * @param source 源字符串
-     * @param subStr 字符串
+     * @param source source string
+     * @param subStr string
      * @return boolean
      */
     public static boolean contains(String source, String subStr) {
@@ -93,10 +93,10 @@ public class StringUtils {
     }
 
     /**
-     * 字符串是否以suffix结尾
+     * whether the string ends with suffix
      *
-     * @param source 源字符串
-     * @param suffix 后缀
+     * @param source source string
+     * @param suffix suffix
      * @return boolean
      */
     public static boolean suffix(String source, String suffix) {
@@ -107,10 +107,10 @@ public class StringUtils {
     }
 
     /**
-     * 字符串是否以suffix结尾
+     * whether the string starts with prefix
      *
-     * @param source 源字符串
-     * @param prefix 后缀
+     * @param source source string
+     * @param prefix prefix
      * @return boolean
      */
     public static boolean prefix(String source, String prefix) {
@@ -121,9 +121,9 @@ public class StringUtils {
     }
 
     /**
-     * 去除前后空格
+     * remove the spaces before and after the string
      *
-     * @param target 目标字符串
+     * @param target target string
      * @return String
      */
     public static String trim(String target) {

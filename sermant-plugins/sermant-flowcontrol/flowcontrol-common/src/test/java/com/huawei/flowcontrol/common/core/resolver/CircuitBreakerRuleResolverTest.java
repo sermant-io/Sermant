@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.common.core.rule.CircuitBreakerRule;
 import org.junit.Assert;
 
 /**
- * 熔断规则解析测试
+ * circuit breaker rule analysis test
  *
  * @author zhouss
  * @since 2022-08-29
@@ -58,7 +58,7 @@ public class CircuitBreakerRuleResolverTest extends AbstractRuleResolverTest<Cir
     public String getValue() {
         return "failureRateThreshold: 80\n"
                 + "minimumNumberOfCalls: 2\n"
-                + "name: 熔断\n"
+                + "name: circuit breaker\n"
                 + "slidingWindowSize: 10000\n"
                 + "slidingWindowType: time\n"
                 + "slowCallDurationThreshold: \"100\"\n"

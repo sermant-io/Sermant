@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 系统规则流控处理
+ * system rule flow control Handler
  *
  * @author xuezechao1
  * @since 2022-12-05
@@ -45,13 +45,13 @@ public class SystemServerReqHandler extends FlowControlHandler<Fault> {
     public void onBefore(RequestContext context, Set<String> businessNames) {
         if (SystemRuleUtils.isEnableSystemRule()) {
 
-            // 流控检测
+            // flow control detection
             final List<SystemRuleFault> faults = systemRuleHandler.createOrGetHandlers(businessNames);
             if (!faults.isEmpty()) {
                 faults.forEach(Fault::acquirePermission);
             }
 
-            // 记录请求时间
+            // record request time
             context.save(CommonConst.REQUEST_START_TIME, System.currentTimeMillis());
             WindowsArray.INSTANCE.addThreadNum(context.get(CommonConst.REQUEST_START_TIME, long.class));
         }

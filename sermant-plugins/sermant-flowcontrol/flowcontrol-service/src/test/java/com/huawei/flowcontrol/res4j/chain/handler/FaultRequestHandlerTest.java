@@ -26,7 +26,7 @@ import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import org.junit.Assert;
 
 /**
- * 错误注入测试
+ * error injection testing
  *
  * @author zhouss
  * @since 2022-08-30
@@ -37,7 +37,7 @@ public class FaultRequestHandlerTest extends BaseEntityTest implements RequestTe
     private String sourceName;
 
     /**
-     * 测试限流
+     * test current limiting
      */
     @Override
     public void test(HandlerChainEntry entry, String sourceName) {

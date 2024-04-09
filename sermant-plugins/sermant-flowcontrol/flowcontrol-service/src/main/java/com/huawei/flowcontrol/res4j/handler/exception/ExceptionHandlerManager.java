@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 错误处理器
+ * Exception Handler
  *
  * @author zhouss
  * @since 2022-08-08
@@ -41,17 +41,17 @@ public class ExceptionHandlerManager {
     private Map<Class<?>, ExceptionHandler<?>> handlers;
 
     /**
-     * 构造器
+     * constructor
      */
     public ExceptionHandlerManager() {
         loadHandlers();
     }
 
     /**
-     * 异常处理
+     * exceptionHandling
      *
-     * @param ex 目标异常
-     * @param result 流控结果, 用户异常处理器变更响应内容
+     * @param ex target exception
+     * @param result flowcontrol result, The user exception handler changed the response content
      */
     public void apply(Throwable ex, FlowControlResult result) {
         final ExceptionHandler handler = handlers.get(ex.getClass());

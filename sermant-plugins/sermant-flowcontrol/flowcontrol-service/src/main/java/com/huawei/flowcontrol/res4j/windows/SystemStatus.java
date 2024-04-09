@@ -18,22 +18,21 @@
 package com.huawei.flowcontrol.res4j.windows;
 
 /**
- * 系统状态
+ * system state
  *
  * @author xuezechao1
  * @since 2022-12-06
  */
 public class SystemStatus {
-
     private static final SystemStatus INSTANCE = new SystemStatus();
 
     /**
-     * 当前系统负载
+     * current system load
      */
     private double currentLoad = -1;
 
     /**
-     * 当前系统CPU使用率
+     * current system cpu usage
      */
     private double currentCpuUsage = -1;
 
@@ -43,17 +42,17 @@ public class SystemStatus {
     private double qps = 0d;
 
     /**
-     * 平均响应时间
+     * average response time
      */
     private double aveRt = 0d;
 
     /**
-     * 最小响应时间
+     * minimum response time
      */
     private double minRt = Long.MAX_VALUE;
 
     /**
-     * 最大线程数
+     * maximum number of threads
      */
     private long maxThreadNum = Long.MIN_VALUE;
 

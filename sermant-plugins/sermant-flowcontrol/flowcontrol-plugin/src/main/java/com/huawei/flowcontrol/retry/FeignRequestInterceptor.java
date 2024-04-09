@@ -51,7 +51,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
+ * enhanced DispatcherServlet api interface, buried to define sentinel resources
  *
  * @author zhouss
  * @since 2022-02-11
@@ -66,9 +66,11 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
     private final Retry retry = new FeignRetry();
 
     /**
-     * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * http request data conversion: adapts plugin to service data passing Note that this method is not
+     * extractable，Because host dependencies can only be loaded by this interceptor, pulling out results in classes not
+     * being found.
      *
-     * @param request 请求
+     * @param request request
      * @return HttpRequestEntity
      */
     private Optional<HttpRequestEntity> convertToHttpEntity(Request request) {
@@ -136,7 +138,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                 context.getMethod(), allArguments, context.getResult());
         RetryContext.INSTANCE.markRetry(retry);
         try {
-            // 第一次执行, 接管宿主逻辑
+            // first execution taking over the host logic
             result = retryFunc.get();
         } catch (Throwable throwable) {
             ex = throwable;
@@ -200,7 +202,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * feign重试
+     * feign retry
      *
      * @since 2022-02-11
      */

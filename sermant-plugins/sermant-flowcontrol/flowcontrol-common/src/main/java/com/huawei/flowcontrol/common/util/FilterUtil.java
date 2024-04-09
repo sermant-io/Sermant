@@ -18,24 +18,25 @@
 package com.huawei.flowcontrol.common.util;
 
 /**
- * 过滤工具类
+ * filter tools
  *
  * @author zhanghu
  * @since 2021-03-29
  */
 public final class FilterUtil {
     private static final String PATH_SPLIT = "/";
+
     private static final int NEGATIVE_ONE = -1;
 
     private FilterUtil() {
     }
 
     /**
-     * 过滤目标对象
+     * filter target object
      *
-     * @param rawPathInfo 路径信息
-     * @param rawServletPath 子路径
-     * @return 过滤后的字符串
+     * @param rawPathInfo path information
+     * @param rawServletPath subpath
+     * @return the filtered character string
      */
     public static String filterTarget(String rawPathInfo, String rawServletPath) {
         String pathInfo = getResourcePath(rawPathInfo, rawServletPath);

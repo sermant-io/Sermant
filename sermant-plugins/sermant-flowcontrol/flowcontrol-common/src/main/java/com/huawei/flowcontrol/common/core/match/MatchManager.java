@@ -26,14 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 匹配管理器
+ * match manager
  *
  * @author zhouss
  * @since 2021-11-24
  */
 public enum MatchManager {
     /**
-     * 单例
+     * single case
      */
     INSTANCE;
 
@@ -44,21 +44,21 @@ public enum MatchManager {
     private MatchGroupResolver matchGroupResolver;
 
     /**
-     * 匹配所有业务场景
+     * matches all service scenarios
      *
-     * @param request 请求信息
-     * @return 匹配的业务场景
+     * @param request request-information
+     * @return matching service scenarios
      */
     public Set<String> matchWithCache(RequestEntity request) {
         return matchWithCache(request, null);
     }
 
     /**
-     * 匹配指定业务场景名
+     * matches the specified service scenario name
      *
-     * @param request 请求信息
-     * @param businessName 业务场景名
-     * @return 匹配的业务场景
+     * @param request request_information
+     * @param businessName service scenario name
+     * @return matching service scenarios
      */
     public Set<String> matchWithCache(RequestEntity request, String businessName) {
         final Set<String> businesses = matchedCache.getDelegate().get(request);
@@ -71,14 +71,14 @@ public enum MatchManager {
     }
 
     /**
-     * 匹配指定业务场景名
+     * matches the specified service scenario name
      *
-     * @param request 请求信息
-     * @param businessName 业务场景名
-     * @return 匹配的业务场景
+     * @param request request-information
+     * @param businessName service scenario name
+     * @return matching service scenarios
      */
     public Set<String> match(RequestEntity request, String businessName) {
-        // 匹配规则
+        // matchingRule
         final Map<String, BusinessMatcher> matchGroups = getMatchGroups(businessName);
         final Set<String> result = new HashSet<>(DEFAULT_BUSINESS_SIZE);
         for (Map.Entry<String, BusinessMatcher> entry : matchGroups.entrySet()) {
@@ -87,7 +87,7 @@ public enum MatchManager {
                     continue;
                 }
 
-                // 资源名（业务场景名）
+                // resourceName（service scenario name）
                 result.add(entry.getKey());
             }
         }

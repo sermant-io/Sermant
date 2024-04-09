@@ -21,34 +21,40 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 /**
- * http拦截
+ * http intercept
  *
  * @author zhouss
  * @since 2022-01-25
  */
 public interface HttpService {
     /**
-     * 前置拦截
+     * preintercept
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param requestEntity 请求信息
-     * @param fixedResult   修正结果
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param requestEntity request information
+     * @param fixedResult fixed result
      */
     void onBefore(String sourceName, RequestEntity requestEntity, FlowControlResult fixedResult);
 
     /**
-     * 后置方法
+     * postset method
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param result 响应结果
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param result response result
      */
     void onAfter(String sourceName, Object result);
 
     /**
-     * 异常抛出方法
+     * exception throwing method
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param throwable 异常信息
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param throwable exception message
      */
     void onThrow(String sourceName, Throwable throwable);
 }

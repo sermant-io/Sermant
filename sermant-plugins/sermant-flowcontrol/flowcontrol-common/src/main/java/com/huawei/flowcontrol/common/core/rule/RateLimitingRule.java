@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,49 +18,49 @@
 package com.huawei.flowcontrol.common.core.rule;
 
 /**
- * 限流规则
+ * rate limiting rule
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public class RateLimitingRule extends AbstractRule {
     /**
-     * 默认超时时间
+     * default timeout
      */
     public static final long DEFAULT_TIMEOUT_DURATION_MS = 0L;
 
     /**
-     * 默认单位时间
+     * default unit time
      */
     public static final long DEFAULT_LIMIT_REFRESH_PERIOD_MS = 1000L;
 
     /**
-     * 默认许可数
+     * default rate number
      */
     public static final int DEFAULT_RATE = 1000;
 
     /**
-     * 超时时间
+     * overtime time
      */
     private String timeoutDuration = "0";
 
     /**
-     * 转换后的超时时间
+     * the overtime time after conversion
      */
     private long parsedTimeoutDuration = DEFAULT_TIMEOUT_DURATION_MS;
 
     /**
-     * 单位时间
+     * unit interval
      */
     private String limitRefreshPeriod = "1000";
 
     /**
-     * 转换后的单位时间
+     * converted unit time
      */
     private long parsedLimitRefreshPeriod = DEFAULT_LIMIT_REFRESH_PERIOD_MS;
 
     /**
-     * 默认许可数 单位时间内超过该许可数便会触发限流
+     * If the rate exceeds the default rate, limiting is triggered
      */
     private int rate = DEFAULT_RATE;
 
@@ -82,9 +82,9 @@ public class RateLimitingRule extends AbstractRule {
     }
 
     /**
-     * 设置流控超时时间
+     * set the flow control timeout period
      *
-     * @param timeoutDuration 超时时间
+     * @param timeoutDuration timeout period
      */
     public void setTimeoutDuration(String timeoutDuration) {
         this.timeoutDuration = timeoutDuration;
@@ -96,9 +96,9 @@ public class RateLimitingRule extends AbstractRule {
     }
 
     /**
-     * 单位时间
+     * unit interval
      *
-     * @param limitRefreshPeriod 单位时间
+     * @param limitRefreshPeriod unit interval
      */
     public void setLimitRefreshPeriod(String limitRefreshPeriod) {
         this.limitRefreshPeriod = limitRefreshPeriod;

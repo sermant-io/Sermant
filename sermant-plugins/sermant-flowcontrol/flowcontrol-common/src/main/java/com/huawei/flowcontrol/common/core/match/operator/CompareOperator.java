@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 比较, 格式如下, 存在有两个符合和一个符号的场景 请求路径包含/b 且    d=10 e != 5 f >= 11 - apiPath: contains: /b headers: d: compare: =10 e:
+ * There are two scenes: two symbols and one symbol. Example scene: request path contains /b and
+ * d=10, e != 5, f >= 11. - apiPath: contains: /b headers: d: compare: =10 e:
  * compare: '!=5' f: compare: '>=11' method: - PUT name: rule2
  *
  * @author zhouss
@@ -45,14 +46,14 @@ public class CompareOperator implements Operator {
     private static final double DOUBLE_EPSLON = 1e-6d;
 
     /**
-     * 比较符下标
+     * comparator subscript
      */
     private static final int OPERATOR_INDEX = 2;
 
     private final Set<Character> operators = new HashSet<Character>();
 
     /**
-     * 比较器构造
+     * comparator construction
      */
     public CompareOperator() {
         operators.addAll(Arrays.asList('=', '>', '<', '!'));
@@ -64,11 +65,11 @@ public class CompareOperator implements Operator {
             return false;
         }
         if (operators.contains(patternValue.charAt(0)) && operators.contains(patternValue.charAt(1))) {
-            // 前两个字符为比较符
+            // the first two characters are comparators
             return compare(targetValue, patternValue.substring(0, OPERATOR_INDEX),
                 patternValue.substring(OPERATOR_INDEX));
         } else if (operators.contains(patternValue.charAt(0))) {
-            // 仅第一个为比较字符
+            // only the first is the comparison character
             return compare(targetValue, patternValue.substring(0, 1), patternValue.substring(1));
         } else {
             return false;
@@ -82,13 +83,13 @@ public class CompareOperator implements Operator {
             parsedTarget = Double.parseDouble(targetValue);
             parsedNum = Double.parseDouble(num);
         } catch (NumberFormatException ex) {
-            // 转换失败的直接返回未匹配
+            // conversion failure directly returns no match
             LOGGER.warning(
-                String.format(Locale.ENGLISH, "Format number failed when convert %s and %s", targetValue, num));
+                    String.format(Locale.ENGLISH, "Format number failed when convert %s and %s", targetValue, num));
             return false;
         }
 
-        // 根据operator进行比较
+        // compare according to operator
         if (StringUtils.equal(operator, "=")) {
             return doubleEquals(parsedTarget, parsedNum);
         } else if (StringUtils.equal(operator, ">")) {

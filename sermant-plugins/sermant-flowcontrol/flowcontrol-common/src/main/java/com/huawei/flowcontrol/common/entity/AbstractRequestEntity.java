@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.entity;
 import java.util.Objects;
 
 /**
- * 用于统一重写equals与hashCode方法
+ * Used to uniformly override equals and hashCode methods
  *
  * @author zhouss
  * @since 2022-02-28
  */
 public abstract class AbstractRequestEntity implements RequestEntity {
     /**
-     * 服务名
+     * service name
      */
     private String serviceName;
 
     /**
-     * 请求类型
+     * request type
      */
     private RequestType requestType;
 

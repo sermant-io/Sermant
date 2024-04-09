@@ -17,13 +17,13 @@
 
 package com.huawei.flowcontrol.res4j.service;
 
-import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
+import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.service.rest4j.HttpRest4jService;
 
 /**
- * http请求拦截逻辑实现
+ * http request interception logic implementation
  *
  * @author zhouss
  * @since 2022-01-22

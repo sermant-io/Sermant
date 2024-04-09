@@ -24,7 +24,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 
 /**
- * 隔离仓异常处理
+ * isolation bin exception handling
  *
  * @author zhouss
  * @since 2022-08-05

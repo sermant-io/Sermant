@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,34 +18,34 @@
 package com.huawei.flowcontrol.common.core.rule;
 
 /**
- * 隔离仓规则
+ * isolation bin rule
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public class BulkheadRule extends AbstractRule {
     /**
-     * 最大并发数
+     * maximum concurrency
      */
     public static final int DEFAULT_MAX_CONCURRENT_CALLS = 1000;
 
     /**
-     * 默认最大等待时间
+     * default maximum wait time
      */
     public static final long DEFAULT_MAX_WAIT_DURATION_MS = 0L;
 
     /**
-     * 最大并发数
+     * maximum concurrency
      */
     private int maxConcurrentCalls = DEFAULT_MAX_CONCURRENT_CALLS;
 
     /**
-     * 最大等待时间
+     * maximum wait time
      */
     private String maxWaitDuration = String.valueOf(DEFAULT_MAX_WAIT_DURATION_MS);
 
     /**
-     * 转换后的最大等待时间
+     * Maximum wait time after conversion
      */
     private long parsedMaxWaitDuration = DEFAULT_MAX_WAIT_DURATION_MS;
 
@@ -77,9 +77,9 @@ public class BulkheadRule extends AbstractRule {
     }
 
     /**
-     * 设置最大等待时间
+     * the maximum waiting time is set
      *
-     * @param maxWaitDuration 最大等待时间
+     * @param maxWaitDuration maximum waiting time
      */
     public void setMaxWaitDuration(String maxWaitDuration) {
         this.maxWaitDuration = maxWaitDuration;

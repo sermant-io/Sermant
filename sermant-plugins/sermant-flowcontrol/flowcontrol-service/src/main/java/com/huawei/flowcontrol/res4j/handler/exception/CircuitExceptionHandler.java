@@ -23,7 +23,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.res4j.exceptions.CircuitBreakerException;
 
 /**
- * 熔断异常处理
+ * circuit breaker exception handling
  *
  * @author zhouss
  * @since 2022-08-05
@@ -41,7 +41,7 @@ public class CircuitExceptionHandler extends AbstractExceptionHandler<CircuitBre
     }
 
     /**
-     * 获取响应码
+     * get response code
      *
      * @return code
      */

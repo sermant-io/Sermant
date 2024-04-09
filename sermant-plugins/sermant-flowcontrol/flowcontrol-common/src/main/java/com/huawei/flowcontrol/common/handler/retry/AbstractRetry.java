@@ -30,21 +30,21 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * 重试抽象，提供公共方法
+ * retryAbstraction，provide a common method
  *
  * @author zhouss
  * @since 2022-02-10
  */
 public abstract class AbstractRetry extends ReflectMethodCacheSupport implements Retry {
     /**
-     * 重试异常类
+     * retry exception class
      */
     protected Class<? extends Throwable>[] classes;
 
     /**
-     * 根据用户定义的重试异常，尝试加载
+     * Attempt to load based on user-defined retry exception
      *
-     * @param classNames 异常类名
+     * @param classNames exception class name
      * @return classes
      */
     protected final Class<? extends Throwable>[] findClass(String[] classNames) {
@@ -73,21 +73,22 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
     }
 
     /**
-     * 由子类实现 若子类实现{@link #needRetry(Set, Object)}则无需实现getCode方法
+     * implemented by subclasses， if subclass implement {@link #needRetry(Set, Object)}, no need to implement the get
+     * code method
      *
-     * @param result 接口响应结果
-     * @return 响应状态码
-     * @throws UnsupportedOperationException 不支持操作
+     * @param result interface response result
+     * @return response status code
+     * @throws UnsupportedOperationException unsupported operation
      */
     protected Optional<String> getCode(Object result) {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * 获取重试异常
+     * get retry exception
      *
      * @return Class<? extends Throwable>[]
-     * @throws IllegalArgumentException 参数不合法抛出
+     * @throws IllegalArgumentException parameter is thrown illegally
      */
     protected final Class<? extends Throwable>[] getRetryExceptions() {
         if (classes != null) {

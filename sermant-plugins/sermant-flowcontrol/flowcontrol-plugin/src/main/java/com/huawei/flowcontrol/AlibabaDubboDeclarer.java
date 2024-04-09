@@ -18,24 +18,24 @@
 package com.huawei.flowcontrol;
 
 /**
- * 拦截点 拦截 alibaba MonitorFilter invoke
+ * pointOfIntercept: intercept alibaba MonitorFilter invoke
  *
  * @author zhouss
  * @since 2022-02-10
  */
 public class AlibabaDubboDeclarer extends DubboDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = AlibabaDubboInterceptor.class.getCanonicalName();
 
     /**
-     * alibaba dubbo拦截声明
+     * alibaba dubbo Declarer
      */
     public AlibabaDubboDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS);

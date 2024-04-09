@@ -34,7 +34,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * dubbo service调用
+ * dubbo service invoking
  *
  * @author zhouss
  * @since 2022-08-30
@@ -54,7 +54,7 @@ public class DubboRest4jServiceImplTest {
     }
 
     /**
-     * 测试流程
+     * test process
      */
     @Test
     public void test() {

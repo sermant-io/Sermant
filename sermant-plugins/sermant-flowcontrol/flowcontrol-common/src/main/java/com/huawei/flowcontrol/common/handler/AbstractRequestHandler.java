@@ -32,21 +32,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * 拦截请求处理器
+ * interceptRequestHandler
  *
- * @param <H> 处理器 对应 resilience4j个处理器
- * @param <R> resolver解析规则
+ * @param <H> processor indicates resilience4j processors
+ * @param <R> resolver analytic rule
  * @author zhouss
  * @since 2022-01-22
  */
 public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     /**
-     * 处理器缓存 map 业务场景名, 处理器
+     * Handler cache
      */
     private final Map<String, Optional<H>> handlers = new ConcurrentHashMap<>();
 
     /**
-     * 处理器构造方法
+     * construction method
      */
     protected AbstractRequestHandler() {
         registerConfigListener();
@@ -57,9 +57,9 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     }
 
     /**
-     * 获取指定请求处理器
+     * gets the specified request handler
      *
-     * @param request 请求信息
+     * @param request request information
      * @return handler
      */
     public List<H> getHandlers(RequestEntity request) {
@@ -71,17 +71,17 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     }
 
     /**
-     * 创建处理器
+     * create handler
      *
-     * @param businessNames 已匹配的业务名
-     * @return 处理器
+     * @param businessNames matched service name
+     * @return handler
      */
     public List<H> createOrGetHandlers(Set<String> businessNames) {
         return businessNames.stream()
-            .map(businessName -> handlers.computeIfAbsent(businessName, fn -> create(businessName)))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+                .map(businessName -> handlers.computeIfAbsent(businessName, fn -> create(businessName)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     private Optional<H> create(String businessName) {
@@ -94,18 +94,18 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     }
 
     /**
-     * 创建处理器
+     * create handler
      *
-     * @param businessName 业务场景名
-     * @param rule         匹配的解析规则
+     * @param businessName service scenario name
+     * @param rule matching resolution rules
      * @return handler
      */
     protected abstract Optional<H> createProcessor(String businessName, R rule);
 
     /**
-     * 获取配置键
+     * get configuration key
      *
-     * @return 配置键， 用于注册配置监听器
+     * @return Configuration key, used to register the configuration listener
      * @since 2022-03-22
      */
     protected abstract String configKey();

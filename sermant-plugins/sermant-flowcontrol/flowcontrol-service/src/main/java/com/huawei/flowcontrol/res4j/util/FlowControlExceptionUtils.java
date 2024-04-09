@@ -29,14 +29,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 针对流控异常处理
+ * handle flow control exceptions
  *
  * @author zhouss
  * @since 2022-01-22
  */
 public class FlowControlExceptionUtils {
     /**
-     * 需释放资源的异常类型
+     * exception type of the resource to be released
      */
     private static final Set<Class<?>> RELEASE_FLOW_CONTROL_EXCEPTIONS =
             new HashSet<>(Arrays.asList(RequestNotPermitted.class, CallNotPermittedException.class,
@@ -48,20 +48,20 @@ public class FlowControlExceptionUtils {
     }
 
     /**
-     * 处理流控异常
+     * handle flow control exceptions
      *
-     * @param throwable 异常信息
-     * @param result 前置返回结果
+     * @param throwable exception message
+     * @param result pre-return result
      */
     public static void handleException(Throwable throwable, FlowControlResult result) {
         EXCEPTION_HANDLER_MANAGER.apply(throwable, result);
     }
 
     /**
-     * 判断是否为流控异常
+     * Determine whether there is a flow control exception
      *
-     * @param throwable 异常类型
-     * @return 是否为流控异常
+     * @param throwable exception type
+     * @return whether there is a flow control exception
      */
     public static boolean isNeedReleasePermit(Throwable throwable) {
         for (Class<?> clazz : RELEASE_FLOW_CONTROL_EXCEPTIONS) {

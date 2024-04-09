@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 针对处理链测试
+ * tests for handler chains
  *
  * @author zhouss
  * @since 2022-08-30
@@ -56,14 +56,14 @@ public class HandlerChainTest {
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
     }
 
-    // mock 静态方法用完后需要关闭
+    // The mock static method needs to be closed when it is finished
     @After
     public void tearDown() throws Exception {
         operationManagerMockedStatic.close();
     }
 
     /**
-     * 测试链路拼接与调用
+     * test link concatenation and invocation
      */
     @Test
     public void testChain() {
@@ -83,7 +83,7 @@ public class HandlerChainTest {
         }
         assertEquals(0, num);
 
-        // 测试调用
+        // test call
         final RequestContext requestContext = ChainContext.getThreadLocalContext("test");
         final HttpRequestEntity build = new Builder().setRequestType(RequestType.CLIENT).setApiPath("/api").build();
         requestContext.setRequestEntity(build);

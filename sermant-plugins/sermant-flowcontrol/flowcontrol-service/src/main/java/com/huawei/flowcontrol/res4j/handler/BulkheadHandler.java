@@ -29,7 +29,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * 隔离仓处理器
+ * isolation bin handler
  *
  * @author zhouss
  * @since 2022-01-24
@@ -38,9 +38,9 @@ public class BulkheadHandler extends AbstractRequestHandler<Bulkhead, BulkheadRu
     @Override
     protected final Optional<Bulkhead> createProcessor(String businessName, BulkheadRule rule) {
         final BulkheadConfig config = BulkheadConfig.custom()
-            .maxConcurrentCalls(rule.getMaxConcurrentCalls())
-            .maxWaitDuration(Duration.ofMillis(rule.getParsedMaxWaitDuration()))
-            .build();
+                .maxConcurrentCalls(rule.getMaxConcurrentCalls())
+                .maxWaitDuration(Duration.ofMillis(rule.getParsedMaxWaitDuration()))
+                .build();
         return Optional.of(BulkheadRegistry.of(config).bulkhead(businessName));
     }
 

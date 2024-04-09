@@ -24,25 +24,25 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Timer;
 
 /**
- * 系统状态滑动窗口服务
+ * system status sliding window service
  *
  * @author xuezechao1
  * @since 2022-12-05
  */
 public class SystemStatusSlidingWindow implements PluginService {
-
     private final Timer systemStatus = new Timer();
+
     private final SystemStatusTask systemStatusTask = new SystemStatusTask();
 
     @Override
     public void start() {
         /**
-         * 初始化滑动窗口
+         * initialize the sliding window
          */
         WindowsArray.INSTANCE.initWindowsArray();
 
         /**
-         * 定时任务 更新系统状态
+         * a scheduled task updates the system status
          */
         systemStatus.scheduleAtFixedRate(systemStatusTask, getDelay(), CommonConst.S_MS_UNIT);
     }

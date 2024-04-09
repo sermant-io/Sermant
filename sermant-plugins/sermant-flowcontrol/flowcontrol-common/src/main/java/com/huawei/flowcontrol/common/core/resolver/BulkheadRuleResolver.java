@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.core.resolver;
 import com.huawei.flowcontrol.common.core.rule.BulkheadRule;
 
 /**
- * 隔离仓配置解析
+ * isolation bin configuration analysis
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class BulkheadRuleResolver extends AbstractResolver<BulkheadRule> {
     /**
-     * 隔离仓配置 键
+     * isolation bin configuration key
      */
     public static final String CONFIG_KEY = "servicecomb.bulkhead";
 
     /**
-     * 隔离仓构造器
+     * isolation bin constructor
      */
     public BulkheadRuleResolver() {
         super(CONFIG_KEY);

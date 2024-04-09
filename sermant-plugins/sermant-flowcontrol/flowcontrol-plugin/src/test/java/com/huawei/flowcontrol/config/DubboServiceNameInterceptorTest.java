@@ -17,8 +17,6 @@
 
 package com.huawei.flowcontrol.config;
 
-import static org.junit.Assert.*;
-
 import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
 
@@ -35,7 +33,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 测试获取dubbo服务名
+ * test gets dubbo service name
  *
  * @author zhouss
  * @since 2022-08-30
@@ -60,9 +58,9 @@ public class DubboServiceNameInterceptorTest {
     }
 
     /**
-     * 测试获取服务名
+     * the test gets the service name
      *
-     * @throws Exception 不会抛出
+     * @throws Exception will not throw
      */
     @Test
     public void test() throws Exception {

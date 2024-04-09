@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * 测试所有请求处理器（现存）
+ * test all request handlers
  *
  * @author zhouss
  * @since 2022-08-30
@@ -57,7 +57,7 @@ public class RequestHandlerTest {
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
     /**
-     * 前置处理
+     * preprocessing
      */
     @Before
     public void setUp() {
@@ -103,7 +103,7 @@ public class RequestHandlerTest {
     }
 
     /**
-     * 测试限流
+     * test rate limiting
      */
     @Test
     public void test() {

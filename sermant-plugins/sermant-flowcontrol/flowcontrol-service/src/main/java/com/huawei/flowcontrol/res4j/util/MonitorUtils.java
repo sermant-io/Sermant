@@ -20,7 +20,7 @@ import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 监控工具类
+ * monitoring tools
  *
  * @author zhp
  * @since 2022-09-16
@@ -32,9 +32,9 @@ public class MonitorUtils {
     }
 
     /**
-     * 获取监控开关情况
+     * obtain the monitoring switch status
      *
-     * @return 开关
+     * @return switch
      */
     public static boolean isStartMonitor() {
         return CONFIG.isEnableStartMonitor();

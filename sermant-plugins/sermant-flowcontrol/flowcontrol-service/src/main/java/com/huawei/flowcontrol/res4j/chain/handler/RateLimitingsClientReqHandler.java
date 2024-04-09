@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
 /**
- * 客户端限流器
+ * client rate limiter
  *
  * @author zhouss
  * @since 2022-07-23

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.core.match;
 import com.huawei.flowcontrol.common.core.resolver.AbstractResolver;
 
 /**
- * 业务组
+ * business group
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class MatchGroupResolver extends AbstractResolver<BusinessMatcher> {
     /**
-     * 业务场景匹配 键值
+     * service scenarios match key values
      */
     public static final String CONFIG_KEY = "servicecomb.matchGroup";
 
     /**
-     * 业务场景解析器构造
+     * business scenario parser construction
      */
     public MatchGroupResolver() {
         super(CONFIG_KEY);

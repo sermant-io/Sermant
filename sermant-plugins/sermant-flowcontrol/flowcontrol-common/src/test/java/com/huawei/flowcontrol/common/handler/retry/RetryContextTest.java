@@ -25,14 +25,14 @@ import org.junit.Test;
 import java.util.Set;
 
 /**
- * 重试测试
+ * retry test
  *
  * @author zhouss
  * @since 2022-08-29
  */
 public class RetryContextTest {
     /**
-     * mark测试
+     * mark test
      */
     @Test
     public void testMark() {
@@ -43,7 +43,7 @@ public class RetryContextTest {
     }
 
     /**
-     * 测试重试策略
+     * test retry strategy
      */
     @Test
     public void testRetryPolicy() {
@@ -54,13 +54,13 @@ public class RetryContextTest {
         RetryContext.INSTANCE.buildRetryPolicy(retryRule);
         Assert.assertFalse(RetryContext.INSTANCE.isPolicyNeedRetry());
 
-        // 开始模拟重试
+        // start simulated retry
         final Object instance = new Object();
         for (int i = 0; i < maxRetry; i++) {
             muteRetry(instance);
         }
 
-        // 超过最大重试次数则重试完成
+        // If the number of retries exceeds the maximum, retry is complete
         RetryContext.INSTANCE.updateServiceInstance(instance);
         Assert.assertFalse(RetryContext.INSTANCE.isPolicyNeedRetry());
         RetryContext.INSTANCE.remove();

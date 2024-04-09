@@ -21,14 +21,14 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * dubbo请求体
+ * dubbo request body
  *
  * @author zhouss
  * @since 2022-01-22
  */
 public class DubboRequestEntity extends AbstractRequestEntity {
     /**
-     * dubbo方法匹配类型
+     * dubbo method matching type
      */
     public static final String METHOD = "POST";
 
@@ -37,17 +37,17 @@ public class DubboRequestEntity extends AbstractRequestEntity {
     private Map<String, String> attachments;
 
     /**
-     * 是否为dubbo泛化接口
+     * Whether the interface is a dubbo generalization interface
      */
     private final boolean isGeneric;
 
     /**
-     * 构造dubbo请求体
+     * construct the dubbo request body
      *
-     * @param apiPath 请求路径
-     * @param attachments 额外参数
-     * @param requestType 请求类型
-     * @param serviceName 服务名
+     * @param apiPath request path
+     * @param attachments extra parameter
+     * @param requestType request type
+     * @param serviceName service name
      */
     public DubboRequestEntity(String apiPath, Map<String, String> attachments, RequestType requestType,
             String serviceName) {
@@ -55,13 +55,13 @@ public class DubboRequestEntity extends AbstractRequestEntity {
     }
 
     /**
-     * 构造dubbo请求体
+     * construct the dubbo request body
      *
-     * @param apiPath 请求路径
-     * @param attachments 额外参数
-     * @param requestType 请求类型
-     * @param serviceName 服务名
-     * @param isGeneric 是否为泛化接口
+     * @param apiPath request path
+     * @param attachments extra parameter
+     * @param requestType request type
+     * @param serviceName service name
+     * @param isGeneric Whether the interface is a generalization interface
      */
     public DubboRequestEntity(String apiPath, Map<String, String> attachments, RequestType requestType,
             String serviceName, boolean isGeneric) {
