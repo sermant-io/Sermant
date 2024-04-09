@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.router.dubbo.interceptor.RegistryDirectoryInterceptor;
 
 /**
- * dubbo3.x all注册类型，增强RegistryDirectoryDeclarer类的overrideWithConfigurator方法
+ * Dubbo3.x all registration types, enhancing the mergeUrl method of the RegistryDirectory class
  *
  * @author chengyouling
  * @since 2024-02-17

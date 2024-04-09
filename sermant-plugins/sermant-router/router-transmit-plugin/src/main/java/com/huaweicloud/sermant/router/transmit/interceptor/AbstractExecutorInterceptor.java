@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 线程池拦截器抽象类
+ * Thread pool interceptor abstract class
  *
  * @author provenceee
  * @since 2024-01-16
@@ -48,9 +48,9 @@ public abstract class AbstractExecutorInterceptor extends AbstractInterceptor {
     private final boolean cannotTransmit;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param cannotTransmit Whether the thread variable needs to be deleted before the method can be executed
      */
     protected AbstractExecutorInterceptor(boolean cannotTransmit) {
         this.cannotTransmit = cannotTransmit;

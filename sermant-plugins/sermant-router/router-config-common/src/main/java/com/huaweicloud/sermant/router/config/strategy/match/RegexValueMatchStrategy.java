@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * 正则表达式匹配策略
+ * Regular expression matching strategy
  *
  * @author provenceee
  * @since 2021-10-23

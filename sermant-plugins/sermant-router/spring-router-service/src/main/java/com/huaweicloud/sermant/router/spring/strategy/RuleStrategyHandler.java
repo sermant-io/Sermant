@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由策略处理器
+ * Routing Policy Processor
  *
  * @author provenceee
  * @since 2021-10-14
  */
 public enum RuleStrategyHandler {
     /**
-     * 实例
+     * Instance
      */
     INSTANCE();
 
@@ -60,36 +60,36 @@ public enum RuleStrategyHandler {
     }
 
     /**
-     * 选取路由匹配的实例
+     * Select the instance of route matching
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param rule 路由规则
-     * @return 路由匹配的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param rule Routing rules
+     * @return Instances of route matching
      */
     public List<Object> getFlowMatchInstances(String serviceName, List<Object> instances, Rule rule) {
         return getRuleStrategy(instances).getFlowMatchInstances(serviceName, instances, rule);
     }
 
     /**
-     * 选取rule匹配的实例
+     * Select an instance that matches the rule
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param rule rule规则
-     * @return 规则匹配的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param rule rule
+     * @return The instance of the rule match
      */
     public List<Object> getMatchInstances(String serviceName, List<Object> instances, Rule rule) {
         return getRuleStrategy(instances).getMatchInstances(serviceName, instances, rule);
     }
 
     /**
-     * 选取路由匹配的实例
+     * Select the instance of route matching
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param tags 标签
-     * @return 路由匹配的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param tags Label
+     * @return Instances of route matching
      */
     public List<Object> getMatchInstancesByRequest(String serviceName, List<Object> instances,
             Map<String, String> tags) {
@@ -97,13 +97,13 @@ public enum RuleStrategyHandler {
     }
 
     /**
-     * 选取不匹配标签的实例
+     * Select instances of mismatched labels
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param tags 标签
-     * @param isReturnAllInstancesWhenMismatch 无匹配时，是否返回全部实例
-     * @return 路由过滤后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param tags Label
+     * @param isReturnAllInstancesWhenMismatch If there is no match, whether to return all instances
+     * @return Instances that are route-filtered
      */
     public List<Object> getMismatchInstances(String serviceName, List<Object> instances,
             List<Map<String, String>> tags, boolean isReturnAllInstancesWhenMismatch) {

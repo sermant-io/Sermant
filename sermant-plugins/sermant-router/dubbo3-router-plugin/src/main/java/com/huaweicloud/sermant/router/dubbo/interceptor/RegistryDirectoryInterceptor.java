@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 
 /**
- * 增强RegistryDirectory类的mergeUrl方法
+ * Enhance the mergeUrl method of the RegistryDirectory class
  *
  * @author chengyouling
  * @since 2024-02-20

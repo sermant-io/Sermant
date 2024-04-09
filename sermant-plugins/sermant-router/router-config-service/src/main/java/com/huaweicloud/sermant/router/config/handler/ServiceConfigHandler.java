@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由配置处理器（服务维度）
+ * Routing configuration processor (service dimension)
  *
  * @author provenceee
  * @since 2022-08-09

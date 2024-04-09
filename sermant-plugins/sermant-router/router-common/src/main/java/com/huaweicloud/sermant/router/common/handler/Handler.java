@@ -17,16 +17,16 @@
 package com.huaweicloud.sermant.router.common.handler;
 
 /**
- * 处理器
+ * Handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public interface Handler {
     /**
-     * 获取优先级
+     * Get priority
      *
-     * @return 优先级
+     * @return priority
      */
     int getOrder();
 }

@@ -27,14 +27,14 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 测试EurekaMetadataMapper
+ * Test EurekaMetadataMapper
  *
  * @author provenceee
  * @since 2022-09-30
  */
 public class EurekaMetadataMapperTest {
     /**
-     * 测试EurekaMetadataMapper获取元数据方法
+     * Test the EurekaMetadataMapper method to get metadata
      */
     @Test
     public void testApply() {

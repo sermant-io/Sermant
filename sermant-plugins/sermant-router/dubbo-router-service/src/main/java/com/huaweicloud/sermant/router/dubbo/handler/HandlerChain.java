@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.handler;
 
 /**
- * 路由处理器链
+ * route handler chain
  *
  * @author lilai
  * @since 2023-02-24
@@ -26,7 +26,7 @@ public class HandlerChain extends AbstractRouteHandler {
     private AbstractRouteHandler tail;
 
     /**
-     * 添加路由处理器
+     * add a route handler
      *
      * @param handler 路由处理器
      */

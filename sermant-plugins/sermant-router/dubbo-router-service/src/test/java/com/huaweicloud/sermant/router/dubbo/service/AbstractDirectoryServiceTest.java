@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试AbstractDirectoryService
+ * Test AbstractDirectoryService
  *
  * @author provenceee
  * @since 2022-09-14
@@ -60,7 +60,7 @@ public class AbstractDirectoryServiceTest {
     private static RouterConfig config;
 
     /**
-     * UT执行前进行mock
+     * Mock before UT execution
      */
     @BeforeClass
     public static void before() {
@@ -77,7 +77,7 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release mock objects after UT execution
      */
     @AfterClass
     public static void after() {
@@ -95,7 +95,7 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试无效时
+     * when the test is invalid
      */
     @Test
     public void testSelectInvokersWhenInvalid() {
@@ -107,23 +107,23 @@ public class AbstractDirectoryServiceTest {
         TestObject testObject = new TestObject();
         Invocation invocation = new ApacheInvocation();
 
-        // 测试arguments为null
+        // Test arguments as null
         List<Object> targetInvokers = (List<Object>) service.selectInvokers(testObject, null, invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
-        // 测试arguments为空
+        // Test arguments are empty
         targetInvokers = (List<Object>) service.selectInvokers(testObject, new Object[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
-        // 设置arguments
+        // Set arguments
         Object[] arguments = {invocation};
 
-        // 初始化路由规则
+        // Initialize routing rules
         RuleInitializationUtils.initFlowMatchRule();
 
-        // 测试传递attachment与queryMap为空
+        // Test passing empty attachment and queryMap
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("foo", Collections.singletonList("foo1")));
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
@@ -131,20 +131,20 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals("foo1", invocation.getAttachment("foo"));
         ThreadLocalUtils.removeRequestTag();
 
-        // side不为consumer
+        // Side is not a consumer
         testObject.getQueryMap().put("side", "");
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
-        // targetService为空
+        // TargetService is empty
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
         targetInvokers = (List<Object>) service.selectInvokers(testObject, arguments[0], invokers);
         Assert.assertEquals(invokers, targetInvokers);
         Assert.assertEquals(2, targetInvokers.size());
 
-        // 测试路由规则无效
+        // the test routing rule is invalid
         ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME).resetRouteRule(Collections.emptyMap());
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         testObject.getQueryMap().put("side", "consumer");
@@ -154,7 +154,7 @@ public class AbstractDirectoryServiceTest {
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker1, targetInvokers.get(0));
 
-        // 规则无效
+        // the rule is invalid
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
         testObject.getQueryMap().put("side", "consumer");
         testObject.getQueryMap().put("interface", "com.huaweicloud.foo.FooTest");
@@ -165,11 +165,11 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试getGetTargetInvokers方法(flow匹配规则)
+     * Test the getGetTargetInvokers method (flow matching rule)
      */
     @Test
     public void testGetTargetInvokersByFlowRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initFlowMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -193,11 +193,11 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试getGetTargetInstances方法(tag匹配规则)
+     * Test the getGetTargetExamples method (tag matching rule)
      */
     @Test
     public void testGetTargetInvokerByTagRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initTagMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -224,11 +224,11 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试getGetTargetInstances方法(flow匹配规则和tag匹配规则)
+     * Test the getGetTargetExamples method (flow matching rule and tag matching rule)
      */
     @Test
     public void testGetTargetInvokerByAllRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initAllRules();
         List<Object> invokers = new ArrayList<>();
         Map<String, String> parameters1 = new HashMap<>();
@@ -259,7 +259,7 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试对象
+     * test object
      */
     public static class TestObject {
         private final Map<String, String> queryMap;
@@ -274,7 +274,7 @@ public class AbstractDirectoryServiceTest {
     }
 
     /**
-     * 测试类
+     * test class
      *
      * @since 2022-09-14
      */

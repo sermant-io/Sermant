@@ -21,27 +21,27 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * web拦截器处理器
+ * Web Blocker Processor
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public abstract class AbstractRequestTagHandler extends AbstractHandler {
     /**
-     * 获取透传的标记
+     * Obtain transparent tags
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @param keys 透传标记key
-     * @return 透传的标记
+     * @param path The path of the request
+     * @param methodName HTTP method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @param keys Transparent transmission is marked with a key
+     * @return Marks for transparent transmission
      */
     public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
             Map<String, List<String>> headers, Map<String, String[]> parameters, Keys keys);
 
     /**
-     * 透传标记key实体
+     * Transparent transmission marks the key entity
      *
      * @author provenceee
      * @since 2023-02-21
@@ -52,10 +52,10 @@ public abstract class AbstractRequestTagHandler extends AbstractHandler {
         private final Set<String> injectTags;
 
         /**
-         * 构造方法
+         * Constructor
          *
-         * @param matchKeys 标签路由透传标记
-         * @param injectTags 泳道透传标记
+         * @param matchKeys Label routing transparent transmission markers
+         * @param injectTags Swim lane transparent markers
          */
         public Keys(Set<String> matchKeys, Set<String> injectTags) {
             this.matchKeys = matchKeys;

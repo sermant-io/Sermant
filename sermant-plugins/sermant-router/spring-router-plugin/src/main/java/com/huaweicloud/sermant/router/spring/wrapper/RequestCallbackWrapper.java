@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 对于{@link RequestCallback}的一个包装类，用于传递请求头信息<br>
+ * A wrapper class for {@link RequestCallback} that passes the request header <br>information
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-27
  */
 public class RequestCallbackWrapper implements RequestCallback {
@@ -34,10 +34,10 @@ public class RequestCallbackWrapper implements RequestCallback {
     private final Map<String, String> header;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param callback 真实需要包装的对象
-     * @param header 请求头信息
+     * @param callback Objects that really need to be packaged
+     * @param header Request header information
      */
     public RequestCallbackWrapper(RequestCallback callback, Map<String, String> header) {
         this.callback = callback;

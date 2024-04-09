@@ -23,7 +23,8 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.router.dubbo.interceptor.ServiceDiscoveryRegistryDirectoryInterceptor;
 
 /**
- * dubbo3.x instance注册类型，增强ServiceDiscoveryRegistryDirectory类的overrideWithConfigurator方法
+ * Dubbo3.x instance registration type
+ * enhances the overrideWithConfiguration method of the ServiceDiscoveryRegistryDirectory class
  *
  * @author chengyouling
  * @since 2024-02-17

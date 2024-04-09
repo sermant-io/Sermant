@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
+ * To be compatible with both Alibaba and Apache Dubbo, you need to use the reflection method to perform the class
+ * operation
  *
  * @author provenceee
  * @since 2022-02-07
@@ -64,7 +65,7 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取queryMap
+     * get the queryMap
      *
      * @param obj RegistryDirectory
      * @return queryMap
@@ -76,11 +77,11 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取参数
+     * Get the parameters
      *
      * @param obj url
-     * @param key 键
-     * @return 参数
+     * @param key key
+     * @return parameter
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -89,10 +90,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取应用参数
+     * Get the application parameters
      *
      * @param obj ApplicationConfig
-     * @return 应用参数
+     * @return Apply parameters
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */
@@ -101,7 +102,7 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取url
+     * Get the URL
      *
      * @param obj invoker
      * @return url
@@ -113,10 +114,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取服务接口名
+     * Obtain the name of the service interface
      *
      * @param obj url
-     * @return 服务接口名
+     * @return The name of the service interface
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -125,10 +126,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取服务接口名
+     * Obtain the name of the service interface
      *
      * @param obj url
-     * @return 服务接口名
+     * @return The name of the service interface
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -137,10 +138,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取dubbo请求方法名
+     * Obtain the name of the dubbo request method
      *
      * @param obj invocation
-     * @return dubbo请求方法名
+     * @return The name of the dubbo request method
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
      */
@@ -149,10 +150,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取dubbo请求参数
+     * Obtain the parameters of the dubbo request
      *
      * @param obj invocation
-     * @return dubbo请求参数
+     * @return dubbo request parameter
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
      */
@@ -161,10 +162,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 设置注册时的参数
+     * Set the parameters at the time of registration
      *
      * @param obj ApplicationConfig
-     * @param parameter 注册参数
+     * @param parameter Registration parameters
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */
@@ -173,10 +174,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取dubbo请求attachments参数
+     * Get dubbo request attachments parameter
      *
      * @param obj invocation
-     * @return dubbo attachments参数
+     * @return dubbo attachments parameter
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
      * @see com.alibaba.dubbo.rpc.RpcContext
@@ -194,10 +195,10 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取dubbo Invocation中的attachments参数
+     * Obtain the attachment parameter from dubbo Invocation
      *
      * @param obj invocation
-     * @return dubbo attachments参数
+     * @return dubbo attachments parameter
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
      */
@@ -220,7 +221,7 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取ServiceInstance
+     * Get the ServiceInstance
      *
      * @param obj invoker
      * @return ServiceInstance
@@ -231,7 +232,7 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取MetadataInfo
+     * Get the MetadataInfo
      *
      * @param obj invoker
      * @return MetadataInfo
@@ -242,7 +243,7 @@ public class DubboReflectUtils {
     }
 
     /**
-     * 获取serviceKey
+     * Get the serviceKey
      *
      * @param obj invoker
      * @return String

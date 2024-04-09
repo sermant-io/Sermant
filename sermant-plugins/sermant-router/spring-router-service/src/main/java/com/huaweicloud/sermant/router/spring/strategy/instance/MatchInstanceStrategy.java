@@ -24,20 +24,20 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * 匹配目标版本号的实例
+ * Instances that match the target version number
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2021-12-08
  */
 public class MatchInstanceStrategy<I> extends AbstractInstanceStrategy<I, Map<String, String>> {
     /**
-     * 匹配目标版本号的实例
+     * Instances that match the target version number
      *
-     * @param instance 实例
-     * @param tag 匹配上的标签
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param instance Instance
+     * @param tag Match the tag on
+     * @param mapper Methods to obtain metadata
+     * @return Whether it matches or not
      */
     @Override
     public boolean isMatch(I instance, Map<String, String> tag, Function<I, Map<String, String>> mapper) {

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由配置处理器(全局维度)
+ * Route Configuration Processor (Global Dimension)
  *
  * @author lilai
  * @since 2023-02-18

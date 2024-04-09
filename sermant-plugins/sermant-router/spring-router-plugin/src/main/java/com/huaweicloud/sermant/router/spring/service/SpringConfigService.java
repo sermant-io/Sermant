@@ -21,31 +21,31 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Set;
 
 /**
- * 配置服务
+ * Configuration service
  *
  * @author provenceee
  * @since 2021-11-24
  */
 public interface SpringConfigService extends PluginService {
     /**
-     * 初始化通知
+     * Initialize the notification
      *
-     * @param cacheName 缓存名
-     * @param serviceName 服务名
+     * @param cacheName Cache name
+     * @param serviceName Service name
      */
     void init(String cacheName, String serviceName);
 
     /**
-     * 获取规则key
+     * Obtain the rule key
      *
-     * @return 规则key
+     * @return Rule key
      */
     Set<String> getMatchKeys();
 
     /**
-     * 获取染色的key
+     * Obtain the staining key
      *
-     * @return 染色的key
+     * @return The key of the staining
      */
     Set<String> getInjectTags();
 }

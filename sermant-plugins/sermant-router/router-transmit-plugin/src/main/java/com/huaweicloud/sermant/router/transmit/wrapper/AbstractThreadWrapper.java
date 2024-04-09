@@ -26,9 +26,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Callable/Runnable包装抽象类
+ * Callable/Runnable Wrapping abstract classes
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2024-01-16
  */
@@ -46,13 +46,13 @@ public abstract class AbstractThreadWrapper<T> {
     private final boolean cannotTransmit;
 
     /**
-     * 构造方法
+     * Constructor
      *
      * @param runnable runnable
      * @param callable callable
-     * @param requestTag 请求标记
-     * @param requestData 请求数据
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param requestTag Request tags
+     * @param requestData Request data
+     * @param cannotTransmit Whether the thread variable needs to be deleted before the method can be executed
      */
     public AbstractThreadWrapper(Runnable runnable, Callable<T> callable, RequestTag requestTag,
             RequestData requestData, boolean cannotTransmit) {
@@ -69,7 +69,7 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     /**
-     * run方法
+     * run method
      */
     public void run() {
         try {
@@ -83,8 +83,8 @@ public abstract class AbstractThreadWrapper<T> {
     /**
      * call
      *
-     * @return callable调用结果
-     * @throws Exception 异常
+     * @return The call result of the callable method
+     * @throws Exception Exception
      */
     public T call() throws Exception {
         try {
@@ -97,7 +97,8 @@ public abstract class AbstractThreadWrapper<T> {
 
     private void before(Object obj) {
         if (cannotTransmit) {
-            // 当开启普通线程透传，不开启线程池透传时，需要在执行方法之前，删除由InheritableThreadLocal透传的数据
+            // If you enable normal thread pass through but do not enable thread pool pass through,
+            // you need to delete the data that is pass passed by InheritableThreadLocal before executing the method
             ThreadLocalUtils.removeRequestTag();
             ThreadLocalUtils.removeRequestData();
         }

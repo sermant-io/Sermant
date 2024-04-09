@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * HystrixContexSchedulerAction增强类，设置线程参数
+ * HystrixContexSchedulerAction enhancement class and set the thread parameters
  *
  * @author provenceee
  * @since 2022-07-12
@@ -38,7 +38,7 @@ public class HystrixActionDeclarer extends AbstractDeclarer {
     private static final int ARGS_LENGTH = 2;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public HystrixActionDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, "");
@@ -56,7 +56,7 @@ public class HystrixActionDeclarer extends AbstractDeclarer {
 
     @Override
     public boolean isEnabled() {
-        // 不开启线程池异步路由时，才需要开启这个
+        // This is only required if thread pool asynchronous routing is not enabled
         return !PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool();
     }
 }

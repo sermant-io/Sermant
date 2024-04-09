@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试ApplicationConfigInterceptor
+ * Test ApplicationConfigInterceptor
  *
  * @author provenceee
  * @since 2022-09-28
@@ -43,7 +43,7 @@ public class ApplicationConfigInterceptorTest {
     private final ApplicationConfigInterceptor interceptor;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigInterceptorTest() throws IllegalAccessException, NoSuchFieldException {
         interceptor = new ApplicationConfigInterceptor();
@@ -62,7 +62,7 @@ public class ApplicationConfigInterceptorTest {
     }
 
     /**
-     * 测试setName方法
+     * Test setName method
      */
     @Test
     public void testSetName() throws NoSuchMethodException {
@@ -72,12 +72,12 @@ public class ApplicationConfigInterceptorTest {
         ExecuteContext context = ExecuteContext.forMemberMethod(applicationConfig,
                 ApplicationConfig.class.getMethod("setName", String.class), args, null, null);
 
-        // 应用名为空
+        // the app name is empty
         interceptor.before(context);
         Assert.assertNull(DubboCache.INSTANCE.getAppName());
         Assert.assertNull(applicationConfig.getParameters());
 
-        // 应用名不为空
+        // the app name is not empty
         args[0] = "foo";
         interceptor.before(context);
         Assert.assertEquals("foo", DubboCache.INSTANCE.getAppName());
@@ -87,7 +87,7 @@ public class ApplicationConfigInterceptorTest {
     }
 
     /**
-     * 测试putParameters方法
+     * Test the putParameters method
      */
     @Test
     public void testPutParametersWithNull() throws NoSuchMethodException {
@@ -96,7 +96,7 @@ public class ApplicationConfigInterceptorTest {
         ExecuteContext context = ExecuteContext.forMemberMethod(new Object(),
                 ApplicationConfig.class.getMethod("setParameters", Map.class), args, null, null);
 
-        // map为null
+        // map is null
         interceptor.before(context);
         Map<String, String> parameters = (Map<String, String>) context.getArguments()[0];
         Assert.assertEquals(config.getParameters().size() + 2, parameters.size());
@@ -108,11 +108,11 @@ public class ApplicationConfigInterceptorTest {
     }
 
     /**
-     * 测试putParameters方法
+     * Test the putParameters method
      */
     @Test
     public void testPutParametersWithNotEmpty() throws NoSuchMethodException {
-        // map为不为空
+        // map is not empty
         Map<String, String> map = new HashMap<>();
         map.put("bar", "bar1");
         Object[] args = new Object[1];

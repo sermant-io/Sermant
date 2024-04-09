@@ -21,19 +21,19 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * 匹配不在mismatch中的实例
+ * Match instances that are not in mismatch
  *
- * @param <I> 实例泛型
- * @param <T> 标签泛型
+ * @param <I> Instance generics
+ * @param <T> Label generics
  * @author provenceee
  * @since 2021-12-08
  */
 public abstract class AbstractInstanceStrategy<I, T> implements InstanceStrategy<I, T> {
     /**
-     * 获取metadata
+     * Get metadata
      *
-     * @param instance 实例
-     * @param mapper 获取metadata的方法
+     * @param instance Instance
+     * @param mapper Methods to obtain metadata
      * @return metadata
      */
     protected Map<String, String> getMetadata(I instance, Function<I, Map<String, String>> mapper) {

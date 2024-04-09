@@ -38,9 +38,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 匹配策略
+ * Matching Policies
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2021-10-14
  */
@@ -56,12 +56,12 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     private final String source;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param source 来源
-     * @param matchInstanceStrategy 匹配上的策略
-     * @param mismatchInstanceStrategy 匹配不上的策略
-     * @param mapper 获取metadata的方法
+     * @param source Source
+     * @param matchInstanceStrategy Match the policy on it
+     * @param mismatchInstanceStrategy Strategies that don't match
+     * @param mapper Methods to obtain metadata
      */
     public AbstractRuleStrategy(String source, InstanceStrategy<I, Map<String, String>> matchInstanceStrategy,
             InstanceStrategy<I, List<Map<String, String>>> mismatchInstanceStrategy, Function<I,
@@ -79,7 +79,7 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             return getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
         }
         if (result.isMatch()) {
-            // route命中标签，fallback有设置路由规则时，仅返回匹配的实例，如果存在直接返回
+            // If a route tag is hit and a route rule is set for fallback, only matching instances are returned
             List<I> routeInstances = getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName,
                     instances, false);
             if (!CollectionUtils.isEmpty(routeInstances)) {
@@ -87,30 +87,33 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             }
         }
 
-        // route设置的目标标签未匹配实例时，fallback有设置路由，通过fallback路由目标标签实例
+        // If the destination label set by route does not match the instance, a route is set on the fallback to route
+        // the destination label instance through the fallback
         RouteResult<?> fallback = RuleUtils.getTargetTags(rule.getFallback());
         if (fallback.isMatch()) {
             List<I> fallbackInstances = getInstances(getStrategy(fallback.isMatch()), fallback.getTags(), serviceName,
                     instances, false);
 
-            // fallback中设置了路由规则命中routeTag，且有对应的实例匹配则按fallback路由规则选中实例，返回对应实例
+            // If a route tag is set in the fallback and the corresponding instances match, the instance is selected
+            // based on the fallback routing rule and the corresponding instance is returned
             if (!CollectionUtils.isEmpty(fallbackInstances)) {
                 return fallbackInstances;
             }
         }
 
-        // 结合上面result.isMatch()为true逻辑，如果为true未能匹配实例，直接返回所有实例，反之通过mismatch处理
+        // Combined with the above logic result.isMatch() is true, if the instance fails to be matched if true,
+        // all instances will be returned directly, otherwise mismatch will be processed
         return result.isMatch() ? instances
                 : getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances, true);
     }
 
     /**
-     * 根据rule规则获取匹配上的实例
+     * Obtain the matching instance based on the rule
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param rule rule规则
-     * @return 返回rule规则筛选过滤实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param rule rule rules
+     * @return Returns rule rules to filter and filter instances
      */
     @Override
     public List<I> getMatchInstances(String serviceName, List<I> instances, Rule rule) {
@@ -118,13 +121,13 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
         List<I> matchInstances = getInstances(getStrategy(result.isMatch()), result.getTags(), serviceName, instances,
                 false);
 
-        // 如果匹配到的实例数为0，则返回所以实例
+        // If the number of matched instances is 0, all instances are returned
         if (CollectionUtils.isEmpty(matchInstances)) {
             LOGGER.fine("not matched, return all instances");
             return instances;
         }
 
-        // 校验是否有同TAG优先规则
+        // Check whether there is a priority rule with TAG
         Match match = rule.getMatch();
         if (match == null) {
             return matchInstances;
@@ -135,7 +138,8 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             return matchInstances;
         }
 
-        // 情况一：全部实例最小可用阈值大于全部可用实例数，则同TAG优先
+        // Scenario 1: If the minimum available threshold of all instances is greater than the number of all
+        // available instances, the same TAG takes precedence
         if (policy.getMinAllInstances() > instances.size()) {
             PolicyEventUtils.notifySameTagMatchedEvent(PolicyEvent.SAME_TAG_MATCH_LESS_MIN_ALL_INSTANCES,
                     match.getTags(), serviceName);
@@ -143,8 +147,11 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             return matchInstances;
         }
 
-        // 情况二：未设置全部实例最小可用阈值，超过(大于等于)同TAG比例阈值，则同TAG优先
-        // 情况三：设置了全部实例最小可用阈值，但其小于全部TAG可用实例，超过（大于等于）同TAG比例阈值，则同TAG优先
+        // Scenario 2: If the minimum available threshold for all instances is not set and exceeds
+        // (greater than or equal to) the threshold of the same TAG, the same TAG takes precedence
+        // Scenario 3: If the minimum available threshold for all instances is set, but it is less than all available
+        // TAG instances, and the threshold is greater than or greater than the ratio of the same TAG,
+        // the same TAG takes precedence
         if (matchInstances.size() >= instances.size() * policy.getTriggerThreshold()) {
             PolicyEventUtils.notifySameTagMatchedEvent(PolicyEvent.SAME_TAG_MATCH_EXCEEDED_TRIGGER_THRESHOLD,
                     match.getTags(), serviceName);
@@ -152,7 +159,7 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
             return matchInstances;
         }
 
-        // 情况四：未匹配上
+        // Scenario 4: Unmatched
         PolicyEventUtils.notifySameTagMisMatchedEvent(PolicyEvent.SAME_TAG_MISMATCH,
                 match.getTags(), serviceName);
         LOGGER.fine("not matched, return all instances");

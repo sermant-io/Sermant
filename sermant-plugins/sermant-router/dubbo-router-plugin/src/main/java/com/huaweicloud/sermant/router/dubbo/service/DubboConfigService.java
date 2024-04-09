@@ -21,31 +21,31 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Set;
 
 /**
- * 配置服务
+ * configure the service
  *
  * @author provenceee
  * @since 2021-11-24
  */
 public interface DubboConfigService extends PluginService {
     /**
-     * 初始化通知
+     * initialize the notification
      *
-     * @param cacheName 缓存名
-     * @param serviceName 服务名
+     * @param cacheName cache name
+     * @param serviceName service name
      */
     void init(String cacheName, String serviceName);
 
     /**
-     * 获取规则key
+     * obtain the rule key
      *
-     * @return 规则key
+     * @return rule key
      */
     Set<String> getMatchKeys();
 
     /**
-     * 获取染色的key
+     * obtain the staining key
      *
-     * @return 染色的key
+     * @return the key of the staining
      */
     Set<String> getInjectTags();
 }

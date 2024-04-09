@@ -29,7 +29,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 
 /**
- * spring cloud gateway ReactiveLoadBalancerClientFilter增强类，获取请求数据
+ * spring cloud gateway ReactiveLoadBalancerClientFilter enhancement the class to get the request data
  *
  * @author provenceee
  * @since 2024-01-16
@@ -38,7 +38,7 @@ public class ReactiveLoadBalancerClientFilterInterceptor extends AbstractInterce
     private final TransmitConfig config;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ReactiveLoadBalancerClientFilterInterceptor() {
         this.config = PluginConfigManager.getPluginConfig(TransmitConfig.class);
@@ -56,8 +56,10 @@ public class ReactiveLoadBalancerClientFilterInterceptor extends AbstractInterce
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        // ReactiveLoadBalancerClientFilter为响应式编程，开启线程池透传时不能在after方法中删除，否则会导致线程变量无法透传到负载均衡线程中
-        // 会在HttpServerHandleInterceptor、ReactiveTypeHandlerInterceptor中删除
+        // ReactiveLoadBalancerCentFilter is a responsive programming method
+        // that cannot be deleted in the after method when thread pool pass through is enabled.
+        // Otherwise, thread variables cannot be passed through to load balancing threads
+        // and will be deleted in HttpServerHandleInterceptor and ReactiveTypeHandleInterceptor
         if (!config.isEnabledThreadPool()) {
             ThreadLocalUtils.removeRequestTag();
             ThreadLocalUtils.removeRequestData();

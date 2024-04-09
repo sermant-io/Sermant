@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 测试HandlerExecutionChainInterceptor
+ * Test HandlerExecutionChainInterceptor
  *
  * @author provenceee
  * @since 2022-09-07
@@ -45,7 +45,7 @@ public class HandlerExecutionChainInterceptorTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -69,7 +69,7 @@ public class HandlerExecutionChainInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -82,7 +82,7 @@ public class HandlerExecutionChainInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {

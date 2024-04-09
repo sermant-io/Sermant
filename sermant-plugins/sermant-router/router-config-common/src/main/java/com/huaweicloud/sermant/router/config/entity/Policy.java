@@ -17,25 +17,25 @@
 package com.huaweicloud.sermant.router.config.entity;
 
 /**
- * 阈值策略
+ * Threshold policy
  *
  * @author robotLJW
  * @since 2023-02-28
  */
 public class Policy {
     /**
-     * 百分之一
+     * Per cent
      */
     private static final float ONE_PERCENT = 0.01f;
 
     /**
-     * 同AZ占比触发阈值
+     * The trigger threshold is the same as the proportion of the same AZ
      */
 
     private float triggerThreshold;
 
     /**
-     * 全部实例最小可用阈值
+     * The minimum available threshold for all instances
      */
     private int minAllInstances;
 
@@ -44,7 +44,7 @@ public class Policy {
     }
 
     public void setTriggerThreshold(float triggerThreshold) {
-        // 需要做个百分比转化，乘0.01
+        // Need to do a percentage conversion, multiplied by 0.01
         this.triggerThreshold = triggerThreshold * ONE_PERCENT;
     }
 

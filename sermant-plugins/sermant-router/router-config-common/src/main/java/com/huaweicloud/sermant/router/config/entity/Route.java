@@ -26,24 +26,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由
+ * Route
  *
  * @author provenceee
  * @since 2021-10-23
  */
 public class Route {
     /**
-     * 权重
+     * Weight
      */
     private Integer weight;
 
     /**
-     * 路由标签
+     * Routing labels
      */
     private Map<String, String> tags;
 
     /**
-     * 路由标签
+     * Routing labels
      */
     @JSONField(name = "tag-inject")
     private Map<String, List<String>> injectTags;
@@ -69,9 +69,9 @@ public class Route {
     }
 
     /**
-     * 存入染色标记
+     * Deposit staining markers
      *
-     * @param injectTags 染色标记
+     * @param injectTags Stain markers
      */
     public void setInjectTags(Map<String, String> injectTags) {
         if (CollectionUtils.isEmpty(injectTags)) {

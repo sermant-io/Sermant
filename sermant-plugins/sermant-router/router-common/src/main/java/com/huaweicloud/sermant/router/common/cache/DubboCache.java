@@ -20,21 +20,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * dubbo缓存
+ * dubbo caching
  *
  * @author provenceee
  * @since 2021-11-03
  */
 public enum DubboCache {
     /**
-     * 实例
+     * Instance
      */
     INSTANCE;
 
-    // dubbo应用名
+    // the name of the dubbo app
     private String appName;
 
-    // parameters中增加版本号、路由标签
+    // Add the version number and route label to the parameters
     private Map<String, String> parameters;
 
     private final Map<String, String> applicationCache;
@@ -60,20 +60,20 @@ public enum DubboCache {
     }
 
     /**
-     * 缓存接口与服务名的关系
+     * The relationship between the cache interface and the service name
      *
-     * @param interfaceName 接口名
-     * @param application 服务名
+     * @param interfaceName the name of the interface
+     * @param application service name
      */
     public void putApplication(String interfaceName, String application) {
         applicationCache.put(interfaceName, application);
     }
 
     /**
-     * 获取应用名
+     * obtain the app name
      *
-     * @param serviceInterface 接口
-     * @return 应用名
+     * @param serviceInterface interface
+     * @return the name of the app
      */
     public String getApplication(String serviceInterface) {
         return applicationCache.get(serviceInterface);

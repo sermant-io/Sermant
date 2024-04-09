@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 注入请求过滤器
+ * Inject request filter
  *
  * @author provenceee
  * @since 2024-01-16
@@ -51,12 +51,12 @@ public class WebClientBuilderInterceptor extends AbstractInterceptor {
             List<ExchangeFilterFunction> list = (List<ExchangeFilterFunction>) filters.get();
             for (ExchangeFilterFunction filterFunction : list) {
                 if (filterFunction instanceof RouterExchangeFilterFunction) {
-                    // 已经注入重试的不再注入
+                    // If it has already been injected and retried, it will not be injected again
                     return context;
                 }
             }
 
-            // 存在过滤器时，注入到第一个
+            // When a filter is present, inject into the first one
             list.add(0, new RouterExchangeFilterFunction());
             return context;
         }

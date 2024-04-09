@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RouteContextFilterHandler
+ * Test RouteContextFilterHandler
  *
  * @author provenceee
  * @since 2023-02-25
@@ -50,7 +50,7 @@ public class RouteContextFilterHandlerTest {
 
     @Test
     public void testGetRequestTag() {
-        // 正常情况
+        // normal
         configService.setReturnEmptyWhenGetMatchKeys(false);
         Map<String, List<String>> requestTag = routeContextFilterHandler
                 .getRequestTag(null, invocation, invocation.getObjectAttachments(),
@@ -60,7 +60,7 @@ public class RouteContextFilterHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试getMatchKeys返回空
+        // Test getMatchKeys returns null
         configService.setReturnEmptyWhenGetMatchKeys(true);
         requestTag = routeContextFilterHandler.getRequestTag(null, invocation, invocation.getObjectAttachments(),
                 configService.getMatchKeys(), configService.getInjectTags());

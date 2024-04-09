@@ -23,20 +23,20 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * AbstractHandlerMapping处理器
+ * AbstractHandlerMapping handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public class RouteMappingHandler extends AbstractMappingHandler {
     /**
-     * 获取透传的标记
+     * Obtain transparent tags
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @return 透传的标记
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @return Marks for transparent transmission
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,

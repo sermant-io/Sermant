@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.config.strategy.ValueMatchStrategy;
 import java.util.List;
 
 /**
- * 大于匹配策略
+ * Greater than the matching strategy
  *
  * @author provenceee
  * @since 2021-10-23

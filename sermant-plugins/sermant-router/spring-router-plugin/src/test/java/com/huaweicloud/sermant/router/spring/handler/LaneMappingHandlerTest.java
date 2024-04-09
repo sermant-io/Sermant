@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LaneMappingHandler
+ * Test LaneMappingHandler
  *
  * @author provenceee
  * @since 2023-02-28
@@ -49,7 +49,7 @@ public class LaneMappingHandlerTest {
     private final LaneMappingHandler handler;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -63,7 +63,7 @@ public class LaneMappingHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -75,16 +75,16 @@ public class LaneMappingHandlerTest {
     }
 
     /**
-     * 测试getRequestTag方法
+     * Test the getRequestTag method
      */
     @Test
     public void testGetRequestTag() {
-        // 测试matchTags为null
+        // Test matchTags as null
         configService.setReturnEmptyWhenGetMatchTags(true);
         Map<String, List<String>> requestTag = handler.getRequestTag("", "", null, null);
         Assert.assertEquals(requestTag, Collections.emptyMap());
 
-        // 测试getLane返回空
+        // Test getLane returns null
         configService.setReturnEmptyWhenGetMatchTags(false);
         laneService.setReturnEmpty(true);
         Map<String, List<String>> headers = new HashMap<>();
@@ -95,7 +95,7 @@ public class LaneMappingHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试getLane不为空
+        // Test getLane is not empty
         configService.setReturnEmptyWhenGetMatchTags(false);
         laneService.setReturnEmpty(false);
         requestTag = handler.getRequestTag("", "", headers, null);

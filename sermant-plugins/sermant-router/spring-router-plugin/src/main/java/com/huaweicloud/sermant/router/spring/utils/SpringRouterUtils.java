@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 反射工具类
+ * Reflection tool class
  *
  * @author provenceee
  * @since 2022-07-19
@@ -40,20 +40,20 @@ public class SpringRouterUtils {
     }
 
     /**
-     * 获取元数据
+     * Get metadata
      *
-     * @param obj 对象
-     * @return 元数据
+     * @param obj Object
+     * @return Metadata
      */
     public static Map<String, String> getMetadata(Object obj) {
         return (Map<String, String>) ReflectUtils.invokeWithNoneParameter(obj, "getMetadata");
     }
 
     /**
-     * 存入元数据
+     * Deposit metadata
      *
-     * @param metadata 元数据
-     * @param routerConfig 路由配置
+     * @param metadata Metadata
+     * @param routerConfig Route configuration
      */
     public static void putMetaData(Map<String, String> metadata, RouterConfig routerConfig) {
         if (metadata == null) {
@@ -65,7 +65,7 @@ public class SpringRouterUtils {
         }
         Map<String, String> parameters = routerConfig.getParameters();
         if (!CollectionUtils.isEmpty(parameters)) {
-            // 请求头在http请求中，会统一转成小写
+            // The request header is changed to lowercase in the HTTP request
             parameters.forEach((key, value) -> metadata.putIfAbsent(key.toLowerCase(Locale.ROOT), value));
         }
         AppCache.INSTANCE.setMetadata(metadata);

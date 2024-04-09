@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TagRouteHandler单元测试
+ * TagRouteHandler Unit tests
  *
  * @author lilai
  * @since 2023-02-27
@@ -53,7 +53,7 @@ public class TagRouteHandlerTest {
     private static MockedStatic<ConfigManager> mockConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -65,14 +65,15 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * UT执行后释放资源
+     * Resources are released after UT is executed
      */
     @AfterClass
-    public static void after(){
+    public static void after() {
         mockConfigManager.close();
     }
+
     /**
-     * 测试getTargetInstancesByRules方法
+     * Test the getTargetInstancesByRules method
      */
     @Test
     public void testGetTargetInstancesByTagRules() {
@@ -93,7 +94,7 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法
+     * Test the getTargetInstancesByRules method
      */
     @Test
     public void testGetTargetInstancesByConsumerTagRules() {
@@ -116,7 +117,8 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法，同时配置服务维度规则和全局维度规则
+     * Test the getTargetInstancesByRules method and configure both the service dimension rule and the global dimension
+     * rule
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithGlobalRules() {
@@ -138,7 +140,7 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInstancesByRules方法，配置全局维度规则
+     * Test the getTargetInstancesByRules method and configure global dimension rules
      */
     @Test
     public void testGetTargetInstancesByGlobalRules() {
@@ -159,10 +161,11 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given: match为精确匹配az1，未设置policy，下游provider有az1实例
-     * when: route至az1
-     * then: 有能匹配到az1下游provider实例
+     * The following table describes the test rules：
+     * given:match indicates an exact match for az 1, no policy is set,
+     * and the downstream provider has an az 1 instance
+     * when: Route to az1
+     * then: There are instances that can be matched to the az1 downstream provider
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithoutPolicySceneOne() {
@@ -183,10 +186,11 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given：match为精确匹配az1，未设置policy，下游provider无az1实例
-     * when：route至az1
-     * then：不能匹配到下游provider实例，则返回所有实例
+     * The following table describes the test rules：
+     * given：match indicates an exact match for az 1, no policy is set,
+     * and the downstream provider does not have an az 1 instance
+     * when：route to az1
+     * then：If the downstream provider instance cannot be matched, all instances are returned
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithoutPolicySceneTwo() {
@@ -206,10 +210,11 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given：match为精确匹配az1，设置policy的triggerThreshold为60，下游provider有az1实例
-     * when：route至az1
-     * then：能匹配到az1下游provider实例
+     * The following table describes the test rules：
+     * given：match is an exact match for az 1, the trigger threshold of the policy is set to 60,
+     * and the downstream provider has an az 1 instance
+     * when：route to az1
+     * then：It can be matched to the az 1 downstream provider instance
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithPolicySceneOne() {
@@ -231,15 +236,17 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given: match为精确匹配az1，设置policy的triggerThreshold为60，下游provider有/无az1实例
-     * when: route至az1，但是触发了阈值规则：az1可用实例数/ALL实例数小于triggerThreshold
-     * then: 返回所有实例
+     * The following table describes the test rules：
+     * given: match is an exact match for az 1, the trigger threshold of the policy is set to 60,
+     * and the downstream provider has or does not have an az 1 instance
+     * when: route to az1，However, the threshold rule is triggered: the number of available az 1 instances/ALL
+     * instances is less than the trigger threshold
+     * then: All instances are returned
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithPolicySceneTwo() {
         RuleInitializationUtils.initAZTagMatchTriggerThresholdPolicyRule();
-        // 场景一：下游provider有符合要求的实例
+        // Scenario 1: The downstream provider has instances that meet the requirements
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az1");
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az2");
@@ -252,7 +259,7 @@ public class TagRouteHandlerTest {
                 new RequestData(null, null, null));
         Assert.assertEquals(2, targetInstances.size());
 
-        // 场景二：下游provider无符合要求的实例
+        // Scenario 2: The downstream provider does not have instances that meet the requirements
         List<Object> instances2 = new ArrayList<>();
         ServiceInstance instance3 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az3");
         ServiceInstance instance4 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az4");
@@ -268,10 +275,12 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given: match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
-     * when: route至az1，minAllInstances小于5，az1实例/ALL实例占比大于triggerThreshold
-     * then: 能匹配到az1的下游provider实例
+     * The following table describes the test rules：
+     * given: Match to accurately match az1, set the trigger threshold of policy to 50, min Alliances to 4,
+     * and downstream providers have az1 instances
+     * when: route to az1，MinAlliances less than 5,
+     * az1 instance/ALL instance proportion greater than triggerThreshold
+     * then: Can be matched to the downstream provider instance of az 1
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithPolicySceneThree() {
@@ -297,10 +306,11 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given：match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
-     * when：route至az1，minAllInstances小于5，az1实例/ALL实例占比小于triggerThreshold
-     * then：返回所有下游provider实例
+     * The following table describes the test rules：
+     * given：Match to accurately match az1, set the trigger threshold of policy to 50, minAlliances to 4,
+     * and downstream providers have az1 instances
+     * when：Route to az1, minAlliances less than 5, az1 instance/ALL instance ratio less than triggerThreshold
+     * then：Returns all downstream provider instances
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithPolicySceneFour() {
@@ -326,15 +336,17 @@ public class TagRouteHandlerTest {
     }
 
     /**
-     * 测试rule规则如下：
-     * given：match为精确匹配az1，设置policy的triggerThreshold为50，minAllInstances为4，下游provider有az1实例
-     * when：route至az1，minAllInstances大于3，az1实例/ALL实例占比小于或者大于triggerThreshold
-     * then：返回下游az1的provider实例
+     * The following table describes the test rules：
+     * given：Match to accurately match az1, set the trigger threshold of policy to 50, minAlliances to 4,
+     * and downstream providers have az1 instances
+     * when：Route to az1, minAlliances greater than 3, az1 instance/ALL instance ratio less than or greater than
+     * triggerThreshold
+     * then：Returns the provider instance of the downstream AZ 1
      */
     @Test
     public void testGetTargetInstancesByTagRulesWithPolicySceneFive() {
         RuleInitializationUtils.initAZTagMatchTriggerThresholdMinAllInstancesPolicyRule();
-        // 场景一: az1实例/ALL实例占比大于triggerThreshold
+        // Scenario 1: The proportion of az1 instances/ALL instances is greater than the triggerThreshold
         List<Object> instances = new ArrayList<>();
         ServiceInstance instance1 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az1");
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az2");
@@ -349,7 +361,7 @@ public class TagRouteHandlerTest {
                 new RequestData(null, null, null));
         Assert.assertEquals(2, targetInstances.size());
 
-        // 场景二: az1实例/ALL实例占比小于triggerThreshold
+        // Scenario 2: The proportion of az1 instances/ALL instances is less than the triggerThreshold
         List<Object> instances2 = new ArrayList<>();
         ServiceInstance instance4 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az1");
         ServiceInstance instance5 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az2");
@@ -361,7 +373,7 @@ public class TagRouteHandlerTest {
                 new RequestData(null, null, null));
         Assert.assertEquals(1, targetInstances.size());
 
-        // 没有匹配上返回所有的实例
+        // There is no match on all instances returned
         List<Object> instances3 = new ArrayList<>();
         ServiceInstance instance7 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az3");
         ServiceInstance instance8 = TestDefaultServiceInstance.getTestDefaultServiceInstance("1.0.0", "az2");

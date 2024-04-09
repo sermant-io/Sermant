@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 请求数据
+ * Request data
  *
  * @author provenceee
  * @since 2022-07-12
@@ -31,11 +31,11 @@ public class RequestData extends RequestTag {
     private final String httpMethod;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param header 请求头/attachments
-     * @param path 请求路径
-     * @param httpMethod 请求方法
+     * @param header Request header/attachments
+     * @param path The path of the request
+     * @param httpMethod Request method
      */
     public RequestData(Map<String, List<String>> header, String path, String httpMethod) {
         super(header);

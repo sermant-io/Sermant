@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 配置缓存
+ * Configure caching
  *
  * @author provenceee
  * @since 2021-10-13
@@ -34,10 +34,10 @@ public class ConfigCache {
     }
 
     /**
-     * 获取指定标签
+     * Obtain the specified tag
      *
-     * @param cacheName 缓存的标签名
-     * @return 标签
+     * @param cacheName The name of the cached tag
+     * @return Label
      */
     public static RouterConfiguration getLabel(String cacheName) {
         RouterConfiguration configuration = LABEL_CACHE.get(cacheName);

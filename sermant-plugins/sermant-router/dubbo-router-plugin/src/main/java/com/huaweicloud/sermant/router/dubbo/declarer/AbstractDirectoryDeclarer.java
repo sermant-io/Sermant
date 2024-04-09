@@ -20,7 +20,8 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
+ * The doList method of the AbstractDirectory subclass is enhanced to filter the addresses to which the label is
+ * applied
  *
  * @author provenceee
  * @since 2021-06-28
@@ -36,7 +37,7 @@ public class AbstractDirectoryDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "doList";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractDirectoryDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);
@@ -48,9 +49,9 @@ public class AbstractDirectoryDeclarer extends AbstractDeclarer {
     }
 
     /**
-     * 获取方法匹配器
+     * get the method matcher
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     @Override
     public MethodMatcher getMethodMatcher() {

@@ -27,7 +27,7 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import java.util.Map;
 
 /**
- * 增强AbstractConfig类的appendParameters方法，增加路由标签
+ * The appendParameters method of the AbstractConfig class is enhanced to add route labels
  *
  * @author chengyouling
  * @since 2022-12-28
@@ -36,7 +36,7 @@ public class AbstractConfigInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractConfigInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);

@@ -19,29 +19,29 @@ package com.huaweicloud.sermant.router.config.entity;
 import java.util.List;
 
 /**
- * 规则
+ * Rules
  *
  * @author provenceee
  * @since 2021-10-27
  */
 public class Rule {
     /**
-     * 优先级，值越小优先级越低
+     * priority, the lower the value, the lower the priority
      */
     private int precedence;
 
     /**
-     * 匹配规则
+     * Matching rules
      */
     private Match match;
 
     /**
-     * 路由
+     * Route
      */
     private List<Route> route;
 
     /**
-     * 降级路由
+     * Downgrade routes
      */
     private List<Route> fallback;
 

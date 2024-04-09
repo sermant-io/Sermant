@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * spring拦截器
+ * Spring Interceptor
  *
  * @author provenceee
  * @since 2022-07-12
@@ -53,7 +53,7 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
     private final SpringConfigService configService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RouteHandlerInterceptor() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);
@@ -68,7 +68,7 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
         Set<String> matchKeys = configService.getMatchKeys();
         Set<String> injectTags = configService.getInjectTags();
         if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(injectTags)) {
-            // 染色标记为空，代表没有染色规则，直接return
+            // The staining mark is empty, which means that there are no staining rules, and it is returned directly
             return true;
         }
         Map<String, List<String>> headers = getHeaders(request);

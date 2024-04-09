@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 实例增强基类
+ * Instance enhancement base class
  *
  * @author provenceee
  * @since 2022-01-18
@@ -35,11 +35,11 @@ public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
     private final String methodName;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param enhanceClass 增强类
-     * @param interceptClass 拦截类
-     * @param methodName 增强方法
+     * @param enhanceClass Enhancement Classes
+     * @param interceptClass Interception class
+     * @param methodName Enhancement methods
      */
     public AbstractDeclarer(String enhanceClass, String interceptClass, String methodName) {
         this.enhanceClass = enhanceClass;
@@ -60,9 +60,9 @@ public abstract class AbstractDeclarer extends AbstractPluginDeclarer {
     }
 
     /**
-     * 获取方法匹配器
+     * Get the method matcher
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     public MethodMatcher getMethodMatcher() {
         return MethodMatcher.nameEquals(methodName);

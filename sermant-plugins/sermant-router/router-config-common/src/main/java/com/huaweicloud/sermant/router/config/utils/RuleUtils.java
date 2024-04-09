@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * 路由工具类
+ * Routing tool class
  *
  * @author provenceee
  * @since 2022-07-11
@@ -66,10 +66,10 @@ public class RuleUtils {
     }
 
     /**
-     * 获取所有标签
+     * Get all tags
      *
-     * @param rules 路由规则
-     * @return 标签
+     * @param rules Routing rules
+     * @return Label
      */
     public static List<Map<String, String>> getTags(List<Rule> rules) {
         if (CollectionUtils.isEmpty(rules)) {
@@ -85,12 +85,12 @@ public class RuleUtils {
     }
 
     /**
-     * 获取具体规则
+     * Get specific rules
      *
-     * @param configuration 路由标签缓存
-     * @param targetService 目标服务
-     * @param kind 规则类型
-     * @return 规则列表
+     * @param configuration Route label caching
+     * @param targetService Target service
+     * @param kind The type of rule
+     * @return List of rules
      */
     public static List<Rule> getRules(RouterConfiguration configuration, String targetService, String kind) {
         Map<String, Map<String, List<Rule>>> serviceRouteRule = configuration.getRouteRule();
@@ -111,11 +111,11 @@ public class RuleUtils {
     }
 
     /**
-     * 获取全局规则
+     * Get the global rule
      *
-     * @param configuration 路由标签缓存
-     * @param kind 规则类型
-     * @return 规则列表
+     * @param configuration Route label caching
+     * @param kind The type of rule
+     * @return List of rules
      */
     public static List<Rule> getGlobalRule(RouterConfiguration configuration, String kind) {
         Map<String, List<Rule>> globalRule = configuration.getGlobalRule();
@@ -127,9 +127,9 @@ public class RuleUtils {
     }
 
     /**
-     * 初始化需要缓存的key
+     * Initialize the key that needs to be cached
      *
-     * @param configuration 路由配置
+     * @param configuration Route configuration
      */
     public static void initKeys(RouterConfiguration configuration) {
         initMatchKeys(configuration);
@@ -137,9 +137,9 @@ public class RuleUtils {
     }
 
     /**
-     * 更新全局的header key
+     * Update the global header key
      *
-     * @param configuration 路由配置
+     * @param configuration Route configuration
      */
     public static void initMatchKeys(RouterConfiguration configuration) {
         MATCH_KEYS.clear();
@@ -170,28 +170,28 @@ public class RuleUtils {
     }
 
     /**
-     * 获取需要缓存的key
+     * Obtain the key to be cached
      *
-     * @return 缓存的key
+     * @return The cached key
      */
     public static Set<String> getMatchKeys() {
         return Collections.unmodifiableSet(MATCH_KEYS);
     }
 
     /**
-     * 获取染色的key
+     * Obtain the staining key
      *
-     * @return 染色的key
+     * @return The key of the staining
      */
     public static Set<String> getInjectTags() {
         return Collections.unmodifiableSet(INJECT_TAGS);
     }
 
     /**
-     * 选取路由
+     * Choose routes
      *
-     * @param routes 路由规则
-     * @return 目标路由
+     * @param routes Routing rules
+     * @return Destination routes
      */
     public static RouteResult<?> getTargetTags(List<Route> routes) {
         List<Map<String, String>> tags = new ArrayList<>();
@@ -213,10 +213,10 @@ public class RuleUtils {
     }
 
     /**
-     * 选取泳道标记
+     * Select a swimlane marker
      *
-     * @param routes 泳道规则
-     * @return 泳道标记
+     * @param routes Swimlane rules
+     * @return Swimlane markers
      */
     public static Map<String, List<String>> getTargetLaneTags(List<Route> routes) {
         if (CollectionUtils.isEmpty(routes)) {
@@ -238,11 +238,11 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的规则
+     * Remove invalid rules
      *
-     * @param list 路由规则
-     * @param isReplaceDash 是否需要把"-"替换成"."
-     * @param isAppendPrefix 元数据的key值是否需要加上前缀
+     * @param list Routing rules
+     * @param isReplaceDash Is it necessary to replace "-" with "."?
+     * @param isAppendPrefix Whether the key value of the metadata needs to be prefixed
      */
     public static void removeInvalidRules(List<EntireRule> list, boolean isReplaceDash, boolean isAppendPrefix) {
         if (CollectionUtils.isEmpty(list)) {
@@ -253,14 +253,14 @@ public class RuleUtils {
             EntireRule entireRule = entireIterator.next();
             String kind = entireRule.getKind();
 
-            // 去掉没配置规则，或kind配置不正确的规则
+            // Remove rules that are not configured, or that are incorrectly configured
             if (CollectionUtils.isEmpty(entireRule.getRules()) || !RouterConstant.MATCH_KIND_LIST.contains(kind)) {
                 entireIterator.remove();
                 continue;
             }
             removeInvalidRules(entireRule.getKind(), entireRule.getRules(), isReplaceDash, isAppendPrefix);
 
-            // 去掉全是无效规则的配置
+            // Remove configurations that are all invalid rules
             if (CollectionUtils.isEmpty(entireRule.getRules())) {
                 entireIterator.remove();
             }
@@ -268,12 +268,12 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的规则
+     * Remove invalid rules
      *
-     * @param kind 规则类型
-     * @param rules 规则
-     * @param isReplaceDash 是否需要把"-"替换成"."
-     * @param isAppendPrefix 元数据的key值是否需要加上前缀
+     * @param kind The type of rule
+     * @param rules rules
+     * @param isReplaceDash Is it necessary to replace "-" with "."?
+     * @param isAppendPrefix Whether the key value of the metadata needs to be prefixed
      */
     public static void removeInvalidRules(String kind, List<Rule> rules, boolean isReplaceDash,
             boolean isAppendPrefix) {
@@ -282,23 +282,23 @@ public class RuleUtils {
             Rule rule = ruleIterator.next();
             List<Route> routes = rule.getRoute();
 
-            // 去掉没有配置路由的规则
+            // Remove rules that do not have routes configured
             if (CollectionUtils.isEmpty(routes)) {
                 LOGGER.warning("Routes are empty, rule will be removed.");
                 ruleIterator.remove();
                 continue;
             }
 
-            // 去掉无效的路由和修复同标签规则的路由
+            // Remove invalid routes and fix routes with the same label rules
             removeInvalidRoute(routes, kind, isReplaceDash, isAppendPrefix);
 
             List<Route> fallback = rule.getFallback();
             if (!CollectionUtils.isEmpty(fallback)) {
-                // 去掉无效的fallback路由和修复同标签规则的fallback路由
+                // Remove invalid fallback routes and fix fallback routes with the same label rules
                 removeInvalidRoute(fallback, kind, isReplaceDash, isAppendPrefix);
             }
 
-            // 去掉全是无效路由的规则
+            // Remove all invalid routes
             if (CollectionUtils.isEmpty(routes)) {
                 LOGGER.warning("Routes are invalid, rule will be removed.");
                 ruleIterator.remove();
@@ -306,36 +306,36 @@ public class RuleUtils {
             }
 
             if (RouterConstant.FLOW_MATCH_KIND.equals(kind)) {
-                // 去掉无效的规则
+                // Remove invalid rules
                 removeInvalidMatch(rule.getMatch());
 
-                // 无attachments规则，将headers规则更新到attachments规则
+                // No attachment rule, update headers rule to attachment rule
                 setAttachmentsByHeaders(rule.getMatch());
                 continue;
             }
 
             if (RouterConstant.TAG_MATCH_KIND.equals(kind)) {
-                // 去掉无效的规则
+                // Remove invalid rules
                 removeInvalidTagMatch(rule.getMatch(), isAppendPrefix);
                 continue;
             }
 
             if (RouterConstant.LANE_MATCH_KIND.equals(kind)) {
-                // 去掉无效的规则
+                // Remove invalid rules
                 removeInvalidLaneMatch(rule.getMatch());
             }
         }
     }
 
     /**
-     * 获取目标规则
+     * Get the target rule
      *
-     * @param configuration 路由配置
-     * @param method 方法名
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
-     * @param protocol 获取哪种协议的规则
-     * @return 目标规则
+     * @param configuration Route configuration
+     * @param method Method Name
+     * @param path Dubbo interface name/URL path
+     * @param serviceName The name of the service
+     * @param protocol Get the rules for which protocol
+     * @return Target rules
      */
     public static List<Rule> getLaneRules(RouterConfiguration configuration, String method, String path,
             String serviceName, Protocol protocol) {
@@ -360,10 +360,10 @@ public class RuleUtils {
     }
 
     /**
-     * 转化成元数据中的key
+     * Convert it into a key in the metadata
      *
      * @param key key
-     * @return 元数据中的key
+     * @return The key in the metadata
      */
     public static String getMetaKey(String key) {
         if (RouterConstant.VERSION.equals(key)) {
@@ -392,7 +392,7 @@ public class RuleUtils {
             }
             String matchMethod = match.getMethod();
             if (StringUtils.isExist(matchMethod)) {
-                // http方法不应区分大小写
+                // Http methods should not be case-sensitive
                 if (!equals(matchMethod, method, protocol == Protocol.HTTP)) {
                     return false;
                 }
@@ -405,7 +405,7 @@ public class RuleUtils {
         try {
             return Pattern.matches(regex, path);
         } catch (PatternSyntaxException ignored) {
-            // 正则表达式不符合，返回false
+            // If the regular expression does not match, false will be returned
             return false;
         }
     }
@@ -418,9 +418,9 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的规则
+     * Remove invalid rules
      *
-     * @param match 匹配规则
+     * @param match Matching rules
      */
     private static void removeInvalidMatch(Match match) {
         if (match == null) {
@@ -432,10 +432,10 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的tag匹配规则
+     * Remove invalid tag matching rules
      *
-     * @param match 匹配规则
-     * @param isAppendPrefix 元数据的key值是否需要加上前缀
+     * @param match Matching rules
+     * @param isAppendPrefix Whether the key value of the metadata needs to be prefixed
      */
     private static void removeInvalidTagMatch(Match match, boolean isAppendPrefix) {
         if (match == null) {
@@ -451,9 +451,9 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的lane匹配规则
+     * Remove invalid lane matching rules
      *
-     * @param match 匹配规则
+     * @param match Matching rules
      */
     private static void removeInvalidLaneMatch(Match match) {
         if (match == null) {
@@ -466,9 +466,9 @@ public class RuleUtils {
     }
 
     /**
-     * 将headers规则写入attachments
+     * Write header rules into attachments
      *
-     * @param match headers匹配规则
+     * @param match Headers matching rules
      */
     private static void setAttachmentsByHeaders(Match match) {
         if (match == null || !CollectionUtils.isEmpty(match.getAttachments())) {
@@ -480,12 +480,12 @@ public class RuleUtils {
     }
 
     /**
-     * 去掉无效的路由和修复同标签规则的路由
+     * Remove invalid routes and fix routes with the same label rules
      *
-     * @param routeList 路由
-     * @param kind 规则类型
-     * @param isReplaceDash 是否替换破折号
-     * @param isAppendPrefix 是否拼接前缀
+     * @param routeList Route list
+     * @param kind The type of rule
+     * @param isReplaceDash Whether to replace the dash
+     * @param isAppendPrefix Whether to splice the prefix
      */
     private static void removeInvalidRoute(List<Route> routeList, String kind, boolean isReplaceDash,
             boolean isAppendPrefix) {
@@ -522,7 +522,7 @@ public class RuleUtils {
             return route.getWeight() == null || CollectionUtils.isEmpty(route.getInjectTags());
         }
 
-        // 修正tag配置为保留字段CONSUMER_TAG的规则, 并将其权重设置为100
+        // Fix the tag rule configured to reserve the field CONSUMER_TAG and set its weight to 100
         Map<String, String> tags = route.getTags();
         if (CollectionUtils.isEmpty(tags)) {
             return true;
@@ -568,7 +568,7 @@ public class RuleUtils {
             return;
         }
         for (String key : matchRule.keySet()) {
-            // 请求头在http请求中，会统一转成小写
+            // The request header is changed to lowercase in the HTTP request
             MATCH_KEYS.add(key.toLowerCase(Locale.ROOT));
         }
     }
@@ -600,7 +600,7 @@ public class RuleUtils {
             }
             String newKey;
             if (isReplaceDash) {
-                // dubbo会把key中的"-"替换成"."
+                // dubbo will replace the "-" in the key with "."
                 newKey = key.replace(RouterConstant.DASH, RouterConstant.POINT);
             } else {
                 newKey = key;
@@ -614,9 +614,9 @@ public class RuleUtils {
     }
 
     /**
-     * 匹配结果
+     * Match results
      *
-     * @param <T> 泛型
+     * @param <T> Generics
      * @author provenceee
      * @since 2022-07-17
      */
@@ -626,10 +626,10 @@ public class RuleUtils {
         private final T tags;
 
         /**
-         * 构造方法
+         * Constructor
          *
-         * @param match 是否匹配
-         * @param tags 目标路由
+         * @param match Whether it matches or not
+         * @param tags Destination routing
          */
         public RouteResult(boolean match, T tags) {
             this.match = match;

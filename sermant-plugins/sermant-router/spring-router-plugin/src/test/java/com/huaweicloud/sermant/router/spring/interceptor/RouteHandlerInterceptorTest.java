@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RouteHandlerInterceptor
+ * Test RouteHandlerInterceptor
  *
  * @author provenceee
  * @since 2022-09-07
@@ -51,7 +51,7 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -62,7 +62,7 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -74,7 +74,7 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -83,7 +83,7 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试preHandle方法
+     * Test the preHandle method
      */
     @Test
     public void testPreHandle() {
@@ -94,13 +94,13 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         Object obj = new Object();
 
-        // 测试keys全为空
+        // The test keys are all empty
         configService.setReturnEmptyWhenGetMatchTags(true);
         configService.setReturnEmptyWhenGetMatchKeys(true);
         interceptor.preHandle(request, response, obj);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试preHandle方法，getMatchKeys不为空
+        // Test the preHandle method, getMatchKeys is not empty
         configService.setReturnEmptyWhenGetMatchTags(true);
         configService.setReturnEmptyWhenGetMatchKeys(false);
         interceptor.preHandle(request, response, obj);
@@ -113,14 +113,14 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试afterCompletion,验证是否释放线程变量
+     * After testing is completed, verify if the thread variables are released
      */
     @Test
     public void testAfterCompletion() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试afterCompletion,验证是否释放线程变量
+        // Test afterCompletion to verify if thread variables are released
         interceptor.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }

@@ -43,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试ServiceInstanceListSupplierInterceptor
+ * Test ServiceInstanceListSupplierInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -60,7 +60,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -76,7 +76,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -91,7 +91,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void reset() {
@@ -104,7 +104,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 测试路由规则无效时
+     * When the test routing rule is invalid
      */
     @Test
     public void testBeforeWhenInvalid() {
@@ -116,7 +116,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 测试ThreadLocal没有请求数据时
+     * Test when no data is requested for Thread Local
      */
     @Test
     public void testBeforeWithoutThreadLocal() {
@@ -128,7 +128,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 测试obj无效
+     * The test obj is invalid
      */
     @Test
     public void testBeforeWithInvalidObject() {
@@ -139,7 +139,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 测试实例列表为空时
+     * When the test instance list is empty
      */
     @Test
     public void testBeforeWithEmptyInstances() {
@@ -153,7 +153,7 @@ public class ServiceInstanceListSupplierInterceptorTest {
     }
 
     /**
-     * 测试正常情况
+     * Test for normal conditions
      */
     @Test
     public void testBefore() {

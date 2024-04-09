@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import java.util.Map;
 
 /**
- * dubbo默认元数据处理
+ * Dubbo defaults to metadata processing
  *
  * @author chengyouling
  * @since 2024-02-26

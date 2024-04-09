@@ -21,7 +21,8 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 /**
- * CachingServiceInstanceListSupplier/DiscoveryClientServiceInstanceListSupplier增强类，筛选下游实例
+ * CachingServiceInstanceListSupplier/DiscoveryClientServiceInstanceListSupplier enhanced class, filtering downstream
+ * instances
  *
  * @author provenceee
  * @since 2022-07-12
@@ -37,7 +38,7 @@ public class ServiceInstanceListSupplierDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "get";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ServiceInstanceListSupplierDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);
@@ -50,7 +51,7 @@ public class ServiceInstanceListSupplierDeclarer extends AbstractDeclarer {
 
     @Override
     public boolean isEnabled() {
-        // 不开启线程池异步路由时，才需要开启这个
+        // This is only required if thread pool asynchronous routing is not enabled
         return !PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool();
     }
 }

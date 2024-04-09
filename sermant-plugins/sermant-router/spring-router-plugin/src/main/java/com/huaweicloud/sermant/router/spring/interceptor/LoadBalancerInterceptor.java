@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * spring cloud loadbalancer拦截点
+ * spring cloud loadbalancer Interception points
  *
  * @author provenceee
  * @since 2024-01-16
@@ -39,7 +39,7 @@ public class LoadBalancerInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LoadBalancerInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);

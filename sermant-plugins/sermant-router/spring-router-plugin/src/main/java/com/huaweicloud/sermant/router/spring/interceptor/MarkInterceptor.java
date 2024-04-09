@@ -20,14 +20,14 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 /**
- * 用于标记拦截器调用
+ * Used to mark interceptor calls
  *
  * @author yangrh
  * @since 2022-11-04
  */
 public abstract class MarkInterceptor implements Interceptor {
     /**
-     * 多个拦截器共享
+     * Shared by multiple interceptors
      */
     private static final ThreadLocal<Boolean> MARK = new ThreadLocal<>();
 
@@ -45,11 +45,11 @@ public abstract class MarkInterceptor implements Interceptor {
     }
 
     /**
-     * 调用逻辑
+     * Invocation logic
      *
-     * @param context 上下文
-     * @return 上下文
-     * @throws Exception 执行异常抛出
+     * @param context Context
+     * @return Context
+     * @throws Exception Execute an exception throw
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context) throws Exception;
 }

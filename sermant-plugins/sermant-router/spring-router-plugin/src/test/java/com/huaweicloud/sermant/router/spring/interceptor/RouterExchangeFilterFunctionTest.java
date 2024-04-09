@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RouterExchangeFilterFunction
+ * Test RouterExchangeFilterFunction
  *
  * @author provenceee
  * @since 2024-01-16
@@ -71,7 +71,7 @@ public class RouterExchangeFilterFunctionTest extends BaseTransmitConfigTest {
 
     @Test
     public void testFilterWithoutRequestTag() {
-        // requestTag为null时
+        // when requestTag is null
         ClientResponse response = function.filter(request, exchangeFunction).block();
         Assert.assertNotNull(response);
         HttpHeaders httpHeaders = response.headers().asHttpHeaders();
@@ -88,7 +88,7 @@ public class RouterExchangeFilterFunctionTest extends BaseTransmitConfigTest {
 
     @Test
     public void testFilterWithRequestTag() {
-        // requestTag不为null时
+        // When requestTag is not null
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("bar1")));
         ClientResponse response = function.filter(request, exchangeFunction).block();
         Assert.assertNotNull(response);

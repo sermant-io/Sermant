@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 import java.util.List;
 
 /**
- * 注册插件拦截点
+ * Register plug-in intercept point
  *
  * @author provenceee
  * @since 2022-10-08
@@ -35,7 +35,7 @@ public class NopInstanceFilterInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NopInstanceFilterInterceptor() {
         loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);

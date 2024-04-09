@@ -31,14 +31,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 规则策略选择器
+ * rule policy selector
  *
  * @author provenceee
  * @since 2021-10-13
  */
 public enum TypeStrategyChooser {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
@@ -52,7 +52,7 @@ public enum TypeStrategyChooser {
     }
 
     /**
-     * 初始化
+     * initialize
      */
     private void init() {
         registerTypeStrategy(new ArrayTypeStrategy());
@@ -64,19 +64,19 @@ public enum TypeStrategyChooser {
     }
 
     /**
-     * 策略注册
+     * policy registration
      *
-     * @param typeStrategy 表达式策略
+     * @param typeStrategy expression strategy
      */
     private void registerTypeStrategy(TypeStrategy typeStrategy) {
         typeStrategies.add(typeStrategy);
     }
 
     /**
-     * 选择策略
+     * select policy
      *
-     * @param type 标签规则策略表达式
-     * @return 规则策略
+     * @param type label rule policy expressions
+     * @return Rule strategy
      */
     private Optional<TypeStrategy> choose(String type) {
         for (TypeStrategy typeStrategy : typeStrategies) {
@@ -89,12 +89,12 @@ public enum TypeStrategyChooser {
     }
 
     /**
-     * 根据策略表达式获取参数值
+     * Obtain the parameter value based on the policy expression
      *
-     * @param type 策略表达式
-     * @param key 参数索引
-     * @param arguments 参数数组
-     * @return 参数值
+     * @param type policy expressions
+     * @param key parameter index
+     * @param arguments array of parameters
+     * @return parameter value
      */
     public Optional<String> getValue(String type, String key, Object[] arguments) {
         if (arguments == null) {

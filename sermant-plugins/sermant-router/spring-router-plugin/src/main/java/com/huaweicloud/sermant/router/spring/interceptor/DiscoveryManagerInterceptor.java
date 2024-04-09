@@ -31,7 +31,7 @@ import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 import java.util.logging.Logger;
 
 /**
- * 注册插件拦截点
+ * Register plug-in intercept point
  *
  * @author provenceee
  * @since 2022-10-13
@@ -44,7 +44,7 @@ public class DiscoveryManagerInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public DiscoveryManagerInterceptor() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.spring.handler.HandlerChainEntry;
 import java.util.List;
 
 /**
- * BaseLoadBalancerInterceptor服务
+ * BaseLoadBalancerInterceptor service
  *
  * @author provenceee
  * @since 2022-07-20

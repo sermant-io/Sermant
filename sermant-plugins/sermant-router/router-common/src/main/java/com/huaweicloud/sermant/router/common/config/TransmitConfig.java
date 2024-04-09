@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 跨线程透传配置
+ * Cross-threaded transparent transmission configuration
  *
  * @author provenceee
  * @since 2024-01-16
@@ -29,19 +29,20 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("transmit.plugin")
 public class TransmitConfig implements PluginConfig {
     /**
-     * 是否在直接new Thread时传递标签
+     * Whether to pass the label on the direct new thread
      */
     @ConfigFieldKey("enabled-thread")
     private boolean enabledThread;
 
     /**
-     * 是否在非定时线程池中传递标签
+     * Whether labels are passed in the pool of unscheduled threads
      */
     @ConfigFieldKey("enabled-thread-pool")
     private boolean enabledThreadPool;
 
     /**
-     * 是否在定时线程池的schedule/scheduleAtFixedRate/scheduleWithFixedDelay方法中传递标签
+     * Is the label passed in the schedule/scheduleAtFixedRate/scheduleWithFixedDelay method of the scheduled thread
+     * pool?
      */
     @ConfigFieldKey("enabled-scheduler")
     private boolean enabledScheduler;

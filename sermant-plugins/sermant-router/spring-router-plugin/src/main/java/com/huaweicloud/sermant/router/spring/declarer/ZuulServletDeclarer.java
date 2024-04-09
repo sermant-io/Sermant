@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * ZuulServlet增强类，设置请求头
+ * ZuulServlet enhancement class, setting request headers
  *
  * @author provenceee
  * @since 2023-02-21
@@ -33,7 +33,7 @@ public class ZuulServletDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "service";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ZuulServletDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

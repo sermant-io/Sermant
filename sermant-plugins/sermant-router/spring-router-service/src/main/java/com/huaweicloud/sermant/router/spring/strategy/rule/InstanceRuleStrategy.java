@@ -22,17 +22,17 @@ import com.huaweicloud.sermant.router.spring.strategy.instance.MismatchInstanceS
 import com.huaweicloud.sermant.router.spring.strategy.mapper.AbstractMetadataMapper;
 
 /**
- * 路由规则匹配策略
+ * The routing rule matches the policy
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2021-10-14
  */
 public class InstanceRuleStrategy<I> extends AbstractRuleStrategy<I> {
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param mapper metadata获取方法
+     * @param mapper Metadata fetch method
      */
     public InstanceRuleStrategy(AbstractMetadataMapper<I> mapper) {
         super("spring", new MatchInstanceStrategy<>(), new MismatchInstanceStrategy<>(), mapper);

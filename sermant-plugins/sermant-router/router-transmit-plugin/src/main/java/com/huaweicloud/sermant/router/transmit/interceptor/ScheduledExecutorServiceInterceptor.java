@@ -20,14 +20,14 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 /**
- * 拦截ScheduledExecutorService
+ * Intercept the ScheduledExecutorService
  *
  * @author provenceee
  * @since 2024-01-16
  */
 public class ScheduledExecutorServiceInterceptor extends AbstractExecutorInterceptor {
     /**
-     * 构造方法
+     * Constructor
      */
     public ScheduledExecutorServiceInterceptor() {
         super(!PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledScheduler());

@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 import java.util.Map;
 
 /**
- * metadata获取mapper
+ * Obtain mapper from metadata
  *
  * @author provenceee
  * @since 2022-09-27

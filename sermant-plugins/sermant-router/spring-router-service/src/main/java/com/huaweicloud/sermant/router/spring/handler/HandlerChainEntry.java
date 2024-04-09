@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * 路由处理器链入口
+ * Route Processor Chain Entry
  *
  * @author lilai
  * @since 2023-02-21
  */
 public enum HandlerChainEntry {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
@@ -50,12 +50,12 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * 调用路由处理器链
+     * Invoke the route processor chain
      *
-     * @param targetName 目标服务名
-     * @param instances 被筛选的服务实力列表
-     * @param requestData 请求数据
-     * @return 筛选后的实例列表
+     * @param targetName Target service name
+     * @param instances List of filtered service strengths
+     * @param requestData Request data
+     * @return Filtered list of instances
      */
     public List<Object> process(String targetName, List<Object> instances, RequestData requestData) {
         return HANDLER_CHAIN.handle(targetName, instances, requestData);

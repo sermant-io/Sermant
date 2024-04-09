@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 路由标签
+ * Routing labels
  *
  * @author provenceee
  * @since 2021-10-27
@@ -38,38 +38,39 @@ public class RouterConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 服务的标签规则,外层key为标签规则类型kind，内层key为服务名，内层value为该类型标签路由的具体规则
+     * The outer key is the type of the label rule, the inner key is the service name, and the inner value is the
+     * specific rule of the label route
      */
     private final Map<String, Map<String, List<Rule>>> rules = new ConcurrentHashMap<>();
 
     /**
-     * 全局标签规则,key为标签规则类型kind，value为该类型标签路由的具体规则
+     * For a global tag rule, the key is the type of the tag rule and the value is the specific rule of the tag route
      */
     private final Map<String, List<Rule>> globalRules = new ConcurrentHashMap<>();
 
     /**
-     * 获取路由规则信息
+     * Obtain routing rule information
      *
-     * @return 路由规则信息
+     * @return Routing rule information
      */
     public Map<String, Map<String, List<Rule>>> getRouteRule() {
         return rules;
     }
 
     /**
-     * 获取全局的规则信息
+     * Obtain global rule information
      *
-     * @return 全局的路由规则信息
+     * @return Global routing rule information
      */
     public Map<String, List<Rule>> getGlobalRule() {
         return globalRules;
     }
 
     /**
-     * 更新服务粒度的路由规则
+     * Update routing rules at the service granularity
      *
-     * @param serviceName 服务名
-     * @param entireRules 配置中心下发的路由规则列表
+     * @param serviceName Service name
+     * @param entireRules Configure the list of routing rules delivered by the center
      */
     public void updateServiceRule(String serviceName, List<EntireRule> entireRules) {
         Map<String, List<Rule>> flowRules = rules.computeIfAbsent(RouterConstant.FLOW_MATCH_KIND,
@@ -103,10 +104,10 @@ public class RouterConfiguration {
     }
 
     /**
-     * 按类型更新服务粒度的路由规则
+     * Update routing rules at service granularity by type
      *
-     * @param serviceName 服务名
-     * @param entireRule 规则
+     * @param serviceName Service name
+     * @param entireRule Rules
      */
     public void updateServiceRule(String serviceName, EntireRule entireRule) {
         Map<String, List<Rule>> ruleList = rules.computeIfAbsent(entireRule.getKind(),
@@ -117,9 +118,9 @@ public class RouterConfiguration {
     }
 
     /**
-     * 移除服务的路由规则
+     * Remove the routing rule for the service
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      */
     public void removeServiceRule(String serviceName) {
         Map<String, List<Rule>> flowRules = rules.get(RouterConstant.FLOW_MATCH_KIND);
@@ -138,10 +139,10 @@ public class RouterConfiguration {
     }
 
     /**
-     * 移除服务的路由规则
+     * Remove the routing rule for the service
      *
-     * @param serviceName 服务名
-     * @param kind 规则类型
+     * @param serviceName Service name
+     * @param kind The type of rule
      */
     public void removeServiceRule(String serviceName, String kind) {
         Map<String, List<Rule>> ruleList = rules.get(kind);
@@ -152,9 +153,9 @@ public class RouterConfiguration {
     }
 
     /**
-     * 重置路由规则
+     * Reset the routing rule
      *
-     * @param map 路由规则
+     * @param map Routing rules
      */
     public void resetRouteRule(Map<String, List<EntireRule>> map) {
         rules.clear();
@@ -168,10 +169,10 @@ public class RouterConfiguration {
     }
 
     /**
-     * 重置路由规则
+     * Reset the routing rule
      *
-     * @param kind 规则类型
-     * @param map 路由规则
+     * @param kind The type of rule
+     * @param map Routing rules
      */
     public void resetRouteRule(String kind, Map<String, EntireRule> map) {
         if (map == null) {
@@ -191,9 +192,9 @@ public class RouterConfiguration {
     }
 
     /**
-     * 重置全局路由规则
+     * Reset the global routing rule
      *
-     * @param list 路由规则
+     * @param list Routing rules
      */
     public void resetGlobalRule(List<EntireRule> list) {
         globalRules.clear();
@@ -205,9 +206,9 @@ public class RouterConfiguration {
     }
 
     /**
-     * 重置全局路由规则
+     * Reset the global routing rule
      *
-     * @param entireRule 路由规则
+     * @param entireRule Routing rules
      */
     public void resetGlobalRule(EntireRule entireRule) {
         List<Rule> ruleList = entireRule.getRules();
@@ -224,11 +225,11 @@ public class RouterConfiguration {
     }
 
     /**
-     * 路由规则是否无效
+     * Whether the routing rule is invalid
      *
-     * @param configuration 路由规则
-     * @param kind 类型
-     * @return 是否无效
+     * @param configuration Routing rules
+     * @param kind Type
+     * @return Whether it is invalid
      */
     public static boolean isInValid(RouterConfiguration configuration, String kind) {
         if (configuration == null) {

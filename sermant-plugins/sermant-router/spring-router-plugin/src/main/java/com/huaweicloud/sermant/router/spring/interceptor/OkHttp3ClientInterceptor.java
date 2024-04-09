@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 针对okHttp3.x版本以上的拦截
+ * Blocking for okHttp3.x and above versions
  *
  * @author yangrh
  * @since 2022-10-25
@@ -42,11 +42,11 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     private static final String FIELD_NAME = "originalRequest";
 
     /**
-     * 前置触发点
+     * Pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
@@ -67,11 +67,11 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 后置触发点
+     * Rear trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Exceptions that were executed
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {

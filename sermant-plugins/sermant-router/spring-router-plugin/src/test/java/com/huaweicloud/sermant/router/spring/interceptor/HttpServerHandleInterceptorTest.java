@@ -29,7 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 测试HttpServerHandleInterceptor
+ * Test HttpServerHandleInterceptor
  *
  * @author provenceee
  * @since 2024-01-16
@@ -58,18 +58,18 @@ public class HttpServerHandleInterceptorTest extends BaseTransmitConfigTest {
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 
-        // State为null
+        // State is null
         interceptor.after(context);
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
         Assert.assertNotNull(ThreadLocalUtils.getRequestData());
 
-        // State不为DISCONNECTING
+        // The State is not DISCONNECTING
         arguments[1] = State.CONFIGURED;
         interceptor.after(context);
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
         Assert.assertNotNull(ThreadLocalUtils.getRequestData());
 
-        // State为DISCONNECTING
+        // The State is DISCONNECTING
         arguments[1] = State.DISCONNECTING;
         interceptor.after(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
@@ -81,18 +81,18 @@ public class HttpServerHandleInterceptorTest extends BaseTransmitConfigTest {
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 
-        // State为null
+        // State is null
         interceptor.onThrow(context);
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
         Assert.assertNotNull(ThreadLocalUtils.getRequestData());
 
-        // State不为DISCONNECTING
+        // The State is not DISCONNECTING
         arguments[1] = State.CONFIGURED;
         interceptor.onThrow(context);
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
         Assert.assertNotNull(ThreadLocalUtils.getRequestData());
 
-        // State为DISCONNECTING
+        // The State is DISCONNECTING
         arguments[1] = State.DISCONNECTING;
         interceptor.onThrow(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());

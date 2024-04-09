@@ -31,39 +31,39 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * 值匹配策略
+ * Value matching strategy
  *
  * @author provenceee
  * @since 2021-10-14
  */
 public enum MatchStrategy {
     /**
-     * 等值匹配
+     * Equivalence matching
      */
     EXACT(new ExactValueMatchStrategy()),
 
     /**
-     * 正则表达式匹配
+     * Regular expression matching
      */
     REGEX(new RegexValueMatchStrategy()),
 
     /**
-     * 不等于匹配
+     * Not equal to matching
      */
     NOEQU(new NoEquValueMatchStrategy()),
 
     /**
-     * 不小于匹配
+     * Not less than a match
      */
     NOLESS(new NoLessValueMatchStrategy()),
 
     /**
-     * 不大于匹配
+     * Not greater than a match
      */
     NOGREATER(new NoGreaterValueMatchStrategy()),
 
     /**
-     * 大于匹配
+     * Greater than match
      */
     GREATER(new GreaterValueMatchStrategy()),
 

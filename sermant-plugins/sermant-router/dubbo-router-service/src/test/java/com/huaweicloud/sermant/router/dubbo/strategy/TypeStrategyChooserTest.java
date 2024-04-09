@@ -24,7 +24,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * 规则策略选择器测试
+ * rule policy selector testing
  *
  * @author provenceee
  * @since 2021-12-01
@@ -35,7 +35,7 @@ public class TypeStrategyChooserTest {
     private final Object[] arguments;
 
     /**
-     * 构造方法
+     * constructor
      */
     public TypeStrategyChooserTest() {
         chooser = TypeStrategyChooser.INSTANCE;
@@ -43,29 +43,29 @@ public class TypeStrategyChooserTest {
     }
 
     /**
-     * 测试数组策略
+     * test the array strategy
      */
     @Test
     public void testArray() {
         arguments[0] = new String[]{"foo"};
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", chooser.getValue("[0]", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试空策略
+     * test the null strategy
      */
     @Test
     public void testEmpty() {
         arguments[0] = "foo";
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", chooser.getValue("", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试enabled策略
+     * test the enabled policy
      */
     @Test
     public void testEnabled() {
@@ -73,34 +73,34 @@ public class TypeStrategyChooserTest {
         entity.setEnabled(true);
         arguments[0] = entity;
 
-        // 正常情况
+        // normal
         Assert.assertEquals(Boolean.TRUE.toString(), chooser.getValue(".isEnabled()", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试列表策略
+     * test the list strategy
      */
     @Test
     public void testList() {
         arguments[0] = Collections.singletonList("foo");
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", chooser.getValue(".get(0)", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试map策略
+     * test the map policy
      */
     @Test
     public void testMap() {
         arguments[0] = Collections.singletonMap("foo", "bar");
 
-        // 正常情况
+        // normal
         Assert.assertEquals("bar", chooser.getValue(".get(\"foo\")", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试实体策略
+     * test entity strategy
      */
     @Test
     public void testObject() {
@@ -108,36 +108,36 @@ public class TypeStrategyChooserTest {
         entity.setTest("foo");
         arguments[0] = entity;
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", chooser.getValue(".test", "args0", arguments).orElse(null));
     }
 
     /**
-     * 测试null（异常情况）
+     * Test null (anomaly)
      */
     @Test
     public void testNull() {
-        // 参数为null
+        // the parameter is null
         Assert.assertNull(chooser.getValue(".test", "args0", null).orElse(null));
 
-        // 未命中TypeStrategy
+        // not hit TypeStrategy
         Assert.assertNull(chooser.getValue("bar", "args0", arguments).orElse(null));
 
-        // 非数字
+        // non numeric
         Assert.assertNull(chooser.getValue(".test", "argsA", arguments).orElse(null));
 
-        // 索引越界
+        // the index is out of bounds
         Assert.assertNull(chooser.getValue(".test", "args1", arguments).orElse(null));
     }
 
     /**
-     * 测试非数字
+     * test non numeric
      */
     @Test
     public void testInvalidNumber() {
         arguments[0] = new String[]{"foo"};
 
-        // 测试非数字
+        // test non numeric
         Assert.assertNull(chooser.getValue("[bar]", "args0", arguments).orElse(null));
     }
 }

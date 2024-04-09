@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 反射测试类
+ * Reflex test class
  *
  * @author provenceee
  * @since 2022-03-18
@@ -60,7 +60,7 @@ public class DubboReflectUtilsTest {
     private final org.apache.dubbo.config.ApplicationConfig apacheConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public DubboReflectUtilsTest() {
         alibabaConfig = new ApplicationConfig(BAR);
@@ -70,7 +70,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试获取queryMap
+     * Test obtaining queryMap
      */
     @Test
     public void testGetQueryMap() {
@@ -80,7 +80,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试获取私有字段
+     * Test to get private fields
      */
     @Test
     public void testGetFieldValue() {
@@ -93,7 +93,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取参数
+     * Get the parameters
      *
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -105,7 +105,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取应用参数
+     * Get the application parameters
      *
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
@@ -117,7 +117,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取url
+     * Get the URL
      *
      * @see com.alibaba.dubbo.rpc.Invoker
      * @see org.apache.dubbo.rpc.Invoker
@@ -129,7 +129,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取服务接口名
+     * Obtain the name of the service interface
      *
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -141,7 +141,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取服务接口名
+     * Obtain the name of the service interface
      *
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -153,7 +153,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取dubbo请求方法名
+     * Obtain the name of the dubbo request method
      *
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
@@ -165,7 +165,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取dubbo请求参数
+     * Obtain the parameters of the dubbo request
      *
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
@@ -184,7 +184,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 设置注册时的参数
+     * Set the parameters at the time of registration
      *
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
@@ -197,7 +197,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 从Invocation获取attachments
+     * Obtain attachments from null
      *
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
@@ -208,7 +208,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 从Invocation获取attachments
+     * Obtain attachments from Invocation
      *
      * @see com.alibaba.dubbo.rpc.Invocation
      * @see org.apache.dubbo.rpc.Invocation
@@ -225,7 +225,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 从RpcContext获取attachments
+     * Get attachments from RpcContext
      *
      * @see com.alibaba.dubbo.rpc.RpcContext
      */
@@ -236,7 +236,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 获取权限检查类
+     * Get the permission check class
      */
     @Test
     public void testGetAccessibleObject() throws NoSuchMethodException {
@@ -246,7 +246,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试类
+     * Test class
      *
      * @since 2022-03-18
      */
@@ -254,7 +254,7 @@ public class DubboReflectUtilsTest {
         private final Map<String, String> queryMap = new HashMap<>();
 
         /**
-         * 构造方法
+         * Constructor
          */
         public Entity() {
             queryMap.put(FOO, BAR);
@@ -266,7 +266,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试类
+     * Test class
      *
      * @since 2022-03-18
      */
@@ -297,7 +297,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试类
+     * Test class
      *
      * @since 2022-03-18
      */
@@ -329,7 +329,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试类
+     * Test class
      *
      * @since 2022-03-18
      */
@@ -388,7 +388,7 @@ public class DubboReflectUtilsTest {
     }
 
     /**
-     * 测试类
+     * Test class
      *
      * @since 2022-03-18
      */

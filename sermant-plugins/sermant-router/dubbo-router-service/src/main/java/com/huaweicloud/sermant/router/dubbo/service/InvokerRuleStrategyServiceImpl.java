@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.common.service.InvokerRuleStrategyService;
 import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
 
 /**
- * 设置InvokerRuleStrategy的service
+ * Set the service for InvokerRuleStrategy
  *
  * @author chengyouling
  * @since 2024-02-23

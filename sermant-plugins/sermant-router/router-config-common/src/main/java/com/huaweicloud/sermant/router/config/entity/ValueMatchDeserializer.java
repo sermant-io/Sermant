@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * 值匹配反序列化器
+ * Value matches deserializer
  *
  * @author provenceee
  * @since 2022-02-18
@@ -49,7 +49,7 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
     public Map<String, List<MatchRule>> deserialze(DefaultJSONParser parser, Type type, Object fieldName) {
         JSONObject args = parser.parseObject();
 
-        // LinkedHashMap用为了保持顺序
+        // LinkedHashMap is used to maintain order
         LinkedHashMap<String, List<MatchRule>> matchRuleMap = new LinkedHashMap<>();
         for (String key : args.keySet()) {
             matchRuleMap.put(key, getMatchRuleList(args, key, DUBBO_ARGS_FIELD_NAME.equals(fieldName)));
@@ -91,8 +91,9 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
             }
         }
 
-        // 如果不区分大小写，则强制转为小写
-        // 因为boolean型转string是小写，所以如果是.isXxx()的dubbo args类型，则强制把值转为小写，即boolean类型时强制对大小写不敏感
+        // If it is not case-sensitive, it is forced to be lowercase
+        // Because the boolean type is lowercase, if it is a dubbo args type of .isXxx(), the value is forced to be
+        // lowercase; that is, the boolean type is forced to be case-sensitive
         if (!matchRule.isCaseInsensitive() || (isDubboArgs && isIsMethod(matchRule.getType()))) {
             ListIterator<String> listIterator = valueMatch.getValues().listIterator();
             while (listIterator.hasNext()) {
@@ -111,7 +112,7 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
         try {
             matchStrategy = MatchStrategy.valueOf(fieldName.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ignored) {
-            // 不存在该策略，忽略
+            // The policy does not exist, ignore it
             return;
         }
         List<String> values = new ArrayList<>();
@@ -130,7 +131,7 @@ public class ValueMatchDeserializer implements ObjectDeserializer {
     }
 
     /**
-     * JSONObject序列化类
+     * JSONObject Serialization Class
      *
      * @since 2022-02-18
      */

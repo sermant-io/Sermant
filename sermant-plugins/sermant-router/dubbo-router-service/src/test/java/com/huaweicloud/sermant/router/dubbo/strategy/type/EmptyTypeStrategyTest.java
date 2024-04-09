@@ -22,29 +22,29 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 空匹配策略测试
+ * Empty matching strategy testing
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class EmptyTypeStrategyTest {
     /**
-     * 测试空策略
+     * Test empty strategy
      */
     @Test
     public void testValue() {
         TypeStrategy strategy = new EmptyTypeStrategy();
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", strategy.getValue("foo", "").orElse(null));
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", strategy.getValue("foo", null).orElse(null));
 
-        // 测试不等于
+        // the test is not equal
         Assert.assertNotEquals("foo", strategy.getValue("bar", null).orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertNotEquals("foo", strategy.getValue(null, null).orElse(null));
     }
 }

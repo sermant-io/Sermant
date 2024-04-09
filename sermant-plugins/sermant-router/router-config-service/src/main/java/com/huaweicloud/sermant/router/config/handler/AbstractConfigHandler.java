@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.router.config.common.SafeConstructor;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * 配置处理器
+ * Configure the handler
  *
  * @author provenceee
  * @since 2022-08-09
@@ -37,17 +37,17 @@ public abstract class AbstractConfigHandler implements AbstractHandler {
     protected final Yaml yaml;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractConfigHandler() {
         this.yaml = new Yaml(new SafeConstructor(null));
     }
 
     /**
-     * 是否需要处理
+     * Whether it needs to be processed
      *
-     * @param key 配置key
-     * @return 是否需要处理
+     * @param key configuration key
+     * @return Whether it needs to be processed
      */
     @Override
     public boolean shouldHandle(String key) {

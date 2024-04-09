@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * webflux获取header拦截点
+ * Webflux obtains the header interception point
  *
  * @author provenceee
  * @since 2022-10-10
@@ -46,7 +46,7 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
     private final List<AbstractMappingHandler> handlers;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractHandlerMappingInterceptor() {
         handlers = new ArrayList<>();
@@ -73,8 +73,9 @@ public class AbstractHandlerMappingInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        // 响应式编程不能在after方法中删除，否则会导致线程变量无法透传到负载均衡线程中
-        // 会在HttpServerHandleInterceptor、ReactiveTypeHandlerInterceptor中删除
+        // Reactive programming cannot be deleted in the after method, otherwise thread variables cannot be
+        // transparently transmitted to the load balancer thread
+        // Will be deleted in HttpServerHandleInterceptor, ReactiveTypeHandlerInterceptor
         return context;
     }
 

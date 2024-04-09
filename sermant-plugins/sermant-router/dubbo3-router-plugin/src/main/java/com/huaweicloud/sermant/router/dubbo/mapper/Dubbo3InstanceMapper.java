@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * dubbo3.x注册应用类型instance模式下，获取服务端所有参数，匹配目标版本号的invoker
+ * In the instance mode of dubbo3.x registration application type
+ * obtains all parameters from the server and matches the invoker with the target version number
  *
  * @author chengyouling
  * @since 2024-02-26

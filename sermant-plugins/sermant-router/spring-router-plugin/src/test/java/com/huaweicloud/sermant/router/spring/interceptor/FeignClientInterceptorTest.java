@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试FeignClientInterceptor
+ * Test FeignClientInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -84,7 +84,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -93,7 +93,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试从ThreadLocal中获取header
+     * Test obtaining header from ThreadLocal
      */
     @Test
     public void testBeforeWithThreadLocal() {
@@ -114,7 +114,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试从Hystrix中获取header
+     * Test obtaining header from Hystrix
      */
     @Test
     public void testBeforeWithHystrix() {
@@ -138,7 +138,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试从Hystrix中获取header
+     * Test obtaining header from Hystrix
      */
     @Test
     public void testBeforeWithoutHystrix() {
@@ -154,7 +154,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试Hystrix中没有header时
+     * When testing Hystrix without a header
      */
     @Test
     public void testBeforeWithoutRequestHeader() {
@@ -173,7 +173,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {
@@ -183,7 +183,7 @@ public class FeignClientInterceptorTest {
     }
 
     /**
-     * 测试onThrow方法
+     * Test the onThrow method
      */
     @Test
     public void testOnThrow() {

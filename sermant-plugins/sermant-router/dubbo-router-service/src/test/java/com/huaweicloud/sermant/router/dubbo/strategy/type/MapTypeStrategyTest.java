@@ -25,14 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * map匹配策略测试
+ * map matching strategy test
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class MapTypeStrategyTest {
     /**
-     * 测试map策略
+     * test the map policy
      */
     @Test
     public void testValue() {
@@ -40,16 +40,16 @@ public class MapTypeStrategyTest {
         Map<String, String> map = new HashMap<>();
         map.put("foo", "bar");
 
-        // 正常情况
+        // normal
         Assert.assertEquals("bar", strategy.getValue(map, ".get(\"foo\")").orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertNotEquals("bar", strategy.getValue(map, ".get(\"bar\")").orElse(null));
 
-        // 测试非map
+        // test non map
         Assert.assertNotEquals("bar", strategy.getValue("foo", ".get(\"foo\")").orElse(null));
 
-        // 测试不等于
+        // the test is not equal
         Assert.assertNotEquals("foo", strategy.getValue(map, ".get(\"foo\")").orElse(null));
     }
 }

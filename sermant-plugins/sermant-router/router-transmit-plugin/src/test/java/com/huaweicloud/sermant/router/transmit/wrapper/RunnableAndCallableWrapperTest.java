@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试RunnableAndCallableWrapper
+ * Test RunnableAndCallableWrapper
  *
  * @author provenceee
  * @since 2024-01-16
@@ -50,7 +50,7 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
 
     @Test
     public void testRunCannotTransmit() {
-        // 初始条件
+        // Initial conditions
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 
@@ -91,7 +91,7 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
 
     @Test
     public void testCallCannotTransmit() throws Exception {
-        // 初始条件
+        // Initial conditions
         ThreadLocalUtils.setRequestTag(new RequestTag(null));
         ThreadLocalUtils.setRequestData(new RequestData(null, null, null));
 

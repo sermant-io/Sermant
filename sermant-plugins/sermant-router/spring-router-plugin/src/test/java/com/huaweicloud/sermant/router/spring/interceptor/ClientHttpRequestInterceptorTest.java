@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试ClientHttpRequestInterceptor
+ * Test ClientHttpRequestInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -52,7 +52,7 @@ public class ClientHttpRequestInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -61,7 +61,7 @@ public class ClientHttpRequestInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
@@ -82,7 +82,7 @@ public class ClientHttpRequestInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试after方法
+     * Test the After method
      */
     @Test
     public void testAfter() {
@@ -92,7 +92,7 @@ public class ClientHttpRequestInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * 测试onThrow方法
+     * Test the onThrow method
      */
     @Test
     public void testOnThrow() {

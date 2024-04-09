@@ -22,51 +22,51 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由策略
+ * Routing policy
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2021-10-14
  */
 public interface RuleStrategy<I> {
     /**
-     * 选取路由的实例
+     * Select an instance of the route
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param rule 路由规则
-     * @return 路由过滤后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param rule Routing rules
+     * @return Instances that are route-filtered
      */
     List<I> getFlowMatchInstances(String serviceName, List<I> instances, Rule rule);
 
     /**
-     * 选取路由的实例
+     * Select an instance of the route
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param rule 规则
-     * @return 规则过滤后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param rule Rules
+     * @return Instances filtered by rules
      */
     List<I> getMatchInstances(String serviceName, List<I> instances, Rule rule);
 
     /**
-     * 根据请求信息选取路由的实例
+     * Select an instance of the route based on the request information
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param tags 请求信息
-     * @return 路由过滤后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param tags Request information
+     * @return Instances that are route-filtered
      */
     List<I> getMatchInstancesByRequest(String serviceName, List<I> instances, Map<String, String> tags);
 
     /**
-     * 选取不匹配标签的实例
+     * Select instances of mismatched labels
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param tags 标签
-     * @param isReturnAllInstancesWhenMismatch 无匹配时，是否返回全部实例
-     * @return 路由过滤后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @param tags Label
+     * @param isReturnAllInstancesWhenMismatch If there is no match, whether to return all instances
+     * @return Instances that are route-filtered
      */
     List<I> getMismatchInstances(String serviceName, List<I> instances, List<Map<String, String>> tags,
             boolean isReturnAllInstancesWhenMismatch);

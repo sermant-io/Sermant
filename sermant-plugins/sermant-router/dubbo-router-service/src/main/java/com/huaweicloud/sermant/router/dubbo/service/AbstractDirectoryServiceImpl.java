@@ -29,26 +29,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AbstractDirectory的service
+ * The service of AbstractDirectory
  *
  * @author provenceee
  * @since 2021-11-24
  */
 public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
-    // dubbo请求参数中是否为consumer的key值
+    // Whether the key value of the request parameter is consumer
     private static final String CONSUMER_KEY = "side";
 
-    // dubbo请求参数中接口名的key值
+    // The key value of the interface name in the dubbo request parameter
     private static final String INTERFACE_KEY = "interface";
 
-    // dubbo请求参数中是否为consumer的value值
+    // Whether the value of the request parameter is consumer
     private static final String CONSUMER_VALUE = "consumer";
 
     /**
-     * 筛选标签invoker
+     * filter the label invoker
      *
      * @param registryDirectory RegistryDirectory
-     * @param invocation 参数
+     * @param invocation Parameter
      * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory

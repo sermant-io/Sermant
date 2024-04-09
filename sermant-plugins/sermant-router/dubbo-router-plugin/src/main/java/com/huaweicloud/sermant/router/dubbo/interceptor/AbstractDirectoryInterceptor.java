@@ -23,7 +23,8 @@ import com.huaweicloud.sermant.core.utils.LogUtils;
 import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
 
 /**
- * 增强AbstractDirectory的子类的doList方法，筛选标签应用的地址
+ * The doList method of the AbstractDirectory subclass is enhanced to filter the addresses to which the label is
+ * applied
  *
  * @author provenceee
  * @since 2021-06-28
@@ -32,7 +33,7 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
     private final AbstractDirectoryService abstractDirectoryService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractDirectoryInterceptor() {
         abstractDirectoryService = PluginServiceManager.getPluginService(AbstractDirectoryService.class);
@@ -48,7 +49,7 @@ public class AbstractDirectoryInterceptor extends AbstractInterceptor {
     public ExecuteContext after(ExecuteContext context) {
         Object[] arguments = context.getArguments();
 
-        // DUBBO 2.x and DUBBO 3.O.x dolist method is one parameter/3.1.x two parameter/3.2.x three parameter
+        // DUBBO 2.x and DUBBO 3.O.x doList method is one parameter/3.1.x two parameter/3.2.x three parameters
         // all version invocation parameter at last
         Object invocation = arguments[arguments.length - 1];
         context.changeResult(abstractDirectoryService.selectInvokers(context.getObject(), invocation,

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.router.common.request.RequestTag;
 import java.util.concurrent.Callable;
 
 /**
- * Runnable&Callable包装类，例如reactor.core.scheduler.WorkerTask
+ * Runnable&Callable wrapper class, such as reactor. core. schedule WorkerTask
  *
  * @param <T> 泛型
  * @author provenceee
@@ -30,13 +30,13 @@ import java.util.concurrent.Callable;
  */
 public class RunnableAndCallableWrapper<T> extends AbstractThreadWrapper<T> implements Runnable, Callable<T> {
     /**
-     * 构造方法
+     * Constructor
      *
      * @param runnable runnable
      * @param callable callable
-     * @param requestTag 请求标记
-     * @param requestData 请求数据
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param requestTag Request tags
+     * @param requestData Request data
+     * @param cannotTransmit Whether the thread variable needs to be deleted before the method can be executed
      */
     public RunnableAndCallableWrapper(Runnable runnable, Callable<T> callable, RequestTag requestTag,
             RequestData requestData, boolean cannotTransmit) {

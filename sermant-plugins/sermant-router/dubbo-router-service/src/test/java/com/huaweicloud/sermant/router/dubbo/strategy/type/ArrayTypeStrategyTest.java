@@ -22,33 +22,33 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 数组匹配策略测试
+ * Array matching strategy testing
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class ArrayTypeStrategyTest {
     /**
-     * 测试数组策略
+     * test the array strategy
      */
     @Test
     public void testValue() {
         TypeStrategy strategy = new ArrayTypeStrategy();
         String[] arr = new String[]{"foo", null};
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", strategy.getValue(arr, "[0]").orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertNotEquals("foo", strategy.getValue(arr, "[1]").orElse(null));
 
-        // 测试越界
+        // Testing out of bounds
         Assert.assertNotEquals("foo", strategy.getValue(arr, "[2]").orElse(null));
 
-        // 测试非数组
+        // Test non array
         Assert.assertNotEquals("foo", strategy.getValue("bar", "[0]").orElse(null));
 
-        // 测试不等于
+        // Test does not equal
         Assert.assertNotEquals("bar", strategy.getValue(arr, "[0]").orElse(null));
     }
 }

@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RuleStrategyHandler
+ * Test RuleStrategyHandler
  *
  * @author provenceee
  * @since 2022-09-09
@@ -43,7 +43,7 @@ public class RuleStrategyHandlerTest {
     private final Rule rule;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RuleStrategyHandlerTest() {
         rule = new Rule();
@@ -64,7 +64,7 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * 测试命中0.0.1版本实例的情况
+     * Test the instance that hits version 0.0.1
      */
     @Test
     public void testMatchV1() {
@@ -80,7 +80,7 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * 测试命中0.0.1版本实例的情况
+     * Test the instance that hits version 0.0.1
      */
     @Test
     public void testMatchV1ByRequest() {
@@ -96,7 +96,7 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * 测试未命中0.0.1版本实例的情况
+     * Test for missing instances of version 0.0.1
      */
     @Test
     public void testMismatchV1() {
@@ -107,12 +107,12 @@ public class RuleStrategyHandlerTest {
         instances.add(instance2);
         routes.get(0).setWeight(0);
 
-        // 测试匹配上路由，没有随机到实例的情况
+        // The test matches the route on the instance, and there is no random instance
         List<Object> matchInstances = RuleStrategyHandler.INSTANCE.getFlowMatchInstances("foo", instances, rule);
         Assert.assertEquals(1, matchInstances.size());
         Assert.assertEquals(instance2, matchInstances.get(0));
 
-        // 测试没有匹配上路由，选取不匹配标签的实例的情况
+        // If the test does not match the previous route, the instance with the label does not match
         List<Map<String, String>> tags = new ArrayList<>();
         tags.add(routes.get(0).getTags());
         List<Object> mismatchInstances = RuleStrategyHandler.INSTANCE
@@ -122,7 +122,8 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * rule中route有命中tag，但是没有符合版本的实例，invoker命中fallback版本实例的情况
+     * If the route in the rule has a hit tag, but there is no instance that matches the version, and the invoker hits
+     * the fallback instance
      */
     @Test
     public void testMatchV1Fallback() {
@@ -134,7 +135,7 @@ public class RuleStrategyHandlerTest {
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.4");
         instances.add(instance2);
 
-        // Route随机命中route1，但是没有0.0.1版本实例；命中fallback，返回fallback实例信息
+        // Route randomly hits route 1 but does not have an instance of version 0.0.1
         List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getFlowMatchInstances("foo", instances, rule);
         Assert.assertEquals(100, routes.get(0).getWeight().intValue());
         Assert.assertEquals(1, matchInvoker.size());
@@ -153,7 +154,8 @@ public class RuleStrategyHandlerTest {
     }
 
     /**
-     * rule中设置route、fallback，且权重均有命中tag，但是invoker均未命中版本实例的情况
+     * If route and fallback are set in the rule, and the weights are all hit tags, but the invoker does not hit the
+     * version instance
      */
     @Test
     public void testSpringV1NotMathRouteFallback() {
@@ -164,13 +166,14 @@ public class RuleStrategyHandlerTest {
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.4");
         instances.add(instance2);
-        // Route随机命中route1，但是没有0.0.1版本实例，fallback也未命中tag实例，所以返回全部实例信息
+        // Route randomly hits route 1, but there is no instance of version 0.0.1, and fallback does not hit the tag
+        // instance, so all instance information is returned
         List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getFlowMatchInstances("foo", instances, rule);
         Assert.assertEquals(2, matchInvoker.size());
     }
 
     /**
-     * rule中设置routes但权重计算未命中，invoker命中fallback版本实例的情况
+     * If routes is set in the rule but the weight calculation fails, and the invoker hits the fallback instance
      */
     @Test
     public void testSpringV1MathFallback() {
@@ -183,14 +186,16 @@ public class RuleStrategyHandlerTest {
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.3");
         instances.add(instance2);
-        // Route计算权重均未命中tag，fallback权重计算命中tag，返回fallback规则命中实例信息
+        // None of the route weights are missed, and the fallback weights are calculated as the hit tags,
+        // and the information about the instances hit by the fallback rule is returned
         List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getFlowMatchInstances("foo", instances, rule);
         Assert.assertEquals(1, matchInvoker.size());
         Assert.assertEquals(instance2, matchInvoker.get(0));
     }
 
     /**
-     * rule中设置routes但权重计算未命中，同时fallback也未命中实例，invoker返回未设置规则版本号版本实例的情况
+     * If the route parameter is set in the rule but the weight calculation fails and the fallback also misses the
+     * instance, Invoker returns the instance without setting the rule version number
      */
     @Test
     public void testSpringV1BothNotMathFallbackRoute() {
@@ -203,7 +208,8 @@ public class RuleStrategyHandlerTest {
         instances.add(instance1);
         ServiceInstance instance2 = TestDefaultServiceInstance.getTestDefaultServiceInstance("0.0.4");
         instances.add(instance2);
-        // Route计算权重均未命中tag，fallback权重计算也未命中tag，返回route中未设置tag实例信息
+        // None of the route weights or fallback weights are tagged, and the tag instance information is not set
+        // in the route
         List<Object> matchInvoker = RuleStrategyHandler.INSTANCE.getFlowMatchInstances("foo", instances, rule);
         Assert.assertEquals(1, matchInvoker.size());
         Assert.assertEquals(instance2, matchInvoker.get(0));

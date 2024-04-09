@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 流量匹配方式的路由处理器
+ * The route processor of the traffic matching method
  *
  * @author lilai
  * @since 2023-02-21
@@ -52,11 +52,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
 
     private final RouterConfig routerConfig;
 
-    // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+    // The tags set is null, which means that all instances containing the tag are filtered and the value is not judged
     private final Map<String, String> allMismatchTags;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public FlowRouteHandler() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
@@ -65,7 +65,7 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             allMismatchTags.put(requestTag, null);
         }
 
-        // 所有实例都含有version，所以不能存入null值
+        // All instances contain version, so null values cannot be stored
         allMismatchTags.remove(VERSION_KEY);
     }
 
@@ -95,10 +95,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
             return instances;
         }
 
-        // 用于匹配实例的tags集合
+        // The tags set used to match the instance
         Map<String, String> tags = new HashMap<>();
 
-        // 用于过滤实例的tags集合，value为null，代表含有该标签的实例全部过滤，不判断value值
+        // The tags set is null,
+        // which means that all instances containing the tag are filtered and the value is not judged
         Map<String, String> mismatchTags = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : header.entrySet()) {
             String key = entry.getKey();
@@ -114,12 +115,13 @@ public class FlowRouteHandler extends AbstractRouteHandler {
         if (StringUtils.isExist(tags.get(VERSION_KEY))) {
             mismatchTags.put(VERSION_KEY, tags.get(VERSION_KEY));
         } else {
-            // 所有实例都含有version，所以不能存入null值
+            // All instances contain version, so null values cannot be stored
             mismatchTags.remove(VERSION_KEY);
         }
         boolean isReturnAllInstancesWhenMismatch = false;
         if (CollectionUtils.isEmpty(mismatchTags)) {
-            // 不传入header时，优先匹配无标签实例，没有无标签实例时，返回全部实例
+            // If no header is passed, the instance without a label is matched first,
+            // and if there are no instances without a label, all instances are returned
             mismatchTags = allMismatchTags;
             isReturnAllInstancesWhenMismatch = true;
         }
@@ -150,11 +152,11 @@ public class FlowRouteHandler extends AbstractRouteHandler {
     }
 
     /**
-     * 获取匹配的路由
+     * Get a matching route
      *
-     * @param list 有效的规则
+     * @param list Valid rules
      * @param header header
-     * @return 匹配的路由
+     * @return Matching routes
      */
     private Optional<Rule> getRule(List<Rule> list, Map<String, List<String>> header) {
         for (Rule rule : list) {
@@ -186,21 +188,22 @@ public class FlowRouteHandler extends AbstractRouteHandler {
                 List<String> list = header.get(key);
                 String arg = list == null ? null : list.get(0);
                 if (!isFullMatch && matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，那么直接return
+                    // If it is not all matched, and one is matched, then return directly
                     return rule.getRoute();
                 }
                 if (isFullMatch && !matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
+                    // If it's an all-match and there is a mismatch, move on to the next rule
                     return Collections.emptyList();
                 }
             }
         }
         if (isFullMatch) {
-            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
+            // If it's an all-match, go here, it means that there is no mismatch, just return
             return rule.getRoute();
         }
 
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
+        // If it is not an all-match, if you go to this point, it means that none of the rules can be matched,
+        // then move on to the next rule
         return Collections.emptyList();
     }
 }

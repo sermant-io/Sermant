@@ -35,9 +35,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 针对JDK 1.8版本的java.net.HttpURLConnection的一个增强拦截器<br>
+ * An enhanced interceptor for java.net.HttpURLConnection in JDK version 1.8<br>
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-25
  */
 public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
