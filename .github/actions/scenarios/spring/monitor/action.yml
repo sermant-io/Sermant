@@ -30,7 +30,7 @@ runs:
       shell: bash
       env:
         MONITOR_CONFIG_ENABLE_START_SERVICE: true
-        FLOW_CONTROL_PLUGIN_ENABLE_START_MONITOR: true # 是否启动指标监控
+        FLOW_CONTROL_PLUGIN_ENABLE_START_MONITOR: true # Whether to enable monitor
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
                 -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true \
