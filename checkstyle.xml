@@ -23,12 +23,12 @@
     </module>
     <!-- 规则3.3 使用空格进行缩进，每次缩进4个空格: 不允许用Tab -->
     <module name="FileTabCharacter"/>
-    <!-- 规则1.2 华为版权检查-->
+    <!-- 规则1.2 版权检查-->
     <!-- module name="RegexpSingleline">
-        <property name="format" value="^ \* Copyright \(c\) Huawei Technologies Co., Ltd. [\d]{4}(\-[\d]{4})\. All rights reserved\.$"/>
+        <property name="format" value="^ \* Copyright \(C\) [\d]{4}(\-[\d]{4})\ Sermant Authors. All rights reserved\.$"/>
         <property name="minimum" value="1"/>
         <property name="maximum" value="1"/>
-        <property name="message" value="编程规范-规则2.4: 华为版权缺失或者格式不正确"/>
+        <property name="message" value="编程规范-规则2.4: 版权缺失或者格式不正确"/>
         <property name="severity" value="error"/>
     </module-->
     <module name="RegexpSingleline">

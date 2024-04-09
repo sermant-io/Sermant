@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+# Copyright (C) 2021-2024 Sermant Authors. All rights reserved.
 #
 
 com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceImpl
