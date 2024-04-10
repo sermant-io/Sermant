@@ -39,7 +39,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 /**
- * 负载均衡配置类
+ * load balancing configuration class
  *
  * @author zhouss
  * @since 2022-08-04
@@ -50,9 +50,9 @@ public class LoadbalancerProperties {
     private Environment environment;
 
     /**
-     * 从spring获取服务名
+     * get the service name from spring
      *
-     * @param serviceName 服务名
+     * @param serviceName service name
      */
     public LoadbalancerProperties(@Value("${dubbo.application.name:${spring.application.name:application}}")
             String serviceName) {
@@ -63,7 +63,7 @@ public class LoadbalancerProperties {
     }
 
     /**
-     * 基于配置文件加载符合要求的负载均衡规则
+     * Load the required load balancing rules based on the configuration file
      */
     @PostConstruct
     public void loadLbRule() {
@@ -71,7 +71,7 @@ public class LoadbalancerProperties {
     }
 
     /**
-     * 从spring环境变量读取流控策略
+     * Read the flow control policy from the spring environment variable
      */
     private void loadRuleFromEnvironment() {
         if (!(environment instanceof ConfigurableEnvironment)) {
@@ -84,10 +84,11 @@ public class LoadbalancerProperties {
     }
 
     /**
-     * 这里对配置源倒序排序，保证获取的配置优先级与spring一致
+     * Sort the configuration sources in reverse order to ensure that the obtained configuration priorities are
+     * consistent with spring
      *
-     * @param propertySources 配置源
-     * @return 倒序后的配置源
+     * @param propertySources configuration source
+     * @return configuration source in reverse order
      */
     private List<PropertySource<?>> getPropertySources(MutablePropertySources propertySources) {
         final LinkedList<PropertySource<?>> result = new LinkedList<>();

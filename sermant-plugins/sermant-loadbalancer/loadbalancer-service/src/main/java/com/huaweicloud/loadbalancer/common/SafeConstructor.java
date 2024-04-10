@@ -24,16 +24,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * YAML安全构造器
+ * YAML safety constructor
  *
  * @author zhp
  * @since 2022-10-25
  */
 public class SafeConstructor extends Constructor {
     /**
-     * 构造器
+     * constructor
      *
-     * @param whiteList 白名单
+     * @param whiteList white list
      */
     public SafeConstructor(List<String> whiteList) {
         super(new LoaderOptions());
@@ -44,9 +44,9 @@ public class SafeConstructor extends Constructor {
     }
 
     /**
-     * 增加白名单
+     * add white list
      *
-     * @param whiteList 白名单
+     * @param whiteList white list
      */
     private void addWhiteList(List<String> whiteList) {
         if (whiteList == null || whiteList.size() == 0) {
@@ -58,7 +58,7 @@ public class SafeConstructor extends Constructor {
     }
 
     /**
-     * 构造Yaml对象
+     * construct yaml object
      *
      * @author zhp
      * @since 2022-10-26

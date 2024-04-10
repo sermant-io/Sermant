@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 拦截loadFactories注入自定义配置源
+ * Intercept loadFactories for injecting custom configuration sources
  *
  * @author zhouss
  * @since 2022-04-08

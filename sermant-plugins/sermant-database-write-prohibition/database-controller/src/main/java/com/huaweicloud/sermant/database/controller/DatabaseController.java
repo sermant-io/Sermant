@@ -24,7 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 数据库控制器
+ * database controller
  *
  * @author daizhenyu
  * @since 2024-01-15
@@ -38,10 +38,10 @@ public class DatabaseController {
     }
 
     /**
-     * 获取需要禁写的数据库清单
+     * Gets a list of databases that require write prohibition
      *
-     * @param database 数据库名称
-     * @param context 拦截点上下文对象
+     * @param database database name
+     * @param context context of the interception point
      * @return
      */
     public static void disableDatabaseWriteOperation(String database, ExecuteContext context) {

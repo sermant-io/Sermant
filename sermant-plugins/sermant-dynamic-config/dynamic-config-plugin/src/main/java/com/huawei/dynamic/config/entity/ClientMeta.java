@@ -18,14 +18,14 @@
 package com.huawei.dynamic.config.entity;
 
 /**
- * 当前服务信息
+ * current service information
  *
  * @author zhouss
  * @since 2022-04-13
  */
 public enum ClientMeta {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 

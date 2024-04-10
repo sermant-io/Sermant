@@ -24,24 +24,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 动态配置
+ * dynamic configuration
  *
  * @author zhouss
  * @since 2022-04-15
  */
 public abstract class DynamicConfigSource implements ConfigSource {
     /**
-     * 动态配置
+     * dynamic configuration
      */
     protected final DynamicConfiguration configuration;
 
     /**
-     * 指定配置键
+     * specify configuration key
      */
     private final List<String> sourceKeys = new ArrayList<>();
 
     /**
-     * 动态配置源初始化, 解析配置源指定的配置键
+     * Dynamic configuration source initialization, parsing the configuration key specified by the configuration source
      */
     protected DynamicConfigSource() {
         configuration = PluginConfigManager.getPluginConfig(DynamicConfiguration.class);
@@ -54,13 +54,14 @@ public abstract class DynamicConfigSource implements ConfigSource {
     }
 
     /**
-     * 配置事件更新
+     * configuration event update
      *
-     * @param event 配置事件
-     * @return 是否要求刷新配置
+     * @param event configuration event
+     * @return whether to refresh the configuration
      */
     public final boolean accept(DynamicConfigEvent event) {
-        // 配置读取条件 1、如果没有指定key则全部读取 2、如果指定了配置key则只读取指定的键
+        // configure read condition 1、if no key is specified all is read
+        // 2、If the configuration key is specified, only the specified key is read
         if (sourceKeys.isEmpty() || sourceKeys.contains(event.getKey())) {
             return doAccept(event);
         }
@@ -68,10 +69,10 @@ public abstract class DynamicConfigSource implements ConfigSource {
     }
 
     /**
-     * 底层实现配置更新
+     * The underlying implementation configuration updates
      *
-     * @param event 通知事件
-     * @return 处理成功返回true
+     * @param event notification event
+     * @return return true if processing succeeds
      */
     protected abstract boolean doAccept(DynamicConfigEvent event);
 }

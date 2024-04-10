@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 默认配置解析器
+ * the parser is configured by default
  *
  * @author zhouss
  * @since 2022-04-13

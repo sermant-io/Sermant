@@ -20,7 +20,7 @@ package com.huaweicloud.loadbalancer.factory;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 线程工厂
+ * thread factory
  *
  * @author zhouss
  * @since 2022-08-04
@@ -29,9 +29,9 @@ public class LoadbalancerThreadFactory implements ThreadFactory {
     private final String threadName;
 
     /**
-     * 线程工厂构造器
+     * thread factory constructor
      *
-     * @param threadName 线程名字
+     * @param threadName thread name
      */
     public LoadbalancerThreadFactory(String threadName) {
         this.threadName = threadName;

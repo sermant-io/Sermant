@@ -20,7 +20,7 @@ package com.huawei.dynamic.config.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * 配置发布注入类
+ * configure the publish injection class
  *
  * @author zhouss
  * @since 2022-04-20

@@ -18,39 +18,39 @@
 package com.huaweicloud.loadbalancer.config;
 
 /**
- * 负载均衡上下文
+ * load balancing context
  *
  * @author zhouss
  * @since 2022-08-04
  */
 public enum LbContext {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     /**
-     * ribbon负载均衡类型
+     * ribbon load balancer type
      */
     public static final String LOADBALANCER_RIBBON = "loadbalancer_ribbon";
 
     /**
-     * spring loadbalancer负载均衡类型
+     * spring loadbalancer load balancer type
      */
     public static final String LOADBALANCER_SPRING = "loadbalancer_spring";
 
     /**
-     * dubbo负载均衡类型
+     * dubbo load balancer type
      */
     public static final String LOADBALANCER_DUBBO = "loadbalancer_dubbo";
 
     /**
-     * 当前服务名
+     * current service name
      */
     private String serviceName;
 
     /**
-     * 当前宿主使用的负载均衡类型(ribbon/spring loadbalancer/dubbo)
+     * The type of load balancing currently used by the host(ribbon/spring loadbalancer/dubbo)
      */
     private String curLoadbalancerType;
 
@@ -63,10 +63,10 @@ public enum LbContext {
     }
 
     /**
-     * 是否为目标负载均和类型
+     * Whether it is the target load balancing type
      *
-     * @param targetLbType 负载均和类型
-     * @return true为负载均衡类型
+     * @param targetLbType load balancing type
+     * @return Whether it is the target load balancing type
      */
     public boolean isTargetLb(String targetLbType) {
         if (this.curLoadbalancerType == null) {

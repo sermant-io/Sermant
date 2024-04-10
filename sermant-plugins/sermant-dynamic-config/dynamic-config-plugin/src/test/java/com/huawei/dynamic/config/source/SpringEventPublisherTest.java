@@ -37,7 +37,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
- * 事件发布器测试
+ * event publisher testing
  *
  * @author zhouss
  * @since 2022-09-05

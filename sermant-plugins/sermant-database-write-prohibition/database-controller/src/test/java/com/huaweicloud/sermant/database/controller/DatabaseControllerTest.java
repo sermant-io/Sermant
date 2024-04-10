@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 import java.lang.reflect.Method;
 
 /**
- * 数据库控制器单元测试
+ * database controller unit test
  *
  * @author daizhenyu
  * @since 2024-01-23

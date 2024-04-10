@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 拦截loadFactories注入自定义配置源
+ * Intercept loadFactories for injecting custom configuration sources
  *
  * @author zhouss
  * @since 2022-04-08

@@ -33,7 +33,7 @@ import java.util.ServiceLoader;
  */
 public enum HandlerChainBuilder {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

@@ -25,8 +25,11 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对addFirst方法拦截, 当用户在配置中心下发配置, 动态关闭原生配置中心, 此拦截点开始拦截添加原生配置中心配置源, 阻止配置生效
- * 生效见{@link com.huawei.dynamic.config.source.OriginConfigCenterDisableListener}添加禁止配置源
+ * In the addFirst method, when a user sends a configuration to the configuration center and dynamically disables the
+ * native configuration center, the intercept point starts to block the native configuration source and prevents the
+ * configuration from taking effect effective
+ * view{@link com.huawei.dynamic.config.source.OriginConfigCenterDisableListener}
+ * the forbidden configuration source was added
  *
  * @author zhouss
  * @since 2022-04-08

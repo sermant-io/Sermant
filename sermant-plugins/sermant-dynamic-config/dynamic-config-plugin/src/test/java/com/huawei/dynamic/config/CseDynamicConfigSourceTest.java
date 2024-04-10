@@ -29,7 +29,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 测试cse配置类
+ * tests the cse configuration
  *
  * @author zhouss
  * @since 2022-09-05
@@ -50,9 +50,9 @@ public class CseDynamicConfigSourceTest {
     }
 
     /**
-     * 获取配置源
+     * get configuration source
      *
-     * @return 配置源
+     * @return configuration source
      */
     protected DynamicConfigSource getSource() {
         return new CseDynamicConfigSource();

@@ -81,48 +81,54 @@ public class ExecuteInterceptorTest {
 
     @Test
     public void testDoBefore() throws Exception {
-        // 数据库禁写开关关闭
+        // the database write prohibition switch is disabled
         globalConfig.setEnableMySqlWriteProhibition(false);
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        // 数据库禁写开关关闭，禁写数据库set包含被拦截的数据库
+        // The database write prohibition function is disabled.
+        // The write prohibition database set contains the database that is blocked
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
         globalConfig.setMySqlDatabases(databases);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        //数据库禁写开关打开，禁写数据库集合包含被拦截的数据库, 方法入参为String
+        // The database write prohibition switch is enabled, and the database set contains the database that is
+        // blocked, method input is String
         globalConfig.setEnableMySqlWriteProhibition(true);
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
-        //数据库禁写开关打开，禁写数据库集合包含被拦截的数据库，方法入参为ClientPrepareResult
+        //// The database write prohibition switch is enabled, and the database set contains the database that is
+        // blocked, method input is ClientPrepareResult
         argument[PARAM_INDEX] = resultMock;
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
-        //数据库禁写开关打开，sql没有写操作，禁写数据库集合包含被拦截的数据库
+        //The database write prohibition switch is turned on, the sql does not write,
+        // and the database set contains the blocked database
         sql = "SELECT * FROM table";
         argument[PARAM_INDEX] = sql;
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        //数据库禁写开关打开，禁写数据库集合不包含被拦截的数据库, 方法入参为String
+        //The database write prohibition switch is enabled. The database set does not contain the database that is
+        // blocked, method input is String
         argument[PARAM_INDEX] = "INSERT INTO table (name) VALUES ('test')";
         globalConfig.setMySqlDatabases(new HashSet<>());
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        //数据库禁写开关打开，禁写数据库集合不包含被拦截的数据库，方法入参为ClientPrepareResult
+        //The database write prohibition switch is enabled. The database set does not contain the database that is
+        // blocked, method input is ClientPrepareResult
         argument[PARAM_INDEX] = resultMock;
         context = ExecuteContext.forMemberMethod(protocolMock, methodMock, argument, null, null);
         interceptor.before(context);

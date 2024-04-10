@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.database.constant;
 
 /**
- * 数据库类型常量
+ * database type constant
  *
  * @author daizhenyu
  * @since 2024-02-06
@@ -43,9 +43,9 @@ public enum DatabaseType {
     private String type;
 
     /**
-     * 构造方法
+     * construction method
      *
-     * @param type 数据库类型
+     * @param type type of database
      */
     DatabaseType(String type) {
         this.type = type;

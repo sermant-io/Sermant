@@ -37,7 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * yaml转换器
+ * yaml Converter
  *
  * @author zhouss
  * @since 2022-08-09
@@ -48,7 +48,7 @@ public class YamlRuleConverter implements RuleConverter, PluginService {
     private final Yaml yaml;
 
     /**
-     * 构造器
+     * constructor
      */
     public YamlRuleConverter() {
         Representer representer = new Representer(new DumperOptions());

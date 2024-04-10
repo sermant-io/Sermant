@@ -20,31 +20,32 @@ package com.huawei.dynamic.config.entity;
 import com.huawei.dynamic.config.DynamicConfiguration;
 
 /**
- * 动态配置常量类
+ * dynamically configure constant classes
  *
  * @author zhouss
  * @since 2022-07-12
  */
 public class DynamicConstants {
     /**
-     * 原配置中心配置开关
-     * true : 需要关闭
-     * false : 需开启
+     * switch of the original configuration center
+     * true : need to close
+     * false : need to be opened
      */
     public static final String ORIGIN_CONFIG_CENTER_CLOSE_KEY = "sermant.origin.config.needClose";
 
     /**
-     * 动态配置主配置源名称
+     * Dynamic configuration Primary configuration source name
      */
     public static final String PROPERTY_NAME = "Sermant-Dynamic-Config";
 
     /**
-     * 禁用配置开关, 用于启动时判断, 关联配置{@link DynamicConfiguration#isEnableOriginConfigCenter()} ()}
+     * Disable the configuration switch, which is used to determine the startup and associate configurations
+     * {@link DynamicConfiguration#isEnableOriginConfigCenter()} ()}
      */
     public static final String DISABLE_CONFIG_SOURCE_NAME = "Sermant-Disable-Origin-Config";
 
     /**
-     * 配置中心关闭监听器初始数
+     * Configure the center to turn off the initial number of listeners
      */
     public static final int CONFIG_CENTER_CLOSER_INIT_NUM = 4;
 

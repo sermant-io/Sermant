@@ -20,7 +20,7 @@ package com.huawei.dynamic.config.init;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 自定义线程工厂 区分线程
+ * custom thread factory discriminating thread
  *
  * @author zhouss
  * @since 2022-01-28
@@ -29,9 +29,9 @@ public class DynamicConfigThreadFactory implements ThreadFactory {
     private final String threadName;
 
     /**
-     * 动态配置线程工厂
+     * configure thread factories dynamically
      *
-     * @param threadName 线程名称
+     * @param threadName thread name
      */
     public DynamicConfigThreadFactory(String threadName) {
         this.threadName = threadName;

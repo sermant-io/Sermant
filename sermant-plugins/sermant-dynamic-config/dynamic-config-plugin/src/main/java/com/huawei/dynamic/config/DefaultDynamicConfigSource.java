@@ -30,7 +30,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 /**
- * 默认动态配置更新
+ * the default dynamic configuration update
  *
  * @author zhouss
  * @since 2022-04-22
@@ -39,28 +39,28 @@ public class DefaultDynamicConfigSource extends DynamicConfigSource {
     private final ConfigResolver<Map<String, Object>> configResolver = new DefaultConfigResolver();
 
     /**
-     * key: 前置配置项 value: 针对该配置项的所有键值对
-     * <p>使用最新更新配置</p>
+     * key: preConfigurationItem value: all key value pairs for this configuration item
+     * <p>use the latest updated configuration</p>
      */
     private final Map<String, Map<String, Object>> allConfigSources = new LinkedHashMap<>();
 
     /**
-     * 根据时间戳排序的key, 越新则排在约前面
+     * The key is sorted by timestamp. The newer the key is, the sooner the date
      */
     private final PriorityQueue<TimestampKey> sortedKeys = new PriorityQueue<>();
 
     private Map<String, Object> configSources = new HashMap<>();
 
     /**
-     * 配置事件更新
+     * configuration event update
      *
-     * @param event 配置事件
-     * @return 是否要求刷新配置
+     * @param event configuration event
+     * @return whether to refresh the configuration
      */
     @Override
     public boolean doAccept(DynamicConfigEvent event) {
         if (event.getEventType() == DynamicConfigEventType.DELETE) {
-            // 直接移除该配置项的所有键值对
+            // Delete all key-value pairs of this configuration item
             allConfigSources.remove(event.getKey());
             sortedKeys.removeIf(timestampKey -> timestampKey.key.equals(event.getKey()));
         } else {
@@ -105,7 +105,7 @@ public class DefaultDynamicConfigSource extends DynamicConfigSource {
     }
 
     /**
-     * 带时间戳的key
+     * a key with a timestamp
      *
      * @since 2022-04-18
      */

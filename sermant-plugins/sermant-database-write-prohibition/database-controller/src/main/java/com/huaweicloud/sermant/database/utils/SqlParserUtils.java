@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.regex.Pattern;
 
 /**
- * sql解析工具类
+ * sql parsing tool class
  *
  * @author daizhenyu
  * @since 2024-01-25
@@ -35,10 +35,10 @@ public class SqlParserUtils {
     }
 
     /**
-     * 解析sql并判断是否为写操作
+     * Parse the sql and determine if it is a write operation
      *
-     * @param sql sql语句
-     * @return 是否为写操作
+     * @param sql sql
+     * @return whether it is a write operation
      */
     public static boolean isWriteOperation(String sql) {
         if (StringUtils.isEmpty(sql)) {

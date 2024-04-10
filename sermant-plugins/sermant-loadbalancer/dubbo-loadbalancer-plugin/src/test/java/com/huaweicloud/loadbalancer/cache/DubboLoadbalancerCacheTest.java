@@ -34,7 +34,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * dubbo缓存测试
+ * Dubbo Cache Test
  *
  * @author zhouss
  * @since 2022-08-16
@@ -42,7 +42,7 @@ import java.util.Optional;
 public class DubboLoadbalancerCacheTest {
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -57,18 +57,18 @@ public class DubboLoadbalancerCacheTest {
     }
 
     /**
-     * dubbo缓存测试
+     * Dubbo Cache Test
      */
     @Test
     public void test() {
         final DubboLoadbalancerCache instance = DubboLoadbalancerCache.INSTANCE;
 
-        // 测试发布配置监听
+        // test publish configuration listening
         String serviceName = "test";
         RuleManagerHelper.publishRule(serviceName, DubboLoadbalancerType.RANDOM.getMapperName());
         Assert.assertNull(instance.getNewCache().get(serviceName));
 
-        // 测试发布空服务名, 即匹配全局, 该情况清理负载均衡
+        // Test publish an empty service name to match the global, the situation clears load balancing
         RuleManagerHelper.publishRule(null, DubboLoadbalancerType.SHORTESTRESPONSE.getMapperName());
         Assert.assertNull(instance.getNewCache().get(serviceName));
         final Optional<LoadbalancerRule> targetServiceRule = RuleManager.INSTANCE.getTargetServiceRule(serviceName);
@@ -78,7 +78,7 @@ public class DubboLoadbalancerCacheTest {
         Assert.assertTrue(type.isPresent());
         Assert.assertEquals(type.get(), DubboLoadbalancerType.SHORTESTRESPONSE);
 
-        // 清理规则
+        // clean up rule
         RuleManagerHelper.deleteRule(serviceName, targetServiceRule.get().getRule());
     }
 }

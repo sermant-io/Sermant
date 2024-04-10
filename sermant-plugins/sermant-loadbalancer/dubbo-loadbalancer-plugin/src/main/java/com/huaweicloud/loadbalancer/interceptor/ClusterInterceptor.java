@@ -28,7 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 拦截ClusterUtils#mergeUrl,每当发现下游服务时, 该方法则会被调用. 此处需取出接口与下游的映射关系
+ * Intercept ClusterUtils#mergeUrl. Whenever a downstream service is found, this method will be called. Here need to
+ * get the mapping relationship between the interface and the downstream.
  *
  * @author zhouss
  * @since 2022-09-13

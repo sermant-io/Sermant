@@ -22,18 +22,18 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import java.util.Optional;
 
 /**
- * 规则解析器
+ * RuleResolver
  *
+ * @param <T> rule type
  * @author zhouss
  * @since 2022-08-09
- * @param <T> 规则类型
  */
 public interface RuleResolver<T> {
     /**
-     * 解析规则
+     * resolve rule
      *
-     * @param event 配置事件
-     * @return 解析后的规则
+     * @param event configuration event
+     * @return the parsed rule
      */
     Optional<T> resolve(DynamicConfigEvent event);
 }

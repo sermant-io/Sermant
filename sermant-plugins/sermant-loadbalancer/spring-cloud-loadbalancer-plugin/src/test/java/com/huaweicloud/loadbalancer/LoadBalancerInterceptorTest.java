@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * 测试RandomLoadBalancer/RoundRobinLoadBalancer构造方法的拦截点
+ * Test the intercept point of the RandomLoadBalancer/RoundRobinLoadBalancer constructor
  *
  * @author provenceee
  * @see org.springframework.cloud.loadbalancer.core.RandomLoadBalancer
@@ -51,14 +51,14 @@ public class LoadBalancerInterceptorTest {
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     /**
-     * 构造方法
+     * construction method
      */
     public LoadBalancerInterceptorTest() {
         interceptor = new LoadBalancerInterceptor();
     }
 
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -73,13 +73,13 @@ public class LoadBalancerInterceptorTest {
     }
 
     /**
-     * 测试不合法的参数
+     * tests invalid parameters
      */
     @Test
     public void test() throws NoSuchFieldException, IllegalAccessException {
         init();
 
-        // 测试obj为null
+        // test: obj is null
         ExecuteContext context = ExecuteContext.forStaticMethod(Object.class, null, null, null);
         interceptor.after(context);
         Assert.assertEquals(0, getProviderMap().size());
@@ -87,37 +87,37 @@ public class LoadBalancerInterceptorTest {
 
         context = ExecuteContext.forMemberMethod(new Object(), null, null, null, null);
 
-        // 测试arguments为null
+        // test: arguments is null
         interceptor.after(context);
         Assert.assertEquals(0, getProviderMap().size());
         Assert.assertEquals(0, getOriginCache().size());
 
-        // 测试参数数组大小小于2
+        // test: the parameter array size is less than 2
         context = ExecuteContext.forMemberMethod(new Object(), null, new Object[1], null, null);
         interceptor.after(context);
         Assert.assertEquals(0, getProviderMap().size());
         Assert.assertEquals(0, getOriginCache().size());
 
-        // 测试参数数组大小大于1
+        // test: the parameter array size is greater than 1
         Object[] arguments = new Object[2];
         Object obj = new Object();
         context = ExecuteContext.forMemberMethod(obj, null, arguments, null, null);
 
-        // 测试arguments[0]为null
+        // test: arguments[0] is null
         arguments[0] = null;
         arguments[1] = FOO;
         interceptor.after(context);
         Assert.assertEquals(0, getProviderMap().size());
         Assert.assertEquals(0, getOriginCache().size());
 
-        // 测试arguments[1]为null
+        // test: arguments[1] is null
         arguments[0] = new Object();
         arguments[1] = null;
         interceptor.after(context);
         Assert.assertEquals(0, getProviderMap().size());
         Assert.assertEquals(0, getOriginCache().size());
 
-        // 测试arguments[1]为foo
+        // test: arguments[1] is foo
         Object args0 = new Object();
         arguments[0] = args0;
         arguments[1] = FOO;
@@ -125,7 +125,7 @@ public class LoadBalancerInterceptorTest {
         Assert.assertEquals(args0, SpringLoadbalancerCache.INSTANCE.getProvider(FOO));
         Assert.assertEquals(obj, SpringLoadbalancerCache.INSTANCE.getOrigin(FOO));
 
-        // 测试再次调用
+        // test call again
         Object newObj = new Object();
         Object newArgs0 = new Object();
         arguments[0] = newArgs0;

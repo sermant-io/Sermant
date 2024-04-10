@@ -41,7 +41,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 配置监听器测试
+ * configure listener tests
  *
  * @author zhouss
  * @since 2022-09-05
@@ -80,7 +80,7 @@ public class ConfigListenerTest {
         ConfigHolder.INSTANCE.getConfigSources().add(new CseDynamicConfigSource());
         configListener.process(new OrderConfigEvent("id", "group", "test: 1", DynamicConfigEventType.CREATE,
                 Collections.singletonMap("test", 1)));
-        // 由于此处为异步执行, 因此这里等待异步执行完成
+        // Because this is an asynchronous execution, it waits for the asynchronous execution to complete
         Thread.sleep(1000);
         Assert.assertEquals(ConfigHolder.INSTANCE.getConfig("test"), 1);
     }

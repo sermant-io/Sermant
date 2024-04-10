@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public enum ClusterInvokerCreator {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

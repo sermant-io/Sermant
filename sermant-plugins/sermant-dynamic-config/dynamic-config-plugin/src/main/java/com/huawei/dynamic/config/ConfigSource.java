@@ -20,17 +20,17 @@ package com.huawei.dynamic.config;
 import java.util.Set;
 
 /**
- * 配置
+ * configuration
  *
  * @author zhouss
  * @since 2022-04-15
  */
 public interface ConfigSource extends Comparable<ConfigSource> {
     /**
-     * 优先级比较
+     * priorityComparison
      *
-     * @param target 比较对象
-     * @return 优先级
+     * @param target comparison object
+     * @return priority
      */
     @Override
     default int compareTo(ConfigSource target) {
@@ -41,33 +41,33 @@ public interface ConfigSource extends Comparable<ConfigSource> {
     }
 
     /**
-     * 是否启用
+     * enable or not
      *
-     * @return 是否启用
+     * @return enable or not
      */
     default boolean isEnabled() {
         return true;
     }
 
     /**
-     * 获取所有配置名称
+     * gets all configuration names
      *
-     * @return 所有配置名称
+     * @return all configuration names
      */
     Set<String> getConfigNames();
 
     /**
-     * 获取单个配置
+     * get a single configuration
      *
-     * @param key 配置键
-     * @return 配置项
+     * @param key configuration key
+     * @return configuration value
      */
     Object getConfig(String key);
 
     /**
-     * 优先级, 越小优先级越高
+     * Priority: The smaller the priority, the higher the priority
      *
-     * @return 优先级
+     * @return priority
      */
     int order();
 }

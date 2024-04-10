@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 import java.time.Duration;
 
 /**
- * 动态配置插件配置类
+ * Dynamically configure plugin configuration classes
  *
  * @author zhouss
  * @since 2022-04-13
@@ -31,27 +31,28 @@ import java.time.Duration;
 @ConfigTypeKey("dynamic.config.plugin")
 public class DynamicConfiguration implements PluginConfig {
     /**
-     * 是否开启CSE适配
+     * whether to enable cse adaptation
      */
     private boolean enableCseAdapter = true;
 
     /**
-     * 内容为yaml的配置项列表, 多个使用逗号分隔, 例如:sourceKey1, sourceKey2
+     * The content is a list of yaml configuration items, separated by commas, suchAs:sourceKey1, sourceKey2
      */
     private String sourceKeys;
 
     /**
-     * 是否开启动态配置
+     * whether to enable dynamic configuration
      */
     private boolean enableDynamicConfig = false;
 
     /**
-     * 初次刷新spring事件延迟, 防止初始化时多次调用多次刷新, 影响宿主
+     * The initial refresh spring event is delayed, preventing multiple calls to multiple refreshes during
+     * initialization that affect the host
      */
     private long firstRefreshDelayMs = Duration.ofMinutes(1L).toMillis();
 
     /**
-     * 是否屏蔽原生的Spring Cloud Config系的配置中心开关
+     * Whether to disable the native Spring Cloud Config configuration center switch
      */
     private boolean enableOriginConfigCenter = true;
 

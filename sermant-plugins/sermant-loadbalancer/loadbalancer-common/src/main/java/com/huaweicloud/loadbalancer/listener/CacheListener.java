@@ -21,17 +21,17 @@ import com.huaweicloud.loadbalancer.rule.LoadbalancerRule;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 缓存监听器
+ * cacheListener
  *
  * @author zhouss
  * @since 2022-08-12
  */
 public interface CacheListener {
     /**
-     * 通知缓存更新
+     * notification cache update
      *
-     * @param rule 新的负载均衡规则
-     * @param event 原生事件
+     * @param rule new load balancing rules
+     * @param event primary event
      */
     void notify(LoadbalancerRule rule, DynamicConfigEvent event);
 }

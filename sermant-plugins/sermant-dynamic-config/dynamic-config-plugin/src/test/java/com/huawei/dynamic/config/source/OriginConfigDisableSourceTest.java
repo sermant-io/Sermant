@@ -23,7 +23,7 @@ import org.junit.Test;
 import java.util.Set;
 
 /**
- * 测试禁用配置
+ * test disable configuration
  *
  * @author zhouss
  * @since 2022-09-05

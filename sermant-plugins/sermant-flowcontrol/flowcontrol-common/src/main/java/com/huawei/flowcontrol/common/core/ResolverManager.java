@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public enum ResolverManager {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

@@ -282,7 +282,7 @@ public class FlowControlConfig implements PluginConfig {
      * Whether to replace the native ClusterInvoker for dubbo applications only;
      * <p>If true, the call logic will still follow the original dubbo cluster invoker logic when called,
      * retry only the outermost packaging</p>
-     * <p>If false, when called, its cluster invoker is replaced by a custom retry Invoker retried by the plug-in,
+     * <p>If false, when called, its cluster invoker is replaced by a custom retry Invoker retried by the plugin,
      * which defaults to false</p>
      */
     private boolean useOriginInvoker = false;

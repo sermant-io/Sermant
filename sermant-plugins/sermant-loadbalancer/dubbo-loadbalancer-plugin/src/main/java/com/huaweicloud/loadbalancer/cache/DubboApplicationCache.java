@@ -20,27 +20,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * dubbo服务名缓存
+ * dubbo service name cache
  *
  * @author zhouss
  * @since 2022-09-13
  */
 public enum DubboApplicationCache {
     /**
-     * 实例
+     * instance
      */
     INSTANCE;
 
     /**
-     * 服务接口缓存 key:接口名  value:下游服务名
+     * serviceInterfaceCache key:interfaceName value:downstreamServiceName
      */
     private final Map<String, String> applicationCache = new ConcurrentHashMap<>();
 
     /**
-     * 缓存
+     * cache
      *
-     * @param interfaceName 接口名
-     * @param application 服务名
+     * @param interfaceName interface name
+     * @param application service name
      */
     public void cache(String interfaceName, String application) {
         applicationCache.put(interfaceName, application);

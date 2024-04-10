@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  */
 public enum WindowsArray {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

@@ -41,7 +41,7 @@ import org.springframework.core.env.PropertySource;
 import java.util.Collections;
 
 /**
- * MutableSource拦截器测试
+ * mutableSource interceptor testing
  *
  * @author zhouss
  * @since 2022-09-05

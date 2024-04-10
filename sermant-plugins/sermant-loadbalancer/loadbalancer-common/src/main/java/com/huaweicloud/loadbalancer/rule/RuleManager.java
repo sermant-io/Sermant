@@ -23,32 +23,32 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import java.util.Optional;
 
 /**
- * 规则manager
+ * rule manager
  *
  * @author zhouss
  * @since 2022-08-10
  */
 public enum RuleManager {
     /**
-     * 单例
+     * instance
      */
     INSTANCE;
 
     private final LoadbalancerRuleResolver loadbalancerRuleRuleResolver = new LoadbalancerRuleResolver();
 
     /**
-     * 解析配置
+     * parsing configuration
      *
-     * @param event 事件
+     * @param event event
      */
     public void resolve(DynamicConfigEvent event) {
         loadbalancerRuleRuleResolver.resolve(event);
     }
 
     /**
-     * 获取目标服务的负载均衡类型
+     * gets the load balancing type of the target service
      *
-     * @param serviceName 目标服务名
+     * @param serviceName targetServiceName
      * @return LoadbalancerRule
      */
     public Optional<LoadbalancerRule> getTargetServiceRule(String serviceName) {
@@ -56,18 +56,18 @@ public enum RuleManager {
     }
 
     /**
-     * 添加缓存监听器
+     * add cache listener
      *
-     * @param cacheListener 监听器
+     * @param cacheListener Listener
      */
     public void addRuleListener(CacheListener cacheListener) {
         loadbalancerRuleRuleResolver.addListener(cacheListener);
     }
 
     /**
-     * 宿主服务是否配置负载均衡策略
+     * Whether load balancing policies are configured for the host service
      *
-     * @return true为已配置
+     * @return true: The value is configured
      */
     public boolean isConfigured() {
         return loadbalancerRuleRuleResolver.isConfigured();

@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.database.utils.SqlParserUtils;
 import java.util.List;
 
 /**
- * executeBatchStmt方法拦截器
+ * executeBatchStmt method interceptor
  *
  * @author daizhenyu
  * @since 2024-01-26
@@ -34,15 +34,15 @@ public class ExecuteBatchStmtInterceptor extends AbstractMariadbV2Interceptor {
     private static final int PARAM_INDEX = 2;
 
     /**
-     * 无参构造方法
+     * no parameter construction method
      */
     public ExecuteBatchStmtInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * parameter construction method
      *
-     * @param handler 写操作处理器
+     * @param handler write handler
      */
     public ExecuteBatchStmtInterceptor(DatabaseHandler handler) {
         this.handler = handler;

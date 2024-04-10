@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 负载均衡基础配置类
+ * basic load balancing configuration class
  *
  * @author provenceee
  * @since 2022-01-22
@@ -43,7 +43,7 @@ public class LoadbalancerConfigServiceImpl implements PluginService {
     private LoadbalancerConfig config;
 
     /**
-     * 初始化通知
+     * initialization notification
      */
     @Override
     public void start() {
@@ -51,7 +51,7 @@ public class LoadbalancerConfigServiceImpl implements PluginService {
     }
 
     /**
-     * 订阅配置
+     * subscription configuration
      */
     public void subscribe() {
         executorService.execute(this::doSubscribe);

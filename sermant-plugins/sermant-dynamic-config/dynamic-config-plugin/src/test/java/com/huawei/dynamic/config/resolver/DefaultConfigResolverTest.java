@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import java.util.Map;
 
 /**
- * 测试默认解析
+ * test default resolution
  *
  * @author zhouss
  * @since 2022-04-16
