@@ -31,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * ServiceCombDiscoveryClient测试
+ * ServiceCombDiscoveryClient Test
  *
  * @author zhouss
  * @since 2022-09-06

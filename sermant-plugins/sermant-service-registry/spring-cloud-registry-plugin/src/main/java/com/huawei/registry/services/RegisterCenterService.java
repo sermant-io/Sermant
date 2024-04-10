@@ -24,57 +24,57 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.List;
 
 /**
- * 注册服务类
+ * Register for the service class
  *
  * @author zhouss
  * @since 2021-12-16
  */
 public interface RegisterCenterService extends PluginService {
     /**
-     * 拦截原spring的注册方法
+     * Intercept the registration method of the original spring
      *
-     * @param result 前置返回
+     * @param result Pre-return
      */
     void register(FixedResult result);
 
     /**
-     * 停止方法
+     * Stop method
      */
     void unRegister();
 
     /**
-     * 获取实例列表
+     * Obtain the list of instances
      *
-     * @param serviceId 服务名
-     * @return 实例列表
+     * @param serviceId Service name
+     * @return List of instances
      */
     List<MicroServiceInstance> getServerList(String serviceId);
 
     /**
-     * 获取服务名列表
+     * Get a list of service names
      *
-     * @return 服务列表
+     * @return List of services
      */
     List<String> getServices();
 
     /**
-     * 获取注册中心状态
+     * Get registry status
      *
      * @return UP DOWN
      */
     String getRegisterCenterStatus();
 
     /**
-     * 获取当前实例的状态
+     * Obtain the status of the current instance
      *
-     * @return 实例状态
+     * @return Instance status
      */
     String getInstanceStatus();
 
     /**
-     * 更新实例状态
+     * Update the instance status
      *
-     * @param status 目标状态
+     * @param status Target status
      */
     void updateInstanceStatus(String status);
 }

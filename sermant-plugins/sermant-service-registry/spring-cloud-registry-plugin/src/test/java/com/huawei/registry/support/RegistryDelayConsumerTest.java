@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试睡眠
+ * Test Sleep
  *
  * @author zhouss
  * @since 2022-09-07

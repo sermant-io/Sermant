@@ -25,24 +25,25 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对健康判定拦截
+ * Interception for health determinations
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class EurekaHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
+     * The fully qualified name of the enhanced class has the highest injection priority for this client, so only
+     * intercepting this client is necessary
      */
     private static final String ENHANCE_CLASS = "com.netflix.discovery.DiscoveryClient";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = EurekaHealthInterceptor.class.getCanonicalName();
 
     /**
-     * 定时器注入拦截
+     * Timer injection interception
      */
     private static final String REGISTER_INTERCEPT_CLASS = EurekaRegisterInterceptor.class.getCanonicalName();
 
@@ -54,8 +55,8 @@ public class EurekaHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("renew"), INTERCEPT_CLASS),
-            InterceptDeclarer.build(MethodMatcher.nameEquals("register"), REGISTER_INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("renew"), INTERCEPT_CLASS),
+                InterceptDeclarer.build(MethodMatcher.nameEquals("register"), REGISTER_INTERCEPT_CLASS)
         };
     }
 }

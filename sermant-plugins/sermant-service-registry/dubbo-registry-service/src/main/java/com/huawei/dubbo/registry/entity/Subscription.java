@@ -17,7 +17,7 @@
 package com.huawei.dubbo.registry.entity;
 
 /**
- * 发现下游服务新增实例的实体
+ * Discover the entities that add new instances to downstream services
  *
  * @author provenceee
  * @since 2021-12-15
@@ -28,7 +28,7 @@ public class Subscription {
     private final Object notifyListener;
 
     /**
-     * 构造方法
+     * Constructor
      *
      * @param url url
      * @param notifyListener notifyListener

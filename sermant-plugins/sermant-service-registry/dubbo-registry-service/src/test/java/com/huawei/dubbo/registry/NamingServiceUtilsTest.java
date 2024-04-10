@@ -31,7 +31,7 @@ import com.huawei.registry.config.PropertyKeyConst;
 import com.huawei.registry.config.RegisterServiceCommonConfig;
 
 /**
- * 测试NamingServiceUtils
+ * Test NamingServiceUtils
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -40,9 +40,9 @@ public class NamingServiceUtilsTest {
     public static final String ADDRESS = "127.0.0.1:8848";
 
     /**
-     * 测试构建NamingService
+     * Test build NamingService
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */

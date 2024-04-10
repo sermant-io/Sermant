@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * nacos注册工厂
+ * NACOS registered factory
  *
  * @author chengyouling
  * @since 2022-10-25
@@ -55,7 +55,8 @@ public class NacosRegistryFactory extends AbstractRegistryFactory {
             Map<String, String> parameters = url.getParameters();
             registryService.buildNamingService(parameters);
             if (registryClass.isPresent()) {
-                // 由于plugin不能直接new宿主的接口实现类，所以只能手动new出来给宿主
+                // Since the plugin cannot directly instantiate the host's interface implementation class,
+                // it can only be instantiated manually to the host
                 return (Registry) registryClass.get().getConstructor(URL.class).newInstance(url);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException

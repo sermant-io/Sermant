@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 注册实现
+ * Registration implementation
  *
  * @author zhouss
  * @since 2021-12-16
@@ -82,7 +82,7 @@ public class RegisterCenterServiceImpl implements RegisterCenterService {
             return Collections.emptyList();
         }
         if (serviceId == null) {
-            // 无法执行替换
+            // Unable to perform a replacement
             LOGGER.warning("Can not acquire the name of service, the process to replace instance won't be finished!");
             return Collections.emptyList();
         }

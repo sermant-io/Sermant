@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 针对zookeeper 3.x自动发现实例获取拦截
+ * Obtain interception for ZooKeeper 3.x auto-discovery instances
  *
  * @author zhouss
  * @since 2022-03-29
@@ -50,10 +50,10 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
     }
 
     private List<ServiceInstance> getMergedInstances(ExecuteContext context) {
-        // 过滤后的服务实例
+        // Filtered service instances
         final Object originServiceInstances = context.getResult();
 
-        // 全量服务实例
+        // Full service instances
         final Object allServiceInstances = context.getArguments()[0];
         final List<ServiceInstance> serviceInstances = filterDiscoveryServiceInstance(
                 (List<ServiceInstance>) allServiceInstances);
@@ -64,11 +64,12 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
     }
 
     /**
-     * 由于在该方法调用前{@link org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient} 已经调用查询实例方法
-     * 因此此处为避免再次查询，通过过滤筛选出已查询的实例列表
+     * Since the query instance method has been called before
+     * {@link org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient} is called before the method
+     * is called， Therefore, to avoid re-querying, the list of queried instances is filtered out
      *
-     * @param serviceInstances 实例列表
-     * @return 过滤后的实例
+     * @param serviceInstances List of instances
+     * @return Filtered instances
      */
     private List<ServiceInstance> filterDiscoveryServiceInstance(List<ServiceInstance> serviceInstances) {
         return serviceInstances.stream()
@@ -92,9 +93,9 @@ public class ZookeeperInstanceSupplierInterceptor extends InstanceInterceptorSup
     }
 
     /**
-     * 获取实例类与宿主关联
+     * Obtain the instance class associated with the host
      *
-     * @return 类权限定名
+     * @return The class permission is named
      */
     @Override
     protected String getInstanceClassName() {

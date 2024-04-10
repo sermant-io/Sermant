@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * nacos监听服务服务
+ * NACOS Listening Service
  *
  * @since 2022-10-25
  */
@@ -32,18 +32,18 @@ public class NacosAggregateListener {
     private final Set<String> serviceNames = new ConcurrentHashSet<>();
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param notifyListener 监听
+     * @param notifyListener Listening
      */
     public NacosAggregateListener(Object notifyListener) {
         this.notifyListener = notifyListener;
     }
 
     /**
-     * 设置服务名、实例信息
+     * Set the service name and instance information
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      */
     public void saveAndAggregateAllInstances(String serviceName) {
         serviceNames.add(serviceName);

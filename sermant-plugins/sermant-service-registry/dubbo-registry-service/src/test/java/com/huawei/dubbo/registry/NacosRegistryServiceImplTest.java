@@ -44,7 +44,7 @@ import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 测试NacosRegistryServiceImpl
+ * Test NacosRegistryServiceImpl
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -98,9 +98,9 @@ public class NacosRegistryServiceImplTest {
     }
 
     /**
-     * 测试注册doRegister
+     * Test registration doRegister
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws IllegalAccessException IllegalAccessException
      */
     @Test
@@ -114,9 +114,9 @@ public class NacosRegistryServiceImplTest {
     }
 
     /**
-     * 测试doSubscribe/doUnsubscribe
+     * Test doSubscribe/doUnsubscribe
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws IllegalAccessException IllegalAccessException
      */
     @Test
@@ -145,9 +145,9 @@ public class NacosRegistryServiceImplTest {
     }
 
     /**
-     * 测试doSubscribe
+     * Test doSubscribe
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws IllegalAccessException IllegalAccessException
      */
     @Test

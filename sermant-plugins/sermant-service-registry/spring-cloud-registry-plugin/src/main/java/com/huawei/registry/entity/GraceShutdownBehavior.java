@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 优雅关闭行为
+ * Graceful closing behavior
  *
  * @author zhouss
  * @since 2022-06-24

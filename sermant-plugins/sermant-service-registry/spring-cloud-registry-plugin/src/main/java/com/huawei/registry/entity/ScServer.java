@@ -24,25 +24,27 @@ import com.netflix.loadbalancer.Server;
 import java.util.Map;
 
 /**
- * server 信息定义 {@link com.netflix.loadbalancer.ServerList}
+ * server Information Definitions {@link com.netflix.loadbalancer.ServerList}
  *
  * @author zhouss
  * @since 2022-04-11
  */
 public class ScServer extends Server {
     private final MicroServiceInstance microServiceInstance;
+
     private final String serviceName;
+
     private MetaInfo metaInfo;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param microServiceInstance 实例信息
-     * @param serviceName          服务名
+     * @param microServiceInstance Instance information
+     * @param serviceName Service name
      */
     public ScServer(final MicroServiceInstance microServiceInstance, String serviceName) {
         super(microServiceInstance.isSecure() ? "https" : "http", microServiceInstance.getIp(),
-            microServiceInstance.getPort());
+                microServiceInstance.getPort());
         this.microServiceInstance = microServiceInstance;
         this.serviceName = serviceName;
     }
@@ -66,9 +68,9 @@ public class ScServer extends Server {
     }
 
     /**
-     * 获取服务元信息
+     * Obtain the service meta-information
      *
-     * @return 服务元信息
+     * @return Service meta information
      */
     public Map<String, String> getMetadata() {
         return microServiceInstance.getMetadata();

@@ -29,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试MigrationRuleInterceptor
+ * Test MigrationRuleInterceptor
  *
  * @author provenceee
  * @since 2022-02-15
@@ -42,7 +42,7 @@ public class MigrationRuleInterceptorTest {
     private final ExecuteContext context;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public MigrationRuleInterceptorTest() throws NoSuchMethodException {
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig(TestConstant.BAR));
@@ -52,24 +52,24 @@ public class MigrationRuleInterceptorTest {
     }
 
     /**
-     * 测试MigrationRule
+     * Test MigrationRule
      *
      * @see org.apache.dubbo.rpc.cluster.support.migration.MigrationRule
      */
     @Test
     public void testMigrationRule() {
-        // 测试null
+        // Test null
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
         Assert.assertNull(context.getResult());
 
-        // 测试非sc
+        // Test non-SC
         arguments[0] = "init";
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
         Assert.assertNull(context.getResult());
 
-        // 测试sc
+        // Test SC
         arguments[0] = Constant.SC_INIT_MIGRATION_RULE;
         interceptor.before(context);
         Assert.assertTrue(context.isSkip());

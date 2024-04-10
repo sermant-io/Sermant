@@ -36,53 +36,77 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 反射工具类，为了同时兼容alibaba和apache dubbo，所以需要用反射的方法进行类的操作
+ * In order to be compatible with both Alibaba and Apache Dubbo, you need to use the reflection method to perform the
+ * class operation
  *
  * @author provenceee
  * @since 2022-02-07
  */
 public class ReflectUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final String GET_PROTOCOL_METHOD_NAME = "getProtocol";
+
     private static final String GET_ADDRESS_METHOD_NAME = "getAddress";
+
     private static final String GET_PATH_METHOD_NAME = "getPath";
+
     private static final String GET_ID_METHOD_NAME = "getId";
+
     private static final String GET_NAME_METHOD_NAME = "getName";
+
     private static final String GET_PARAMETERS_METHOD_NAME = "getParameters";
+
     private static final String GET_REGISTRIES_METHOD_NAME = "getRegistries";
+
     private static final String GET_EXTENSION_CLASSES_METHOD_NAME = "getExtensionClasses";
+
     private static final String IS_VALID_METHOD_NAME = "isValid";
+
     private static final String SET_HOST_METHOD_NAME = "setHost";
+
     private static final String SET_ADDRESS_METHOD_NAME = "setAddress";
+
     private static final String SET_PATH_METHOD_NAME = "setPath";
+
     private static final String SET_ID_METHOD_NAME = "setId";
+
     private static final String SET_PREFIX_METHOD_NAME = "setPrefix";
+
     private static final String SET_PROTOCOL_METHOD_NAME = "setProtocol";
+
     private static final String NOTIFY_METHOD_NAME = "notify";
+
     private static final String VALUE_OF_METHOD_NAME = "valueOf";
+
     private static final String REMOVE_PARAMETERS_METHOD_NAME = "removeParameters";
+
     private static final String ADD_PARAMETERS_METHOD_NAME = "addParameters";
+
     private static final String GET_PARAMETER_METHOD_NAME = "getParameter";
+
     private static final String GET_HOST_METHOD_NAME = "getHost";
+
     private static final String GET_PORT_METHOD_NAME = "getPort";
+
     private static final String GET_SERVICE_INTERFACE_METHOD_NAME = "getServiceInterface";
 
     private ReflectUtils() {
     }
 
     /**
-     * 加载宿主类
+     * Load the host class
      *
-     * @param className 宿主全限定类名
-     * @return 宿主类
+     * @param className The host is a fully qualified class name
+     * @return Host class
      */
     public static Optional<Class<?>> defineClass(String className) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             return Optional.of(ClassLoaderUtils.defineClass(className, contextClassLoader,
-                ClassLoaderUtils.getClassResource(ReflectUtils.class.getClassLoader(), className)));
+                    ClassLoaderUtils.getClassResource(ReflectUtils.class.getClassLoader(), className)));
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
-            // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
+            // It may have already been loaded, and it can be loaded directly with context Class Loader.load Class
             try {
                 return Optional.of(contextClassLoader.loadClass(className));
             } catch (ClassNotFoundException ex) {
@@ -92,11 +116,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 新建注册配置
+     * Create a registration configuration
      *
      * @param clazz RegistryConfig(apache/alibaba)
      * @param <T> RegistryConfig(apache/alibaba)
-     * @return 注册配置
+     * @return registry config
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
@@ -104,20 +128,20 @@ public class ReflectUtils {
         try {
             Constructor<T> constructor = clazz.getConstructor(String.class);
 
-            // 这个url不重要，重要的是protocol，所以设置成localhost:30100就行
+            // This URL is not important, what matters is the protocol, so set it to localhost:30100
             return Optional.of(constructor.newInstance(Constant.SC_REGISTRY_ADDRESS));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-            | InvocationTargetException e) {
+                 | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);
             return Optional.empty();
         }
     }
 
     /**
-     * 获取协议
+     * Get the protocol
      *
      * @param obj RegistryConfig | URL
-     * @return 协议
+     * @return Protocol
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      * @see com.alibaba.dubbo.common.URL
@@ -128,10 +152,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取应用地址
+     * Obtain the application address
      *
      * @param obj URL
-     * @return 应用地址
+     * @return The address of the application
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -140,10 +164,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取路径名，多数情况下与接口名相同，2.6.x, 2.7.0-2.7.7在多实现的场景下，会在接口名后拼一个序号
+     * Obtain the path name, which is usually the same as the interface name. 2.6. x, 2.7.0-2.7.7 In multi
+     * implementation scenarios, a sequence number will be spelled after the interface name
      *
      * @param obj URL
-     * @return 接口
+     * @return Interface
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -152,10 +177,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取注册id
+     * Get the registration ID
      *
      * @param obj RegistryConfig
-     * @return 注册id
+     * @return Registration ID
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
@@ -164,10 +189,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取dubbo应用名
+     * Obtain the name of the dubbo application
      *
      * @param obj ApplicationConfig
-     * @return 应用名
+     * @return The name of the app
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */
@@ -176,10 +201,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取应用接口名
+     * Obtain the API name
      *
      * @param obj URL
-     * @return 应用接口名
+     * @return The name of the API
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -188,10 +213,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取应用主机
+     * Get the app host
      *
      * @param obj URL
-     * @return 应用主机
+     * @return Application hosts
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -200,10 +225,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取应用端口
+     * Obtain the application port
      *
      * @param obj URL
-     * @return 应用端口
+     * @return Application port
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -212,11 +237,11 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取url参数
+     * Obtain the url parameter
      *
      * @param obj ApplicationConfig
      * @param key key
-     * @return 应用名
+     * @return The name of the app
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */
@@ -225,10 +250,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取url参数
+     * Obtain the url parameter
      *
      * @param obj URL
-     * @return url参数
+     * @return url parameters
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -237,10 +262,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取注册信息列表
+     * Get a list of registration information
      *
      * @param obj AbstractInterfaceConfig
-     * @return 注册信息列表
+     * @return List of registration information
      * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
      * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
@@ -249,10 +274,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 获取dubbo spi缓存类
+     * Get Dubbo SPI cache class
      *
      * @param obj ExtensionLoader
-     * @return 缓存列表
+     * @return Cached lists
      * @see com.alibaba.dubbo.common.extension.ExtensionLoader
      * @see org.apache.dubbo.common.extension.ExtensionLoader
      */
@@ -261,24 +286,24 @@ public class ReflectUtils {
     }
 
     /**
-     * 判断注册信息是否有效
+     * Determine whether the registration information is valid
      *
      * @param obj RegistryConfig
-     * @return 是否有效
+     * @return Whether it works
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
     public static boolean isValid(Object obj) {
         Boolean isValid = invokeWithNoneParameter(obj, IS_VALID_METHOD_NAME, Boolean.class, true);
         if (isValid == null) {
-            // 为null代表没有这个方法，返回true
+            // null means that there is no such method, and returns true
             return true;
         }
         return isValid;
     }
 
     /**
-     * 设置host
+     * Set the host
      *
      * @param obj URL
      * @param host host
@@ -291,7 +316,7 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置地址
+     * Set the address
      *
      * @param obj URL
      * @param address 地址
@@ -304,10 +329,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置路径
+     * Set the path
      *
      * @param obj URL
-     * @param path 路径
+     * @param path Path
      * @return URL
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -317,7 +342,7 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置id
+     * Set the ID
      *
      * @param obj RegistryConfig
      * @param id id
@@ -329,10 +354,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置前缀
+     * Set the prefix
      *
      * @param obj RegistryConfig
-     * @param prefix 前缀
+     * @param prefix Prefix
      * @see com.alibaba.dubbo.config.RegistryConfig
      * @see org.apache.dubbo.config.RegistryConfig
      */
@@ -341,10 +366,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 设置协议
+     * Set Protocol
      *
      * @param obj URL
-     * @param protocol 协议
+     * @param protocol Protocol
      * @return URL
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -354,10 +379,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 通知dubbo下游接口的URL
+     * Notify the URL of the downstream interface of Dubbo
      *
-     * @param notifyListener 通知监听器
-     * @param urls 下游接口的URL
+     * @param notifyListener Notification Listener
+     * @param urls URL of the downstream interface
      * @see com.alibaba.dubbo.registry.NotifyListener
      * @see org.apache.dubbo.registry.NotifyListener
      * @see com.alibaba.dubbo.common.URL
@@ -368,23 +393,23 @@ public class ReflectUtils {
     }
 
     /**
-     * 根据address新建URL
+     * Create a URL based on the address
      *
-     * @param address 地址
+     * @param address Address
      * @return URL
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
     public static Object valueOf(String address) {
         return invoke(new InvokeParameter(DubboCache.INSTANCE.getUrlClass(), null, VALUE_OF_METHOD_NAME, address,
-            String.class)).orElse(null);
+                String.class)).orElse(null);
     }
 
     /**
-     * 删除url中的参数
+     * Delete the parameters in the URL
      *
      * @param url URL
-     * @param keys 需要删除的参数的key
+     * @param keys The key of the parameter to be deleted
      * @return url
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -394,10 +419,10 @@ public class ReflectUtils {
     }
 
     /**
-     * 增加url中的参数
+     * Add parameters to the URL
      *
      * @param url URL
-     * @param parameters 需要增加的参数
+     * @param parameters Parameters that need to be added
      * @return url
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -437,34 +462,34 @@ public class ReflectUtils {
     private static Optional<Object> invoke(InvokeParameter parameter) {
         try {
             Method method = getMethod(parameter.invokeClass, parameter.name, parameter.parameterClass,
-                parameter.isPublic);
+                    parameter.isPublic);
             if (parameter.parameter == null) {
                 return Optional.ofNullable(method.invoke(parameter.obj));
             }
             return Optional.ofNullable(method.invoke(parameter.obj, parameter.parameter));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            // 因版本的原因，有可能会找不到方法，所以可以忽略这些错误
+            // Due to version limitations, it is possible that methods may not be found, so these errors can be ignored
             return Optional.empty();
         }
     }
 
     private static Method getMethod(Class<?> invokeClass, String name, Class<?> parameterClass, boolean isPublic)
-        throws NoSuchMethodException {
+            throws NoSuchMethodException {
         boolean hasParameter = parameterClass != null;
         if (hasParameter && isPublic) {
-            // 有参公共方法
+            // Public methods with parameters
             return invokeClass.getMethod(name, parameterClass);
         }
         if (hasParameter) {
-            // 有参非公共方法
+            // Non public methods with parameters
             return setAccessible(invokeClass.getDeclaredMethod(name, parameterClass));
         }
         if (isPublic) {
-            // 无参公共方法
+            // Public method without parameters
             return invokeClass.getMethod(name);
         }
 
-        // 无参非公共方法
+        // Non public method without parameters
         return setAccessible(invokeClass.getDeclaredMethod(name));
     }
 
@@ -477,16 +502,21 @@ public class ReflectUtils {
     }
 
     /**
-     * 反射参数
+     * Reflection parameters
      *
      * @since 2022-02-07
      */
     private static class InvokeParameter {
         Class<?> invokeClass;
+
         Object obj;
+
         String name;
+
         Object parameter;
+
         Class<?> parameterClass;
+
         boolean isPublic;
 
         InvokeParameter(Class<?> invokeClass, Object obj, String name, Object parameter, Class<?> parameterClass) {

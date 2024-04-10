@@ -52,7 +52,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * nacos注册中心注册服务
+ * NACOS Registry Registration Service
  *
  * @since 2022-10-25
  */
@@ -88,13 +88,13 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * key对应关系：第一个Object -> URL，第二个Object -> NotifyListener
+     * Key correspondence: First Object ->URL, Second Object ->NotifyListener
      */
     private final Map<Object, Map<Object, NacosAggregateListener>> originToAggregateListener =
             new ConcurrentHashMap<>();
 
     /**
-     * key对应关系：Object -> URL，String -> serviceName
+     * Key correspondence: Object ->URL, String ->serviceName
      */
     private final Map<Object, Map<NacosAggregateListener, Map<String, EventListener>>> nacosListeners =
             new ConcurrentHashMap<>();
@@ -150,8 +150,9 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
                     subscribeEventListener(serviceName, url, listener);
                 }
             } else {
-                // 当url的serviceInterface、group中含“，”、“*”时，需要从新构建监听url
-                // serviceName示例：providers:com.huawei.dubbo.registry.service.RegistryService:default,A
+                // When the serviceInterface and group in the URL contain "," and "*", it is necessary to build a new
+                // listening URL
+                // Example of serviceName: providers:com.huawei.dubbo.registry.service.RegistryService:default,A
                 for (String serviceName : serviceNames) {
                     String serviceInterface = serviceName;
                     String[] segments = serviceName.split(nacosRegisterConfig.getServiceNameSeparator(), -1);
@@ -383,7 +384,7 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     }
 
     /**
-     * 注册监听子类
+     * Register the listener subclass
      *
      * @since 2022-10-25
      */
@@ -397,11 +398,11 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
         private final NacosAggregateListener listener;
 
         /**
-         * 构造方法
+         * Constructor
          *
-         * @param serviceName 服务名
-         * @param url 客户端url
-         * @param listener 监听器
+         * @param serviceName Service name
+         * @param url Client URL
+         * @param listener Listener
          */
         protected RegistryChildListenerImpl(String serviceName, Object url, NacosAggregateListener listener) {
             this.serviceName = serviceName;

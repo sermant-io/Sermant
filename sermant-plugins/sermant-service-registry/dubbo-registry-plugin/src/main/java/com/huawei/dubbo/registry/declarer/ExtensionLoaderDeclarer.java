@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强ExtensionLoader类的createExtension方法
+ * Enhance the createExtension method of the ExtensionLoader class
  *
  * @author provenceee
  * @since 2022-02-10
@@ -34,7 +34,7 @@ public class ExtensionLoaderDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "createExtension";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ExtensionLoaderDeclarer() {
         super(ENHANCE_CLASS);

@@ -30,7 +30,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 拦截获取watcher
+ * Intercept to get watcher
  *
  * @author zhouss
  * @since 2022-09-07

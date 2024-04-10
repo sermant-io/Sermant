@@ -29,14 +29,14 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * 测试获取serverList
+ * Test obtaining serverList
  *
  * @author zhouss
  * @since 2022-09-06
  */
 public class ServiceCombRibbonConfigurationTest {
     /**
-     * 获取ServerList测试
+     * Get ServerList Test
      */
     @Test
     public void serverList() {

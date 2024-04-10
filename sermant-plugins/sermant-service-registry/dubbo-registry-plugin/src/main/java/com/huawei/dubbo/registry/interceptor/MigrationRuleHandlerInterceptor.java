@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 增强MigrationRuleHandler类的doMigrate方法
+ * Enhance the doMigrate method of the MigrationRuleHandler class
  *
  * @author provenceee
  * @since 2022-01-26
@@ -59,12 +59,12 @@ public class MigrationRuleHandlerInterceptor extends AbstractInterceptor {
                 return context;
             }
 
-            // 只拦截sc协议的
+            // Only the SC protocol is intercepted
             if (!Constant.SC_REGISTRY_PROTOCOL.equals(migrationInvoker.getRegistryUrl().getProtocol())) {
                 return context;
             }
 
-            // sc MigrationRule的标记，适用2.7.10-2.7.15
+            // Markings for sc MigrationRule, applicable from 2.7.10 to 2.7.15
             context.getArguments()[0] = Constant.SC_INIT_MIGRATION_RULE;
         }
         return context;

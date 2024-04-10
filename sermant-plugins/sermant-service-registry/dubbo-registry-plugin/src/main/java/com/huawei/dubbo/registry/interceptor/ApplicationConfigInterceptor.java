@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 /**
- * 增强ApplicationConfig类的setName方法
+ * Enhance the setName method of the Application Configuration class
  *
  * @author provenceee
  * @since 2021-11-08
@@ -32,7 +32,7 @@ public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private final ApplicationConfigService applicationConfigService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigInterceptor() {
         applicationConfigService = PluginServiceManager.getPluginService(ApplicationConfigService.class);

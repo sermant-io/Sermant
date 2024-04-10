@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 服务发现实例测试
+ * Service discovery instance testing
  *
  * @author chengyouling
  * @since 2023-01-10
@@ -42,10 +42,10 @@ public class DiscoveryServiceInstanceTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param port 端口
-     * @return 实例
+     * @param port Port
+     * @return Instance
      */
     public MicroServiceInstance buildInstance(int port, boolean secure) {
         return new MicroServiceInstance() {

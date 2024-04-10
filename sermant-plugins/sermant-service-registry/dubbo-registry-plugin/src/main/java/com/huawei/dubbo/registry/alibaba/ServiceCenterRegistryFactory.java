@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * sc注册工厂
+ * SC registered factory
  *
  * @author provenceee
  * @since 2021-12-15
@@ -42,13 +42,14 @@ public class ServiceCenterRegistryFactory extends AbstractRegistryFactory {
 
     @Override
     protected Registry createRegistry(URL url) {
-        // 加载了sc的注册spi的标志
+        // Flag for registering SPI with SC loaded
         DubboCache.INSTANCE.loadSc();
         DubboCache.INSTANCE.setUrlClass(url.getClass());
         try {
             Optional<Class<?>> registryClass = ReflectUtils.defineClass(ALIBABA_REGISTRY_CLASS_NAME);
             if (registryClass.isPresent()) {
-                // 由于plugin不能直接new宿主的接口实现类，所以只能手动new出来给宿主
+                // Since the plugin cannot directly instantiate the host's interface implementation class,
+                // it can only be instantiated manually to the host
                 return (Registry) registryClass.get().getConstructor(URL.class).newInstance(url);
             }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException

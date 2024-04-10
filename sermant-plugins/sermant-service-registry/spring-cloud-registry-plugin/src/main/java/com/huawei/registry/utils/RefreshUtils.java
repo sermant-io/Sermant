@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 刷新缓存工具类
+ * Refresh the cache utility class
  *
  * @author provenceee
  * @since 2022-05-27
@@ -40,19 +40,19 @@ public class RefreshUtils {
     }
 
     /**
-     * 刷新目标服务实例缓存
+     * Refresh the cache of the target service instance
      *
-     * @param serviceName 下游服务名
+     * @param serviceName Downstream service name
      */
     public static void refreshTargetServiceInstances(String serviceName) {
         refreshTargetServiceInstances(serviceName, null);
     }
 
     /**
-     * 刷新目标服务实例缓存
+     * Refresh the cache of the target service instance
      *
-     * @param serviceName 下游服务名
-     * @param responseServiceNames 响应标记下线的服务名, 仅一个
+     * @param serviceName Downstream service name
+     * @param responseServiceNames The response marks the service name offline, only one
      */
     public static void refreshTargetServiceInstances(String serviceName, Collection<String> responseServiceNames) {
         final Object ribbonLoadbalancer = getRibbonLoadbalancer(serviceName, responseServiceNames);
@@ -64,22 +64,22 @@ public class RefreshUtils {
     }
 
     /**
-     * 获取Ribbon负载均衡
+     * Obtain the Ribbon load balancer
      *
-     * @param serviceName 下游服务名
-     * @param responseServiceNames 响应标记下线的服务名, 仅一个
+     * @param serviceName Downstream service name
+     * @param responseServiceNames The response marks the service name offline, only one
      * @return loadbalancer
      */
     private static Object getRibbonLoadbalancer(String serviceName, Collection<String> responseServiceNames) {
         Object result = null;
         if (serviceName != null) {
             result = GraceContext.INSTANCE.getGraceShutDownManager().getLoadBalancerCache()
-                .get(serviceName);
+                    .get(serviceName);
         }
         if (result == null) {
             if (responseServiceNames != null && !responseServiceNames.isEmpty()) {
                 result = GraceContext.INSTANCE.getGraceShutDownManager().getLoadBalancerCache()
-                    .get(responseServiceNames.iterator().next());
+                        .get(responseServiceNames.iterator().next());
             }
         }
         return result;
@@ -87,26 +87,26 @@ public class RefreshUtils {
 
     private static void refreshWithSpringLb(String serviceName, Collection<String> responseServiceNames) {
         final Object loadBalancerCacheManager = GraceContext.INSTANCE.getGraceShutDownManager()
-            .getLoadBalancerCacheManager();
+                .getLoadBalancerCacheManager();
         String curServiceName = serviceName;
         if (curServiceName == null && responseServiceNames != null && !responseServiceNames.isEmpty()) {
             curServiceName = responseServiceNames.iterator().next();
         }
         if (loadBalancerCacheManager == null) {
             LOGGER.warning(String.format(Locale.ENGLISH,
-                "Can not refresh service [%s] instance cache with spring loadbalancer!", curServiceName));
+                    "Can not refresh service [%s] instance cache with spring loadbalancer!", curServiceName));
             return;
         }
         LOGGER.fine(String.format(Locale.ENGLISH,
-            "Start refresh target service [%s] spring loadbalancer instance cache!", curServiceName));
+                "Start refresh target service [%s] spring loadbalancer instance cache!", curServiceName));
         final Optional<Object> cacheOptional = ReflectUtils.invokeMethod(loadBalancerCacheManager, "getCache",
-            new Class[]{String.class}, new Object[]{GraceConstants.SPRING_CACHE_MANAGER_LOADBALANCER_CACHE_NAME});
+                new Class[]{String.class}, new Object[]{GraceConstants.SPRING_CACHE_MANAGER_LOADBALANCER_CACHE_NAME});
         if (cacheOptional.isPresent()) {
             final Object cache = cacheOptional.get();
             ReflectUtils.invokeMethod(cache, "evict", new Class[]{Object.class}, new Object[]{curServiceName});
             if (responseServiceNames != null && !responseServiceNames.isEmpty()) {
                 ReflectUtils.invokeMethod(cache, "evict", new Class[]{Object.class},
-                    new Object[]{responseServiceNames.iterator().next()});
+                        new Object[]{responseServiceNames.iterator().next()});
             }
         }
     }
@@ -114,7 +114,7 @@ public class RefreshUtils {
     private static void refreshWithRibbon(Object loadbalancer) {
         final Optional<Object> serviceName = ReflectUtils.getFieldValue(loadbalancer, "name");
         LOGGER.fine(String.format(Locale.ENGLISH,
-            "Start refresh target service [%s] ribbon instance cache!", serviceName.orElse("unKnow service")));
+                "Start refresh target service [%s] ribbon instance cache!", serviceName.orElse("unKnow service")));
         ReflectUtils.invokeMethod(loadbalancer, "updateListOfServers", null, null);
     }
 }

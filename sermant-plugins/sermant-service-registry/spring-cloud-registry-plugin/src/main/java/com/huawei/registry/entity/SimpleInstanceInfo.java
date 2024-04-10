@@ -18,7 +18,7 @@
 package com.huawei.registry.entity;
 
 /**
- * 基本实例信息定义
+ * Basic instance information definition
  *
  * @author zhouss
  * @since 2022-02-23
@@ -30,15 +30,15 @@ public class SimpleInstanceInfo {
     private String host;
 
     /**
-     * 端口
+     * Port
      */
     private int port;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param host 域名
-     * @param port 端口
+     * @param host domain name
+     * @param port Port
      */
     public SimpleInstanceInfo(String host, int port) {
         this.host = host;

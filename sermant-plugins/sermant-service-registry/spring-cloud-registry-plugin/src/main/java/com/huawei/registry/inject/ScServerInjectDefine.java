@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * Ribbon Server注入
+ * Ribbon Server Injection
  *
  * @author zhouss
  * @since 2022-05-31

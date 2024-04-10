@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * 测试ApplicationConfigServiceImpl
+ * Test ApplicationConfigServiceImpl
  *
  * @author provenceee
  * @since 2022-02-14
@@ -37,49 +37,49 @@ public class ApplicationConfigServiceTest {
     private final ApplicationConfigService service;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigServiceTest() {
         service = new ApplicationConfigServiceImpl();
     }
 
     /**
-     * 测试Alibaba ApplicationConfig
+     * Test Alibaba ApplicationConfig
      *
      * @see com.alibaba.dubbo.config.ApplicationConfig
      */
     @Test
     public void testAlibabaApplicationConfig() {
-        // 清空缓存
+        // Clear the cache
         DubboCache.INSTANCE.setServiceName(null);
         ApplicationConfig alibabaConfig = new ApplicationConfig();
 
-        // 测试无效应用名
+        // Test invalid app name
         service.getName(alibabaConfig);
         Assertions.assertNull(DubboCache.INSTANCE.getServiceName());
 
-        // 测试有效应用名
+        // Test valid app names
         alibabaConfig.setName(FOO);
         service.getName(alibabaConfig);
         Assertions.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());
     }
 
     /**
-     * 测试Apache ApplicationConfig
+     * Test Apache ApplicationConfig
      *
      * @see org.apache.dubbo.config.ApplicationConfig
      */
     @Test
     public void testApacheApplicationConfig() {
-        // 清空缓存
+        // Clear the cache
         DubboCache.INSTANCE.setServiceName(null);
         org.apache.dubbo.config.ApplicationConfig apacheConfig = new org.apache.dubbo.config.ApplicationConfig();
 
-        // 测试无效应用名
+        // Test invalid app name
         service.getName(apacheConfig);
         Assertions.assertNull(DubboCache.INSTANCE.getServiceName());
 
-        // 测试有效应用名
+        // Test valid app names
         apacheConfig.setName(FOO);
         service.getName(apacheConfig);
         Assertions.assertEquals(FOO, DubboCache.INSTANCE.getServiceName());

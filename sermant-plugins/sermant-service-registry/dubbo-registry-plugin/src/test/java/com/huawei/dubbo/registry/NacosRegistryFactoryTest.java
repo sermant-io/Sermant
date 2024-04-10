@@ -33,14 +33,14 @@ import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.core.utils.KeyGenerateUtils;
 
 /**
- * 测试NacosRegistryFactory
+ * Test NacosRegistryFactory
  *
  * @author chengyouling
  * @since 2022-11-29
  */
 public class NacosRegistryFactoryTest {
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosRegistryFactoryTest() throws NoSuchFieldException, IllegalAccessException {
         Field field = ServiceManager.class.getDeclaredField("SERVICES");
@@ -82,9 +82,9 @@ public class NacosRegistryFactoryTest {
     }
 
     /**
-     * 测试Alibaba NacosRegistryFactory
+     * Test Alibaba NacosRegistryFactory
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */
@@ -99,9 +99,9 @@ public class NacosRegistryFactoryTest {
     }
 
     /**
-     * 测试Apache NacosRegistryFactory
+     * Test Apache NacosRegistryFactory
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */

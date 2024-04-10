@@ -25,22 +25,22 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截负载均衡请求方法, 仅针对RestTemplate请求
+ * Intercept SLB request method, only for RestTemplate requests
  *
  * @author zhouss
  * @since 2022-05-25
  */
 public class SpringLoadbalancerRestTemplateResponseDeclarer extends AbstractPluginDeclarer {
     private static final String[] ENHANCE_CLASSES = {
-        "org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor",
-        "org.springframework.cloud.client.loadbalancer.RetryLoadBalancerInterceptor"
+            "org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor",
+            "org.springframework.cloud.client.loadbalancer.RetryLoadBalancerInterceptor"
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS =
-        SpringLoadbalancerRestTemplateResponseInterceptor.class.getCanonicalName();
+            SpringLoadbalancerRestTemplateResponseInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {

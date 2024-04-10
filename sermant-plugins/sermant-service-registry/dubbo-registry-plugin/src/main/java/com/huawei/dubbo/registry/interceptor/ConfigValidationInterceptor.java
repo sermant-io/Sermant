@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import org.apache.dubbo.common.URL;
 
 /**
- * 增强ConfigValidationUtils类的extractRegistryType方法
+ * Enhance the extractRegistryType method of the ConfigValidation Utils class
  *
  * @author provenceee
  * @since 2022-01-27
@@ -41,9 +41,9 @@ public class ConfigValidationInterceptor extends AbstractInterceptor {
         if (arguments[0] instanceof URL) {
             URL url = (URL) arguments[0];
 
-            // 这个拦截点是为了把2.7.5-2.7.8的sc应用级注册给屏蔽掉
+            // This interception point is to block the SC application-level registration of 2.7.5-2.7.8
             if (Constant.SC_REGISTRY_PROTOCOL.equals(url.getProtocol())
-                && !CollectionUtils.isEmpty(url.getParameters())) {
+                    && !CollectionUtils.isEmpty(url.getParameters())) {
                 if (url.hasParameter(REGISTRY_TYPE_KEY_1) || url.hasParameter(REGISTRY_TYPE_KEY_2)) {
                     arguments[0] = url.removeParameters(REGISTRY_TYPE_KEY_1, REGISTRY_TYPE_KEY_2);
                 }

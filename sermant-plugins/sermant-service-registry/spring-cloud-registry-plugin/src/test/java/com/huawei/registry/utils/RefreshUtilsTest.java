@@ -31,7 +31,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cloud.loadbalancer.cache.LoadBalancerCacheManager;
 
 /**
- * 测试刷新
+ * Test refresh
  *
  * @author zhouss
  * @since 2022-09-07

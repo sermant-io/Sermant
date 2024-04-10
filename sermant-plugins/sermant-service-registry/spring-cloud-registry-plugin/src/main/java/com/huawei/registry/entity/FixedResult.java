@@ -18,19 +18,19 @@
 package com.huawei.registry.entity;
 
 /**
- * 前置返回结果
+ * The result is returned in front
  *
  * @author zhouss
  * @since 2022-02-16
  */
 public class FixedResult {
     /**
-     * 覆盖结果
+     * Override the results
      */
     private Object result;
 
     /**
-     * 是否需要跳过调用
+     * Whether the call needs to be skipped
      */
     private boolean isSkip = false;
 
@@ -39,7 +39,7 @@ public class FixedResult {
     }
 
     /**
-     * 设置结果
+     * Set the result
      *
      * @param result 结果
      */

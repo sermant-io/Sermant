@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 优雅上下线工具类
+ * Elegant online and offline tools
  *
  * @author zhouss
  * @since 2022-05-17
@@ -44,7 +44,7 @@ public class GraceHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 获取元信息的方法名称
+     * The name of the method to get the meta information
      */
     private static final String META_METHOD = "getMetadata";
 
@@ -52,10 +52,10 @@ public class GraceHelper {
     }
 
     /**
-     * 填充预热参数
+     * Populate the preheating parameters
      *
-     * @param meta 服务元信息
-     * @param graceConfig 优雅上下线配置
+     * @param meta Service meta information
+     * @param graceConfig Elegant online and offline configuration
      */
     public static void configWarmUpParams(Map<String, String> meta, GraceConfig graceConfig) {
         if (meta == null || graceConfig == null) {
@@ -79,10 +79,10 @@ public class GraceHelper {
     }
 
     /**
-     * 基于feign.request#url获取host, 即请求的服务名
+     * Obtain the host, that is, the name of the requested service, based on feign.request#url
      *
-     * @param url 请求地址
-     * @return 服务名
+     * @param url The address of the request
+     * @return Service name
      */
     public static Optional<String> getServiceNameFromReqUrl(String url) {
         if (StringUtils.isBlank(url)) {
@@ -98,10 +98,10 @@ public class GraceHelper {
     }
 
     /**
-     * 获取服务实例元信息
+     * Obtain the meta-information of the service instance
      *
-     * @param target 目标对象
-     * @return 元信息
+     * @param target Target Audience
+     * @return Meta information
      */
     public static Map<String, String> getMetadata(Object target) {
         if (target == null) {

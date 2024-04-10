@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * server服务发现-ribbon
+ * Server service discovery-ribbon
  *
  * @author zhouss
  * @since 2022-09-07

@@ -25,22 +25,26 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * nacos 2.x
- * 拦截反注册方法, 在反注册之前，判断RpcClient是否可用; 因为此处当双注册下发关闭原注册中心配置时，会将RpcClient关闭掉,
- * 若关闭了，则无需进行反注册, 因为此时当前客户端已经主动从注册中心下线了，且若处于Shutdown调用, 会直接抛出异常，因此做前置判断
+ * Intercept the anti-registration method, and determine whether the RpcClient is available before the
+ * anti-registration; Because here, when the dual registration is delivered to close the original registry
+ * configuration, the RpcClient will be closed.
+ * If it is closed, there is no need to deregister, because the current
+ * client has been actively removed from the registry, and if it is called by Shutdown, an exception will be thrown
+ * directly, so make a pre-judgment
  *
  * @author zhouss
  * @since 2022-12-20
  */
 public class NacosGrpcProxyDeregisterDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * nacos心跳发送类
+     * Nacos heartbeat sending class
      */
-    private static final String[] ENHANCE_CLASSES = new String[] {
-        "com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy"
+    private static final String[] ENHANCE_CLASSES = new String[]{
+            "com.alibaba.nacos.client.naming.remote.gprc.NamingGrpcClientProxy"
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = NacosGrpcDeRegisterInterceptor.class.getCanonicalName();
 
@@ -52,7 +56,7 @@ public class NacosGrpcProxyDeregisterDeclarer extends AbstractDoubleRegistryDecl
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("deregisterService"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("deregisterService"), INTERCEPT_CLASS)
         };
     }
 }

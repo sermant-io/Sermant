@@ -24,14 +24,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对eureka，consul注册中心获取实例列表拦截
+ * For Eureka, the Consul registry obtains the instance list to intercept the instance
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class DiscoveryClientDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
+     * Fully qualified name of the enhanced class This client injection priority is the highest, so just intercept it
      */
     private static final String[] ENHANCE_CLASSES = {
         "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient",
@@ -39,12 +39,12 @@ public class DiscoveryClientDeclarer extends AbstractDoubleRegistryDeclarer {
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = DiscoveryClientInterceptor.class.getCanonicalName();
 
     /**
-     * 服务名拦截
+     * Service name interception
      */
     private static final String SERVICE_INTERCEPT_CLASS = DiscoveryClientServiceInterceptor.class.getCanonicalName();
 

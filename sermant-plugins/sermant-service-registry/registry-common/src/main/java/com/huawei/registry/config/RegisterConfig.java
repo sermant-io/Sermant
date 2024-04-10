@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * spring注册插件配置
+ * Spring registration plugin configuration
  *
  * @author zhouss
  * @since 2021-12-16
@@ -37,118 +37,120 @@ import java.util.Map;
 @ConfigTypeKey(value = "servicecomb.service")
 public class RegisterConfig implements PluginConfig {
     /**
-     * kie命名空间
+     * kie namespace
      */
     private String project = ConfigConstants.COMMON_DEFAULT_VALUE;
 
     /**
-     * 服务实例心跳发送间隔
+     * The heartbeat sending interval of the service instance
      */
     private int heartbeatInterval = ConfigConstants.DEFAULT_HEARTBEAT_INTERVAL;
 
     /**
-     * 心跳重试次数
+     * The number of heartbeat retries
      */
     private int heartbeatRetryTimes = ConfigConstants.DEFAULT_HEARTBEAT_RETRY_TIMES;
 
     /**
-     * 拉取实例时间间隔
+     * The interval between the pull instances
      */
     private int pullInterval = ConfigConstants.DEFAULT_PULL_INTERVAL;
 
     /**
-     * sc app配置
+     * sc app configuration
      */
     private String application = "sermant";
 
     /**
-     * sc 环境配置
+     * sc Environment configuration
      */
     private String environment = "";
 
     /**
-     * 默认sc版本
+     * Default SC version
      */
     private String version = "1.0.0";
 
     /**
-     * 是否开启sc的加密 作为配置类，使用布尔类型不可使用is开头，否则存在配置无法读取的问题
+     * Whether to enable SC encryption As a configuration class, you cannot use the Boolean type that starts with is,
+     * otherwise the configuration cannot be read
      */
     private boolean sslEnabled = false;
 
     /**
-     * 是否开启迁移模式
+     * Specifies whether to enable the migration mode
      */
     private boolean openMigration = false;
 
     /**
-     * spring注册开关
+     * Spring registration switch
      */
     private boolean enableSpringRegister = false;
 
     /**
-     * dubbo注册开关
+     * dubbo registration switch
      */
     private boolean enableDubboRegister = false;
 
     /**
-     * 是否启用区域发现
+     * Whether to enable region discovery
      */
     private boolean enableZoneAware = false;
 
     /**
-     * 数据中心名称
+     * The name of the data center
      */
     private String dataCenterName = ConfigConstants.COMMON_DEFAULT_VALUE;
 
     /**
-     * 数据中心 区域
+     * Data Center region
      */
     private String dataCenterRegion = ConfigConstants.COMMON_DEFAULT_VALUE;
 
     /**
-     * 数据中心 去
+     * Data Center Go
      */
     private String dataCenterAvailableZone = ConfigConstants.COMMON_DEFAULT_VALUE;
 
     /**
-     * 是否支持跨app访问实例
+     * Specifies whether to access instances across apps
      */
     private boolean allowCrossApp = false;
 
     /**
-     * spring cloud zone
-     * 若未配置默认使用系统环境变量的zone, 即spring.cloud.loadbalancer.zone
+     * If the Spring Cloud Zone does not use the default system environment variables, that is,
+     * spring.cloud.loadbalancer.zone
      */
     private String zone;
 
     /**
-     * 基于hostname访问时, 可由用户选择是否直接使用IP地址进行访问下游
+     * If you want to use the IP address to access the hostname, you can choose whether to use the IP address to access
+     * the downstream data
      */
     private boolean preferIpAddress = false;
 
     /**
-     * 是否忽略契约差异
+     * Whether to ignore the contract differences
      */
     private boolean ignoreSwaggerDifferent = false;
 
     /**
-     * dubbo参数白名单
+     * Whitelist of dubbo parameters
      */
     private List<String> governanceParametersWhiteList = Collections.singletonList("timeout");
 
     /**
-     * dubbo注册时的接口级参数key
+     * The interface-level parameter key during dubbo registration
      */
     private List<String> interfaceKeys;
 
     /**
-     * 服务级别参数，形如k1,v1;k2,v2
+     * Service level parameters, in the form of:k1,v1;k2,v2
      */
     private String parameters;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegisterConfig() {
         final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
@@ -330,9 +332,9 @@ public class RegisterConfig implements PluginConfig {
     }
 
     /**
-     * 获取注册参数
+     * Obtain the registration parameters
      *
-     * @return 注册参数
+     * @return Registration parameters
      */
     public Map<String, String> getParametersMap() {
         if (StringUtils.isBlank(parameters)) {

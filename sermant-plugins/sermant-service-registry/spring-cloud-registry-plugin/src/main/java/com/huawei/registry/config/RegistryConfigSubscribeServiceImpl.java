@@ -32,29 +32,29 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 注册配置订阅服务
+ * Sign up for the configuration subscription service
  *
  * @author zhouss
  * @since 2022-05-24
  */
 public class RegistryConfigSubscribeServiceImpl implements PluginService {
     /**
-     * 订阅注册配置
+     * Subscription registration configuration
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      */
     public void subscribeRegistryConfig(String serviceName) {
         ConfigSubscriber subscriber;
         final RegisterConfig registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
         final RegisterServiceCommonConfig registerCommonConfig =
-            PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+                PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
         if (registerCommonConfig.getRegisterType() == RegisterType.SERVICE_COMB
-            && registerConfig.isEnableSpringRegister()) {
-            // 使用了CSE
+                && registerConfig.isEnableSpringRegister()) {
+            // CSE was used
             subscriber = new CseGroupConfigSubscriber(serviceName, new RegistryConfigListener(),
-                "SpringCloudRegistry");
+                    "SpringCloudRegistry");
         } else {
-            // 其他场景
+            // Other scenarios
             subscriber = new DefaultGroupConfigSubscriber(serviceName, new RegistryConfigListener(),
                     "SpringCloudRegistry");
         }
@@ -63,7 +63,8 @@ public class RegistryConfigSubscribeServiceImpl implements PluginService {
     }
 
     private void fixGrace() {
-        // 基于环境变量修正优雅上下线开关, 该配置优先级最高
+        // Modify the elegant online and offline switches based on environment variables,
+        // and this configuration has the highest priority
         final GraceConfig graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
         graceConfig.fixGraceSwitch();
         if (graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown()) {
@@ -72,13 +73,15 @@ public class RegistryConfigSubscribeServiceImpl implements PluginService {
     }
 
     /**
-     * 注册配置监听
+     * Register and configure a listener
      *
      * @since 2022-05-24
      */
     static class RegistryConfigListener implements DynamicConfigListener {
         private static final Logger LOGGER = LoggerFactory.getLogger();
+
         private final RegistryConfigResolver graceConfigResolver = new GraceConfigResolver();
+
         private final RegistryConfigResolver switchConfigResolver = new OriginRegistrySwitchConfigResolver();
 
         @Override

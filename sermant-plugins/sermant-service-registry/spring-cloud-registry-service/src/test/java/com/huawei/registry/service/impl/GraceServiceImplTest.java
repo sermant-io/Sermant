@@ -35,14 +35,14 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 测试下线通知逻辑
+ * Test the offline notification logic
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class GraceServiceImplTest {
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
@@ -62,7 +62,7 @@ public class GraceServiceImplTest {
     }
 
     /**
-     * 测试关闭逻辑以及加载handler逻辑
+     * Test the shutdown logic as well as the loading handler logic
      */
     @Test
     public void testShutDown() {

@@ -20,7 +20,7 @@ package com.huawei.registry.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * 关闭时间监听器注入
+ * Turn off time listener injection
  *
  * @author provenceee
  * @since 2022-05-25

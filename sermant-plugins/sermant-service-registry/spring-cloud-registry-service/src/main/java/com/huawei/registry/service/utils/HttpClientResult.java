@@ -5,36 +5,36 @@
 package com.huawei.registry.service.utils;
 
 /**
- * Description: 封装httpClient响应结果
+ * Description: Encapsulates the HTTP client response
  *
  * @author provenceee
  * @since 2022-05-26
  */
 public class HttpClientResult {
     /**
-     * 响应状态码
+     * Response status code
      */
     private final int code;
 
     /**
-     * 响应数据
+     * Response data
      */
     private final String msg;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param code 响应码
+     * @param code Response code
      */
     public HttpClientResult(int code) {
         this(code, null);
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param code 响应码
-     * @param msg 响应消息
+     * @param code Response code
+     * @param msg Response message
      */
     public HttpClientResult(int code, String msg) {
         this.code = code;

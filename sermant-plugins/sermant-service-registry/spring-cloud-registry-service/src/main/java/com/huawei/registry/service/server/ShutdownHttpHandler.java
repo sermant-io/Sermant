@@ -37,7 +37,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * http处理器
+ * HTTP processor
  *
  * @author provenceee
  * @since 2022-05-27
@@ -48,7 +48,7 @@ public class ShutdownHttpHandler implements HttpHandler {
     private final GraceConfig pluginConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ShutdownHttpHandler() {
         graceService = PluginServiceManager.getPluginService(GraceService.class);

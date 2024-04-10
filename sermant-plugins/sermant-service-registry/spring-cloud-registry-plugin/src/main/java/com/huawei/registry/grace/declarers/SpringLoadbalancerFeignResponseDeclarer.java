@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截负载均衡请求方法, 包含ribbon与spring loadbalacner请求执行
+ * Intercept load balancer request execution, including ribbon and spring loadbalacner request execution
  *
  * @author zhouss
  * @since 2022-05-25
@@ -39,7 +39,7 @@ public class SpringLoadbalancerFeignResponseDeclarer extends AbstractPluginDecla
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = SpringLoadbalancerFeignResponseInterceptor.class.getCanonicalName();
 

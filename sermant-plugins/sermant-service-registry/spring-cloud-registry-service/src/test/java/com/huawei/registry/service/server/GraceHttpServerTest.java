@@ -46,19 +46,19 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 测试Http Server
+ * Test Http Server
  *
  * @author zhouss
  * @since 2022-06-29
  */
 public class GraceHttpServerTest {
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
 
@@ -75,7 +75,7 @@ public class GraceHttpServerTest {
     }
 
     /**
-     * 测试HttpServer有效性
+     * Test the effectiveness of the Http server
      */
     @Test
     public void testHttpServer() {

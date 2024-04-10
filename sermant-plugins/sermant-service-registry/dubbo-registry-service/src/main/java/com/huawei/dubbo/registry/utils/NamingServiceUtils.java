@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * nacos注册naming服务
+ * Nacos registers for the Naming service
  *
  * @since 2022-10-25
  */
@@ -47,13 +47,13 @@ public class NamingServiceUtils {
     }
 
     /**
-     * 构建naming服务
+     * Build a naming service
      *
      * @param parameters url
      * @param registerConfig registerConfig
-     * @param commonConfig 公共配置
-     * @return naming服务
-     * @throws IllegalStateException 创建namingService异常
+     * @param commonConfig Common configuration
+     * @return Naming services
+     * @throws IllegalStateException Creating NamingService exception
      */
     public static NamingService buildNamingService(Map<String, String> parameters, NacosRegisterConfig registerConfig,
         RegisterServiceCommonConfig commonConfig) {

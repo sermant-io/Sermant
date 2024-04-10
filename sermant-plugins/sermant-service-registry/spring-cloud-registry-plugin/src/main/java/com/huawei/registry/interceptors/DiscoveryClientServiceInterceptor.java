@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 拦截获取服务名列表
+ * Intercept to get a list of service names
  *
  * @author zhouss
  * @since 2021-12-13
@@ -66,7 +66,7 @@ public class DiscoveryClientServiceInterceptor extends InstanceInterceptorSuppor
     }
 
     private List<String> getServices(List<String> services, Object target, Object contextResult) {
-        // 合并两个注册中心
+        // Merge the two registries
         if (isWebfLux(target)) {
             final Flux<String> originServicesFlux = (Flux<String>) contextResult;
             final List<String> originServices = new ArrayList<>();

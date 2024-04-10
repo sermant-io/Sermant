@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 拦截器测试
+ * Interceptor test
  *
  * @author zhouss
  * @since 2022-09-06

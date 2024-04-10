@@ -41,7 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Spring Web请求前置拦截器, 由拦截器动态加入, 每次请求都会添加, {@link com.huawei.registry.grace.interceptors.SpringWebHandlerInterceptor}
+ * Spring Web request pre-interceptors, dynamically joined by interceptors, are added with each request,
+ * {@link com.huawei.registry.grace.interceptors.SpringWebHandlerInterceptor}
  *
  * @author zhouss
  * @since 2022-05-23
@@ -52,7 +53,7 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
     private final GraceConfig graceConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringRequestInterceptor() {
         graceService = PluginServiceManager.getPluginService(GraceService.class);
@@ -68,12 +69,12 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
         final GraceShutDownManager graceShutDownManager = GraceContext.INSTANCE.getGraceShutDownManager();
         graceShutDownManager.increaseRequestCount();
         if (graceShutDownManager.isShutDown() && graceConfig.isEnableGraceShutdown()) {
-            // 已被标记为关闭状态, 开始统计进入的请求数
+            // It has been marked as closed, and the number of incoming requests has been counted
             final ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
             response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
-                buildEndpoint(clientInfo.getIp(), clientInfo.getPort()));
+                    buildEndpoint(clientInfo.getIp(), clientInfo.getPort()));
             response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
-                buildEndpoint(clientInfo.getHost(), clientInfo.getPort()));
+                    buildEndpoint(clientInfo.getHost(), clientInfo.getPort()));
             response.addHeader(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME, clientInfo.getServiceName());
         }
         return true;
@@ -81,12 +82,12 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-        ModelAndView modelAndView) {
+            ModelAndView modelAndView) {
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-        Exception ex) {
+            Exception ex) {
         GraceContext.INSTANCE.getGraceShutDownManager().decreaseRequestCount();
     }
 
@@ -96,8 +97,8 @@ public class SpringRequestInterceptor implements HandlerInterceptor {
 
     private void addGraceAddress(HttpServletRequest request) {
         if (graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown() && graceConfig.isEnableOfflineNotify()
-            && GraceConstants.GRACE_OFFLINE_SOURCE_VALUE
-            .equals(request.getHeader(GraceConstants.GRACE_OFFLINE_SOURCE_KEY))) {
+                && GraceConstants.GRACE_OFFLINE_SOURCE_VALUE
+                .equals(request.getHeader(GraceConstants.GRACE_OFFLINE_SOURCE_KEY))) {
             String address = request.getHeader(GraceConstants.SERMANT_GRACE_ADDRESS);
             if (StringUtils.isBlank(address)) {
                 address = request.getRemoteAddr() + ":" + request.getServerPort();

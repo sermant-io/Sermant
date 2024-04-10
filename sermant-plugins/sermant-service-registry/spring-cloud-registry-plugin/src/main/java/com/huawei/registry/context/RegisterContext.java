@@ -24,19 +24,19 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 注册中心上下文
+ * Registry context
  *
  * @author zhouss
  * @since 2021-12-30
  */
 public enum RegisterContext {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
     /**
-     * 注册中心健康监听对象 通常用于关闭定时服务
+     * Registry health listeners are typically used to turn off scheduled services
      */
     private Object registerWatch;
 
@@ -49,7 +49,7 @@ public enum RegisterContext {
     private final ClientInfo clientInfo = new ClientInfo();
 
     /**
-     * 定时扫描器
+     * Timed scanner
      */
     private Object scheduleProcessor;
 
@@ -66,29 +66,29 @@ public enum RegisterContext {
     }
 
     /**
-     * 设置注册中心可用状态 - 强制
+     * Set Registry Available Status - Mandatory
      *
-     * @param available 是否可用
+     * @param available Availability
      */
     public void setAvailable(boolean available) {
         this.isAvailable.set(available);
     }
 
     /**
-     * 设置注册中心可用状态
+     * Set the registry availability status
      *
-     * @param expect 期待值
-     * @param target 目标值
-     * @return 是否配置成功
+     * @param expect Expectation
+     * @param target Target value
+     * @return Whether the configuration is successful
      */
     public boolean compareAndSet(boolean expect, boolean target) {
         return this.isAvailable.compareAndSet(expect, target);
     }
 
     /**
-     * 注册中心是否可用
+     * Whether the registry is available
      *
-     * @return 是否可用的标识
+     * @return Whether the identity is available or not
      */
     public boolean isAvailable() {
         return isAvailable.get();
@@ -103,9 +103,9 @@ public enum RegisterContext {
     }
 
     /**
-     * 注册注册中心关闭处理器
+     * Register the registry to shut down the processor
      *
-     * @param handler 处理器
+     * @param handler Processor
      */
     public void registerCloseHandler(SingleStateCloseHandler handler) {
         if (handler == null) {
@@ -127,18 +127,18 @@ public enum RegisterContext {
     }
 
     /**
-     * 客户端信息
+     * Client information
      *
      * @since 2022-03-01
      */
     public static class ClientInfo {
         /**
-         * 服务名 通过拦截获取
+         * Service name obtained through interception
          */
         private String serviceName;
 
         /**
-         * 域名
+         * domain name
          */
         private String host;
 
@@ -148,27 +148,27 @@ public enum RegisterContext {
         private String ip;
 
         /**
-         * 端口
+         * Port
          */
         private int port;
 
         /**
-         * 服务id
+         * Service ID
          */
         private String serviceId;
 
         /**
-         * 服务元信息
+         * Service meta information
          */
         private Map<String, String> meta;
 
         /**
-         * 区域
+         * Region
          */
         private String zone;
 
         /**
-         * 实例状态 UP DOWN
+         * Instance status UP DOWN
          */
         private String status = "UN_KNOWN";
 

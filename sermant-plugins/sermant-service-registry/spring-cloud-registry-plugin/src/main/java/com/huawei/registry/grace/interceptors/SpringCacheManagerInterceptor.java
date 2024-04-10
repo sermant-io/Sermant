@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import org.springframework.cloud.loadbalancer.cache.LoadBalancerCacheManager;
 
 /**
- * 注入请求拦截器, 针对loadbalancer缓存
+ * Inject a request interceptor, against the loadbalancer cache
  *
  * @author zhouss
  * @since 2022-05-23

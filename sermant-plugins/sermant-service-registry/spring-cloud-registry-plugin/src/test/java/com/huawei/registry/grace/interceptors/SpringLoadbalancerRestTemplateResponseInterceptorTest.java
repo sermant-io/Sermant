@@ -33,16 +33,16 @@ import java.net.URI;
 import java.util.Collections;
 
 /**
- * 测试RestTemplate
+ * Test RestTemplate
  *
  * @author zhouss
  * @since 2022-07-01
  */
 public class SpringLoadbalancerRestTemplateResponseInterceptorTest extends ResponseTest {
     /**
-     * 测试rest
+     * Test rest
      *
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     @Test
     public void testRestTemplate() throws NoSuchMethodException {

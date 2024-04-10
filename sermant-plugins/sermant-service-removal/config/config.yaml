@@ -1,14 +1,24 @@
-# 离群实例摘除插件配置
+# Configuration of Outlier Instance Removal Plugin
 removal.config:
-  expireTime: 60000  # 实例调用信息过期时间。单位：毫秒
-  exceptions:         # 任务服务调用失败的异常情况
+  # Expiration time of the instance call information. Unit: milliseconds
+  expireTime: 60000
+  # Exception for service call failure
+  exceptions:
     - com.alibaba.dubbo.remoting.TimeoutException
     - org.apache.dubbo.remoting.TimeoutException
     - java.util.concurrent.TimeoutException
     - java.net.SocketTimeoutException
-  enableRemoval: false  # 离群实例摘除开关
-  recoveryTime: 30000  # 实例摘除之后的恢复时间
-  windowsTime: 1000    # 离群实例异常统计窗口大小。单位：毫秒
-  windowsNum: 10        # 离群实例异常统计窗口个数
-  rules:                # 离群实例摘除规则，scaleUpLimit：离群实例摘除上限比例。minInstanceNum：最小实例数。
+  # The outlier instance removal switch
+  enableRemoval: false
+  # The recovery time after the instance is removed
+  recoveryTime: 30000
+  # The size of the anomaly statistics window for outlier instances. Unit: milliseconds
+  windowsTime: 1000
+  # The number of anomalous statistics windows for outlier instances
+  windowsNum: 10
+  # Outlier instance removal rules，
+  # scaleUpLimit：The proportion of outlier instances, that are removed from the upper limit。
+  # minInstanceNum：Minimum number of instances。
+  # key：Service name (valid for all services if default-rule)
+  rules:
     - { key: default-rule, scaleUpLimit: 0.6, minInstanceNum: 1, errorRate: 0.6 }

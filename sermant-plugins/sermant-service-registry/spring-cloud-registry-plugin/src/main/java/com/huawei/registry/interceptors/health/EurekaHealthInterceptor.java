@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import java.util.logging.Logger;
 
 /**
- * 注册中心健康状态变更
+ * Registration Center Health Status Change
  *
  * @author zhouss
  * @since 2021-12-13
@@ -40,9 +40,9 @@ public class EurekaHealthInterceptor extends SingleStateCloseHandler {
 
     @Override
     protected void close() throws Exception {
-        // 关闭Eureka定时器
+        // Turn off the Eureka timer
         final Class<?> discoveryClientClass = Thread.currentThread().getContextClassLoader()
-            .loadClass("com.netflix.discovery.DiscoveryClient");
+                .loadClass("com.netflix.discovery.DiscoveryClient");
         discoveryClientClass.getDeclaredMethod("shutdown").invoke(target);
         LOGGER.warning("Eureka register center has been closed by user.");
     }

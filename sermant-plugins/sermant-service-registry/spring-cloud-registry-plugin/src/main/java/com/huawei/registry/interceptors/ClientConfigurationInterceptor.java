@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 /**
- * 拦截获取服务列表
+ * Intercept to get a list of services
  *
  * @author zhouss
  * @since 2021-12-13

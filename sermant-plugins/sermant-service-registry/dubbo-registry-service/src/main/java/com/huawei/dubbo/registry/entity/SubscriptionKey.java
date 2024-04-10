@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.entity;
 import java.util.Objects;
 
 /**
- * 订阅数据的key
+ * The key to the subscription data
  *
  * @author provenceee
  * @since 2021-12-23
@@ -32,24 +32,24 @@ public class SubscriptionKey extends InterfaceKey {
     private final String interfaceName;
 
     /**
-     * 构造方法
+     * Constructor
      *
      * @param appId appId
-     * @param serviceName 服务名
-     * @param interfaceName 接口名
+     * @param serviceName Service name
+     * @param interfaceName The name of the interface
      */
     public SubscriptionKey(String appId, String serviceName, String interfaceName) {
         this(appId, serviceName, interfaceName, null, null);
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
      * @param appId appId
-     * @param serviceName 服务名
-     * @param interfaceName 接口名
-     * @param group 组
-     * @param version 版本
+     * @param serviceName Service name
+     * @param interfaceName The name of the interface
+     * @param group Group
+     * @param version Version
      */
     public SubscriptionKey(String appId, String serviceName, String interfaceName, String group, String version) {
         super(group, version);

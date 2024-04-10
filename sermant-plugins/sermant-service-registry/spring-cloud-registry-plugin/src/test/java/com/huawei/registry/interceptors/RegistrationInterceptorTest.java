@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 注册测试
+ * Register for the test
  *
  * @author zhouss
  * @since 2022-09-07

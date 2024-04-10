@@ -30,19 +30,19 @@ import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 注册管理器
+ * Registration Manager
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public enum RegisterManager {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
     /**
-     * 注册中心类型 基于spi加载 Map -> 注册中心类型, 注册实现
+     * Registry Type Load Map -> registry type based on SPI, registration implementation
      */
     private final Map<RegisterType, Register> registerMap = new HashMap<>();
 
@@ -64,7 +64,7 @@ public enum RegisterManager {
     }
 
     /**
-     * 获取注册实现
+     * Get the registration implementation
      *
      * @return Register
      */
@@ -75,9 +75,9 @@ public enum RegisterManager {
     }
 
     /**
-     * 获取注册实现
+     * Get the registration implementation
      *
-     * @param registerType 注册中心类型
+     * @param registerType Registry type
      * @return Register
      */
     public Register getRegister(RegisterType registerType) {
@@ -85,7 +85,7 @@ public enum RegisterManager {
     }
 
     /**
-     * 初始化
+     * Initialize
      */
     public void start() {
         final Register register = getRegister();
@@ -95,7 +95,7 @@ public enum RegisterManager {
     }
 
     /**
-     * 停止方法
+     * Stop method
      */
     public void stop() {
         final Register register = getRegister();
@@ -105,7 +105,7 @@ public enum RegisterManager {
     }
 
     /**
-     * 注册服务
+     * Registration Services
      */
     public void register() {
         final Register register = getRegister();
@@ -115,11 +115,11 @@ public enum RegisterManager {
     }
 
     /**
-     * 获取服务列表
+     * Get a list of services
      *
-     * @param serviceId 服务ID
-     * @param <T>       实例信息
-     * @return 服务列表
+     * @param serviceId Service ID
+     * @param <T>       Instance information
+     * @return List of services
      */
     public <T extends MicroServiceInstance> List<T> getServerList(String serviceId) {
         final Register register = getRegister();
@@ -130,9 +130,9 @@ public enum RegisterManager {
     }
 
     /**
-     * 获取服务名列表
+     * Get a list of service names
      *
-     * @return 服务名列表
+     * @return A list of service names
      */
     public List<String> getServices() {
         final Register register = getRegister();

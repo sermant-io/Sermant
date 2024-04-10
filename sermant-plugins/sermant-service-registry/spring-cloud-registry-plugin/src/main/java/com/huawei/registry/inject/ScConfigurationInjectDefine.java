@@ -20,7 +20,7 @@ package com.huawei.registry.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * ServiceComb自动注册发现注入定义
+ * ServiceComb automatically registers the discovery injection definition
  *
  * @author zhouss
  * @since 2022-05-18

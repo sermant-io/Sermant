@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * MigrationRuleHandler增强类
+ * MigrationRuleHandler Enhancement Classes
  *
  * @author provenceee
  * @since 2022-01-26
@@ -29,12 +29,12 @@ public class MigrationRuleHandlerDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.registry.client.migration.MigrationRuleHandler"};
 
     private static final String INTERCEPT_CLASS
-        = "com.huawei.dubbo.registry.interceptor.MigrationRuleHandlerInterceptor";
+            = "com.huawei.dubbo.registry.interceptor.MigrationRuleHandlerInterceptor";
 
     private static final String METHOD_NAME = "doMigrate";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public MigrationRuleHandlerDeclarer() {
         super(ENHANCE_CLASS);
@@ -43,7 +43,7 @@ public class MigrationRuleHandlerDeclarer extends AbstractDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME), INTERCEPT_CLASS)
         };
     }
 }

@@ -20,28 +20,28 @@ package com.huawei.registry.entity;
 import java.util.Map;
 
 /**
- * 定义实例信息
+ * Define instance information
  *
  * @author zhouss
  * @since 2022-02-17
  */
 public interface MicroServiceInstance {
     /**
-     * 服务名
+     * Service name
      *
-     * @return 服务名
+     * @return Service name
      */
     String getServiceName();
 
     /**
-     * 域名
+     * domain name
      *
      * @return host
      */
     String getHost();
 
     /**
-     * 当前实例的IP地址
+     * The IP address of the current instance
      *
      * @return ip
      */
@@ -50,35 +50,35 @@ public interface MicroServiceInstance {
     /**
      * port
      *
-     * @return 端口
+     * @return Port
      */
     int getPort();
 
     /**
-     * 服务ID
+     * Service ID
      *
-     * @return 服务ID
+     * @return Service ID
      */
     String getServiceId();
 
     /**
-     * 实例ID
+     * Instance ID
      *
-     * @return 实例ID
+     * @return Instance ID
      */
     String getInstanceId();
 
     /**
-     * 获取实例的元数据信息
+     * Obtain the metadata information of the instance
      *
-     * @return 元数据
+     * @return Metadata
      */
     Map<String, String> getMetadata();
 
     /**
-     * 是否加密
+     * Whether it is encrypted or not
      *
-     * @return 是否加密
+     * @return Whether it is encrypted or not
      */
     boolean isSecure();
 }

@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 注册中心健康状态变更
+ * Registration Center Health Status Change
  *
  * @author zhouss
  * @since 2021-12-13
@@ -46,20 +46,21 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 仅在2.x.x以上的版本采用该方式停止
+     * This method is used only for versions 2.x.x or later
      * <p></p>
-     * 1.x.x版本直接阻止catalogServicesWatch方逻辑调用 参考类{@link ConsulWatchRequestInterceptor}
+     * Version 1.x.x directly prevents catalogServicesWatch logic calls Reference
+     * Class{@link ConsulWatchRequestInterceptor}
      */
     @Override
     protected void close() {
-        // 关闭consul心跳发送
+        // Turn off consul heartbeat sending
         final Object registerWatch = RegisterContext.INSTANCE.getRegisterWatch();
         if ((registerWatch instanceof ConsulCatalogWatch) && canStopTask(registerWatch)) {
             ConsulCatalogWatch watch = (ConsulCatalogWatch) registerWatch;
             watch.stop();
             LOGGER.warning("Consul heartbeat has been closed.");
         } else {
-            // 通过定时器的方式关闭consul心跳, 仅在1.x.x存在该场景
+            // The consul heartbeat is disabled by using a timer, which exists only in 1.x.x
             final Object scheduleProcessor = RegisterContext.INSTANCE.getScheduleProcessor();
             final Optional<Object> scheduledTasks = ReflectUtils.getFieldValue(scheduleProcessor, "scheduledTasks");
             if (!scheduledTasks.isPresent()) {
@@ -87,8 +88,9 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
             return true;
         } catch (NoSuchMethodException ex) {
             LOGGER.info(String.format(Locale.ENGLISH,
-                "Consul register center version is less than 2.x.x, it has not method named stop"
-                    + " it will be replaced by stop scheduled task of catalogServicesWatch! %s", ex.getMessage()));
+                    "Consul register center version is less than 2.x.x, it has not method named stop"
+                            + " it will be replaced by stop scheduled task of catalogServicesWatch! %s",
+                    ex.getMessage()));
         }
         return false;
     }
@@ -103,7 +105,7 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
     public ExecuteContext doAfter(ExecuteContext context) {
         final Object result = context.getResult();
         if (result != null) {
-            // 原始注册中心恢复
+            // The original registry is restored
             RegisterContext.INSTANCE.compareAndSet(false, true);
         }
         return context;
@@ -111,7 +113,7 @@ public class ConsulHealthInterceptor extends SingleStateCloseHandler {
 
     @Override
     public ExecuteContext doThrow(ExecuteContext context) {
-        // 请求注册中心失败说明注册中心已失联
+        // If the request to the registry fails, the registry has lost contact
         RegisterContext.INSTANCE.compareAndSet(true, false);
         return context;
     }

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * ServiceInstance实现
+ * ServiceInstance implementation
  *
  * @author zhouss
  * @since 2022-03-29
@@ -38,17 +38,17 @@ public class DiscoveryServiceInstance implements ServiceInstance {
     private final String id;
 
     /**
-     * 针对springCloud ServiceInstance构造器
+     * For the springCloud ServiceInstance constructor
      *
-     * @param microServiceInstance 实例信息
-     * @param serviceId            spring应用服务名
+     * @param microServiceInstance Instance information
+     * @param serviceId The name of the Spring application service
      * @since 2022-03-29
      */
     public DiscoveryServiceInstance(final MicroServiceInstance microServiceInstance, final String serviceId) {
         this.microServiceInstance = microServiceInstance;
         this.serviceId = serviceId == null ? microServiceInstance.getServiceId() : serviceId;
         this.id = String.format(Locale.ENGLISH, "%s:%s", microServiceInstance.getHost(),
-            microServiceInstance.getPort());
+                microServiceInstance.getPort());
     }
 
     @Override

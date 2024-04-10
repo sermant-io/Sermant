@@ -20,7 +20,7 @@ package com.huawei.registry.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * 开关源注入
+ * Switching source injection
  *
  * @author zhouss
  * @since 2022-05-19

@@ -18,19 +18,20 @@
 package com.huawei.registry.config;
 
 /**
- * 注册中心动态配置
+ * Dynamic configuration of the registry
  *
  * @author zhouss
  * @since 2021-12-30
  */
 public class RegisterDynamicConfig {
     /**
-     * 单例
+     * Singleton
      */
     public static final RegisterDynamicConfig INSTANCE = new RegisterDynamicConfig();
 
     /**
-     * 停用原有的注册中心开关 关联动态配置, 由用户配置下发, 默认不开启
+     * Disable the original registry switch Associated dynamic configuration, which is delivered by user configuration
+     * and is not enabled by default
      */
     private boolean needClose = false;
 
@@ -38,18 +39,18 @@ public class RegisterDynamicConfig {
     }
 
     /**
-     * 是否需要关闭原始注册中心
+     * Whether the original registry needs to be closed
      *
-     * @return 是否需要关闭的标识
+     * @return Whether a closed identity is required
      */
     public boolean isNeedCloseOriginRegisterCenter() {
         return needClose;
     }
 
     /**
-     * 设置是否需要关闭原始注册中心的标识
+     * Set whether you need to turn off the identity of the original registry
      *
-     * @param isNeedCloseOriginRegisterCenter 是否需要关闭原始注册中心的标识
+     * @param isNeedCloseOriginRegisterCenter Whether you need to turn off the identity of the original registry
      */
     public void setClose(boolean isNeedCloseOriginRegisterCenter) {
         this.needClose = isNeedCloseOriginRegisterCenter;

@@ -40,21 +40,21 @@ import java.util.Optional;
 import java.util.Random;
 
 /**
- * 优雅上下线开关
+ * Elegant on-line and off-line switches
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     /**
-     * grace配置类
+     * grace configuration class
      */
     protected final GraceConfig graceConfig;
 
     private Random random = new Random();
 
     /**
-     * 优雅上下线开关
+     * Elegant on-line and off-line switches
      *
      * @since 2022-05-17
      */
@@ -68,10 +68,10 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     }
 
     /**
-     * 构建endpoint
+     * Build endpoints
      *
-     * @param host 域名
-     * @param port 端口
+     * @param host domain name
+     * @param port Port
      * @return endpoint
      */
     protected String buildEndpoint(String host, int port) {
@@ -79,22 +79,22 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     }
 
     /**
-     * 预热信息
+     * Warm-up information
      *
-     * @param ip 实例IP
-     * @param port 实例端口
+     * @param ip IP address of the instance
+     * @param port Instance port
      */
     protected void warmMessage(String ip, int port) {
         LoggerFactory.getLogger().fine(String.format(Locale.ENGLISH, "Instance [%s:%s] is warming up!", ip, port));
     }
 
     /**
-     * 对单个实例计算权重
+     * Weights are calculated for individual instances
      *
-     * @param metadata 原信息
-     * @param weights 权重分配
-     * @param index 当前实例索引
-     * @return 当前下标实例是否预热完成
+     * @param metadata Original information
+     * @param weights Weight allocation
+     * @param index Index of the current instance
+     * @return Check whether the preheating of the current subscript instance is complete
      */
     protected boolean calculate(Map<String, String> metadata, int[] weights, int index) {
         final String warmUpWeightStr = metadata.getOrDefault(GraceConstants.WARM_KEY_WEIGHT,
@@ -113,31 +113,33 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     }
 
     /**
-     * 是否预热完成了
+     * Whether the warm-up is complete
      *
-     * @param injectTime 注入时间， 若该值为0, 则当前实例未开启预热功能, 直接返回最大权重
-     * @param warmUpTime 预热时间
-     * @return 是否预热完成
+     * @param injectTime If the injection time is 0, the preheating function is not enabled for the current instance and
+     * the maximum weight is returned
+     *
+     * @param warmUpTime Warm-up time
+     * @return Whether the warm-up is complete
      */
     private boolean isWarmed(long injectTime, long warmUpTime) {
         return injectTime == 0L || System.currentTimeMillis() - injectTime > warmUpTime;
     }
 
     /**
-     * 计算权重
+     * Calculate the weights
      *
-     * @param injectTime 预热参数注入时间
-     * @param warmUpTime 预热时间
-     * @param warmUpWeightStr 预热权重
-     * @param warmUpCurveStr 预热计算曲线值
-     * @return 权重
+     * @param injectTime Warm-up parameter injection time
+     * @param warmUpTime Warm-up time
+     * @param warmUpWeightStr Warm-up weights
+     * @param warmUpCurveStr Preheat calculates the curve value
+     * @return Weight
      */
     protected int calculateWeight(long injectTime, long warmUpTime, String warmUpWeightStr,
             String warmUpCurveStr) {
         final int warmUpWeight = Integer.parseInt(warmUpWeightStr);
         int warmUpCurve = Integer.parseInt(warmUpCurveStr);
         if (warmUpTime <= 0 || injectTime <= 0) {
-            // 未开启预热的服务默认100权重
+            // The default weight of services that do not enable prefetch is 100
             return warmUpWeight;
         }
         if (warmUpCurve < 0) {
@@ -145,20 +147,20 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
         }
         final long runtime = System.currentTimeMillis() - injectTime;
         if (runtime > 0 && runtime < warmUpTime) {
-            // 预热未结束
+            // The warm-up is not over
             return calculateWeight(runtime, warmUpTime, warmUpCurve, warmUpWeight);
         }
         return Math.max(0, warmUpWeight);
     }
 
     /**
-     * 计算权重
+     * Calculate the weights
      *
-     * @param runtime 运行时间（从启动开始）
-     * @param warmUpTime 预热时间
-     * @param warmUpCurve 预热计算曲线
-     * @param warmUpWeight 预热权重
-     * @return 权重
+     * @param runtime Runtime (from startup)
+     * @param warmUpTime Warm-up time
+     * @param warmUpCurve Preheating a calculation curve
+     * @param warmUpWeight Warm-up weights
+     * @return Weight
      */
     protected int calculateWeight(double runtime, double warmUpTime, int warmUpCurve, int warmUpWeight) {
         final int round = (int) Math.round(Math.pow(runtime / warmUpTime, warmUpCurve) * warmUpWeight);
@@ -166,12 +168,12 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     }
 
     /**
-     * 选择实例
+     * Select an instance
      *
-     * @param totalWeight 总权重
-     * @param weights 基于所有实例的权重分配
-     * @param serverList 服务实例列表
-     * @return 确定实例
+     * @param totalWeight Total weight
+     * @param weights Weight allocation based on all instances
+     * @param serverList List of service instances
+     * @return Identify the instance
      */
     protected Optional<Object> chooseServer(int totalWeight, int[] weights, List<?> serverList) {
         if (totalWeight <= 0) {
@@ -188,9 +190,9 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
     }
 
     /**
-     * 获取本地ip的请求头
+     * Obtain the request header of the local IP address
      *
-     * @return 请求头
+     * @return Request header
      */
     protected Map<String, List<String>> getGraceIpHeaders() {
         String address = RegisterContext.INSTANCE.getClientInfo().getIp() + ":" + graceConfig.getHttpServerPort();

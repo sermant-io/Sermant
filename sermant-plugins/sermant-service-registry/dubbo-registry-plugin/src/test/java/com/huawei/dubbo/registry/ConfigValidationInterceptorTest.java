@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试ConfigValidationInterceptor
+ * Test ConfigValidationInterceptor
  *
  * @author provenceee
  * @since 2022-02-14
@@ -42,7 +42,7 @@ public class ConfigValidationInterceptorTest {
     private final ExecuteContext context;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ConfigValidationInterceptorTest() {
         interceptor = new ConfigValidationInterceptor();
@@ -51,38 +51,38 @@ public class ConfigValidationInterceptorTest {
     }
 
     /**
-     * 测试ConfigValidationUtils
+     * Test ConfigValidationUtils
      *
      * @see org.apache.dubbo.config.utils.ConfigValidationUtils
      */
     @Test
     public void testConfigValidationUtils() {
-        // 测试非URL
+        // Test non-URLs
         arguments[0] = TestConstant.BAR;
         interceptor.before(context);
         Assert.assertEquals(TestConstant.BAR, context.getArguments()[0]);
 
-        // 测试非sc协议
+        // Testing non SC protocols
         arguments[0] = URL.valueOf("dubbo://localhost:8080").addParameter(REGISTRY_TYPE_KEY_1, TestConstant.BAR);
         interceptor.before(context);
         Assert.assertEquals(TestConstant.BAR, ((URL) context.getArguments()[0]).getParameter(REGISTRY_TYPE_KEY_1));
 
-        // 测试sc协议parameters为null的情况
+        // Test if the parameters of the SC protocol are null
         arguments[0] = URL.valueOf(TestConstant.SC_ADDRESS);
         interceptor.before(context);
         Assert.assertEquals(0, ((URL) context.getArguments()[0]).getParameters().size());
 
-        // 测试sc协议parameters有registry-type的情况
+        // Testing the presence of registry type in the parameters of the SC protocol
         arguments[0] = URL.valueOf(TestConstant.SC_ADDRESS).addParameter(REGISTRY_TYPE_KEY_1, TestConstant.BAR);
         interceptor.before(context);
         Assert.assertNull(((URL) context.getArguments()[0]).getParameter(REGISTRY_TYPE_KEY_1));
 
-        // 测试sc协议parameters有registry.type的情况
+        // Testing the presence of registry.type in the parameters of the SC protocol
         arguments[0] = URL.valueOf(TestConstant.SC_ADDRESS).addParameter(REGISTRY_TYPE_KEY_2, TestConstant.BAR);
         interceptor.before(context);
         Assert.assertNull(((URL) context.getArguments()[0]).getParameter(REGISTRY_TYPE_KEY_2));
 
-        // 测试sc协议parameters有registry-type、registry.type的情况
+        // Test whether the parameters of the SC protocol have a registry type and registry.type
         arguments[0] = URL.valueOf(TestConstant.SC_ADDRESS).addParameter(REGISTRY_TYPE_KEY_1, TestConstant.BAR)
             .addParameter(REGISTRY_TYPE_KEY_2, TestConstant.BAR);
         interceptor.before(context);

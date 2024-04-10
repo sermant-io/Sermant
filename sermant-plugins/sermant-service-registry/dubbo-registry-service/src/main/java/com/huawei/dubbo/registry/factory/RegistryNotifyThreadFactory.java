@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.factory;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 创建注册监听线程工厂类
+ * Create a registered listener thread factory class
  *
  * @author chengyouling
  * @since 2022-11-27
@@ -28,9 +28,9 @@ public class RegistryNotifyThreadFactory implements ThreadFactory {
     private final String threadName;
 
     /**
-     * 流控线程工厂
+     * Flow-throttling thread factory
      *
-     * @param threadName 线程名称
+     * @param threadName The name of the thread
      */
     public RegistryNotifyThreadFactory(String threadName) {
         this.threadName = threadName;

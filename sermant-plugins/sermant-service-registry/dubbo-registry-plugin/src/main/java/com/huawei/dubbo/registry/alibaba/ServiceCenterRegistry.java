@@ -24,7 +24,7 @@ import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.support.FailbackRegistry;
 
 /**
- * sc注册
+ * SC Registration
  *
  * @author provenceee
  * @since 2021-12-15
@@ -33,9 +33,9 @@ public class ServiceCenterRegistry extends FailbackRegistry {
     private final RegistryService registryService;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param url 注册url
+     * @param url Registration URL
      */
     public ServiceCenterRegistry(com.alibaba.dubbo.common.URL url) {
         super(url);

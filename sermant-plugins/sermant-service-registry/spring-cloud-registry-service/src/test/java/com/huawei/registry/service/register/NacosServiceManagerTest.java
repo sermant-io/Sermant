@@ -36,7 +36,7 @@ import com.huawei.registry.context.RegisterContext;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 测试管理器
+ * Test Manager
  *
  * @author chengyouling
  * @since 2022-11-10

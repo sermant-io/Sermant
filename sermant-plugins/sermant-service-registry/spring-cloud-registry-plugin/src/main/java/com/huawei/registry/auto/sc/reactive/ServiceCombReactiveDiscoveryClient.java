@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 支持SpringCloud高版本ReactiveClient
+ * Support for higher versions of ReactiveClient in SpringCloud
  *
  * @author zhouss
  * @since 2022-06-07

@@ -25,14 +25,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * Spring缓存管理器拦截
+ * Spring Cache Manager interception
  *
  * @author zhouss
  * @since 2022-05-23
  */
 public class SpringCacheManagerDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * The fully qualified name of the enhanced class
      */
     private static final String[] CACHE_ENHANCE_CLASS = {
         "org.springframework.cloud.loadbalancer.cache.CaffeineBasedLoadBalancerCacheManager",
@@ -40,12 +40,12 @@ public class SpringCacheManagerDeclarer extends AbstractPluginDeclarer {
     };
 
     /**
-     * 参数数量
+     * Number of parameters
      */
     private static final int CONSTRUCTOR_COUNT = 2;
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = SpringCacheManagerInterceptor.class.getCanonicalName();
 

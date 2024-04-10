@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 测试公共工具类
+ * Test the public utility class
  *
  * @author zhouss
  * @since 2022-06-29
@@ -39,7 +39,7 @@ public class CommonUtilsTest {
     private static final int TEST_PORT = 8991;
 
     /**
-     * 睡眠测试
+     * Sleep test
      */
     @Test
     public void testSleep() {
@@ -47,12 +47,12 @@ public class CommonUtilsTest {
         CommonUtils.sleep(SLEEP_TIME);
         final long end = System.currentTimeMillis();
 
-        // 存在误差, 以前后20ms为误差值
+        // There is an error, and the error value is 20 ms before and after
         assertTrue((end - start < SLEEP_TIME + DIFF) || (end - start > SLEEP_TIME - DIFF));
     }
 
     /**
-     * 测试消费者消费能力
+     * Test consumer spending power
      */
     @Test
     public void testConsumer() {
@@ -62,7 +62,7 @@ public class CommonUtilsTest {
     }
 
     /**
-     * 测试从endpoint获取信息
+     * The test gets information from the endpoint
      */
     @Test
     public void testGetByEndpoint() {

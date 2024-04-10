@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * ApplicationConfig增强类
+ * ApplicationConfig Enhancement Classes
  *
  * @author provenceee
  * @since 2021-11-24
@@ -34,7 +34,7 @@ public class ApplicationConfigDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "setName";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigDeclarer() {
         super(ENHANCE_CLASS);

@@ -26,22 +26,24 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * springcloud预热拦截，通过拦截选择服务的方法, 执行预热逻辑进行处理 当前拦截器仅对SpringCloud loadbalancer生效
+ * Spring cloud warm-up interception, by intercepting the method of selecting a service, executing the warm-up logic for
+ * processing.
+ * Currently, the interceptor takes effect only for SpringCloud loadbalancer
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class SpringLoadbalancerWarmUpDeclarer extends AbstractPluginDeclarer {
     /**
-     * 负载均衡增强
+     * Load balancing enhancements
      */
     private static final String[] ENHANCE_CLASSES = {
-        "org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer",
-        "org.springframework.cloud.loadbalancer.core.RandomLoadBalancer"
+            "org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer",
+            "org.springframework.cloud.loadbalancer.core.RandomLoadBalancer"
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = SpringLoadbalancerWarmUpInterceptor.class.getCanonicalName();
 
@@ -52,7 +54,7 @@ public class SpringLoadbalancerWarmUpDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        // 插件开始加载时间
+        // Plugin start load time
         GraceContext.INSTANCE.setStartTime(System.currentTimeMillis());
         return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameEquals("getInstanceResponse")

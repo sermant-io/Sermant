@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 反射测试
+ * Reflex test
  *
  * @author provenceee
  * @since 2022-02-09
@@ -47,16 +47,16 @@ public class ReflectUtilsTest {
     private static final String DUBBO_PROTOCOL = "dubbo";
 
     /**
-     * 测试加载Alibaba dubbo接口实现类
+     * Test loading Alibaba Dubbo interface implementation class
      */
     @Test
     public void testAlibabaDefineClass() {
-        // 测试第一次加载ServiceCenterRegistryFactory
+        // Test loading ServiceCenterRegistryFactory for the first time
         Class<?> clazz =
             ReflectUtils.defineClass("com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory").orElse(null);
         Assert.assertEquals(ServiceCenterRegistryFactory.class, clazz);
 
-        // 测试第二次加载ServiceCenterRegistryFactory
+        // Test loading ServiceCenterRegistryFactory for the second time
         Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.registry.alibaba.ServiceCenterRegistryFactory")
             .orElse(null);
         Assert.assertEquals(ServiceCenterRegistryFactory.class, clazz1);
@@ -66,28 +66,28 @@ public class ReflectUtilsTest {
             .orElse(null);
         Assert.assertEquals(ServiceCenterRegistry.class, clazz2);
 
-        // 测试第二次加载ServiceCenterRegistry
+        // Test loading ServiceCenterRegistry for the second time
         Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.registry.alibaba.ServiceCenterRegistry")
             .orElse(null);
         Assert.assertEquals(ServiceCenterRegistry.class, clazz3);
     }
 
     /**
-     * 测试Alibaba RegistryConfig
+     * Test Alibaba RegistryConfig
      *
      * @see com.alibaba.dubbo.config.RegistryConfig
      */
     @Test
     public void testAlibabaRegistryConfig() {
-        // 测试构造方法
+        // Test Constructor
         RegistryConfig registryConfig = ReflectUtils.newRegistryConfig(RegistryConfig.class).orElse(null);
         Assert.assertNotNull(registryConfig);
         Assert.assertEquals(TestConstant.SC_ADDRESS, registryConfig.getAddress());
 
-        // 没有isValid方法，返回true
+        // There is no isValid method, which returns true
         Assert.assertTrue(ReflectUtils.isValid(registryConfig));
 
-        // 测试getProtocol方法
+        // Test the getProtocol method
         registryConfig.setProtocol(Constant.SC_REGISTRY_PROTOCOL);
         Assert.assertEquals(Constant.SC_REGISTRY_PROTOCOL, ReflectUtils.getProtocol(registryConfig));
 
@@ -97,7 +97,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Alibaba URL
+     * Test Alibaba URL
      *
      * @see com.alibaba.dubbo.common.URL
      */
@@ -110,7 +110,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Alibaba ApplicationConfig
+     * Test Alibaba ApplicationConfig
      *
      * @see com.alibaba.dubbo.config.ApplicationConfig
      */
@@ -118,12 +118,12 @@ public class ReflectUtilsTest {
     public void testAlibabaApplicationConfig() {
         ApplicationConfig applicationConfig = new ApplicationConfig(TestConstant.FOO);
 
-        // 测试getName方法
+        // Test the getName method
         Assert.assertEquals(TestConstant.FOO, ReflectUtils.getName(applicationConfig));
     }
 
     /**
-     * 测试Alibaba AbstractInterfaceConfig
+     * Test Alibaba AbstractInterfaceConfig
      *
      * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
      */
@@ -138,7 +138,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Alibaba ExtensionLoader
+     * Test Alibaba ExtensionLoader
      *
      * @see com.alibaba.dubbo.common.extension.ExtensionLoader
      */
@@ -146,12 +146,12 @@ public class ReflectUtilsTest {
     public void testAlibabaExtensionLoader() {
         ExtensionLoader<RegistryFactory> loader = ExtensionLoader.getExtensionLoader(RegistryFactory.class);
 
-        // 初始化, 其他UT可能已经加载，先移除ServiceCenterRegistryFactory
+        // Initialization, other UTs may have already loaded, remove ServiceCenterRegistryFactory first
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(loader);
         cachedClasses.remove("sc", ServiceCenterRegistryFactory.class);
         Assert.assertEquals(0, cachedClasses.size());
 
-        // 加载ServiceCenterRegistryFactory
+        // load ServiceCenterRegistryFactory
         cachedClasses.put(Constant.SC_REGISTRY_PROTOCOL, ServiceCenterRegistryFactory.class);
         Assert.assertEquals(1, ReflectUtils.getExtensionClasses(loader).size());
         Assert.assertEquals(ServiceCenterRegistryFactory.class,
@@ -159,7 +159,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Alibaba NotifyListener
+     * Test Alibaba NotifyListener
      *
      * @see com.alibaba.dubbo.common.URL
      * @see com.alibaba.dubbo.registry.NotifyListener
@@ -173,76 +173,76 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试加载Apache dubbo接口实现类
+     * Test loading the Apache dubbo interface implementation class
      */
     @Test
     public void testApacheDefineClass() {
-        // 测试第一次加载ServiceCenterRegistryFactory
+        // Test loading ServiceCenterRegistryFactory for the first time
         Class<?> clazz = ReflectUtils.defineClass("com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory")
             .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class, clazz);
 
-        // 测试第二次加载ServiceCenterRegistryFactory
+        // Test loading ServiceCenterRegistryFactory for the second time
         Class<?> clazz1 = ReflectUtils.defineClass("com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory")
             .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class, clazz1);
 
-        // 测试第一次加载ServiceCenterRegistry
+        // Test loading ServiceCenterRegistry for the first time
         Class<?> clazz2 = ReflectUtils.defineClass("com.huawei.dubbo.registry.apache.ServiceCenterRegistry")
             .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.registry.apache.ServiceCenterRegistry.class, clazz2);
 
-        // 测试第二次加载ServiceCenterRegistry
+        // Test loading ServiceCenterRegistry for the second time
         Class<?> clazz3 = ReflectUtils.defineClass("com.huawei.dubbo.registry.apache.ServiceCenterRegistry")
             .orElse(null);
         Assert.assertEquals(com.huawei.dubbo.registry.apache.ServiceCenterRegistry.class, clazz3);
     }
 
     /**
-     * 测试Apache RegistryConfig
+     * Test Apache RegistryConfig
      *
      * @see org.apache.dubbo.config.RegistryConfig
      */
     @Test
     public void testApacheRegistryConfig() {
-        // 测试构造方法
+        // Test Constructor
         org.apache.dubbo.config.RegistryConfig registryConfig = ReflectUtils
             .newRegistryConfig(org.apache.dubbo.config.RegistryConfig.class).orElse(null);
         Assert.assertNotNull(registryConfig);
         Assert.assertEquals(TestConstant.SC_ADDRESS, registryConfig.getAddress());
 
-        // 测试isValid方法
+        // The test is theValid method
         Assert.assertTrue(ReflectUtils.isValid(registryConfig));
         Assert.assertFalse(ReflectUtils.isValid(new org.apache.dubbo.config.RegistryConfig()));
 
-        // 测试getProtocol方法
+        // The test is getProtocol method
         registryConfig.setProtocol(Constant.SC_REGISTRY_PROTOCOL);
         Assert.assertEquals(Constant.SC_REGISTRY_PROTOCOL, ReflectUtils.getProtocol(registryConfig));
 
-        // 测试setId、getId方法
+        // The test is setId and getId method
         ReflectUtils.setId(registryConfig, Constant.SC_REGISTRY_PROTOCOL);
         Assert.assertEquals(Constant.SC_REGISTRY_PROTOCOL, ReflectUtils.getId(registryConfig));
 
-        // 测试setPrefix方法
+        // The test is setPrefix method
         ReflectUtils.setPrefix(registryConfig, "dubbo.registries.");
         Assert.assertEquals("dubbo.registries.", registryConfig.getPrefix());
     }
 
     /**
-     * 测试Apache URL
+     * Test Apache URL
      *
      * @see org.apache.dubbo.common.URL
      */
     @Test
     public void testApacheUrl() {
-        // 缓存url class
+        // Cache url class
         DubboCache.INSTANCE.setUrlClass(org.apache.dubbo.common.URL.class);
         Assert.assertEquals(org.apache.dubbo.common.URL.class, DubboCache.INSTANCE.getUrlClass());
         testUrl();
     }
 
     /**
-     * 测试Apache ApplicationConfig
+     * Test Apache ApplicationConfig
      *
      * @see org.apache.dubbo.config.ApplicationConfig
      */
@@ -251,13 +251,13 @@ public class ReflectUtilsTest {
         org.apache.dubbo.config.ApplicationConfig applicationConfig
             = new org.apache.dubbo.config.ApplicationConfig(TestConstant.FOO);
 
-        // 测试getName方法
+        // Test the getName method
         Assert.assertEquals(TestConstant.FOO, ReflectUtils.getName(applicationConfig));
 
     }
 
     /**
-     * 测试Apache AbstractInterfaceConfig
+     * Test Apache AbstractInterfaceConfig
      *
      * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
@@ -272,7 +272,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Apache ExtensionLoader
+     * Test Apache ExtensionLoader
      *
      * @see org.apache.dubbo.common.extension.ExtensionLoader
      */
@@ -282,12 +282,12 @@ public class ReflectUtilsTest {
             org.apache.dubbo.common.extension.ExtensionLoader
                 .getExtensionLoader(org.apache.dubbo.registry.RegistryFactory.class);
 
-        // 初始化, 其他UT可能已经加载，先移除ServiceCenterRegistryFactory
+        // Initialization, other UTs may have already loaded, remove ServiceCenterRegistryFactory first
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(loader);
         cachedClasses.remove("sc", com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class);
         Assert.assertEquals(1, cachedClasses.size());
 
-        // 加载ServiceCenterRegistryFactory
+        // Load ServiceCenterRegistryFactory
         cachedClasses
             .put(Constant.SC_REGISTRY_PROTOCOL, com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class);
         Assert.assertEquals(2, ReflectUtils.getExtensionClasses(loader).size());
@@ -296,7 +296,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试Apache NotifyListener
+     * Test Apache NotifyListener
      *
      * @see org.apache.dubbo.common.URL
      * @see org.apache.dubbo.registry.NotifyListener
@@ -310,7 +310,7 @@ public class ReflectUtilsTest {
     }
 
     private void testUrl() {
-        // 测试valueOf方法
+        // Test the valueOf method
         Object url = ReflectUtils.valueOf("dubbo://localhost:8080/com.huawei.foo.BarTest?group=bar&version=0.0.1");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -325,7 +325,7 @@ public class ReflectUtilsTest {
         url = ReflectUtils.addParameters(url, Collections.singletonMap("interface", "interface"));
         Assert.assertEquals("interface", ReflectUtils.getServiceInterface(url));
 
-        // 测试setHost方法
+        // Test the setHost method
         url = ReflectUtils.setHost(url, "localhost1");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -335,7 +335,7 @@ public class ReflectUtilsTest {
         Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
         Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
-        // 测试setAddress方法
+        // Test the setAddress method
         url = ReflectUtils.setAddress(url, "localhost2:8081");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -345,7 +345,7 @@ public class ReflectUtilsTest {
         Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
         Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
-        // 测试setPath方法
+        // Test the setPath method
         url = ReflectUtils.setPath(url, "com.huawei.foo.FooTest");
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -355,7 +355,7 @@ public class ReflectUtilsTest {
         Assert.assertEquals("bar", ReflectUtils.getParameters(url).get("group"));
         Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
-        // 测试removeParameters方法
+        // Test the removeParameters method
         url = ReflectUtils.removeParameters(url, Collections.singletonList("group"));
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -365,7 +365,7 @@ public class ReflectUtilsTest {
         Assert.assertNull(ReflectUtils.getParameters(url).get("group"));
         Assert.assertEquals("0.0.1", ReflectUtils.getParameters(url).get("version"));
 
-        // 测试addParameters方法
+        // Test the addParameters method
         url = ReflectUtils.addParameters(url, Collections.singletonMap("group", "foo"));
         Assert.assertNotNull(url);
         Assert.assertEquals(DUBBO_PROTOCOL, ReflectUtils.getProtocol(url));
@@ -377,7 +377,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * NotifyListener测试类
+     * NotifyListener Test class
      *
      * @since 2022-02-09
      */
@@ -395,7 +395,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * NotifyListener测试类
+     * NotifyListener Test class
      *
      * @since 2022-02-09
      */

@@ -22,83 +22,83 @@ import com.huawei.registry.entity.MicroServiceInstance;
 import java.util.List;
 
 /**
- * 注册
+ * Register
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public interface Register {
     /**
-     * 服务启动状态
+     * Service startup status
      */
     String UP = "UP";
 
     /**
-     * 服务关闭状态
+     * Service shutdown status
      */
     String DOWN = "DOWN";
 
     /**
-     * 未知状态
+     * Unknown status
      */
     String UN_KNOWN = "UN_KNOWN";
 
     /**
-     * 注册初始化
+     * Registration initialization
      */
     void start();
 
     /**
-     * 停止方法
+     * Stop method
      */
     void stop();
 
     /**
-     * 拦截原spring的注册方法
+     * Intercept the registration method of the original spring
      */
     void register();
 
     /**
-     * 替换服务列表 基于DiscoveryClient拦截
+     * Replace the service list based on DiscoveryClient interception
      *
-     * @param <T> 实例信息
-     * @param serviceId 服务ID
-     * @return 服务列表
+     * @param <T> Instance information
+     * @param serviceId Service ID
+     * @return List of services
      */
     <T extends MicroServiceInstance> List<T> getInstanceList(String serviceId);
 
     /**
-     * 获取服务名列表
+     * Get a list of service names
      *
-     * @return 服务名列表
+     * @return List of service names
      */
     List<String> getServices();
 
     /**
-     * 注册中心类型
+     * Registry type
      *
      * @return register type
      */
     RegisterType registerType();
 
     /**
-     * 获取当前注册中心的状态
+     * Get the status of the current registry
      *
      * @return UP DOWN
      */
     String getRegisterCenterStatus();
 
     /**
-     * 获取当前实例的状态
+     * Obtain the status of the current instance
      *
-     * @return 实例状态
+     * @return Instance status
      */
     String getInstanceStatus();
 
     /**
-     * 更新实例状态
+     * Update the instance status
      *
-     * @param status 目标状态
+     * @param status Target status
      */
     void updateInstanceStatus(String status);
 }

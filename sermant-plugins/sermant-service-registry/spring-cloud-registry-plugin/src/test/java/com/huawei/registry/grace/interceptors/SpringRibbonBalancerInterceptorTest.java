@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 /**
- * 负载均衡测试
+ * Load balancing test
  *
  * @author zhouss
  * @since 2022-09-06

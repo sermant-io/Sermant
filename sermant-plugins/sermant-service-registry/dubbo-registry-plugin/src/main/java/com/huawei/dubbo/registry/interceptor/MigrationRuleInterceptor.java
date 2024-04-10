@@ -25,7 +25,7 @@ import org.apache.dubbo.rpc.cluster.support.migration.MigrationRule;
 import org.apache.dubbo.rpc.cluster.support.migration.MigrationStep;
 
 /**
- * 增强MigrationRule类的parse方法
+ * Enhance the parse method of the MigrationRule class
  *
  * @author provenceee
  * @since 2022-01-26
@@ -34,7 +34,8 @@ public class MigrationRuleInterceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) {
         if (Constant.SC_INIT_MIGRATION_RULE.equals(context.getArguments()[0])) {
-            // 2.7.10-2.7.15，如果规则为scInit，则把MigrationRule设置为FORCE_INTERFACE，以屏蔽sc应用级注册
+            // 2.7.10-2.7.15, if the rule is scInit, set the MigrationRule to FORCE-INTERFACE to block sc application
+            // level registration
             MigrationRule migrationRule = new MigrationRule();
             migrationRule.setStep(MigrationStep.FORCE_INTERFACE);
             context.skip(migrationRule);

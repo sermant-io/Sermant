@@ -29,7 +29,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 反注册状态判断测试
+ * Anti-registration status judgment test
  *
  * @author zhouss
  * @since 2022-12-20

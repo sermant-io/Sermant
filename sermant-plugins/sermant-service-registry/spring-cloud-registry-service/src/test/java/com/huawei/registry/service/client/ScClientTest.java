@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 /**
- * sc客户端测试
+ * SC client test
  *
  * @author zhouss
  * @since 2022-01-05
@@ -39,7 +39,7 @@ public class ScClientTest extends BaseTest {
     private ScClient scClient;
 
     /**
-     * 前置
+     * Front-loaded
      */
     @Before
     public void before() {
@@ -52,11 +52,11 @@ public class ScClientTest extends BaseTest {
     }
 
     /**
-     * 构建实例信息
+     * Build instance information
      *
-     * @throws NoSuchMethodException     无该方法抛出
-     * @throws InvocationTargetException 调用异常时抛出
-     * @throws IllegalAccessException    无法拿到目标对象抛出
+     * @throws NoSuchMethodException     None of the methods are thrown
+     * @throws InvocationTargetException Thrown when an exception is invoked
+     * @throws IllegalAccessException    Unable to reach the target object and throw
      */
     @Test
     public void buildMicro() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {

@@ -22,7 +22,7 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 拦截ConsulCatalogWatch,用于后续关闭服务
+ * Intercept Consul Catalog Watch for later service shutdowns
  *
  * @author zhouss
  * @since 2021-12-31

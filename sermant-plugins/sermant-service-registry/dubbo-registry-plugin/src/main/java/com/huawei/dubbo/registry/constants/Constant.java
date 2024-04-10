@@ -17,44 +17,44 @@
 package com.huawei.dubbo.registry.constants;
 
 /**
- * 常量
+ * Constant
  *
  * @author provenceee
  * @since 2022-01-27
  */
 public class Constant {
     /**
-     * sc注册协议名
+     * SC registration protocol name
      */
     public static final String SC_REGISTRY_PROTOCOL = "sc";
 
     /**
-     * nacos注册协议名
+     * NACOS registers the name of the protocol
      */
     public static final String NACOS_REGISTRY_PROTOCOL = "nacos";
 
     /**
-     * sc注册ip
+     * SC registry ip
      */
     public static final String SC_REGISTRY_IP = "localhost:30100";
 
     /**
-     * 协议分隔符
+     * Protocol delimiter
      */
     public static final String PROTOCOL_SEPARATION = "://";
 
     /**
-     * sc初始化迁移规则
+     * SC initializes the migration rule
      */
     public static final String SC_INIT_MIGRATION_RULE = "scInit";
 
     /**
-     * sc注册地址
+     * SC registry address
      */
     public static final String SC_REGISTRY_ADDRESS = SC_REGISTRY_PROTOCOL + PROTOCOL_SEPARATION + SC_REGISTRY_IP;
 
     /**
-     * 设置协议方法名
+     * Method name for setting protocol
      */
     public static final String SET_PROTOCOL_METHOD_NAME = "setProtocol";
 

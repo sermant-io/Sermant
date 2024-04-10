@@ -28,24 +28,24 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * Response测试
+ * Response Test
  *
  * @author zhouss
  * @since 2022-07-01
  */
 public class ResponseTest {
     /**
-     * 测试地址
+     * Test address
      */
     public static final String SHUTDOWN_ENDPOINT = "localhost:8911";
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void init() {

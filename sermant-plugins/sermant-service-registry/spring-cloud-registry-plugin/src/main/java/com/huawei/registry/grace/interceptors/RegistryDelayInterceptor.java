@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 注册延迟拦截
+ * Register for Delay Interception
  *
  * @author zhouss
  * @since 2022-05-17
@@ -53,7 +53,7 @@ public class RegistryDelayInterceptor extends GraceSwitchInterceptor {
 
     @Override
     protected ExecuteContext doAfter(ExecuteContext context) {
-        // 记录注册完成时间
+        // Record when the registration was completed
         final long currentTimeMillis = System.currentTimeMillis();
         GraceContext.INSTANCE.setRegistryFinishTime(currentTimeMillis);
         final Object object = context.getObject();

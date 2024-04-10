@@ -33,7 +33,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
 /**
- * 针对RestTemplate拦截
+ * Interception for RestTemplate
  *
  * @author zhouss
  * @since 2022-05-23
@@ -56,11 +56,11 @@ public class SpringLoadbalancerRestTemplateResponseInterceptor extends GraceSwit
         }
         ClientHttpResponse response = (ClientHttpResponse) result;
         GraceContext.INSTANCE.getGraceShutDownManager()
-            .addShutdownEndpoints(response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
+                .addShutdownEndpoints(response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT));
         HttpRequest request = (HttpRequest) argument;
         final String host = request.getURI().getHost();
         RefreshUtils.refreshTargetServiceInstances(host,
-            response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
+                response.getHeaders().get(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME));
         return context;
     }
 

@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 注册监听服务
+ * Sign up for the listening service
  *
  * @since 2022-10-25
  */
@@ -47,18 +47,18 @@ public abstract class RegistryNotifier {
     private final AtomicInteger executeTime = new AtomicInteger(0);
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param delayTime 延迟时间
+     * @param delayTime Delay time
      */
     public RegistryNotifier(long delayTime) {
         this.delayTime = delayTime;
     }
 
     /**
-     * 监听下游实例
+     * Listen to downstream instances
      *
-     * @param rawAddress 地址
+     * @param rawAddress Address
      */
     public synchronized void notify(Object rawAddress) {
         this.rawAddresses = rawAddress;
@@ -77,14 +77,14 @@ public abstract class RegistryNotifier {
     }
 
     /**
-     * 监听实例
+     * Listen to the instance
      *
-     * @param rawAddresses 地址
+     * @param rawAddresses Address
      */
     protected abstract void doNotify(Object rawAddresses);
 
     /**
-     * 监听任务
+     * Listen to tasks
      *
      * @since 2022-10-25
      */
@@ -93,10 +93,10 @@ public abstract class RegistryNotifier {
         private final long time;
 
         /**
-         * 构造方法
+         * Constructor
          *
-         * @param listener 监听
-         * @param time 时间
+         * @param listener Listening
+         * @param time Time
          */
         public NotificationTask(RegistryNotifier listener, long time) {
             this.listener = listener;

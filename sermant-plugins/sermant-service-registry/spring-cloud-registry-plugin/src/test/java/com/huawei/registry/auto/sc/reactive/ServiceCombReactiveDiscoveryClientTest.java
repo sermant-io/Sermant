@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * client测试
+ * client test
  *
  * @author zhouss
  * @since 2022-09-06
@@ -70,7 +70,7 @@ public class ServiceCombReactiveDiscoveryClientTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
      * @return MicroServiceInstance
      */
@@ -119,7 +119,7 @@ public class ServiceCombReactiveDiscoveryClientTest {
     }
 
     /**
-     * 测试用
+     * For test
      *
      * @since 2022-09-06
      */

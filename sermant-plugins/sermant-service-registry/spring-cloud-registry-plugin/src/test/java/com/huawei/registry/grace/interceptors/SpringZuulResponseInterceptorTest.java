@@ -33,16 +33,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 测试网关zuul
+ * Test the gateway zuul
  *
  * @author zhouss
  * @since 2022-07-01
  */
 public class SpringZuulResponseInterceptorTest extends ResponseTest {
     /**
-     * 测试url
+     * Test URLs
      *
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     @Test
     public void testZuul() throws NoSuchMethodException {

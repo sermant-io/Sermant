@@ -30,7 +30,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.huawei.dubbo.registry.service.RegistryNotifier;
 
 /**
- * 测试RegistryNotifier
+ * Test RegistryNotifier
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -38,9 +38,9 @@ import com.huawei.dubbo.registry.service.RegistryNotifier;
 public class RegistryNotifierTest {
 
     /**
-     * 测试构建NamingService
+     * Test build NamingService
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */

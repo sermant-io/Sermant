@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 拦截zuul请求
+ * Intercept zuul requests
  *
  * @author zhouss
  * @since 2022-05-23

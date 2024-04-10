@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * ScServer测试
+ * ScServer Test
  *
  * @author chengyouling
  * @since 2023-01-10
@@ -40,10 +40,10 @@ public class ScServerTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param port 端口
-     * @return 实例
+     * @param port Port
+     * @return Instance
      */
     public MicroServiceInstance buildInstance(int port, boolean secure) {
         return new MicroServiceInstance() {

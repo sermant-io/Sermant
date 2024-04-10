@@ -20,16 +20,16 @@ package com.huawei.registry.auto.sc;
 import com.huawei.registry.entity.MicroServiceInstance;
 
 /**
- * ServiceComb服务信息
+ * ServiceComb service information
  *
  * @author zhouss
  * @since 2022-05-18
  */
 public class ServiceCombServiceInstance extends ServiceCombRegistration {
     /**
-     * 构造器
+     * Constructor
      *
-     * @param microServiceInstance 实例
+     * @param microServiceInstance Instance
      */
     public ServiceCombServiceInstance(MicroServiceInstance microServiceInstance) {
         super(microServiceInstance);

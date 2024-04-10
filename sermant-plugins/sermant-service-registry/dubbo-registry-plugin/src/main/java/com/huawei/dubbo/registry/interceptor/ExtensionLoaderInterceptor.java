@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 增强ExtensionLoader类的createExtension方法
+ * Enhance the createExtension method of the ExtensionLoader class
  *
  * @author provenceee
  * @since 2022-02-10
@@ -49,7 +49,7 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
     private static final Map<String, String> REGISTRY_CLASS_NAME = new HashMap<>();
 
     private static RegisterServiceCommonConfig commonConfig =
-        PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
+            PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class);
 
     static {
         REGISTRY_CLASS_NAME.put("apache-sc", "com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory");
@@ -59,23 +59,24 @@ public class ExtensionLoaderInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 由于plugin不能直接new宿主的spi实现类，所以只能拦截宿主加载spi的方法，手动new出来给宿主
+     * Since plugin cannot directly instantiate the host's SPI implementation class, it can only intercept the host's
+     * method of loading SPI and manually instantiate it for the host
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     @Override
     public ExecuteContext before(ExecuteContext context) {
         String name = (String) context.getArguments()[0];
         if (!Constant.SC_REGISTRY_PROTOCOL.equals(name)) {
-            // 如果不是sc/nacos的spi，直接return
+            // If it is not the SPI of SC/NACOS, return it directly
             return context;
         }
         Class<?> type = (Class<?>) context.getMemberFieldValue(TYPE_FIELD_NAME);
         String typeName = type.getName();
         Optional<Class<?>> factoryClass;
 
-        // 只处理类型为RegistryFactory的spi
+        // Only handle spi of type RegistryFactory
         if (APACHE_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {
             factoryClass = ReflectUtils.defineClass(REGISTRY_CLASS_NAME.get(buildKey(APACHE_PREFIX, name)));
         } else if (ALIBABA_REGISTRY_FACTORY_CLASS_NAME.equals(typeName)) {

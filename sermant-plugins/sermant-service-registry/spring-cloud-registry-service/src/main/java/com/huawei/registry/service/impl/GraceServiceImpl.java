@@ -42,7 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 下线通知服务
+ * Offline notification service
  *
  * @author provenceee
  * @since 2022-05-26
@@ -59,7 +59,7 @@ public class GraceServiceImpl implements GraceService {
     private static final String REQUEST_BODY = JSONObject.toJSONString(new Object());
 
     /**
-     * 下线通知
+     * Offline notifications
      */
     @Override
     public void shutdown() {
@@ -89,7 +89,7 @@ public class GraceServiceImpl implements GraceService {
     }
 
     /**
-     * 双注册场景同时注销原SC实例
+     * In the dual-registration scenario, the original SC instance is deregistered at the same time
      */
     private void checkAndCloseSc() {
         final RegisterConfig registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);

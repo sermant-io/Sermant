@@ -25,20 +25,20 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * spring定时器注解@schudled拦截
- * 当前用于拿到consul1.x的心跳定时器
+ * Spring Timer Annotation @schudled Interception
+ * Currently used to get the heartbeat timer of the consul 1.x
  *
  * @author zhouss
  * @since 2022-06-13
  */
 public class ScheduleProcessorDeclared extends AbstractDoubleRegistryDeclarer {
     /**
-     * 定时器自动配置类
+     * Timer auto-configuration class
      */
     private static final String ENHANCE_CLASS = "org.springframework.scheduling.annotation.SchedulingConfiguration";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = ScheduleProcessorInterceptor.class.getCanonicalName();
 

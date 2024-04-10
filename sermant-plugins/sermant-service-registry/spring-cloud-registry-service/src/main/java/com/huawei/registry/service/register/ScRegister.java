@@ -37,7 +37,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * SC注册实现
+ * SC registration implementation
  *
  * @author zhouss
  * @since 2021-12-17

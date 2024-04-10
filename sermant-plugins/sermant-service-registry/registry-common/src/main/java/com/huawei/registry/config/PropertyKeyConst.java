@@ -17,74 +17,74 @@
 package com.huawei.registry.config;
 
 /**
- * nacos注册参数静态常量
+ * NACOS registers static constants for parameters
  *
  * @author chengyouling
  * @since 2022-10-25
  */
 public class PropertyKeyConst {
     /**
-     * 冒号
+     * Profanity
      */
     public static final String HTTP_URL_COLON = ":";
 
     /**
-     * 节点
+     * Node
      */
     public static final String ENDPOINT = "endpoint";
 
     /**
-     * 节点端口
+     * Node port
      */
     public static final String ENDPOINT_PORT = "endpointPort";
 
     /**
-     * 命名空间
+     * Namespace
      */
     public static final String NAMESPACE = "namespace";
 
     /**
-     * 用户名
+     * Username
      */
     public static final String USERNAME = "username";
 
     /**
-     * 用户密码
+     * User password
      */
     public static final String PASSWORD = "password";
 
     /**
-     * ak值
+     * AK value
      */
     public static final String ACCESS_KEY = "accessKey";
 
     /**
-     * sk值
+     * SK value
      */
     public static final String SECRET_KEY = "secretKey";
 
     /**
-     * 服务地址
+     * Service address
      */
     public static final String SERVER_ADDR = "serverAddr";
 
     /**
-     * 集群名称
+     * The name of the cluster
      */
     public static final String CLUSTER_NAME = "clusterName";
 
     /**
-     * 开始是否naming加载缓存
+     * Start naming whether to load the cache
      */
     public static final String NAMING_LOAD_CACHE_AT_START = "namingLoadCacheAtStart";
 
     /**
-     * nacos日志文件名
+     * The name of the nacos log file
      */
     public static final String NACOS_NAMING_LOG_NAME = "com.alibaba.nacos.naming.log.filename";
 
     /**
-     * 构造方法
+     * Constructor
      */
     private PropertyKeyConst() {
     }

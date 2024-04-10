@@ -23,7 +23,7 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * Eureka定时器注入入口拦截
+ * Eureka timer injection entry interception
  *
  * @author zhouss
  * @since 2022-04-11

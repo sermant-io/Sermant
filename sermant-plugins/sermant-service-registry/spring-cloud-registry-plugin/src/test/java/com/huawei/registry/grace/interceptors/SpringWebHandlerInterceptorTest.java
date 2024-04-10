@@ -36,7 +36,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import java.util.Objects;
 
 /**
- * 添加拦截器测试
+ * Add an interceptor test
  *
  * @author zhouss
  * @since 2022-06-30
@@ -45,14 +45,14 @@ public class SpringWebHandlerInterceptorTest {
     private final GraceConfig graceConfig = new GraceConfig();
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     private MockedStatic<PluginServiceManager> pluginServiceManagerMockedStatic;
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void init() {
@@ -84,7 +84,7 @@ public class SpringWebHandlerInterceptorTest {
     }
 
     /**
-     * 测试添加拦截器
+     * Test add interceptors
      */
     @Test
     public void testAddInterceptor() {

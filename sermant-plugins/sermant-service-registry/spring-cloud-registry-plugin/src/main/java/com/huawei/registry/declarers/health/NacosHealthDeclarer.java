@@ -24,14 +24,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * nacos健康检测增强  NamingProxy 1.x版本, NamingHttpClientProxy 2.x版本
+ * Nacos Health Check Enhancements NamingProxy 1.x and NamingHttpClientProxy 2.x
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class NacosHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * nacos心跳发送类
+     * Nacos heartbeat sending class
      */
     private static final String[] ENHANCE_CLASSES = new String[] {
         "com.alibaba.nacos.client.naming.net.NamingProxy",
@@ -39,7 +39,7 @@ public class NacosHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = NacosHealthInterceptor.class.getCanonicalName();
 

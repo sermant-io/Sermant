@@ -35,14 +35,14 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * 测试RegistryFactory
+ * Test RegistryFactory
  *
  * @author provenceee
  * @since 2022-02-16
  */
 public class RegistryFactoryTest {
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryFactoryTest() throws NoSuchFieldException, IllegalAccessException {
         Field field = ServiceManager.class.getDeclaredField("SERVICES");
@@ -73,9 +73,9 @@ public class RegistryFactoryTest {
     }
 
     /**
-     * 测试Alibaba RegistryFactory
+     * Test Alibaba RegistryFactory
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */
@@ -90,9 +90,9 @@ public class RegistryFactoryTest {
     }
 
     /**
-     * 测试Apache RegistryFactory
+     * Test Apache RegistryFactory
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @throws InvocationTargetException InvocationTargetException
      * @throws IllegalAccessException IllegalAccessException
      */

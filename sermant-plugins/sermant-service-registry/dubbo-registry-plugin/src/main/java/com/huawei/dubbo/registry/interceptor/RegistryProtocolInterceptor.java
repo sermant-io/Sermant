@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import org.apache.dubbo.common.URL;
 
 /**
- * 增强InterfaceCompatibleRegistryProtocol类的getServiceDiscoveryInvoker方法
+ * Enhance the getServiceDiscoveryInvoker method of the InterfaceCompatibleRegistryProtocol class
  *
  * @author provenceee
  * @since 2022-01-26
@@ -33,17 +33,18 @@ public class RegistryProtocolInterceptor extends AbstractInterceptor {
     private static final int URL_INDEX = 2;
 
     /**
-     * 这个方法是为了让2.7.9不去加载sc ServiceDiscovery
+     * This method is to prevent 2.7.9 from loading sc ServiceDiscovery
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object[] arguments = context.getArguments();
         if (arguments != null && arguments.length > URL_INDEX && arguments[URL_INDEX] instanceof URL) {
             if (Constant.SC_REGISTRY_PROTOCOL.equals(((URL) arguments[URL_INDEX]).getProtocol())) {
-                // sc协议的注册，直接return，这样就可以不去加载sc ServiceDiscovery，即屏蔽2.7.9 sc应用级注册
+                // The registration of the sc protocol can be returned directly, so that the sc ServiceDiscovery cannot
+                // be loaded, that is, the 2.7.9 sc application-level registration can be blocked
                 context.skip(null);
             }
         }

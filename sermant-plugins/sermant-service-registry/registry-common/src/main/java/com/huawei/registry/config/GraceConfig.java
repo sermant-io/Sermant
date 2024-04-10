@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 优雅上下线相关配置
+ * Elegant online and offline related configurations
  *
  * @author zhouss
  * @since 2022-05-17
@@ -37,82 +37,87 @@ public class GraceConfig implements PluginConfig, Cloneable {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 是否开启优雅上下线
+     * Whether to turn on the elegant online and offline lines
      */
     private boolean enableSpring = false;
 
     /**
-     * 启动延迟时间, 单位秒
+     * Startup delay time, in seconds
      */
     private long startDelayTime = 0L;
 
     /**
-     * 是否开启服务预热
+     * Specifies whether to enable service warm-up
      */
     private boolean enableWarmUp = false;
 
     /**
-     * 预热时间
+     * Warm-up time
      */
     private long warmUpTime = 0L;
 
     /**
-     * 预热权重, 默认100
+     * The warm-up weight is 100 by default
      */
     private int warmUpWeight = GraceConstants.DEFAULT_WARM_UP_WEIGHT;
 
     /**
-     * 默认计算曲线值
+     * The curve value is calculated by default
      */
     private int warmUpCurve = GraceConstants.DEFAULT_WARM_UP_CURVE;
 
     /**
-     * 是否开启优雅关闭
+     * Whether to turn on graceful closing
      */
     private boolean enableGraceShutdown = false;
 
     /**
-     * 关闭等待时间, 单位秒
+     * Shutdown wait time, in seconds
      */
     private long shutdownWaitTime = 0L;
 
     /**
-     * 关闭前自动检测请求数以及关联的请求的地址是否都已处理完毕, 确保流量不丢失, 单位秒 每shutdownCheckTimeUnit检测一次,直到达到shutdownWaitTime或者处理完
+     * Automatically detect whether the number of requests and the associated request addresses have been processed
+     * before shutdown to ensure that traffic is not lost.
+     * Unit: The detection is performed every shutdownCheckTimeUnit, which unit is second
+     * until the shutdownWaitTime is reached or the processing is completed
      */
     private long shutdownCheckTimeUnit = 1L;
 
     /**
-     * 是否开启下线主动通知
+     * Specifies whether to enable offline notifications
      */
     private boolean enableOfflineNotify;
 
     /**
-     * 开启下线主动通知时的httpServer端口
+     * Enable the HTTP server port for active notifications when you go offline
      */
     private int httpServerPort = GraceConstants.DEFAULT_NOTIFY_HTTP_SERVER_PORT;
 
     /**
-     * 下游Endpoint过期时间, 该配置关联注册中心的最大缓存时间, 建议过期时间大于注册中心自身实例缓存时间, 默认120S
+     * Downstream endpoint expiration time, the maximum cache time of the associated registry, the recommended
+     * expiration time is greater than the cache time of the registry itself, which is 120 seconds by default
      */
     private long endpointExpiredTime = GraceConstants.DEFAULT_ENDPOINT_EXPIRED_TIME;
 
     /**
-     * 优雅上下线聚合开关
+     * Elegant on-line and off-line polymerization switches
      */
     private boolean enableGrace = false;
 
     /**
-     * 缓存上游地址的默认大小
+     * The default size of the cache upstream address
      */
     private long upstreamAddressMaxSize = GraceConstants.UPSTREAM_ADDRESS_DEFAULT_MAX_SIZE;
 
     /**
-     * 缓存上游地址的过期时间
+     * Cache the expiration time of upstream addresses
      */
     private long upstreamAddressExpiredTime = GraceConstants.UPSTREAM_ADDRESS_DEFAULT_EXPIRED_TIME;
 
     /**
-     * 根据聚合开关修正相关开关属性, 一键开启优雅上下线所有功能
+     * Correct the relevant switch attributes according to the aggregation switch,
+     * and turn on all functions of elegant online and offline with one click
      */
     public void fixGraceSwitch() {
         this.enableGrace = Boolean.parseBoolean(getConfigFromEnv(GraceConstants.ENV_GRACE_ENABLE, null));
@@ -124,11 +129,11 @@ public class GraceConfig implements PluginConfig, Cloneable {
     }
 
     /**
-     * 从环境变量获取配置
+     * Get the configuration from the environment variables
      *
-     * @param configKey 键
-     * @param defaultValue 默认值
-     * @return 环境变量配置
+     * @param configKey Key
+     * @param defaultValue Default value
+     * @return Environment variable configuration
      */
     private String getConfigFromEnv(String configKey, String defaultValue) {
         String property = System.getProperty(configKey);
@@ -259,9 +264,9 @@ public class GraceConfig implements PluginConfig, Cloneable {
     }
 
     /**
-     * 预热参数是否合法
+     * Check whether the preheating parameter is valid
      *
-     * @return 合法返回true
+     * @return Valid returns true
      */
     public boolean isWarmUpValid() {
         if (warmUpTime < 0) {

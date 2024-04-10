@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * Ribbon自动配置注入
+ * Ribbon is automatically configured for injection
  *
  * @author zhouss
  * @since 2022-05-19
