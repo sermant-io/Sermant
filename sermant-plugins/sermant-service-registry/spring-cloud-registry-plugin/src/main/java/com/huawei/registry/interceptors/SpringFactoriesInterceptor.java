@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 拦截loadFactories注入自定义配置源
+ * Intercept loadFactories injection of custom configuration sources
  *
  * @author zhouss
  * @since 2022-04-08
@@ -55,7 +55,7 @@ public class SpringFactoriesInterceptor extends RegisterSwitchSupport {
     private volatile Boolean hasMethodLoadSpringFactories;
 
     /**
-     * 初始化加载注入定义
+     * Initialize the load injection definition
      */
     public SpringFactoriesInterceptor() {
         for (ClassInjectDefine define : ServiceLoader.load(ClassInjectDefine.class, this.getClass().getClassLoader())) {
@@ -68,7 +68,9 @@ public class SpringFactoriesInterceptor extends RegisterSwitchSupport {
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
         if (isHasMethodLoadSpringFactories()) {
-            // 仅当在高版本采用LoadSpringFactories的方式注入, 高版本存在缓存会更加高效, 仅需注入一次
+            // If the LoadSpringFactories method is used to inject only in the later version,
+            // the cache of the higher version will be more efficient,
+            // and only one injection is required
             if (IS_INJECTED.compareAndSet(false, true)) {
                 injectConfigurations(context.getResult());
             }
@@ -115,7 +117,8 @@ public class SpringFactoriesInterceptor extends RegisterSwitchSupport {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         final boolean isMultiValueMap = result instanceof MultiValueMap;
         if (result instanceof Map) {
-            // spring 高版本处理, 针对List其为不可变list，需做一层处理
+            // Spring is a higher version of the list, and it is an immutable list that needs to be processed at one
+            // level
             CLASS_DEFINES.forEach(classInjectDefine -> service.injectConfiguration((Map<String, List<String>>) result,
                     classInjectDefine, contextClassLoader, !isMultiValueMap));
         } else {

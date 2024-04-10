@@ -24,7 +24,7 @@ import java.util.Properties;
 import java.util.function.Consumer;
 
 /**
- * 环境变量工具类
+ * Environment Variables utility class
  *
  * @author zhouss
  * @since 2022-08-30
@@ -60,10 +60,10 @@ public class EnvUtils {
     }
 
     /**
-     * 环境变量工具类
+     * Environment Variables utility class
      *
-     * @param newEnv 新的环境变量
-     * @throws Exception 设置失败报错
+     * @param newEnv New environment variables
+     * @throws Exception An error message is reported if the setting fails
      */
     public static void addEnv(Map<String, String> newEnv) throws Exception {
         final Properties properties = System.getProperties();
@@ -74,10 +74,10 @@ public class EnvUtils {
     }
 
     /**
-     * 删除环境变量
+     * Delete environment variables
      *
-     * @param newEnv 新的环境变量
-     * @throws Exception 设置失败报错
+     * @param newEnv New environment variables
+     * @throws Exception An error message is reported if the setting fails
      */
     public static void delEnv(Map<String, String> newEnv) throws Exception {
         final Properties properties = System.getProperties();

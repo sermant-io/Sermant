@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.entity;
 import java.util.List;
 
 /**
- * dubbo 生产者信息
+ * dubbo provider information
  *
  * @author provenceee
  * @since 2022-04-21

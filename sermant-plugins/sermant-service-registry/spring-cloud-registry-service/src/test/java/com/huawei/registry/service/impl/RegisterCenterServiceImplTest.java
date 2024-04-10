@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 注册测试
+ * Register for the test
  *
  * @author zhouss
  * @since 2022-09-07
@@ -68,7 +68,7 @@ public class RegisterCenterServiceImplTest {
                 -> PluginConfigManager.getPluginConfig(RegisterServiceCommonConfig.class))
                 .thenReturn(registerServiceCommonConfig);
 
-        // 防止注册内部逻辑影响, 先清理注册器测试完恢复
+        // To prevent the internal logic of the registration, clean up the registrar and test the recovery
         final RegisterManager instance = RegisterManager.INSTANCE;
         final Optional<Object> registerMap = ReflectUtils.getFieldValue(instance, "registerMap");
         Assert.assertTrue(registerMap.isPresent());

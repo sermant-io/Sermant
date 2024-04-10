@@ -26,7 +26,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.huawei.dubbo.registry.listener.NacosAggregateListener;
 
 /**
- * 测试NacosAggregateListener
+ * Test NacosAggregateListener
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -34,7 +34,7 @@ import com.huawei.dubbo.registry.listener.NacosAggregateListener;
 public class NacosAggregateListenerTest {
 
     /**
-     * 测试equal
+     * Test equal
      */
     @Test
     public void testEqual() {

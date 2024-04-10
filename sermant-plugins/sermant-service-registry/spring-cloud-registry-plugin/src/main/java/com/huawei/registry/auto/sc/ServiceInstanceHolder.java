@@ -25,7 +25,7 @@ import com.huawei.registry.entity.MicroServiceInstance;
 import java.util.Map;
 
 /**
- * 服务信息持有, 单例, 由于有些信息基于拦截, 通过引用的方式将信息延后获取
+ * Service information holding, singleton, is deferred by reference because some information is intercepted
  *
  * @author zhouss
  * @since 2022-05-18
@@ -44,10 +44,9 @@ public class ServiceInstanceHolder implements MicroServiceInstance {
     private final Map<String, String> metadata;
 
     /**
-     * 构造函数
-     * 注册时构造
+     * The constructor is constructed at the time of registration
      *
-     * @param registrationProperties 注册信息
+     * @param registrationProperties Registration Information
      */
     public ServiceInstanceHolder(RegistrationProperties registrationProperties) {
         this.serviceName = registrationProperties.getServiceName();

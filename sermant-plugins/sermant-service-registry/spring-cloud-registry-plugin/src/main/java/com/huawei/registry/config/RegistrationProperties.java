@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 
 /**
- * 注册信息
+ * Registration Information
  *
  * @author zhouss
  * @since 2022-06-28
@@ -69,7 +69,7 @@ public class RegistrationProperties implements BeanFactoryAware {
     private BeanFactory beanFactory;
 
     /**
-     * 初始化
+     * Initialize
      */
     @PostConstruct
     public void init() {
@@ -82,7 +82,7 @@ public class RegistrationProperties implements BeanFactoryAware {
                 environment.getProperty(SpringRegistryConstants.SPRING_LOAD_BALANCER_ZONE));
         configureHostIp();
 
-        // 开始订阅配置
+        // Start the subscription configuration
         PluginServiceManager.getPluginService(RegistryConfigSubscribeServiceImpl.class)
                 .subscribeRegistryConfig(RegisterContext.INSTANCE.getClientInfo().getServiceName());
     }

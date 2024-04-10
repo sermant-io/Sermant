@@ -18,149 +18,151 @@
 package com.huawei.registry.config.grace;
 
 /**
- * 优雅上下线公共变量
+ * Elegant online and offline public variables
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class GraceConstants {
     /**
-     * spring loadbalancer缓存的提供实例缓存生产器名称, 基于该实例去刷新指定的服务实例本地缓存
+     * Spring LoadBalancer provides the name of the instance cache generator, based on which the specified service
+     * instance is flushed to the local cache
      */
     public static final String SPRING_CACHE_MANAGER_LOADBALANCER_CACHE_NAME = "CachingServiceInstanceListSupplierCache";
 
     /**
-     * 预热时间-键
+     * Warm-up time-key
      */
     public static final String WARM_KEY_TIME = "sermant.grace.warmup.time";
 
     /**
-     * 预热注入时间-键
+     * Pre-Warm Injection Time-key
      */
     public static final String WARM_KEY_INJECT_TIME = "sermant.grace.warmup.inject.time";
 
     /**
-     * 预热权重-键
+     * Preheat Weight - Key
      */
     public static final String WARM_KEY_WEIGHT = "sermant.grace.warmup.weight";
 
     /**
-     * 预热类型-用于计算流量分配-键
+     * The warm-up type - used to calculate the traffic distribution - key
      */
     public static final String WARM_KEY_CURVE = "sermant.grace.warmup.cal.curve";
 
     /**
-     * 被标记要关闭的服务名, 用于response返回给上游
+     * The name of the service to be shut down is used to return the response to the upstream
      */
     public static final String MARK_SHUTDOWN_SERVICE_NAME = "sermant.grace.mark.shutdown.service.name";
 
     /**
-     * 被标记要关闭的endpoint, 用于response返回给上游
+     * The endpoint that is marked for closure is used to return the response to the upstream
      */
     public static final String MARK_SHUTDOWN_SERVICE_ENDPOINT = "sermant.grace.mark.shutdown.service.endpoint";
 
     /**
-     * 该地址用于传给下游, 下游基于该地址进行下线通知
+     * The downstream sends offline notifications based on the address
      */
     public static final String SERMANT_GRACE_ADDRESS = "sermant.grace.address";
 
     /**
-     * 优雅上下线聚合开关环境变量, 设置为true将开启优雅上下线所有功能
+     * Graceful Offline Aggregation Switch Environment Variable, set to true to enable all functions of Graceful Offline
+     * and Convergence
      */
     public static final String ENV_GRACE_ENABLE = "grace.rule.enableGrace";
 
     /**
-     * 默认的通知http端口
+     * Default notification HTTP port
      */
     public static final int DEFAULT_NOTIFY_HTTP_SERVER_PORT = 16688;
 
     /**
-     * 默认预热权重
+     * Default warm-up weight
      */
     public static final int DEFAULT_WARM_UP_WEIGHT = 100;
 
     /**
-     * 默认流量分配计算曲线值
+     * The default traffic allocation calculation curve value
      */
     public static final int DEFAULT_WARM_UP_CURVE = 2;
 
     /**
-     * 默认注入时间, 1个小时
+     * The default injection time is 1 hour
      */
     public static final String DEFAULT_WARM_UP_INJECT_TIME_GAP = "0";
 
     /**
-     * 默认预热时间
+     * Default warm-up time
      */
     public static final String DEFAULT_WARM_UP_TIME = "0";
 
     /**
-     * 默认下游Endpoint过期时间, 120S
+     * The default downstream endpoint expiration time is 120S
      */
     public static final long DEFAULT_ENDPOINT_EXPIRED_TIME = 120L;
 
     /**
-     * 主动通知url路径
+     * Proactively notify the URL path
      */
     public static final String GRACE_NOTIFY_URL_PATH = "/$$sermant$$/notify";
 
     /**
-     * 下线url路径
+     * The URL path of the downline
      */
     public static final String GRACE_SHUTDOWN_URL_PATH = "/$$sermant$$/shutdown";
 
     /**
-     * 成功响应码
+     * Success response code
      */
     public static final int GRACE_HTTP_SUCCESS_CODE = 200;
 
     /**
-     * 失败响应码
+     * Failure response code
      */
     public static final int GRACE_HTTP_FAILURE_CODE = 500;
 
     /**
-     * POST方法
+     * POST method
      */
     public static final String GRACE_HTTP_METHOD_POST = "POST";
 
     /**
-     * 成功响应消息
+     * Success response message
      */
     public static final String GRACE_OFFLINE_SUCCESS_MSG = "success";
 
     /**
-     * 实现响应消息
+     * Implement response messages
      */
     public static final String GRACE_FAILURE_MSG = "failed";
 
     /**
-     * 下线通知的请求来源KEY
+     * The KEY of the request for the offline notification
      */
     public static final String GRACE_OFFLINE_SOURCE_KEY = "sermant.grace.source";
 
     /**
-     * 下线通知的请求来源value
+     * The value of the request source of the offline notification
      */
     public static final String GRACE_OFFLINE_SOURCE_VALUE = "Sermant-agent";
 
     /**
-     * 缓存上游地址的默认最大大小
+     * The default maximum size of the upstream address of the cache
      */
     public static final long UPSTREAM_ADDRESS_DEFAULT_MAX_SIZE = 100L;
 
     /**
-     * 缓存上游地址的默认过期时间
+     * The default expiration time for the cache upstream address
      */
     public static final long UPSTREAM_ADDRESS_DEFAULT_EXPIRED_TIME = 60L;
 
     /**
-     * 最大端口
+     * Maximum port
      */
     public static final int MAX_HTTP_SERVER_PORT = 65535;
 
     /**
-     * 最大下线前等待时间
+     * The maximum waiting time before going offline
      */
     public static final long MAX_SHUTDOWN_WAIT_TIME = 24 * 3600L;
 

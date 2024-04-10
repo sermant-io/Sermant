@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * nacos健康检查
+ * Nacos health check
  *
  * @author zhouss
  * @since 2022-09-07
@@ -70,24 +70,24 @@ public class NacosHealthInterceptorTest extends BaseRegistryTest<NacosHealthInte
         interceptor.after(context);
         Assert.assertFalse(RegisterContext.INSTANCE.isAvailable());
 
-        // 心跳可用
+        // Heartbeats are available
         context.changeResult(1L);
         interceptor.after(context);
         Assert.assertTrue(RegisterContext.INSTANCE.isAvailable());
 
-        // 心跳不可用
+        // Heartbeat is not available
         context.changeResult(0L);
         interceptor.after(context);
         Assert.assertFalse(RegisterContext.INSTANCE.isAvailable());
 
-        // ObjectNode 可用
+        // ObjectNode available
         final ObjectNode node = Mockito.mock(ObjectNode.class);
         Mockito.when(node.get("clientBeatInterval")).thenReturn(new LongNode(1L));
         context.changeResult(node);
         interceptor.after(context);
         Assert.assertTrue(RegisterContext.INSTANCE.isAvailable());
 
-        // ObjectNode 不可用
+        // ObjectNode not available
         Mockito.reset(node);
         Mockito.when(node.get("clientBeatInterval")).thenReturn(new LongNode(0L));
         context.changeResult(node);

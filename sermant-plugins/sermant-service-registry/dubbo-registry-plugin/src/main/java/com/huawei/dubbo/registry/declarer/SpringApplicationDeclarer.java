@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强SpringApplication类的run方法
+ * Enhance the run method of the SpringApplication class
  *
  * @author provenceee
  * @since 2022-01-24
@@ -33,7 +33,7 @@ public class SpringApplicationDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "run";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringApplicationDeclarer() {
         super(ENHANCE_CLASS);

@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 增强RegistryConfig类的setProtocol/setAddress方法
+ * Enhance the setProtocol/setAddress method of the RegistryConfiguration class
  *
  * @author provenceee
  * @since 2022-04-13
@@ -33,7 +33,7 @@ public class RegistryConfigInterceptor extends AbstractInterceptor {
     private final RegisterConfig config;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryConfigInterceptor() {
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);

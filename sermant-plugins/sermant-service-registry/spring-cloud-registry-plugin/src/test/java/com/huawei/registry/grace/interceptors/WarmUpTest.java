@@ -36,59 +36,59 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 预热
+ * Preheat
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class WarmUpTest {
     /**
-     * 默认端口
+     * Default port
      */
     protected static final int DEFAULT_PORT = 8989;
 
     /**
-     * 默认服务名
+     * Default service name
      */
     protected static final String DEFAULT_SERVICE_NAME = "test";
 
     /**
-     * 禁用预热的IP
+     * Disable the pre-warmed IP address
      */
     protected static final String DISABLE_WARM_UP_IP = "127.0.0.1";
 
     /**
-     * 开启预热的IP
+     * Enable the preheating IP address
      */
     protected static final String ENABLE_WARM_UP_IP = "127.0.0.2";
 
     /**
-     * 最大请求数
+     * Maximum number of requests
      */
     protected static final int REQUEST_COUNT = 1000;
 
     /**
-     * 默认预热时间
+     * Default warm-up time
      */
     protected static final int DEFAULT_WARM_TIME = 120;
 
     /**
-     * 请求相差倍率
+     * Request difference multiplier
      */
     protected static final double RATE = 3d;
 
     /**
-     * 配置
+     * configuration
      */
     protected final GraceConfig graceConfig = new GraceConfig();
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * 前置
+     * Front
      */
     @Before
     public void before() {
@@ -108,10 +108,10 @@ public class WarmUpTest {
     }
 
     /**
-     * 统计数据
+     * Statistics
      *
-     * @param result 结果
-     * @param statResult 统计结果
+     * @param result result
+     * @param statResult Statistical results
      */
     protected void stat(Object result, HashMap<String, Integer> statResult) {
         List servers = (List) result;
@@ -132,10 +132,10 @@ public class WarmUpTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param ip ip地址
-     * @return 实例
+     * @param ip IP address
+     * @return Instance
      */
     protected MicroServiceInstance microServiceInstance(String ip) {
         return new MicroServiceInstance() {

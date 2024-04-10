@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ServiceComb 针对Ribbon自动配置
+ * ServiceComb Automatic configuration for ribbons
  *
  * @author zhouss
  * @since 2022-05-19
@@ -36,9 +36,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ServiceCombRibbonConfiguration {
     /**
-     * ServerList注入
+     * ServerList injection
      *
-     * @param clientConfig 客户端配置
+     * @param clientConfig Client configuration
      * @return ServerList
      */
     @Bean
@@ -50,7 +50,7 @@ public class ServiceCombRibbonConfiguration {
     }
 
     /**
-     * meta重写
+     * meta rewrite
      *
      * @return ServiceCombServerIntrospector
      */

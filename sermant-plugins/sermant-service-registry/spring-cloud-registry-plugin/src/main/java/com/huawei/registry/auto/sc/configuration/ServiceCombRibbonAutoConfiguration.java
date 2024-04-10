@@ -23,7 +23,7 @@ import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ribbon自动配置
+ * Ribbon automatic configuration
  *
  * @author zhouss
  * @since 2022-05-19

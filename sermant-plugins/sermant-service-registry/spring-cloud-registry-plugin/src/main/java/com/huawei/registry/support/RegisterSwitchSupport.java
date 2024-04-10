@@ -25,43 +25,44 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 注册开关控制
+ * Register switch controls
  *
  * @author zhouss
  * @since 2022-03-02
  */
 public abstract class RegisterSwitchSupport implements Interceptor {
     /**
-     * register配置类
+     * register configuration class
      */
     protected final RegisterConfig registerConfig;
 
     /**
-     * 注册开关构造器
+     * Register the switch constructor
      */
     public RegisterSwitchSupport() {
         registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }
 
     /**
-     * 判断是否符合开启条件
+     * Check whether the conditions are met
      *
-     * @return 判断是否符合开启条件
+     * @return Check whether the conditions are met
      */
     protected boolean isEnabled() {
         return registerConfig.isEnableSpringRegister() && registerConfig.isOpenMigration();
     }
 
     /**
-     * 子类实现，默认为配置的注册开关 若需修改，则需重新实现该方法 满足条件:
-     * <li>已开启spring注册</li>
-     * <li>配置中心已下发关闭注册中心指令或者属于单注册的场景</li>
+     * Subclass implementation, default is the configured registration switch If you need to modify it, you need to
+     * re-implement the method Condition met:
+     * <li>Spring registration has been enabled</li>
+     * <li>The configuration center has issued a command to close the registry or is a single registration</li>
      *
-     * @return 是否可关闭注册中心
+     * @return Whether the registry can be closed
      */
     protected boolean needCloseRegisterCenter() {
         return (RegisterDynamicConfig.INSTANCE.isNeedCloseOriginRegisterCenter() || !registerConfig.isOpenMigration())
-            && isEnabled();
+                && isEnabled();
     }
 
     @Override
@@ -89,30 +90,30 @@ public abstract class RegisterSwitchSupport implements Interceptor {
     }
 
     /**
-     * 前置触发点
+     * Pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     protected ExecuteContext doBefore(ExecuteContext context) {
         return context;
     }
 
     /**
-     * 后置触发点
+     * Rear trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     protected ExecuteContext doAfter(ExecuteContext context) {
         return context;
     }
 
     /**
-     * 异常触发点
+     * Exception trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     protected ExecuteContext doThrow(ExecuteContext context) {
         return context;

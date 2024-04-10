@@ -24,19 +24,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 注册增强
+ * Registration Enhancement
  *
  * @author zhouss
  * @since 2021-12-16
  */
 public class RegistrationDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * The fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.springframework.cloud.client.serviceregistry.ServiceRegistry";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = RegistrationInterceptor.class.getCanonicalName();
 

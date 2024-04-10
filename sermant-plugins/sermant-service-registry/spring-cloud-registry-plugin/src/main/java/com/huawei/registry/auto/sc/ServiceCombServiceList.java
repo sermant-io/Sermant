@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ServiceComb ServerList实现, 针对Ribbon
+ * ServiceComb ServerList implementation for Ribbon
  *
  * @author zhouss
  * @since 2022-05-19

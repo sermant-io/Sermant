@@ -26,7 +26,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 调用反注册前，判断RpcClient状态, shutdown状态不再进行反注册; 已经由{@link NacosRpcClientHealthInterceptor}关闭, 自动从注册中心下线
+ * Before calling anti registration, check the status of RpcClient, and the shutdown status will no longer be used for
+ * anti registration; Closed by {@link NacosRpcClientHealthInterceptor}, automatically taken offline from the
+ * registration center
  *
  * @author zhouss
  * @since 2022-12-20

@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * nacos服务名管理
+ * Nacos service name management
  *
  * @since 2022-10-25
  */
@@ -59,7 +59,7 @@ public class NacosServiceName {
     private String value;
 
     /**
-     * url构造类
+     * url constructor class
      *
      * @param url url
      */
@@ -73,7 +73,7 @@ public class NacosServiceName {
     }
 
     /**
-     * 服务名构造类
+     * Service name constructor class
      *
      * @param value serviceName
      */
@@ -86,9 +86,9 @@ public class NacosServiceName {
     }
 
     /**
-     * 判断接口、版本、分组是否含“，”、“*”号
+     * Check whether the interface, version, or group contain "," and "*"
      *
-     * @return 是否包含
+     * @return Whether it is included
      */
     public boolean isValid() {
         return isValid(serviceInterface) && isValid(group);
@@ -99,9 +99,9 @@ public class NacosServiceName {
     }
 
     /**
-     * 判断服务名称是否相同、包含“,”
+     * Determine whether the service name is the same, contains, ","
      *
-     * @param concreteServiceName 服务名
+     * @param concreteServiceName Service name
      * @return boolean
      */
     public boolean isCompatible(NacosServiceName concreteServiceName) {
@@ -142,7 +142,7 @@ public class NacosServiceName {
     }
 
     /**
-     * 获取value
+     * Get the value
      *
      * @return value
      */

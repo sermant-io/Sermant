@@ -18,7 +18,7 @@
 package com.huawei.registry.declarers;
 
 /**
- * 双注册拦截点
+ * Dual-registered intercept points
  *
  * @author zhouss
  * @since 2022-08-18

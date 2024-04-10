@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 增强AbstractInterfaceConfig类的loadRegistries方法
+ * Enhance the loadRegisteries method of the AbstractInterfaceConfiguration class
  *
  * @author provenceee
  * @since 2022-11-24
@@ -42,7 +42,7 @@ public class AlibabaInterfaceConfigInterceptor extends AbstractInterceptor {
     private final RegisterConfig config;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AlibabaInterfaceConfigInterceptor() {
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
@@ -62,7 +62,7 @@ public class AlibabaInterfaceConfigInterceptor extends AbstractInterceptor {
                 return context;
             }
             if (config.isOpenMigration()) {
-                // 任取一个即可
+                // Just take one
                 getScRegistryUrl(urls.get(0)).ifPresent(urls::add);
                 return context;
             }

@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 工具类测试
+ * Instrumental testing
  *
  * @author zhouss
  * @since 2022-09-07

@@ -29,7 +29,7 @@ import com.huawei.dubbo.registry.utils.NacosInstanceManageUtil;
 
 
 /**
- * 测试NacosInstanceManageUtil
+ * Test NacosInstanceManageUtil
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -42,7 +42,7 @@ public class NacosInstanceManageUtilTest {
     private static final List<Instance> instances = new ArrayList<>();
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosInstanceManageUtilTest() {
         namesSet.add(instanceServiceName1);
@@ -53,7 +53,7 @@ public class NacosInstanceManageUtilTest {
     }
 
     /**
-     * 测试构建getAllCorrespondingServiceInstanceList
+     * Test builds getAllCorrespondingServiceInstanceList
      */
     @Test
     public void testGetAllCorrespondingServiceInstanceList() {

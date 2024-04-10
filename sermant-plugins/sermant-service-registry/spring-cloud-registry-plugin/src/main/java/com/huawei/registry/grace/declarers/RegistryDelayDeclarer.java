@@ -25,32 +25,32 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 注册延时拦截器
+ * Register a delay blocker
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class RegistryDelayDeclarer extends AbstractPluginDeclarer {
     /**
-     * 旧版本1.5.x(springboot)
+     * Older versions 1.5.x(springboot)
      */
     public static final String OLD_VERSION_ENHANCE_CLASS =
             "org.springframework.cloud.client.discovery.AbstractDiscoveryLifecycle";
 
     /**
-     * EUREKA自动注册类
+     * EUREKA Automatic registration class
      */
     private static final String EUREKA_ENHANCE_CLASS =
             "org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration";
 
     /**
-     * 通用自动注册类
+     * Universal automatic registration class
      */
     private static final String ENHANCE_CLASS =
             "org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = RegistryDelayInterceptor.class.getCanonicalName();
 

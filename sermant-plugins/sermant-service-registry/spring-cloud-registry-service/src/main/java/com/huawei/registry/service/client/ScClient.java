@@ -72,29 +72,29 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * 基于注册任务注册服务实例
+ * Register a service instance based on a registration task
  *
  * @author zhouss
  * @since 2022-02-25
  */
 public class ScClient {
     /**
-     * 日志
+     * Log
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 事件栈
+     * Event stack
      */
     private static final EventBus EVENT_BUS = new EventBus();
 
     /**
-     * http url前缀
+     * http URL prefix
      */
     private static final String HTTP_URL_PREFIX = "http://";
 
     /**
-     * https url前缀
+     * https URL prefix
      */
     private static final String HTTPS_URL_PREFIX = "https://";
 
@@ -119,7 +119,7 @@ public class ScClient {
     private RegisterServiceCommonConfig commonConfig;
 
     /**
-     * 初始化
+     * Initialize
      */
     public void init() {
         registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
@@ -129,16 +129,16 @@ public class ScClient {
     }
 
     /**
-     * 服务实例注册
+     * Service instance registration
      */
     public void register() {
         startServiceCenterRegistration();
     }
 
     /**
-     * 下线处理
+     * Offline processing
      *
-     * @throws OperationException 删除失败抛出异常
+     * @throws OperationException An exception is thrown if the deletion fails
      */
     public void deRegister() {
         if (this.serviceCenterRegistration != null) {
@@ -154,7 +154,7 @@ public class ScClient {
     }
 
     /**
-     * 获取ServiceComb状态
+     * Get ServiceComb status
      *
      * @return UP DOWN
      */
@@ -172,9 +172,9 @@ public class ScClient {
     }
 
     /**
-     * 获取当前注册实例的状态
+     * Obtain the status of the currently registered instance
      *
-     * @return 实例状态
+     * @return Instance status
      */
     public String getInstanceStatus() {
         try {
@@ -191,9 +191,9 @@ public class ScClient {
     }
 
     /**
-     * 更新当前实例状态
+     * Update the current instance status
      *
-     * @param status 目标状态
+     * @param status Target status
      */
     public void updateInstanceStatus(String status) {
         try {
@@ -207,10 +207,10 @@ public class ScClient {
     }
 
     /**
-     * 查询所有实例
+     * Query all instances
      *
-     * @param serviceName 服务名
-     * @return 实例列表
+     * @param serviceName Service name
+     * @return List of instances
      */
     public List<MicroserviceInstance> queryInstancesByServiceId(String serviceName) {
         List<MicroserviceInstance> instances = null;
@@ -277,15 +277,15 @@ public class ScClient {
         List<MicroserviceInstance> regionMatchList = new ArrayList<>();
         instances.forEach(instance -> {
             if (regionAndAzMatch(microserviceInstance, instance)) {
-                // 匹配region与zone
+                // Matching region and zone
                 regionAndAzMatchList.add(instance);
             } else if (regionMatch(microserviceInstance, instance)) {
-                // 仅匹配region
+                // Only the region is matched
                 regionMatchList.add(instance);
             }
         });
 
-        // 优先使用匹配区域的实例
+        // Instances in matching regions are used first
         if (!regionAndAzMatchList.isEmpty()) {
             return regionAndAzMatchList;
         }
@@ -320,7 +320,7 @@ public class ScClient {
     }
 
     /**
-     * 获取内部client
+     * Obtain the internal client
      *
      * @return ServiceCenterOperation
      */
@@ -329,9 +329,9 @@ public class ScClient {
     }
 
     /**
-     * 心跳事件
+     * Heartbeat events
      *
-     * @param event 心跳事件
+     * @param event Heartbeat events
      */
     @Subscribe
     public void onHeartBeatEvent(HeartBeatEvent event) {
@@ -344,9 +344,9 @@ public class ScClient {
     }
 
     /**
-     * 注册事件
+     * Register for the event
      *
-     * @param event 注册事件
+     * @param event Register for the event
      */
     @Subscribe
     public void onMicroserviceRegistrationEvent(MicroserviceRegistrationEvent event) {
@@ -357,9 +357,9 @@ public class ScClient {
     }
 
     /**
-     * 实例注册
+     * Instance registration
      *
-     * @param event 事件
+     * @param event event
      */
     @Subscribe
     public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
@@ -429,7 +429,7 @@ public class ScClient {
         microserviceInstance.setModTimestamp(currentTimeMillis);
         microserviceInstance.setProperties(RegisterContext.INSTANCE.getClientInfo().getMeta());
         if (registerConfig.isEnableZoneAware()) {
-            // 设置数据中心信息
+            // Set up data center information
             fillDataCenterInfo();
         }
     }

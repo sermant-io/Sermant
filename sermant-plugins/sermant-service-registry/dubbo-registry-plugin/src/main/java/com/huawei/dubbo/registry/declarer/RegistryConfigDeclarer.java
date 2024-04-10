@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * RegistryConfig增强类
+ * RegistryConfig Enhancement Classes
  *
  * @author provenceee
  * @since 2022-04-13
@@ -35,7 +35,7 @@ public class RegistryConfigDeclarer extends AbstractDeclarer {
     private static final String[] METHOD_NAME = {Constant.SET_PROTOCOL_METHOD_NAME, "setAddress"};
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryConfigDeclarer() {
         super(ENHANCE_CLASS);

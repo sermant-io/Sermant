@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * 测试注入逻辑
+ * Test the injection logic
  *
  * @author zhouss
  * @since 2022-06-29
@@ -45,7 +45,7 @@ public class SpringFactoriesInterceptorTest {
     };
 
     /**
-     * 测试spi加载
+     * Test SPI loading
      */
     @Test
     public void testClassDefine() {

@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * dubbo governance 监听器
+ * dubbo governance Listener
  *
  * @author provenceee
  * @since 2022-04-21
@@ -40,7 +40,7 @@ public class GovernanceConfigListener implements DynamicConfigListener {
     private final RegistryService registryService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public GovernanceConfigListener() {
         registryService = PluginServiceManager.getPluginService(RegistryService.class);

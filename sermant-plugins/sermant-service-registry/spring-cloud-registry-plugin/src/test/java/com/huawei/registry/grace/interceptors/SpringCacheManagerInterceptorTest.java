@@ -36,19 +36,19 @@ import org.springframework.cloud.loadbalancer.cache.LoadBalancerCacheManager;
 import java.util.Collections;
 
 /**
- * 测试拦截cacheManager
+ * Test interception cacheManager
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class SpringCacheManagerInterceptorTest {
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void init() {
@@ -67,7 +67,7 @@ public class SpringCacheManagerInterceptorTest {
     }
 
     /**
-     * 测试获取缓存管理器
+     * Test to get the cache manager
      */
     @Test
     public void testCacheManager() {

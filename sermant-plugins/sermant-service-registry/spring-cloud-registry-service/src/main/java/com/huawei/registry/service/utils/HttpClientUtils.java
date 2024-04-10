@@ -39,25 +39,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * httpClient工具类
+ * http client utility class
  *
  * @author provenceee
  * @since 2022-05-26
  */
 public enum HttpClientUtils {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 设置连接超时时间，单位毫秒。指三次握手的超时时间
+     * Set the connection timeout period in milliseconds. Refers to the timeout period for a three-way handshake
      */
     private static final int CONNECT_TIMEOUT = 2000;
 
     /**
-     * 请求获取数据的超时时间(即响应时间)，单位毫秒。
+     * The timeout period (that is, the response time) of the request to get data, in milliseconds.
      */
     private static final int SOCKET_TIMEOUT = 2000;
 
@@ -72,7 +72,7 @@ public enum HttpClientUtils {
     }
 
     private CloseableHttpClient createClient() {
-        // 设置协议http和https对应的处理socket链接工厂的对象
+        // Set the protocols HTTP and HTTPS to handle the objects of the socket link factory
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
             .register("http", PlainConnectionSocketFactory.INSTANCE).build();
         PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(
@@ -81,16 +81,16 @@ public enum HttpClientUtils {
         connManager.setDefaultMaxPerRoute(MAX_TOTAL_POOL);
         RequestConfig.Builder configBuilder = RequestConfig.custom();
 
-        // 设置连接超时
+        // Set the connection timeout
         configBuilder.setConnectTimeout(CONNECT_TIMEOUT);
 
-        // 设置读取超时
+        // Set the read timeout
         configBuilder.setSocketTimeout(SOCKET_TIMEOUT);
 
-        // 设置从连接池获取连接实例的超时
+        // Set the timeout for getting connected instances from the connection pool
         configBuilder.setConnectionRequestTimeout(REQUEST_TIMEOUT);
 
-        // 创建自定义的httpclient对象
+        // Create custom httpclient object
         return HttpClients.custom()
             .setConnectionManager(connManager)
             .setConnectionManagerShared(true)
@@ -99,20 +99,20 @@ public enum HttpClientUtils {
     }
 
     /**
-     * 发送post请求；带请求头和请求参数
+     * Send POST request with request headers and request parameters
      *
-     * @param url 请求地址
-     * @param json 请求参数
-     * @param header 请求头
-     * @return HttpClientResult结果包装类
+     * @param url The address of the request
+     * @param json Request parameters
+     * @param header Request header
+     * @return HttpClientResult result wrapper class
      */
     public HttpClientResult doPost(String url, String json, Map<String, Collection<String>> header) {
-        // 创建http对象
+        // Create an HTTP object
         HttpPost httpPost = new HttpPost(url);
 
-        // 创建httpResponse对象
+        // Create an httpResponse object
         try (CloseableHttpResponse httpResponse = client.execute(packageParam(httpPost, json, header))) {
-            // 执行请求并获得响应结果
+            // Execute the request and get a response
             HttpClientResult result = new HttpClientResult(httpResponse.getStatusLine().getStatusCode(),
                 EntityUtils.toString(httpResponse.getEntity(), StandardCharsets.UTF_8));
             LOGGER

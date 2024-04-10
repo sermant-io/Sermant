@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 服务信息缓存
+ * Service information caching
  *
  * @since 2022-10-20
  */
@@ -37,38 +37,38 @@ public final class ServiceCache {
     }
 
     /**
-     * 设置缓存实例信息
+     * Configure cache instance information
      *
-     * @param serviceId 服务id
-     * @param instances 实例集合
+     * @param serviceId Service ID
+     * @param instances A collection of instances
      */
     public static void setInstances(String serviceId, List<NacosServiceInstance> instances) {
         instancesMap.put(serviceId, Collections.unmodifiableList(instances));
     }
 
     /**
-     * 获取服务名称集合
+     * Get a collection of service names
      *
-     * @return 服务名集合
+     * @return A collection of service names
      */
     public static List<String> getServiceIds() {
         return services;
     }
 
     /**
-     * 获取缓存服务信息
+     * Obtain the caching service information
      *
-     * @param serviceId 服务id
-     * @return 服务集合信息
+     * @param serviceId Service ID
+     * @return Service collection information
      */
     public static List<NacosServiceInstance> getInstances(String serviceId) {
         return instancesMap.getOrDefault(serviceId, Collections.emptyList());
     }
 
     /**
-     * 设置服务名集合
+     * Set up a collection of service names
      *
-     * @param serviceIds 服务id集合
+     * @param serviceIds A collection of service IDs
      */
     public static void setServiceIds(List<String> serviceIds) {
         services = Collections.unmodifiableList(serviceIds);

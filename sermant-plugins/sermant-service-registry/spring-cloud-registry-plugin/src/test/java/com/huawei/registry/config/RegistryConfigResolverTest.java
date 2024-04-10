@@ -34,7 +34,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * 测试配置读取功能
+ * Test the configuration read function
  *
  * @author zhouss
  * @since 2022-06-29
@@ -62,7 +62,7 @@ public class RegistryConfigResolverTest {
     }
 
     /**
-     * 测试优雅上下线配置解析
+     * Test the analysis of elegant online and offline configurations
      */
     @Test
     public void testUpdateGraceConfig() {
@@ -72,16 +72,17 @@ public class RegistryConfigResolverTest {
             RegistryConfigResolver configResolver = new GraceConfigResolver();
             final DynamicConfigEvent event = Mockito.mock(DynamicConfigEvent.class);
             Mockito.when(event.getContent()).thenReturn("rule:\n"
-                    + "  enableSpring: true # springCloud优雅上下线开关\n"
-                    + "  startDelayTime: 20  # 优雅上下线启动延迟时间, 单位S\n"
-                    + "  enableWarmUp: true # 是否开启预热\n"
-                    + "  warmUpTime: 1200    # 预热时间, 单位S\n"
-                    + "  enableGraceShutdown: false # 是否开启优雅下线\n"
-                    + "  shutdownWaitTime: 300  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效\n"
-                    + "  enableOfflineNotify: true # 是否开启下线主动通知\n"
-                    + "  httpServerPort: 26688 # 开启下线主动通知时的httpServer端口\n"
-                    + "  upstreamAddressMaxSize: 5000 # 缓存上游地址的默认大小\n"
-                    + "  upstreamAddressExpiredTime: 600 # 缓存上游地址的过期时间");
+                    + "  enableSpring: true # SpringCloud Elegant On/Off Line Switch\n"
+                    + "  startDelayTime: 20  # Elegant up/down line start-up delay time, in S\n"
+                    + "  enableWarmUp: true # Specifies whether to enable preheating\n"
+                    + "  warmUpTime: 1200    # Warm-up time, in S\n"
+                    + "  enableGraceShutdown: false # Whether to enable elegant offline\n"
+                    + "  shutdownWaitTime: 300  # The maximum wait time for correlation traffic detection before closing"
+                    + ", in S. enabledGraceShutdown must be enabled for it to take effect\n"
+                    + "  enableOfflineNotify: true # Specifies whether to enable offline notifications\n"
+                    + "  httpServerPort: 26688 # Enable the HTTP server port for active notifications when you go offline\n"
+                    + "  upstreamAddressMaxSize: 5000 # The default size of the cache upstream address\n"
+                    + "  upstreamAddressExpiredTime: 600 # The expiration time of the upstream address of the cache");
             Mockito.when(event.getKey()).thenReturn("sermant.agent.grace");
             configResolver.updateConfig(event);
             final GraceConfig graceConfig = config(configResolver, GraceConfig.class);
@@ -96,7 +97,7 @@ public class RegistryConfigResolverTest {
             Assert.assertEquals(graceConfig.getUpstreamAddressMaxSize(), TEST_UPSTREAM_ADDRESS_MAXSIZE);
             Assert.assertEquals(graceConfig.getUpstreamAddressExpiredTime(), TEST_UPSTREAM_ADDRESS_EXPIRED_TIME);
             Mockito.when(event.getContent()).thenReturn("rule:\n"
-                    + "  enableSpring: true # springCloud优雅上下线开关");
+                    + "  enableSpring: true # SpringCloud Elegant On/Off Line Switch");
             configResolver.updateConfig(event);
             final GraceConfig config = config(configResolver, GraceConfig.class);
             Assert.assertEquals(config.getShutdownWaitTime(), TEST_DEFAULT_SHUTDOWN_WAIT_TIME);
@@ -111,7 +112,7 @@ public class RegistryConfigResolverTest {
     }
 
     /**
-     * 测试注册开关配置
+     * Test the registration switch configuration
      */
     @Test
     public void testRegistrySwitchConfig() {

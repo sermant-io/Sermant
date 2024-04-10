@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截SpringFactoriesLoader注入自定配置源
+ * Intercept SpringFactoriesLoader to inject custom configuration sources
  *
  * @author zhouss
  * @since 2022-04-08

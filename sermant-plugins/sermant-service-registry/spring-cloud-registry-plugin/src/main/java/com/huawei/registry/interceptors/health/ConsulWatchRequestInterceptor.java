@@ -22,7 +22,7 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 针对1.x.x consul版本做的定时任务处理适配
+ * Adaptation of scheduled task processing for 1.x.x consul
  *
  * @author zhouss
  * @since 2021-12-13

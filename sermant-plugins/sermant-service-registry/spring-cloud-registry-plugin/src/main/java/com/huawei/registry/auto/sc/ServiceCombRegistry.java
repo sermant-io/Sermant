@@ -36,7 +36,7 @@ import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import java.util.logging.Logger;
 
 /**
- * ServiceComb注册
+ * ServiceComb registration
  *
  * @author zhouss
  * @since 2022-05-18

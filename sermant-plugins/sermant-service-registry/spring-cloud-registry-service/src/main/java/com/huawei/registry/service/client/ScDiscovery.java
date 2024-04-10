@@ -49,7 +49,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * service center实例发现, 原{@link ServiceCenterDiscovery}日志处理存在问题，因此此处重新实现
+ * The service center instance discovery;
+ * that there was a problem with the original {@link ServiceCenterDiscovery} log
+ * processing, so it is reimplemented here
  *
  * @author zhouss
  * @since 2022-05-11
@@ -58,17 +60,17 @@ public class ScDiscovery extends AbstractTask {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 默认拉取间隔
+     * Default pull interval
      */
     private static final long DEFAULT_POLL_INTERVAL = 15000L;
 
     /**
-     * endpoint最大长度，超过该长度直接截取
+     * The maximum length of the endpoint, which is directly intercepted after the endpoint
      */
     private static final int MAX_LEN_OF_ENDPOINT = 64;
 
     /**
-     * 查询所有的版本号
+     * Query all version numbers
      */
     private static final String ALL_VERSION = "0+";
 
@@ -91,10 +93,10 @@ public class ScDiscovery extends AbstractTask {
     private boolean started = false;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param serviceCenterClient sc客户端
-     * @param eventBus            事件总栈
+     * @param serviceCenterClient SC client
+     * @param eventBus Total stack of events
      */
     public ScDiscovery(ServiceCenterClient serviceCenterClient, EventBus eventBus) {
         super("service-center-discovery-task");
@@ -105,9 +107,9 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 设置拉取间隔
+     * Set the pull interval
      *
-     * @param interval 拉取间隔， 单位ms
+     * @param interval Pull interval, in ms
      */
     public void setPollInterval(long interval) {
         if (interval > ServiceCenterDiscovery.MAX_INTERVAL || interval < ServiceCenterDiscovery.MIN_INTERVAL) {
@@ -117,16 +119,16 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 更新自身服务ID
+     * Update your service ID
      *
-     * @param curServiceId 自身服务编号
+     * @param curServiceId Self Service Tag
      */
     public void updateMyselfServiceId(String curServiceId) {
         this.myselfServiceId = curServiceId;
     }
 
     /**
-     * 开启相关定时任务，拉取实例数据
+     * Enable a scheduled task to pull instance data
      */
     public void startDiscovery() {
         if (!started) {
@@ -136,9 +138,9 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 注册订阅者
+     * Sign up for subscribers
      *
-     * @param subscriptionKey 订阅者
+     * @param subscriptionKey Subscriber
      */
     public void registerIfNotPresent(SubscriptionKey subscriptionKey) {
         if (this.instancesCache.get(subscriptionKey) == null) {
@@ -153,19 +155,19 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 获取实例缓存
+     * Obtain the instance cache
      *
-     * @param key 订阅者
-     * @return 实例数据
+     * @param key Subscriber
+     * @return Instance data
      */
     public List<MicroserviceInstance> getInstanceCache(SubscriptionKey key) {
         return this.instancesCache.get(key).instancesCache;
     }
 
     /**
-     * 订阅拉取事件
+     * Subscribe to pull events
      *
-     * @param event 拉取事件
+     * @param event Pull event
      */
     @Subscribe
     public void onPullInstanceEvent(PullInstanceEvent event) {
@@ -179,33 +181,33 @@ public class ScDiscovery extends AbstractTask {
         }
         try {
             FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
-                .findMicroserviceInstance(myselfServiceId, key.appId, key.serviceName, ALL_VERSION, value.revision);
+                    .findMicroserviceInstance(myselfServiceId, key.appId, key.serviceName, ALL_VERSION, value.revision);
             if (instancesResponse.isModified()) {
                 List<MicroserviceInstance> instances =
-                    instancesResponse.getMicroserviceInstancesResponse().getInstances()
-                        == null ? Collections.emptyList()
-                        : instancesResponse.getMicroserviceInstancesResponse().getInstances();
+                        instancesResponse.getMicroserviceInstancesResponse().getInstances()
+                                == null ? Collections.emptyList()
+                                : instancesResponse.getMicroserviceInstancesResponse().getInstances();
                 setMicroserviceInfo(instances);
                 LOGGER.info(String.format(Locale.ENGLISH,
-                    "Instance changed event, current: revision={%s}, instances={%s}; "
-                        + "origin: revision={%s}, instances={%s}; appId={%s}, serviceName={%s}",
-                    instancesResponse.getRevision(),
-                    instanceToString(instances),
-                    value.revision,
-                    instanceToString(value.instancesCache),
-                    key.appId,
-                    key.serviceName
+                        "Instance changed event, current: revision={%s}, instances={%s}; "
+                                + "origin: revision={%s}, instances={%s}; appId={%s}, serviceName={%s}",
+                        instancesResponse.getRevision(),
+                        instanceToString(instances),
+                        value.revision,
+                        instanceToString(value.instancesCache),
+                        key.appId,
+                        key.serviceName
                 ));
                 value.instancesCache = instances;
                 value.revision = instancesResponse.getRevision();
                 eventBus.post(new InstanceChangedEvent(key.appId, key.serviceName,
-                    value.instancesCache));
+                        value.instancesCache));
             }
         } catch (OperationException ex) {
             String message = String.format(Locale.ENGLISH,
-                "find service {%s}#{%s} instance failed. caused by %s, if you are run with mode migration, please "
-                    + "ignore it!", key.appId, key.serviceName,
-                ex.getMessage());
+                    "find service {%s}#{%s} instance failed. caused by %s, if you are run with mode migration, please "
+                            + "ignore it!", key.appId, key.serviceName,
+                    ex.getMessage());
             LOGGER.log(level, message);
             LOGGER.log(Level.FINE, message, ex);
             failedInstances.add(key);
@@ -215,15 +217,15 @@ public class ScDiscovery extends AbstractTask {
     private void setMicroserviceInfo(List<MicroserviceInstance> instances) {
         instances.forEach(instance -> {
             Microservice microservice = microserviceCache
-                .computeIfAbsent(instance.getServiceId(), id -> {
-                    try {
-                        return serviceCenterClient.getMicroserviceByServiceId(id);
-                    } catch (OperationException ex) {
-                        LOGGER.log(Level.INFO, String.format(Locale.ENGLISH,
-                            "Find microservice by id={%s} failed", id), ex);
-                        throw ex;
-                    }
-                });
+                    .computeIfAbsent(instance.getServiceId(), id -> {
+                        try {
+                            return serviceCenterClient.getMicroserviceByServiceId(id);
+                        } catch (OperationException ex) {
+                            LOGGER.log(Level.INFO, String.format(Locale.ENGLISH,
+                                    "Find microservice by id={%s} failed", id), ex);
+                            throw ex;
+                        }
+                    });
             instance.setMicroservice(microservice);
         });
     }
@@ -246,7 +248,7 @@ public class ScDiscovery extends AbstractTask {
         for (MicroserviceInstance instance : instances) {
             for (String endpoint : instance.getEndpoints()) {
                 sb.append(endpoint.length() > MAX_LEN_OF_ENDPOINT
-                    ? endpoint.substring(0, MAX_LEN_OF_ENDPOINT) : endpoint);
+                        ? endpoint.substring(0, MAX_LEN_OF_ENDPOINT) : endpoint);
                 sb.append("|");
             }
             sb.append(instance.getServiceName());
@@ -257,7 +259,7 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 定时拉取任务
+     * Pull tasks at regular intervals
      *
      * @since 2022-05-11
      */
@@ -271,7 +273,7 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 订阅实例
+     * Subscribe to an instance
      *
      * @since 2022-05-11
      */
@@ -282,7 +284,7 @@ public class ScDiscovery extends AbstractTask {
     }
 
     /**
-     * 订阅者
+     * Subscriber
      *
      * @since 2022-05-11
      */
@@ -292,10 +294,10 @@ public class ScDiscovery extends AbstractTask {
         final String serviceName;
 
         /**
-         * 订阅者
+         * Subscriber
          *
-         * @param appId       appName
-         * @param serviceName 服务名
+         * @param appId appName
+         * @param serviceName service name
          */
         public SubscriptionKey(String appId, String serviceName) {
             this.appId = appId;

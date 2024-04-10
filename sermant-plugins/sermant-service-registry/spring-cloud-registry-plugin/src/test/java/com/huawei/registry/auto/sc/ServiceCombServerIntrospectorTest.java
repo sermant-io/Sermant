@@ -18,22 +18,18 @@ package com.huawei.registry.auto.sc;
 
 import static org.junit.Assert.*;
 
-import com.huawei.registry.entity.MicroServiceInstance;
-import com.huawei.registry.entity.ScServer;
-
 import com.netflix.loadbalancer.Server;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.cloud.zookeeper.discovery.ZookeeperServer;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 获取meta测试
+ * Get the meta-test
  *
  * @author zhouss
  * @since 2022-09-06

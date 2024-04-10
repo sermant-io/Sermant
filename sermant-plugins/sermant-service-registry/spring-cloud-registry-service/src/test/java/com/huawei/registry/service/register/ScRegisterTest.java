@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试注册逻辑
+ * Test the registration logic
  *
  * @author zhouss
  * @since 2022-09-07

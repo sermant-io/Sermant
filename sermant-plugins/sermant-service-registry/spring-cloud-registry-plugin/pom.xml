@@ -108,7 +108,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--    zuul自身引入的commons-io有漏洞，排除后引入无漏洞版本    -->
+        <!--   The commons-io introduced by zuul itself has a vulnerability, and a non-vulnerable version is introduced
+        after it is eliminated    -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -120,7 +121,7 @@
             <artifactId>registry-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--测试依赖-->
+        <!--Test dependencies-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

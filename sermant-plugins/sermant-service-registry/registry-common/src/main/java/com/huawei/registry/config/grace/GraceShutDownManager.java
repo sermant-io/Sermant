@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
- * 优雅下线
+ * Gracefully rolled off the line
  *
  * @author zhouss
  * @since 2022-05-23
@@ -45,7 +45,7 @@ public class GraceShutDownManager {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 最大缓存关闭endpoint数量
+     * The maximum number of endpoints that can be disabled for caching
      */
     private static final int MAX_SHUTDOWN_ENDPOINT_CACHE = 2000;
 
@@ -53,32 +53,37 @@ public class GraceShutDownManager {
             new ThreadFactoryUtils("ENDPOINT_CLEAN_UP_TASK"));
 
     /**
-     * 请求数, 统计被标记关闭后的请求数量
+     * Number of Requests: Statistics on the number of requests after they are marked as closed
      */
     private final AtomicInteger requestCount = new AtomicInteger();
 
     /**
-     * 当前实例是否被标记为关闭状态
+     * Whether the current instance is marked as down
      */
     private volatile boolean isShutDown = false;
 
     /**
-     * 负载均衡缓存, 用于缓存balancer, 在服务被通知下线时, 使用该loadBalancer及时拉取最新服务实例 key : 下游服务名 value: loadbalancer
+     * The load balancer is used to cache the balancer, and when the service is notified to go offline, the loadBalancer
+     * is used to pull the latest service instance.
+     * key: downstream service name
+     * value: loadbalancer in a timely manner
      */
     private final Map<String, Object> loadBalancerCache = new ConcurrentHashMap<>();
 
     /**
-     * Spring缓存管理器, 用于负载均衡获取CachingServiceInstanceListSupplier缓存, 并刷新该缓存基于evict方法
+     * Spring Cache Manager, which is used for load balancing to get the CachingServiceInstanceListSupplier cache and
+     * flush the cache based on the evict method
      */
     private Object loadBalancerCacheManager;
 
     /**
-     * 缓存即将要关闭的下游IP key: endpoint value: 关闭被标记的关闭时间戳
+     * Cache the downstream IP that is about to be shut down, key: endpoint value: The closing timestamp of the closure
+     * being marked
      */
     private final Map<String, Long> markShutDownEndpoints = new ConcurrentHashMap<>();
 
     /**
-     * 注册bean
+     * Register bean
      */
     private Object registration;
 
@@ -89,23 +94,23 @@ public class GraceShutDownManager {
     }
 
     /**
-     * +1增加请求数并返回
+     * Increase the number of requests and return them together with the request form
      */
     public void increaseRequestCount() {
         requestCount.incrementAndGet();
     }
 
     /**
-     * -1请求数并返回
+     * Request quantity minus one and return it
      */
     public void decreaseRequestCount() {
         requestCount.decrementAndGet();
     }
 
     /**
-     * 获取请求数
+     * Get the number of requests
      *
-     * @return 请求数
+     * @return Number of requests
      */
     public int getRequestCount() {
         return requestCount.get();
@@ -140,19 +145,19 @@ public class GraceShutDownManager {
     }
 
     /**
-     * 当前endpoint是否已被标记下线
+     * Check whether the endpoint has been marked offline
      *
-     * @param endpoint 下游请求地址
-     * @return true 已被标记下线
+     * @param endpoint Downstream request address
+     * @return true, It has been marked offline
      */
     public boolean isMarkedOffline(String endpoint) {
         return markShutDownEndpoints.containsKey(endpoint);
     }
 
     /**
-     * 添加要关闭的下游ip地址
+     * Add the downstream IP address that you want to shut down
      *
-     * @param endpoints 地址，host:port
+     * @param endpoints Address，host:port
      */
     public void addShutdownEndpoints(Collection<String> endpoints) {
         if (endpoints == null || endpoints.isEmpty()) {
@@ -168,7 +173,7 @@ public class GraceShutDownManager {
         } else {
             cleanUp();
             LOGGER.warning(String.format(Locale.ENGLISH,
-                "Exceed the max mark shutdown endpoints size! endpoint [%s]", endpoint));
+                    "Exceed the max mark shutdown endpoints size! endpoint [%s]", endpoint));
         }
     }
 

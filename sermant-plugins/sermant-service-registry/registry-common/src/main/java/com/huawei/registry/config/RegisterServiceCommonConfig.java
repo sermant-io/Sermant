@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 注册服务公共参数
+ * Register the public parameters of the service
  *
  * @author chengyouling
  * @since 2022-11-17
@@ -33,17 +33,17 @@ import java.util.List;
 @ConfigTypeKey(value = "register.service")
 public class RegisterServiceCommonConfig implements PluginConfig {
     /**
-     * 注册中心类型
+     * Registry type
      */
     private RegisterType registerType = RegisterType.SERVICE_COMB;
 
     /**
-     * SERVICE_COMB注册中心地址，多个地址使用逗号隔开 / NACOS注册中心ip:port
+     * SERVICE_COMB registry address, multiple addresses separated by commas / NACOS registry ip:port
      */
     private String address = "http://127.0.0.1:30100";
 
     /**
-     * 是否加密
+     * Whether it is encrypted or not
      */
     private boolean secure;
 
@@ -64,9 +64,9 @@ public class RegisterServiceCommonConfig implements PluginConfig {
     }
 
     /**
-     * 获取逗号分隔后的地址列表
+     * Get a comma-separated list of addresses
      *
-     * @return 地址列表
+     * @return List of addresses
      */
     public List<String> getAddressList() {
         if (StringUtils.isBlank(address)) {

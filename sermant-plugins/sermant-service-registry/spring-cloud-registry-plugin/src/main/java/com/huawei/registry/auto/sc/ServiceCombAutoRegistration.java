@@ -25,7 +25,7 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationP
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 
 /**
- * ServiceComb自动配置
+ * ServiceComb automatic configuration
  *
  * @author zhouss
  * @since 2022-05-18
@@ -36,12 +36,12 @@ public class ServiceCombAutoRegistration extends AbstractAutoServiceRegistration
     private final ServiceCombRegistration serviceCombRegistration;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param serviceRegistry 注册
-     * @param properties 配置
-     * @param serviceCombRegistration 注册信息
-     * @param registerConfig 注册配置
+     * @param serviceRegistry register
+     * @param properties configuration
+     * @param serviceCombRegistration Registration Information
+     * @param registerConfig Registration configuration
      */
     public ServiceCombAutoRegistration(
             ServiceRegistry<ServiceCombRegistration> serviceRegistry,
@@ -74,18 +74,18 @@ public class ServiceCombAutoRegistration extends AbstractAutoServiceRegistration
     }
 
     /**
-     * 获取端口 低版本需要实现的方法
+     * Get Port Methods that need to be implemented in earlier versions
      *
-     * @return 端口
+     * @return Port
      */
     protected int getConfiguredPort() {
         return RegisterContext.INSTANCE.getClientInfo().getPort();
     }
 
     /**
-     * 设置端口
+     * Set the port
      *
-     * @param port 低版本需实现的方法
+     * @param port Methods to be implemented in earlier versions
      */
     protected void setConfiguredPort(int port) {
     }

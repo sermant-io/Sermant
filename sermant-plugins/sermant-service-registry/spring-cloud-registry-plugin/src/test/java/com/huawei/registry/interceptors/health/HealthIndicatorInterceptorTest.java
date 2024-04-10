@@ -26,7 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 健康拦截测试
+ * Health Interception Test
  *
  * @author zhouss
  * @since 2022-09-07

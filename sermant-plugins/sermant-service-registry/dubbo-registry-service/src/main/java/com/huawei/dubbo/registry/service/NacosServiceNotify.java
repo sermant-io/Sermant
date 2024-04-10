@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * nacos服务名唤醒
+ * Nacos service name notify
  *
  * @since 2022-10-25
  */
@@ -59,11 +59,11 @@ public class NacosServiceNotify {
     private static final String REMOVE_VALUE_PREFIX = "-";
 
     /**
-     * 执行下游无法监听
+     * The execution downstream cannot listen
      *
      * @param url url
-     * @param listener 监听
-     * @param urls url集合
+     * @param listener Listener
+     * @param urls URL collection
      */
     public void doNotify(Object url, Object listener, List<Object> urls) {
         if ((CollectionUtils.isEmpty(urls)) && !ANY_VALUE.equals(ReflectUtils.getServiceInterface(url))) {

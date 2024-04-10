@@ -24,7 +24,7 @@ import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.support.FailbackRegistry;
 
 /**
- * nacos注册
+ * NACOS Registration
  *
  * @author chengyouling
  * @since 2022-10-25
@@ -33,9 +33,9 @@ public class NacosRegistry extends FailbackRegistry {
     private final NacosRegistryService registryService;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param url 注册url
+     * @param url Registration URL
      */
     public NacosRegistry(org.apache.dubbo.common.URL url) {
         super(url);

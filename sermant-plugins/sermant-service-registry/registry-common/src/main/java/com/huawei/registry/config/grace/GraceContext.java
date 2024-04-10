@@ -18,39 +18,39 @@
 package com.huawei.registry.config.grace;
 
 /**
- * 优雅上下线上下文
+ * Elegant online and offline context
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public enum GraceContext {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
     /**
-     * 优雅下线管理
+     * Elegant offline management
      */
     private final GraceShutDownManager graceShutDownManager = new GraceShutDownManager();
 
     /**
-     * 插件开始加载时间
+     * Plugin start load time
      */
     private long startTime;
 
     /**
-     * 注册完成时间
+     * Registration completion time
      */
     private long registryFinishTime;
 
     /**
-     * 第二个注册中心注册完成时间
+     * The time when the registration of the second registry was completed
      */
     private long secondRegistryFinishTime;
 
     /**
-     * 开始预热时间
+     * Start warm-up time
      */
     private long startWarmUpTime;
 

@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 实例获取拦截器支持
+ * The instance is supported by interceptors
  *
  * @author zhouss
  * @since 2022-02-22
@@ -44,16 +44,16 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 类缓存, 避免多次调用loadClass
+     * Class caching to avoid multiple calls to loadClass
      */
     private final Map<String, Class<?>> cacheClasses = new ConcurrentHashMap<>();
 
     private RegisterConfig config;
 
     /**
-     * 是否开启注册中心迁移，双注册
+     * Whether to enable registry migration and dual registration
      *
-     * @return 是否开启
+     * @return Whether it is turned on
      */
     protected final boolean isOpenMigration() {
         return getRegisterConfig().isOpenMigration();
@@ -67,10 +67,11 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     }
 
     /**
-     * 获取实例类对象 当不存在时，采用宿主类加载器加载，使之可与宿主关联
+     * Get an instance class object When it doesn't exist, it's loaded with a host class loader so that it can be
+     * associated with the host
      *
-     * @param className 宿主全限定类名
-     * @return 宿主类
+     * @param className The host is a fully qualified class name
+     * @return Host class
      */
     protected final Class<?> getInstanceClass(String className) {
         return cacheClasses.computeIfAbsent(className, fn -> {
@@ -80,7 +81,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
                 result = ClassLoaderUtils.defineClass(className, contextClassLoader,
                         ClassLoaderUtils.getClassResource(this.getClass().getClassLoader(), className));
             } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | IOException e) {
-                // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
+                // It may have already been loaded, and it can be loaded directly with contextClassLoader.loadClass
                 try {
                     result = contextClassLoader.loadClass(className);
                 } catch (ClassNotFoundException ignored) {
@@ -92,10 +93,10 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     }
 
     /**
-     * 构建实例  由子类自行转换
+     * Build instances are transformed by the subclasses themselves
      *
-     * @param microServiceInstance 实例信息
-     * @param serviceName 服务名
+     * @param microServiceInstance Instance information
+     * @param serviceName Service name
      * @return Object
      */
     protected final Optional<Object> buildInstance(MicroServiceInstance microServiceInstance, String serviceName) {
@@ -105,16 +106,16 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
                     .getDeclaredConstructor(MicroServiceInstance.class, String.class);
             return Optional.of(declaredConstructor.newInstance(microServiceInstance, serviceName));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-            | InvocationTargetException exception) {
+                 | InvocationTargetException exception) {
             return Optional.empty();
         }
     }
 
     /**
-     * 宿主是否为webflux应用
+     * Whether the host is a WebFlux application
      *
-     * @param target 增强目标
-     * @return 是返回true
+     * @param target Enhance the target
+     * @return Yes returns true
      */
     protected boolean isWebfLux(Object target) {
         return StringUtils.equals("org.springframework.cloud.client.discovery.composite.reactive"
@@ -122,9 +123,9 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
     }
 
     /**
-     * 获取实例类权限定名
+     * Obtain the name of the instance class
      *
-     * @return 实例类权限定名
+     * @return The name of the instance class is specified
      */
     protected abstract String getInstanceClassName();
 }

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Spring注册相关配置解析
+ * Configuration analysis related to Spring registration
  *
  * @author zhouss
  * @since 2022-05-24
@@ -41,9 +41,9 @@ public abstract class RegistryConfigResolver {
     private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
-     * 更新优雅上下线配置
+     * Updated the configuration of elegant online and offline lines
      *
-     * @param event 通知事件
+     * @param event Notification of events
      */
     public void updateConfig(DynamicConfigEvent event) {
         if (!isTargetConfig(event)) {
@@ -66,7 +66,8 @@ public abstract class RegistryConfigResolver {
             final String name = field.getName();
             final Object configValue = dic.get(getConfigPrefix() + name);
             if (configValue == null || eventType == DynamicConfigEventType.DELETE) {
-                // 采用默认值覆盖, 默认值会将会改为修改为第一次从配置和环境变量读取覆盖后的配置值
+                // The default value will be changed to the value read from the configuration and environment variables
+                // for the first time
                 final Optional<Object> fieldValue = ReflectUtils.getFieldValue(defaultGraceConfig, name);
                 fieldValue.ifPresent(value -> ReflectUtils.setFieldValue(originGraceConfig, name, value));
                 isUpdated = true;
@@ -74,7 +75,7 @@ public abstract class RegistryConfigResolver {
             }
             isUpdated = true;
 
-            // 若配置中心有该值, 则进行覆盖处理
+            // If the configuration center has this value, it will be overwritten
             ReflectUtils.setFieldValue(originGraceConfig, name, configValue);
         }
         return isUpdated;
@@ -96,36 +97,36 @@ public abstract class RegistryConfigResolver {
     }
 
     /**
-     * 获取配置前缀
+     * Obtain the configuration prefix
      *
-     * @return 配置前缀
+     * @return Configure the prefix
      */
     protected abstract String getConfigPrefix();
 
     /**
-     * 获取默认配置类
+     * Gets the default configuration class
      *
-     * @return 默认配置类
+     * @return The default configuration class
      */
     protected abstract Object getDefaultConfig();
 
     /**
-     * 获取原始配置类, 通过PluginConfigManager获取的配置
+     * Get the original configuration class, the configuration obtained through the PluginConfigManager
      *
-     * @return 原始配置类
+     * @return Original configuration class
      */
     protected abstract Object getOriginConfig();
 
     /**
-     * 是否为目标配置
+     * Whether it is configured for the target
      *
-     * @param event 配置监听事件
-     * @return 如果为目标配置, 则返回true
+     * @param event Configure listening events
+     * @return If configured for the target, true is returned
      */
     protected abstract boolean isTargetConfig(DynamicConfigEvent event);
 
     /**
-     * 更新配置之后的操作
+     * What to do after the configuration is updated
      */
     protected abstract void afterUpdateConfig();
 }

@@ -18,49 +18,49 @@
 package com.huawei.registry.config;
 
 /**
- * 配置常量定义
+ * Configure constant definitions
  *
  * @author zhouss
  * @since 2022-03-02
  */
 public class ConfigConstants {
     /**
-     * 默认实例拉取间隔 单位秒
+     * The default instance pull interval is in seconds
      */
     public static final int DEFAULT_PULL_INTERVAL = 15;
 
     /**
-     * 默认心跳失败重试次数
+     * Default number of failed retries for heartbeats
      */
     public static final int DEFAULT_HEARTBEAT_RETRY_TIMES = 3;
 
     /**
-     * 默认心跳发送间隔 单位秒
+     * The default heartbeat sending interval is in seconds
      */
     public static final int DEFAULT_HEARTBEAT_INTERVAL = 15;
 
     /**
-     * APP与Service分隔符
+     * The separator between APP and Service
      */
     public static final String APP_SERVICE_SEPARATOR = ".";
 
     /**
-     * 默认值
+     * Default value
      */
     public static final String COMMON_DEFAULT_VALUE = "default";
 
     /**
-     * 秒转毫秒单位
+     * Seconds to millisecond units
      */
     public static final long SEC_DELTA = 1000L;
 
     /**
-     * 公共注册框架版本
+     * Public Registry Framework Version
      */
     public static final String COMMON_FRAMEWORK = "Sermant";
 
     /**
-     * 服务是否加密公共参数
+     * Whether the service encrypts public parameters
      */
     public static final String SECURE = "secure";
 

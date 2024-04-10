@@ -32,7 +32,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试基于心跳检测注册中心状态
+ * The test is based on the heartbeat detection registry status
  *
  * @author zhouss
  * @since 2022-12-20

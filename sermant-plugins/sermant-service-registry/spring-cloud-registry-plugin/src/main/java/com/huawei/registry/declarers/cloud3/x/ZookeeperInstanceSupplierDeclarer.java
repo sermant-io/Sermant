@@ -24,9 +24,10 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对springCloud 3.x获取实例列表兼容
+ * Compatible with obtaining instance lists for springCloud 3.x
  * <p>
- * 自从3.x版本，zookeeper注册发现新增InstanceSupplier进行实例获取， 其将包裹原来的DiscoveryClient，因此原来的拦截点将不再受用
+ * Since version 3.x, InstanceSupplier is added to the zookeeper registration and discovery to ontain instance,
+ * which will wrap the original DiscoveryClient, so the original interception point will no longer be used
  * </p>
  *
  * @author zhouss
@@ -34,13 +35,13 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
  */
 public class ZookeeperInstanceSupplierDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 增强类的全限定名
+     * The fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS =
-        "org.springframework.cloud.zookeeper.discovery.ZookeeperServiceInstanceListSupplier";
+            "org.springframework.cloud.zookeeper.discovery.ZookeeperServiceInstanceListSupplier";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = ZookeeperInstanceSupplierInterceptor.class.getCanonicalName();
 
@@ -52,7 +53,7 @@ public class ZookeeperInstanceSupplierDeclarer extends AbstractDoubleRegistryDec
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("filteredByZookeeperStatusUp"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("filteredByZookeeperStatusUp"), INTERCEPT_CLASS)
         };
     }
 }

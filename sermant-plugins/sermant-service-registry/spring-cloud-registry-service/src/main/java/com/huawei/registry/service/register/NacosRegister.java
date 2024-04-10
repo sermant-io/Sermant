@@ -22,7 +22,7 @@ import com.huawei.registry.service.client.NacosClient;
 import java.util.List;
 
 /**
- * nacos注册实现
+ * Nacos registration implementation
  *
  * @author chengyouling
  * @since 2022-10-20

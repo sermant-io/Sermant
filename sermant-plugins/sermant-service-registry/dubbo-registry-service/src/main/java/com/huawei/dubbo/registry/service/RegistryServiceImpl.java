@@ -97,7 +97,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * 注册服务类，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * Register a service class, and use reflection to call class methods in your code to be compatible with both Alibaba
+ * and Apache Dubbo
  *
  * @author provenceee
  * @since 2021-12-15
@@ -178,7 +179,7 @@ public class RegistryServiceImpl implements RegistryService {
     @Override
     public void startRegistration() {
         if (!DubboCache.INSTANCE.isLoadSc()) {
-            // 没有加载sc的注册spi就直接return
+            // If you don't load the registered SPI of SC, you just return it
             return;
         }
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
@@ -201,10 +202,10 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 订阅接口
+     * Subscription API
      *
-     * @param url 订阅地址
-     * @param notifyListener 实例通知监听器
+     * @param url Subscription address
+     * @param notifyListener instance notifies the listener
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      * @see com.alibaba.dubbo.registry.NotifyListener
@@ -240,9 +241,9 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 增加注册接口
+     * The registration interface is added
      *
-     * @param url 注册url
+     * @param url Registration URL
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
      */
@@ -254,7 +255,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 通知治理url
+     * Notification URL
      */
     @Override
     public void notifyGovernanceUrl() {
@@ -266,7 +267,9 @@ public class RegistryServiceImpl implements RegistryService {
                     List<Object> governanceUrls = wrapGovernanceData(urls);
                     if (governanceUrls == urls || (governanceUrls.containsAll(urls)
                             && urls.containsAll(governanceUrls))) {
-                        // 修改前后urls一致，或者修改前后的实例url一致，则不用通知
+                        // If the URL of the instance before and after the modification is the same, or the URL of the
+                        // instance before and after the modification is the same, you do not need to notify the
+                        // instance
                         return;
                     }
                     ReflectUtils.notify(notifyListener, governanceUrls);
@@ -276,9 +279,9 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 心跳事件
+     * Heartbeat events
      *
-     * @param event 心跳事件
+     * @param event Heartbeat events
      */
     @Subscribe
     public void onHeartBeatEvent(HeartBeatEvent event) {
@@ -289,9 +292,9 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 注册事件
+     * Registration event
      *
-     * @param event 注册事件
+     * @param event Registration event
      */
     @Subscribe
     public void onMicroserviceRegistrationEvent(MicroserviceRegistrationEvent event) {
@@ -302,9 +305,9 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 注册事件
+     * Registration event
      *
-     * @param event 注册事件
+     * @param event Registration event
      */
     @Subscribe
     public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
@@ -317,9 +320,9 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * 实例变化事件
+     * Instance change event
      *
-     * @param event 实例变化事件
+     * @param event Instance change event
      */
     @Subscribe
     public void onInstanceChangedEvent(InstanceChangedEvent event) {
@@ -390,7 +393,7 @@ public class RegistryServiceImpl implements RegistryService {
         microserviceInstance.setHostName(getHost());
         microserviceInstance.setEndpoints(getEndpoints());
 
-        // 存入每一个接口提供的实现的group version等信息
+        // Stores information such as the group version of the implementation provided by each interface
         microserviceInstance.getProperties().putAll(getProperties());
     }
 
@@ -398,7 +401,8 @@ public class RegistryServiceImpl implements RegistryService {
         try {
             String hostName = InetAddress.getLocalHost().getHostName();
 
-            // ServiceComb不支持64个字符以上的hostname注册, 此处参考spring-cloud-huawei进行截断处理
+            // ServiceComb does not support hostname registration with more than 64 characters,
+            // so refer to spring-cloud-huawei for truncation
             return hostName != null && hostName.length() > MAX_HOST_NAME_LENGTH ? hostName.substring(0,
                     MAX_HOST_NAME_LENGTH) : hostName;
         } catch (UnknownHostException e) {
@@ -413,20 +417,22 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     private Map<String, String> getProperties() {
-        // 接口的协议缓存（适配多协议接口）
+        // Protocol caching of interfaces (adapting to multi-protocol interfaces)
         Map<String, Set<String>> protocolCache = new ConcurrentHashMap<>();
 
-        // 把registryUrls按接口名进行分组，组装成InterfaceData，并聚合到HashSet（去重）里面
+        // Group registryUrls by interface name, assemble them into InterfaceData, and aggregate them into HashSet
+        // (deduplication)
         Map<String, Set<InterfaceData>> map = registryUrls.stream().collect(Collectors.groupingBy(this::getInterface,
                 Collectors.mapping(url -> getInterfaceData(url, protocolCache),
                         Collectors.toCollection(HashSet::new))));
         Map<String, String> properties = new HashMap<>();
         properties.put(INTERFACE_DATA_KEY, JSONObject.toJSONString(map));
 
-        // 存入实例参数
+        // Deposit the instance parameters
         if (!CollectionUtils.isEmpty(serviceMeta.getParameters())) {
-            // 由于http header的key不区分大小写，所以使用metadata做路由时，统一把key转为小写
-            // 由于dubbo注册时，会把'-'替换成'.'，所以保持一致
+            // Since the key of the HTTP header is not case-sensitive, when using metadata for routing, the key is
+            // uniformly changed to lowercase
+            // Because when dubbo registers, it will replace '-' with '.', so be consistent
             serviceMeta.getParameters()
                     .forEach((key, value) -> properties.put(key.replace("-", ".").toLowerCase(Locale.ROOT), value));
         }
@@ -441,7 +447,8 @@ public class RegistryServiceImpl implements RegistryService {
         String path = ReflectUtils.getPath(url);
         String interfaceName = parameters.get(INTERFACE_KEY);
         if (!path.equals(interfaceName) && path.length() > interfaceName.length()) {
-            // 2.6.x, 2.7.0-2.7.7在多实现的场景下，路径名会在接口名后拼一个序号，取出这个序号并保存
+            // 2.6.x, 2.7.0-2.7.7 In the scenario of multiple implementations, the pathname will spell a sequence number
+            // after the interface name, take out the sequence number and save it
             order = Integer.valueOf(path.substring(interfaceName.length()));
         }
         List<String> keys = new ArrayList<>(DEFAULT_INTERFACE_KEYS);
@@ -497,16 +504,19 @@ public class RegistryServiceImpl implements RegistryService {
         String interfaceName = getInterface(newUrl);
         Map<String, String> parameters = ReflectUtils.getParameters(url);
         parameters.keySet().forEach(key -> {
-            // 实例属性，会存到properties中，所以不需要在接口级参数中储存
+            // Instance properties are stored in properties, so they do not need to be stored in interface-level
+            // parameters
             if (key.startsWith(META_DATA_PREFIX) || META_DATA_VERSION_KEY.equals(key) || META_DATA_ZONE_KEY
                     .equals(key)) {
                 ignoreKeys.add(key);
             }
         });
 
-        // schema是以接口名为维度的，ignoreKeys中的参数主要跟实现相关，所以这里去掉
-        // ignoreKeys中的参数会存在实例的properties中
-        // 2.6.x, 2.7.0-2.7.7在多实现的场景下，路径名会在接口名后拼一个序号，所以这里把路径名统一设置为接口名
+        // The schema is named by the interface as a dimension, and the parameters in ignore keys are mainly related to
+        // the implementation, so they are removed here
+        // The parameters in ignoreKeys will exist in the properties of the instance
+        // 2.6.x, 2.7.0-2.7.7 In the scenario of multiple implementations, the pathname will spell a sequence number
+        // after the interface name, so the pathname is set to the interface name
         String newUrlString = ReflectUtils.setPath(ReflectUtils.removeParameters(newUrl, ignoreKeys), interfaceName)
                 .toString();
         String schema = newUrlString.substring(newUrlString.indexOf(microservice.getServiceName()));
@@ -527,7 +537,8 @@ public class RegistryServiceImpl implements RegistryService {
             return;
         }
 
-        // 相同interfaceName的serviceList的appId和serviceName相同，所以可以取第一个
+        // The app ID of the service list with the same interface name is the same as the service name, so you can
+        // take the first one
         String appId = serviceList.get(0).getAppId();
         String serviceName = serviceList.get(0).getServiceName();
         Object notifyListener = subscription.getNotifyListener();
@@ -614,7 +625,7 @@ public class RegistryServiceImpl implements RegistryService {
             Map<String, String> whiteListMap = new HashMap<>();
             Map<String, String> urlParameters = ReflectUtils.getParameters(url);
 
-            // 参数比较敏感，所以这里使用白名单管理
+            // Parameters are sensitive, so whitelist management is used here
             config.getGovernanceParametersWhiteList().forEach(key -> {
                 String value = parameters.get(key);
                 if (parameters.containsKey(key) && !Objects.equals(value, urlParameters.get(key))) {
@@ -638,11 +649,11 @@ public class RegistryServiceImpl implements RegistryService {
             List<MicroserviceInstance> instances) {
         Map<SubscriptionKey, List<Object>> urlMap = new HashMap<>();
 
-        // instances中的serviceId都是一样的，所以这里可以取第一个
+        // The service ID in instances is the same, so you can take the first one here
         List<SchemaInfo> schemaInfos = client.getServiceSchemasList(instances.get(0).getServiceId(), true);
         instances.forEach(instance -> convertToUrlMap(urlMap, appId, serviceName, instance, schemaInfos));
 
-        // 拼接*（通配符）的场景
+        // Scenes with stitched * (wildcard).
         urlMap.putAll(getWildcardUrlMap(urlMap));
         return urlMap;
     }
@@ -677,13 +688,14 @@ public class RegistryServiceImpl implements RegistryService {
             schemaInfos.forEach(schema -> {
                 Object newUrl = ReflectUtils.valueOf(schema.getSchema());
 
-                // 获取对应接口的所有实现的信息，并组装成InterfaceKey
+                // Obtain information about all implementations of the corresponding interface and assemble it into an
+                // interface key
                 List<InterfaceData> list = getInterfaceDataList(dataMap, properties, schema.getSchemaId(), metaData);
                 if (CollectionUtils.isEmpty(list)) {
                     return;
                 }
 
-                // 遍历所有的接口实现
+                // Traverse through all interface implementations
                 list.forEach(interfaceData -> {
                     if (!CollectionUtils.isEmpty(interfaceData.getProtocol())
                             && !interfaceData.getProtocol().contains(protocol)) {
@@ -691,7 +703,7 @@ public class RegistryServiceImpl implements RegistryService {
                     }
                     Map<String, String> parameters = getParameters(interfaceData);
 
-                    // 组装所有接口实现的访问地址列表
+                    // Assemble a list of access addresses for all interface implementations
                     urlMap.computeIfAbsent(getSubscriptionKey(appId, serviceName, newUrl, interfaceData),
                                     value -> new ArrayList<>())
                             .add(getUrlOnNotifying(newUrl, url, parameters, interfaceData.getOrder(), protocol));
@@ -720,12 +732,13 @@ public class RegistryServiceImpl implements RegistryService {
             return url;
         }
 
-        // 2.6.x, 2.7.0 - 2.7.7在多实现的场景下，路径名为接口拼一个序号
+        // 2.6.x, 2.7.0 - 2.7.7In multi-implementation scenarios, the pathname is spelled with a sequence number for the
+        // interface
         return ReflectUtils.setPath(url, ReflectUtils.getPath(schemaUrl) + order);
     }
 
     private Map<String, String> getMetaData(Map<String, String> properties) {
-        // 没有接口数据，说明是旧版本，跳过
+        // There is no interface data, the description is an old version, skip
         if (StringUtils.isBlank(properties.get(INTERFACE_DATA_KEY))) {
             return Collections.emptyMap();
         }
@@ -733,7 +746,7 @@ public class RegistryServiceImpl implements RegistryService {
         for (Entry<String, String> entry : properties.entrySet()) {
             String key = entry.getKey();
 
-            // 接口数据不是元数据，跳过
+            // Interface data is not metadata, skip
             if (INTERFACE_DATA_KEY.equals(key)) {
                 continue;
             }
@@ -753,11 +766,11 @@ public class RegistryServiceImpl implements RegistryService {
     private List<InterfaceData> getInterfaceDataList(Map<String, List<InterfaceData>> dataMap,
             Map<String, String> properties, String schemaId, Map<String, String> metaData) {
         if (CollectionUtils.isEmpty(dataMap)) {
-            // 旧版本获取方式
+            // How to obtain the old version
             return JSONArray.parseArray(properties.get(schemaId), InterfaceData.class);
         }
 
-        // 新版本获取方式
+        // How to get the new version
         List<InterfaceData> list = dataMap.get(schemaId);
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyList();
@@ -795,7 +808,7 @@ public class RegistryServiceImpl implements RegistryService {
     }
 
     /**
-     * JSONObject序列化类
+     * JSONObject Serialization class
      *
      * @since 2022-02-18
      */

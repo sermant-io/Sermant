@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 /**
- * 环境变量测试
+ * Environment variable testing
  *
  * @author zhouss
  * @since 2022-09-06

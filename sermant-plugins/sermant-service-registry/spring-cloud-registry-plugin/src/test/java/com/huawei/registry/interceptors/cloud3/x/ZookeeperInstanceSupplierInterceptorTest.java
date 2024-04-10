@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 拦截获取实例测试
+ * Intercept and get instance tests
  *
  * @author zhouss
  * @since 2022-09-06
@@ -83,7 +83,7 @@ public class ZookeeperInstanceSupplierInterceptorTest {
         List<ServiceInstance> instances = (List<ServiceInstance>) result;
         assertEquals(instances.size(), (scInstances.size() + originInstances.size()));
 
-        // 测试去重
+        // Test deduplication
         scInstances.clear();
         originInstances.clear();
         allInstances.clear();
@@ -131,10 +131,10 @@ public class ZookeeperInstanceSupplierInterceptorTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param port 端口
-     * @return 实例
+     * @param port Port
+     * @return Instance
      */
     public org.apache.curator.x.discovery.ServiceInstance buildZkInstance(int port) {
         final org.apache.curator.x.discovery.ServiceInstance serviceInstance = Mockito
@@ -147,10 +147,10 @@ public class ZookeeperInstanceSupplierInterceptorTest {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param port 端口
-     * @return 实例
+     * @param port Port
+     * @return Instance
      */
     public MicroServiceInstance buildInstance(int port) {
         return new MicroServiceInstance() {

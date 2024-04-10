@@ -26,19 +26,20 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * springcloud预热拦截，通过拦截选择服务的方法, 执行预热逻辑进行处理 当前拦截器仅对Riboon生效
+ * Spring cloud pre-warm-up interception, by intercepting the method of selecting a service, executing the pre-warm-up
+ * logic for processing, the current interceptor only takes effect for Riboon
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class SpringRibbonWarmUpDeclarer extends AbstractPluginDeclarer {
     /**
-     * 通用自动注册类
+     * Universal automatic registration class
      */
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.AbstractServerPredicate";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = SpringRibbonWarmUpInterceptor.class.getCanonicalName();
 
@@ -49,7 +50,7 @@ public class SpringRibbonWarmUpDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        // 插件开始加载时间
+        // Plugin start load time
         GraceContext.INSTANCE.setStartTime(System.currentTimeMillis());
         return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameEquals("getEligibleServers")

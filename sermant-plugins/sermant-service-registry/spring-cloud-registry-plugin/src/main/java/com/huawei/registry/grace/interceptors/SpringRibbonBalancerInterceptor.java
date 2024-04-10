@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 
 /**
- * ribbon负载均衡拦截
+ * Ribbon Load Balancer interception
  *
  * @author zhouss
  * @since 2022-05-23

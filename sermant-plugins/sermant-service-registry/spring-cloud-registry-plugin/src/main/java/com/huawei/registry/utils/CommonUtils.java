@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 /**
- * 公共工具类
+ * Public utility class
  *
  * @author zhouss
  * @since 2021-12-16
@@ -46,17 +46,17 @@ public class CommonUtils {
     };
 
     /**
-     * endpoints基于":"分割长度
+     * Endpoints based on ":" segmentation length
      */
     private static final int SERVICECOMB_ENDPOINT_PARTS = 3;
 
     /**
-     * ip段所在索引
+     * The index to which the IP range resides
      */
     private static final int ENDPOINTS_IP_PART_INDEX = 1;
 
     /**
-     * ip前的分隔符长度, 对应实际字符: ' // '
+     * The length of the separator before the IP address, which corresponds to the actual character: ' // '
      */
     private static final int ENDPOINTS_SEPARATOR_LEN = 2;
 
@@ -64,10 +64,10 @@ public class CommonUtils {
     }
 
     /**
-     * 获取sc endpoint端口
+     * Get the sc endpoint port
      *
      * @param endpoint sc endpoint  rest:
-     * @return 端口
+     * @return Port
      */
     public static int getPortByEndpoint(String endpoint) {
         if (endpoint == null) {
@@ -81,9 +81,9 @@ public class CommonUtils {
     }
 
     /**
-     * 通过endpoint获取ip 格式: 协议类型://ip:port
+     * Obtain an IP format through endpoint: Protocol type://ip:port
      *
-     * @param endpoint sc 地址信息
+     * @param endpoint sc Address information
      * @return ip
      */
     public static Optional<String> getIpByEndpoint(String endpoint) {
@@ -99,11 +99,11 @@ public class CommonUtils {
     }
 
     /**
-     * 消费
+     * Consume
      *
-     * @param consumer 消费者
-     * @param target 传入目标对象
-     * @param <T> 目标类型
+     * @param consumer Consumer
+     * @param target Pass in the target object
+     * @param <T> Target type
      */
     public static <T> void accept(Consumer<T> consumer, T target) {
         if (consumer != null) {
@@ -112,23 +112,23 @@ public class CommonUtils {
     }
 
     /**
-     * 睡眠指定时间
+     * Sleep for a specified amount of time
      *
-     * @param timeMs 睡眠时间
+     * @param timeMs Sleep time
      */
     public static void sleep(long timeMs) {
         accept(SLEEP, timeMs);
     }
 
     /**
-     * meta数据中增加secure配置参数
+     * The secure parameter is added to the meta-data
      *
-     * @param meta meta数据
-     * @param config 公共注册配置
-     * @return meta数据
+     * @param meta Meta data
+     * @param config Public registration configuration
+     * @return Meta data
      */
     public static Map<String, String> putSecureToMetaData(Map<String, String> meta,
-        RegisterServiceCommonConfig config) {
+            RegisterServiceCommonConfig config) {
         if (StringUtils.isEmpty(meta.get(ConfigConstants.SECURE))) {
             meta.put(ConfigConstants.SECURE, String.valueOf(config.isSecure()));
         }

@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 双注册场景, 原注册中心心跳开关
+ * In the dual-registration scenario, the heartbeat switch of the original registration center
  *
  * @author zhouss
  * @since 2022-05-24

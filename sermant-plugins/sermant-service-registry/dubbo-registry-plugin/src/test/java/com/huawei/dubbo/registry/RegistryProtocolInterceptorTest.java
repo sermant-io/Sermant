@@ -30,7 +30,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 /**
- * 测试RegistryProtocolInterceptor
+ * Test RegistryProtocolInterceptor
  *
  * @author provenceee
  * @since 2022-02-15
@@ -45,7 +45,7 @@ public class RegistryProtocolInterceptorTest {
     private final InterfaceCompatibleRegistryProtocol protocol;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryProtocolInterceptorTest() throws NoSuchMethodException {
         ApplicationModel.getConfigManager().setApplication(new ApplicationConfig(TestConstant.FOO));
@@ -55,38 +55,38 @@ public class RegistryProtocolInterceptorTest {
     }
 
     /**
-     * 测试InterfaceCompatibleRegistryProtocol
+     * Test InterfaceCompatibleRegistryProtocol
      *
      * @see org.apache.dubbo.registry.integration.InterfaceCompatibleRegistryProtocol
      */
     @Test
     public void testInterfaceCompatibleRegistryProtocol() {
-        // 测试null
+        // Test null
         ExecuteContext context = ExecuteContext.forMemberMethod(protocol, method, null, null, null);
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试数组长度小于3
+        // The length of the test array is less than 3
         Object[] arguments = new Object[2];
         context = ExecuteContext.forMemberMethod(protocol, method, arguments, null, null);
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试arguments[2]不是URL
+        // Test arguments [2] are not URLs
         arguments = new Object[EXPECT_LENGTH];
         context = ExecuteContext.forMemberMethod(protocol, method, arguments, null, null);
         arguments[2] = TestConstant.BAR;
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试URL的协议不是sc
+        // The protocol of the test URL is not sc
         arguments = new Object[EXPECT_LENGTH];
         context = ExecuteContext.forMemberMethod(protocol, method, arguments, null, null);
         arguments[2] = URL.valueOf("foo://localhost:8080");
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试URL的协议是sc
+        // The protocol for the test URL is sc
         arguments = new Object[EXPECT_LENGTH];
         context = ExecuteContext.forMemberMethod(protocol, method, arguments, null, null);
         arguments[2] = URL.valueOf(TestConstant.SC_ADDRESS);

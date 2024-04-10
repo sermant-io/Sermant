@@ -22,21 +22,21 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * InterfaceCompatibleRegistryProtocol增强类
+ * InterfaceCompatibleRegistryProtocol Enhancement Classes
  *
  * @author provenceee
  * @since 2022-01-26
  */
 public class RegistryProtocolDeclarer extends AbstractDeclarer {
     private static final String[] ENHANCE_CLASS
-        = {"org.apache.dubbo.registry.integration.InterfaceCompatibleRegistryProtocol"};
+            = {"org.apache.dubbo.registry.integration.InterfaceCompatibleRegistryProtocol"};
 
     private static final String INTERCEPT_CLASS = "com.huawei.dubbo.registry.interceptor.RegistryProtocolInterceptor";
 
     private static final String METHOD_NAME = "getServiceDiscoveryInvoker";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryProtocolDeclarer() {
         super(ENHANCE_CLASS);
@@ -45,9 +45,10 @@ public class RegistryProtocolDeclarer extends AbstractDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            // 这个方法在2.7.9中是protected，2.7.9以上的版本为public，所以isProtected是为了只拦截2.7.9的版本
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(ElementMatchers.isProtected()),
-                INTERCEPT_CLASS)
+                // This method is protected in version 2.7.9, while versions above version 2.7.9 are public,
+                // so isProtected is designed to only intercept versions 2.7.9
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME).and(ElementMatchers.isProtected()),
+                        INTERCEPT_CLASS)
         };
     }
 }

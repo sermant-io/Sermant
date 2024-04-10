@@ -31,14 +31,14 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 预热测试
+ * Warm-up test
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class SpringRibbonWarmUpInterceptorTest extends WarmUpTest {
     /**
-     * 初始化
+     * Initialize
      */
     @Test
     public void testWarmUp() throws NoSuchMethodException {
@@ -50,11 +50,11 @@ public class SpringRibbonWarmUpInterceptorTest extends WarmUpTest {
     }
 
     /**
-     * 执行操作
+     * Take action
      *
-     * @param interceptor    拦截器
-     * @param executeContext 上下文
-     * @param result         结果
+     * @param interceptor    Interceptor
+     * @param executeContext Context
+     * @param result         Result
      */
     private void process(GraceSwitchInterceptor interceptor, ExecuteContext executeContext, Object result) {
         final HashMap<String, Integer> statResult = new HashMap<>();

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ServiceCombRegistry 注册类测试
+ * ServiceCombRegistry registration based testing
  *
  * @author zhouss
  * @since 2022-09-06
@@ -117,7 +117,7 @@ public class ServiceCombRegistryTest {
     }
 
     /**
-     * 测试用
+     * For testing
      *
      * @since 2022-09-06
      */

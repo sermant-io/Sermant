@@ -18,7 +18,7 @@
 package com.huawei.registry.config;
 
 /**
- * Spring注册常量
+ * Spring registers constants
  *
  * @author zhouss
  * @since 2022-06-10
@@ -26,12 +26,12 @@ package com.huawei.registry.config;
 public class SpringRegistryConstants {
 
     /**
-     * spring cloud loadbalancer 环境变量键
+     * spring cloud loadbalancer Environment variable key
      */
     public static final String SPRING_LOAD_BALANCER_ZONE = "spring.cloud.loadbalancer.zone";
 
     /**
-     * 元信息的zone键
+     * Zone key for meta information
      */
     public static final String LOAD_BALANCER_ZONE_META_KEY = "zone";
 

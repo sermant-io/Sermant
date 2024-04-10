@@ -27,38 +27,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * 关闭注册中心处理
+ * Close registry processing
  *
  * @author zhouss
  * @since 2022-01-04
  */
 public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     /**
-     * 注册中心是否关闭
+     * Whether the registry is closed
      */
     protected static final AtomicBoolean IS_CLOSED = new AtomicBoolean();
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 增强对象
+     * Enhance the object
      */
     protected Object target;
 
     /**
-     * 方法参数
+     * Method parameters
      */
     protected Object[] arguments;
 
     /**
-     * 构造器
+     * Constructor
      */
     public SingleStateCloseHandler() {
         RegisterContext.INSTANCE.registerCloseHandler(this);
     }
 
     /**
-     * 关闭注册中心
+     * Close the registry
      */
     protected void tryClose() {
         if (IS_CLOSED.compareAndSet(false, true)) {
@@ -66,19 +66,20 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
                 close();
                 RegisterContext.INSTANCE.setAvailable(false);
             } catch (Exception ex) {
-                // 重置状态
+                // Reset the state
                 resetCloseState();
                 LOGGER.warning(String.format(Locale.ENGLISH,
-                    "Closed register healthy check failed! %s", ex.getMessage()));
+                        "Closed register healthy check failed! %s", ex.getMessage()));
             }
         }
     }
 
     /**
-     * 判断注册中心状态, 若需关闭调用关闭心跳方法, 并用指定结果跳过
+     * Determine the status of the registry, call the close heartbeat method if you need to close, and skip it with the
+     * specified result
      *
-     * @param context 增强上下文
-     * @param result  指定结果
+     * @param context Enhance context
+     * @param result Specify the result
      */
     protected void checkState(ExecuteContext context, Object result) {
         setArguments(context.getArguments());
@@ -90,16 +91,16 @@ public abstract class SingleStateCloseHandler extends RegisterSwitchSupport {
     }
 
     /**
-     * 重置开关状态 当某个注册中心关闭失败需要重新关闭时可调用
+     * Reset switch state: It can be called when a registry fails to close and needs to be closed again
      */
     private void resetCloseState() {
         IS_CLOSED.set(false);
     }
 
     /**
-     * 关闭注册中心
+     * Close the registry
      *
-     * @throws Exception 关闭失败时抛出
+     * @throws Exception Thrown when closing fails
      */
     protected abstract void close() throws Exception;
 

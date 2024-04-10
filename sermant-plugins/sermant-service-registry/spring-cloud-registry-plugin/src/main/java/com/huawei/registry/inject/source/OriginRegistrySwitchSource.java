@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 关闭原始注册中心开关配置源
+ * Turn off the original registry switch configuration source
  *
  * @author zhouss
  * @since 2022-05-19
@@ -42,7 +42,7 @@ public class OriginRegistrySwitchSource extends MapPropertySource {
     /**
      * Create a new {@code MapPropertySource} with the given name and {@code Map}.
      *
-     * @param name 配置源名称
+     * @param name configuration source name
      * {@link #containsProperty} behavior)
      */
     public OriginRegistrySwitchSource(String name) {

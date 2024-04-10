@@ -31,7 +31,7 @@ import com.huawei.registry.config.RegisterServiceCommonConfig;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 测试NacosServiceName
+ * Test NacosServiceName
  *
  * @author chengyouling
  * @since 2022-11-29
@@ -66,7 +66,7 @@ public class NacosServiceNameTest {
     }
 
     /**
-     * 测试NacosServiceName通过url构建
+     * Test building NacosServiceName through URL
      */
     @Test
     public void testBuildNacosServiceNameByUrl() {
@@ -78,7 +78,7 @@ public class NacosServiceNameTest {
     }
 
     /**
-     * 测试NacosServiceName通过serviceName构建
+     * Testing the construction of NacosServiceName through serviceName
      */
     @Test
     public void testBuildNacosServiceNameByName() {
@@ -88,7 +88,7 @@ public class NacosServiceNameTest {
     }
 
     /**
-     * 测试是否包含“，”、“*”
+     * Test whether it includes "," and "*"
      */
     @Test
     public void testIsCompatible() {
@@ -101,7 +101,7 @@ public class NacosServiceNameTest {
     }
 
     /**
-     * 测试equal
+     * Test equal
      */
     @Test
     public void testEqual() {

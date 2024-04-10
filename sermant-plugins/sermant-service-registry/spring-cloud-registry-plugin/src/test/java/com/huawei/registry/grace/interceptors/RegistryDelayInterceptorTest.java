@@ -34,7 +34,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 测试延迟
+ * Test latency
  *
  * @author zhouss
  * @since 2022-06-30
@@ -46,12 +46,12 @@ public class RegistryDelayInterceptorTest {
     private final GraceConfig graceConfig = new GraceConfig();
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void init() {
@@ -68,7 +68,7 @@ public class RegistryDelayInterceptorTest {
     }
 
     /**
-     * 测试开关是否生效
+     * Test whether the switch takes effect
      */
     @Test
     public void testDelaySwitch() {
@@ -84,7 +84,7 @@ public class RegistryDelayInterceptorTest {
     }
 
     /**
-     * 测试延迟效果
+     * Test the effect of the delay
      */
     @Test
     public void testDelay() {

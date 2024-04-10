@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
- * 测试基础化基类
+ * Test the basic base class
  *
  * @author zhouss
  * @since 2021-12-25
@@ -58,11 +58,11 @@ public class BaseTest {
     }
 
     /**
-     * 移除final修饰符
+     * Remove the final modifier
      *
-     * @param field 字段
-     * @throws NoSuchFieldException 无该字段抛出
-     * @throws IllegalAccessException 无法拿到该字段抛出
+     * @param field Field
+     * @throws NoSuchFieldException None of these fields is thrown
+     * @throws IllegalAccessException Unable to get the field thrown
      */
     protected static void removeFinalModify(Field field) throws NoSuchFieldException, IllegalAccessException {
         Field modifiersField = Field.class.getDeclaredField("modifiers");

@@ -27,14 +27,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 上游地址缓存
+ * Upstream address caching
  *
  * @author provenceee
  * @since 2022-05-26
  */
 public enum AddressCache {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
     private final Cache<String, String> cache;
@@ -48,25 +48,25 @@ public enum AddressCache {
     }
 
     /**
-     * 增加上游地址
+     * Add an upstream address
      *
-     * @param address 地址
+     * @param address Address
      */
     public void addAddress(String address) {
         cache.put(address, "");
     }
 
     /**
-     * 获取地址Set
+     * Obtain the address Set
      *
-     * @return Set 地址Set
+     * @return Set Address Set
      */
     public Set<String> getAddressSet() {
         return cache.asMap().keySet();
     }
 
     /**
-     * 清除所有缓存
+     * Clear all caches
      */
     public void cleanCache() {
         cache.invalidateAll();

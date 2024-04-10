@@ -22,7 +22,7 @@ import com.huawei.registry.support.RegisterSwitchSupport;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 拦截获取org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor
+ * Intercept acquisition org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor
  *
  * @author zhouss
  * @since 2022-06-14

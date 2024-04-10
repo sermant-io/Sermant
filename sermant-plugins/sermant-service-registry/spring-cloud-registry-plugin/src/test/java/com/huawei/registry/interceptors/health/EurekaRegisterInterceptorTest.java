@@ -32,7 +32,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 注册拦截测试
+ * Sign up for an interception test
  *
  * @author zhouss
  * @since 2022-09-07

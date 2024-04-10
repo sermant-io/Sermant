@@ -25,7 +25,7 @@ import com.alibaba.dubbo.registry.NotifyListener;
 import com.alibaba.dubbo.registry.support.FailbackRegistry;
 
 /**
- * nacos注册
+ * Nacos Registration
  *
  * @author chengyouling
  * @since 2022-10-25
@@ -34,9 +34,9 @@ public class NacosRegistry extends FailbackRegistry {
     private final NacosRegistryService registryService;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param url 注册url
+     * @param url Registration URL
      */
     public NacosRegistry(URL url) {
         super(url);

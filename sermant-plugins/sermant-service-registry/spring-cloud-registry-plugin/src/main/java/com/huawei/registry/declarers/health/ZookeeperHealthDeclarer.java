@@ -24,19 +24,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * zookeeper注册中心健康状态检测
+ * ZooKeeper registry health status check
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class ZookeeperHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * nacos心跳发送类
+     * Nacos heartbeat sending class
      */
     private static final String ENHANCE_CLASS = "org.springframework.cloud.zookeeper.discovery.ZookeeperServiceWatch";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = ZookeeperHealthInterceptor.class.getCanonicalName();
 

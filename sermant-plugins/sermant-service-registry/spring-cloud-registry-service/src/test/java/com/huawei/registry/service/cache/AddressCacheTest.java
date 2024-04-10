@@ -30,7 +30,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 地址缓存测试
+ * Address caching test
  *
  * @author zhouss
  * @since 2022-06-30
@@ -39,7 +39,7 @@ public class AddressCacheTest {
     private static final int SIZE = 3;
 
     /**
-     * PluginConfigManager mock对象
+     * PluginConfigManager mock object
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
@@ -57,7 +57,7 @@ public class AddressCacheTest {
     }
 
     /**
-     * 测试地址缓存
+     * Test address caching
      */
     @Test
     public void testAddress() {

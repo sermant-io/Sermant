@@ -23,7 +23,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * 测试管理器
+ * Test Manager
  *
  * @author zhouss
  * @since 2022-01-05

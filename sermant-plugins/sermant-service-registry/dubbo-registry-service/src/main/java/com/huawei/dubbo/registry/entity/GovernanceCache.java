@@ -17,14 +17,14 @@
 package com.huawei.dubbo.registry.entity;
 
 /**
- * 治理缓存
+ * Governance caching
  *
  * @author provenceee
  * @since 2022-04-22
  */
 public enum GovernanceCache {
     /**
-     * 实例
+     * Instance
      */
     INSTANCE;
 

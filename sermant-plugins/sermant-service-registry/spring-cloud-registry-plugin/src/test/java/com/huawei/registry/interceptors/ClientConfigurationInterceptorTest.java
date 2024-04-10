@@ -24,7 +24,7 @@ import org.mockito.Mockito;
 import org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClient;
 
 /**
- * client获取测试
+ * client gets the test
  *
  * @author zhouss
  * @since 2022-09-07

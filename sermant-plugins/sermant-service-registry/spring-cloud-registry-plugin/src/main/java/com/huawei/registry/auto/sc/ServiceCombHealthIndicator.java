@@ -26,7 +26,7 @@ import org.springframework.boot.actuate.health.Status;
 import org.springframework.cloud.client.discovery.health.DiscoveryHealthIndicator;
 
 /**
- * 健康检查 配合spring actuator监控使用
+ * Health Check is used in conjunction with Spring Actuator monitoring
  *
  * @author zhouss
  * @since 2022-05-19
