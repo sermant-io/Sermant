@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 规则管理器测试
+ * RuleManagerTest
  *
  * @author zhouss
  * @since 2022-08-16
@@ -52,7 +52,7 @@ public class RuleManagerTest {
     private static final String RULE = "Random";
 
     /**
-     * 测试解析配置
+     * test resolution configuration
      */
     @Test
     public void testResolve() {
@@ -73,13 +73,13 @@ public class RuleManagerTest {
         RuleManager.INSTANCE.resolve(loadbalancerEvent);
         Assert.assertTrue(RuleManager.INSTANCE.isConfigured());
         Assert.assertTrue(isNotify.get());
-        // 测试匹配规则
+        // test matching rule
         final Optional<LoadbalancerRule> targetServiceRule = RuleManager.INSTANCE.getTargetServiceRule(SERVICE_NAME);
         Assert.assertTrue(targetServiceRule.isPresent());
         final Optional<LoadbalancerRule> other = RuleManager.INSTANCE
                 .getTargetServiceRule(SERVICE_NAME + "sss");
         Assert.assertFalse(other.isPresent());
-        // 测试无服务名场景下所有服务名均可匹配规则
+        // Test If no service name exists, all service names match the rule
         final DynamicConfigEvent dynamicConfigEvent = buildEvent(MATCH_GROUP_KEY, getMatchGroup(null));
         RuleManager.INSTANCE.resolve(dynamicConfigEvent);
         final Optional<LoadbalancerRule> allMatch = RuleManager.INSTANCE.getTargetServiceRule("SERVICE_NAME");
@@ -114,7 +114,7 @@ public class RuleManagerTest {
         private final Yaml yaml;
 
         /**
-         * 构造器
+         * constructor
          */
         public YamlRuleConverter() {
             Representer representer = new Representer(new DumperOptions());

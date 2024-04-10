@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 /**
- * spring事件发布器
+ * spring event publisher
  *
  * @author zhouss
  * @since 2022-04-08
@@ -48,9 +48,9 @@ public class SpringEventPublisher implements ApplicationEventPublisherAware {
     }
 
     /**
-     * 发布spring刷新事件{@link org.springframework.cloud.endpoint.event.RefreshEvent}
+     * publish spring refresh events{@link org.springframework.cloud.endpoint.event.RefreshEvent}
      *
-     * @param event 事件
+     * @param event event
      */
     public void publishRefreshEvent(DynamicConfigEvent event) {
         if (event.getEventType() == DynamicConfigEventType.INIT) {

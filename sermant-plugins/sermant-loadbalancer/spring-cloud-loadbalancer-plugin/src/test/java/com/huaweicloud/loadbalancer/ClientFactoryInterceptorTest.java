@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 测试LoadBalancerClientFactory getInstance方法的拦截点
+ * Test the interception point of the LoadBalancerClientFactory getInstance method
  *
  * @author provenceee
  * @see org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory
@@ -60,7 +60,7 @@ public class ClientFactoryInterceptorTest {
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     /**
-     * 构造方法
+     * construction method
      */
     public ClientFactoryInterceptorTest() throws NoSuchMethodException {
         Object[] arguments = new Object[1];
@@ -69,7 +69,7 @@ public class ClientFactoryInterceptorTest {
     }
 
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -88,45 +88,45 @@ public class ClientFactoryInterceptorTest {
     }
 
     /**
-     * 测试拦截器逻辑
+     * test the interceptor logic
      */
     @Test
     public void test() {
-        // 测试配置为null
+        // test: configure is null
         ClientFactoryInterceptor nullConfigInterceptor = new ClientFactoryInterceptor();
         nullConfigInterceptor.after(context);
         Assert.assertNull(context.getResult());
         cleanCache();
-        // 测试未配置负载均衡的场景
+        // test:Scenarios in which load balancing is not configured
         try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class)) {
             pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
                     .thenReturn(new LoadbalancerConfig());
             final ClientFactoryInterceptor interceptor = new ClientFactoryInterceptor();
 
-            // TEST一起跑的时候会失败
+            // test: running together will fail
             interceptor.after(context);
             Assert.assertNull(context.getResult());
 
-            // 测试已配置负载均衡与原生负载均衡一致
+            // test: The configured load balancer is consistent with the native load balancer
             RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.ROUND_ROBIN.getMapperName());
             interceptor.after(context);
             Assert.assertNotNull(context.getResult());
 
-            // 测试与原生负载均衡不一致
+            // test: inconsistent with native load balancing
             RuleManagerHelper.publishRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
             interceptor.after(context);
             Assert.assertNotNull(context.getResult());
 
-            // 测试已存在缓存的场景
+            // test: the scenario where the cache exists
             RuleManagerHelper.publishRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
             interceptor.after(context);
             Assert.assertNotNull(context.getResult());
 
-            // 缓存校验
+            // cache check
             Assert.assertEquals(1, SpringLoadbalancerCache.INSTANCE.getNewCache().size());
 
-            // 清理规则
+            // clean up rule
             RuleManagerHelper.deleteRule(FOO, SpringLoadbalancerType.RANDOM.getMapperName());
             RuleManagerHelper.deleteRule(FOO + "__1", SpringLoadbalancerType.RANDOM.getMapperName());
         }

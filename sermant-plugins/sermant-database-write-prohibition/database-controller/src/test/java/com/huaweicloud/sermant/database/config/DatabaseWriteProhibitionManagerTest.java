@@ -23,7 +23,7 @@ import org.junit.Test;
 import java.util.HashSet;
 
 /**
- * 数据库禁写配置管理类单元测试
+ * Database forbid write configuration management class unit tests
  *
  * @author daizhenyu
  * @since 2024-01-23
@@ -64,7 +64,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试Global和Local配置都开启的情况
+     * Test whether the Global and Local configurations are enabled
      */
     @Test
     public void testGetProhibitionDatabasesWithGlobalAndLocalConfigEnabled() {
@@ -90,7 +90,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试Global配置开启的情况
+     * test whether the global configuration is enabled
      */
     @Test
     public void testGetProhibitionDatabasesWithJustGlobalConfigEnabled() {
@@ -116,7 +116,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试Local配置开启的情况
+     * test whether the local configuration is enabled
      */
     @Test
     public void testGetProhibitionDatabasesWithJustLocalConfigEnabled() {
@@ -142,7 +142,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试Global和Local配置都关闭的情况
+     * Test when both Global and Local configurations are off
      */
     @Test
     public void testGetProhibitionDatabasesWithBothConfigsDisabled() {
@@ -164,7 +164,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试更新配置不为null的情况
+     * tests if the update configuration is not null
      */
     @Test
     public void testUpdateConfigWithNonNullConfig() {
@@ -175,7 +175,7 @@ public class DatabaseWriteProhibitionManagerTest {
     }
 
     /**
-     * 测试更新配置为null的情况
+     * test when the update configuration is null
      */
     @Test
     public void testUpdateConfigWithNullConfig() {

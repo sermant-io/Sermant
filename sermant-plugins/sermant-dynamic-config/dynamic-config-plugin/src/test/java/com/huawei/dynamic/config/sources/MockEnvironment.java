@@ -20,7 +20,7 @@ package com.huawei.dynamic.config.sources;
 import org.springframework.core.env.AbstractEnvironment;
 
 /**
- * mock环境变量
+ * mock environment variable
  *
  * @author zhouss
  * @since 2022-04-16

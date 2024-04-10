@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * Ribbon缓存测试
+ * Ribbon cache test
  *
  * @author zhouss
  * @since 2022-08-16
@@ -44,7 +44,7 @@ public class RibbonLoadbalancerCacheTest {
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -59,20 +59,20 @@ public class RibbonLoadbalancerCacheTest {
     }
 
     /**
-     * 测试
+     * test
      */
     @Test
     public void test() {
         final RibbonLoadbalancerCache instance = RibbonLoadbalancerCache.INSTANCE;
 
-        // 测试发布配置监听
+        // test publish configuration listening
         String serviceName = "test";
         RuleManagerHelper.publishRule(serviceName, RibbonLoadbalancerType.WEIGHTED_RESPONSE_TIME.getMapperName());
         Assert.assertTrue(instance.getTargetServiceLbType(serviceName).isPresent());
         final RibbonLoadbalancerType ribbonLoadbalancerType = instance.getTargetServiceLbType(serviceName).get();
         Assert.assertEquals(ribbonLoadbalancerType, RibbonLoadbalancerType.WEIGHTED_RESPONSE_TIME);
 
-        // 测试发布空服务名, 即匹配全局, 该情况清理负载均衡
+        // Test publish an empty service name to match the global, the situation clears load balancing
         RuleManagerHelper.publishRule(null, RibbonLoadbalancerType.AVAILABILITY_FILTERING.getMapperName());
         final Optional<RibbonLoadbalancerType> targetServiceLbType = instance.getTargetServiceLbType(serviceName);
         Assert.assertTrue(targetServiceLbType.isPresent());
@@ -84,7 +84,7 @@ public class RibbonLoadbalancerCacheTest {
         Assert.assertTrue(type.isPresent());
         Assert.assertEquals(type.get(), RibbonLoadbalancerType.AVAILABILITY_FILTERING);
 
-        // 清理规则
+        // clean up rule
         RuleManagerHelper.deleteRule(targetServiceRule.get().getServiceName(), targetServiceRule.get().getRule());
     }
 }

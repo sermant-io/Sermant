@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * SqlParserUtils单元测试
+ * SqlParserUtils Unit Test
  *
  * @author daizhenyu
  * @since 2024-02-06
@@ -30,7 +30,7 @@ public class SqlParserUtilsTest {
 
     @Test
     public void testIsWriteOperation() {
-        // sql为写操作
+        // sql is a write operation
         sql = "INSERT INTO table (name) VALUES ('test')";
         Assert.assertTrue(SqlParserUtils.isWriteOperation(sql));
 
@@ -40,7 +40,7 @@ public class SqlParserUtilsTest {
         sql = "DROP INDEX idx_name on table";
         Assert.assertTrue(SqlParserUtils.isWriteOperation(sql));
 
-        // sql为读操作
+        // sql is a read operation
         sql = "SELECT * FROM table";
         Assert.assertFalse(SqlParserUtils.isWriteOperation(sql));
     }

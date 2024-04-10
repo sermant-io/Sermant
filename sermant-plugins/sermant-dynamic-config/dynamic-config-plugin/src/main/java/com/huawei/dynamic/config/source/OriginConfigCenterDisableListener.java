@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 
 /**
- * 监听禁用原配置中心的配置开关, 通过动态方式关闭
+ * Listening Disable the configuration switch of the original configuration center and disable it dynamically
  *
  * @author zhouss
  * @since 2022-07-12
@@ -68,7 +68,7 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
     private BeanFactory beanFactory;
 
     /**
-     * 添加配置监听器
+     * add a configuration listener
      */
     @PostConstruct
     public void addListener() {
@@ -89,7 +89,7 @@ public class OriginConfigCenterDisableListener implements BeanFactoryAware {
             }
             tryAddDynamicSourceToFirst(environment);
 
-            // 发布刷新事件补偿, 及时刷新禁用后的数据
+            // Release refresh event compensation and refresh the disabled data in a timely manner
             springEventPublisher.publishRefreshEvent(
                     DynamicConfigEvent.modifyEvent(event.getKey(), event.getGroup(), event.getContent()));
         });

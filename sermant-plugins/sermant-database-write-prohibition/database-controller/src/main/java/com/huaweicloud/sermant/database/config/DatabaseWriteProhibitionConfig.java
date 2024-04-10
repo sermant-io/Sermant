@@ -20,49 +20,49 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 数据库禁写插件配置类
+ * Database prohibit writing plugin configuration classes
  *
  * @author daizhenyu
  * @since 2024-01-15
  **/
 public class DatabaseWriteProhibitionConfig {
     /**
-     * MongoDb是否开启禁写
+     * MongoDb whether to enable write prohibition
      */
     private boolean enableMongoDbWriteProhibition = false;
 
     /**
-     * MongoDb需要禁写的数据库
+     * MongoDb requires writing forbidden databases
      */
     private Set<String> mongoDbDatabases = new HashSet<>();
 
     /**
-     * Mysql是否开启禁写
+     * Mysql whether to enable write prohibition
      */
     private boolean enableMySqlWriteProhibition = false;
 
     /**
-     * Mysql需要禁写的数据库
+     * Mysql requires writing forbidden databases
      */
     private Set<String> mySqlDatabases = new HashSet<>();
 
     /**
-     * PostgreSQL是否开启禁写
+     * PostgreSQL whether to enable write prohibition
      */
     private boolean enablePostgreSqlWriteProhibition = false;
 
     /**
-     * PostgreSQL需要禁写的数据库
+     * PostgreSQL requires writing forbidden databases
      */
     private Set<String> postgreSqlDatabases = new HashSet<>();
 
     /**
-     * OpenGauss是否开启禁写
+     * OpenGauss whether to enable write prohibition
      */
     private boolean enableOpenGaussWriteProhibition = false;
 
     /**
-     * OpenGauss需要禁写的数据库
+     * OpenGauss requires writing forbidden databases
      */
     private Set<String> openGaussDatabases = new HashSet<>();
 

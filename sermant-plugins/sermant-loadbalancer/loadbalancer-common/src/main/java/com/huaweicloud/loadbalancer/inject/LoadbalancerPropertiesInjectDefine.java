@@ -20,7 +20,7 @@ package com.huaweicloud.loadbalancer.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * 配置类注入
+ * configuration class injection
  *
  * @author zhouss
  * @since 2022-08-04

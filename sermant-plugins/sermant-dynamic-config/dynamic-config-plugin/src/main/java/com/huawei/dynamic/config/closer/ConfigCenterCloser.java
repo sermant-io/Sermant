@@ -43,68 +43,69 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 原生注册中心关闭器
- * <P>若需添加新的配置中心类型，遵循以下步骤</P>
- * <p>1.实现该接口</p>
- * <p>2.添加实现类的spi</p>
- * <p>3.添加类注入代码, 参考{@link ProcessorClassInjectDefine#requiredDefines()}</p>
+ * native registry closers
+ * <P>To add a new configuration center type, follow these steps</P>
+ * <p>1.implement the interface</p>
+ * <p>2.add the spi of the implementation class</p>
+ * <p>3.add class injection code see{@link ProcessorClassInjectDefine#requiredDefines()}</p>
  *
  * @author zhouss
  * @since 2022-07-12
  */
 public interface ConfigCenterCloser {
     /**
-     * 日志
+     * log
      */
     Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 启动配置源,在spring高版本新增org.springframework.cloud.bootstrap.config.BootstrapPropertySource
+     * Start the configuration source, spring High add org.springframework.cloud.bootstrap.config
+     * .BootstrapPropertySource
      */
     String BOOTSTRAP_PROPERTY_CLASS = "org.springframework.cloud.bootstrap.config.BootstrapPropertySource";
 
     /**
-     * Spring配置映射缓存
+     * spring configures the mapping cache
      */
     String SPRING_CONFIGURATION_PROPERTY_SOURCES =
             "org.springframework.boot.context.properties.source.SpringConfigurationPropertySources";
 
     /**
-     * 启动配置源名称
+     * start configuration source name
      */
     String BOOTSTRAP_SOURCE_NAME = "bootstrapProperties";
 
     /**
-     * 关闭
+     * close
      *
-     * @param beanFactory spring bean 工厂
-     * @param environment spring 环境变量
+     * @param beanFactory spring bean factory
+     * @param environment spring environment variable
      * @return 是否关闭成功
      */
     boolean close(BeanFactory beanFactory, Environment environment);
 
     /**
-     * 是否支持当前应用
+     * whether the current application is supported
      *
-     * @param beanFactory spring bean 工厂
+     * @param beanFactory spring bean factory
      * @return 是否支持
      */
     boolean isSupport(BeanFactory beanFactory);
 
     /**
-     * 配置中心类型
+     * configuration center type
      *
-     * @return 配置中心类型
+     * @return configuration center type
      */
     ConfigCenterType type();
 
     /**
-     * 从spring容器获取bean
+     * get the bean from the spring container
      *
-     * @param names 所有bean名称
+     * @param names all bean names
      * @param beanFactory bean
-     * @param type 指定类型
-     * @param <T> 获取类型
+     * @param type specified type
+     * @param <T> acquisition type
      * @return bean
      */
     default <T> Map<String, T> getBeans(List<String> names, Class<T> type, BeanFactory beanFactory) {
@@ -119,12 +120,12 @@ public interface ConfigCenterCloser {
     }
 
     /**
-     * 根据名称获取
+     * get by name
      *
-     * @param names 指定名称
-     * @param beanFactory bean工厂
-     * @param <T> 指定类型
-     * @return 该bean的所有类型
+     * @param names assigned-name
+     * @param beanFactory bean factory
+     * @param <T> specifiedType
+     * @return all types of the bean
      */
     default <T> Map<String, T> getBeansByNames(List<String> names, BeanFactory beanFactory) {
         final Map<String, T> result = new HashMap<>(names.size());
@@ -136,16 +137,15 @@ public interface ConfigCenterCloser {
             }
         }
         return result;
-
     }
 
     /**
-     * 根据类型获取
+     * fetch by type
      *
-     * @param type 指定类型
-     * @param beanFactory bean工厂
-     * @param <T> 指定类型
-     * @return 该bean的所有类型
+     * @param type specified type
+     * @param beanFactory bean factory
+     * @param <T> specified type
+     * @return all types of the bean
      */
     default <T> Map<String, T> getBeansByClassType(Class<T> type, ListableBeanFactory beanFactory) {
         try {
@@ -154,15 +154,14 @@ public interface ConfigCenterCloser {
             LOGGER.fine(String.format(Locale.ENGLISH, "Could not find bean type [%s]", type.getName()));
         }
         return Collections.emptyMap();
-
     }
 
     /**
-     * 移除启动配置源
+     * remove the boot configuration source
      *
-     * @param environment 环境
-     * @param propertyName 配置源名称
-     * @return 是否移除成功
+     * @param environment environment
+     * @param propertyName configure source name
+     * @return yes or no successfully removed
      */
     default boolean removeBootstrapPropertySource(Environment environment, String propertyName) {
         if (!(environment instanceof ConfigurableEnvironment)) {
@@ -179,10 +178,12 @@ public interface ConfigCenterCloser {
     }
 
     /**
-     * 移除映射配置源, 该配置涉及本身缓存的启动配置源、适配配置源。由于类方法限制, 当前仅可采用反射移除。针对2.0.0.RELEASE版本由于Spring自身存在bug，无法刷新映射，
-     * 因此此处采用该方式处理
+     * Remove the mapping configuration source, which involves the cache startup configuration source and adaptation
+     * configuration source。Due to class method restrictions, only reflection removal is currently available。 The
+     * mapping could not be refreshed for 2.0.0.RELEASE due to a bug in Spring itself， therefore this method is adopted
+     * here
      *
-     * @param configurableEnvironment 环境变量
+     * @param configurableEnvironment environment variable
      */
     default void removeConfigurationPropertySources(ConfigurableEnvironment configurableEnvironment) {
         final PropertySource<?> propertySource = configurableEnvironment.getPropertySources()
@@ -201,11 +202,11 @@ public interface ConfigCenterCloser {
     }
 
     /**
-     * 从CompositePropertySource移除指定配置源
+     * Removes the specified configuration Source from the Composite Property Source
      *
-     * @param source 配置源
-     * @param propertyName 配置源名称
-     * @return 是否移除成功
+     * @param source configuration source
+     * @param propertyName configure source name
+     * @return yes or no successfully removed
      */
     default boolean removeTargetSource(PropertySource<?> source, String propertyName) {
         if (!(source instanceof CompositePropertySource)) {
@@ -237,10 +238,11 @@ public interface ConfigCenterCloser {
     }
 
     /**
-     * 通过移除Bootstrap方式移除配置源，该方式不同的配置源移除方式不同，需子类实现
+     * You can remove a configuration source by removing Bootstrap. The removal method varies according to the
+     * configuration source and needs to be implemented by subclasses
      *
-     * @param environment 环境
-     * @return 是否移除成功
+     * @param environment environment
+     * @return yes or no successfully removed
      */
     default boolean tryRemoveWithBootstrapProperties(ConfigurableEnvironment environment) {
         final MutablePropertySources propertySources = environment.getPropertySources();
@@ -261,36 +263,36 @@ public interface ConfigCenterCloser {
     }
 
     /**
-     * 是否为目标配置中心的配置源
+     * Whether to be the configuration source of the destination configuration center
      *
-     * @param propertySource 配置源
-     * @return 是否为目标配置中心的配置源
+     * @param propertySource configuration source
+     * @return Whether to be the configuration source of the destination configuration center
      */
     default boolean isTargetPropertySource(BootstrapPropertySource<?> propertySource) {
         return isCurConfigCenterSource(propertySource.getDelegate());
     }
 
     /**
-     * 是否为当前配置中心的配置源
+     * Whether to be the configuration source of the current configuration center
      *
-     * @param propertySource 配置源
-     * @return 是否是
+     * @param propertySource configuration source
+     * @return whether it is
      */
     boolean isCurConfigCenterSource(PropertySource<?> propertySource);
 
     /**
-     * 配置中心类型
+     * configuration center type
      *
      * @since 2022-07-12
      */
     enum ConfigCenterType {
         /**
-         * nacos配置中心
+         * nacos configuration center
          */
         NACOS,
 
         /**
-         * zk配置中心
+         * zk configuration center
          */
         ZOOKEEPER
     }

@@ -28,7 +28,7 @@ import org.springframework.core.annotation.Order;
 import javax.annotation.PostConstruct;
 
 /**
- * 动态配置注册信息
+ * configure registration information dynamically
  *
  * @author zhouss
  * @since 2022-06-28
@@ -39,7 +39,7 @@ public class DynamicProperties {
     private String serviceName;
 
     /**
-     * 初始化订阅，基于spring注入
+     * Initialize the subscription, based on spring injection
      */
     @PostConstruct
     public void init() {

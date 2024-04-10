@@ -20,24 +20,24 @@ package com.huaweicloud.loadbalancer.config;
 import java.util.Optional;
 
 /**
- * spring cloud loadbalancer负载均衡策略
+ * spring cloud loadbalancer load balance strategy
  *
  * @author provenceee
  * @since 2022-01-21
  */
 public enum SpringLoadbalancerType {
     /**
-     * 随机（支持spring cloud loadbalancer 2.2.7+）
+     * Random（support spring cloud loadbalancer 2.2.7+）
      */
     RANDOM("Random"),
 
     /**
-     * 轮询
+     * Round Robin
      */
     ROUND_ROBIN("RoundRobin");
 
     /**
-     * 实际配置映射名称
+     * name of the actual mapping
      */
     private final String mapperName;
 
@@ -46,10 +46,10 @@ public enum SpringLoadbalancerType {
     }
 
     /**
-     * 匹配负载均衡类型
+     * match the load balancing type
      *
-     * @param loadbalancerType 负载均衡
-     * @return 负载均衡类型
+     * @param loadbalancerType loadbalancer type
+     * @return loadbalancer type
      */
     public static Optional<SpringLoadbalancerType> matchLoadbalancer(String loadbalancerType) {
         if (loadbalancerType == null) {

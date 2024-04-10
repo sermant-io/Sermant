@@ -28,7 +28,7 @@ import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * 配置源
+ * configuration source
  *
  * @author zhouss
  * @since 2022-04-20

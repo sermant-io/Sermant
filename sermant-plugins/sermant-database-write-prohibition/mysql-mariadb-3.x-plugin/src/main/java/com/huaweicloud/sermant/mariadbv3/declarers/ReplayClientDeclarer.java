@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.mariadbv3.utils.MariadbV3EnhancementHelper;
 
 /**
- * ReplayClient类增强声明器
+ * ReplayClient class Declarer
  *
  * @author daizhenyu
  * @since 2024-01-30

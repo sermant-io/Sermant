@@ -26,19 +26,19 @@ import com.huaweicloud.sermant.database.utils.SqlParserUtils;
 import java.util.Set;
 
 /**
- * 数据库抽象interceptor
+ * database abstract interceptor
  *
  * @author daizhenyu
  * @since 2024-01-22
  **/
 public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
     /**
-     * 数据库信息存储的key
+     * key for storing database information
      */
     protected static final String DATABASE_INFO = "databaseInfo";
 
     /**
-     * 自定义数据库处理handle
+     * customize the database handling
      */
     protected DatabaseHandler handler;
 
@@ -71,37 +71,38 @@ public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 方法执行前
+     * before method execution
      *
-     * @param context 上下文
-     * @return ExecuteContext 上下文
+     * @param context context
+     * @return ExecuteContext context
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
 
     /**
-     * 创建数据库实例对象并缓存在上下文的本地局部属性集中
+     * Create a database instance object and cache it in the context's local property set
      *
-     * @param context 上下文
+     * @param context context
      */
     protected abstract void createAndCacheDatabaseInfo(ExecuteContext context);
 
     /**
-     * 从context局部属性集中获取数据库实例信息
+     * Gets database instance information from the context local property set
      *
-     * @param context 上下文
-     * @return DatabaseInfo 数据库实例信息
+     * @param context context
+     * @return DatabaseInfo database instance information
      */
     protected DatabaseInfo getDataBaseInfo(ExecuteContext context) {
         return (DatabaseInfo) context.getLocalFieldValue(DATABASE_INFO);
     }
 
     /**
-     * 如果当前数据库开启禁写，并且为写操作，则执行禁写逻辑处理，
+     * If database write prohibition is enabled on the current database and
+     * the write operation is performed, the write prohibition logic is performed，
      *
-     * @param sql 执行的SQL
-     * @param databaseName 执行SQL的数据库名称
-     * @param prohibitionDatabases 禁写的数据库集合
-     * @param context 上下文信息
+     * @param sql executed sql
+     * @param databaseName name of the database where the sql is executed
+     * @param prohibitionDatabases write forbidden database collection
+     * @param context contextual information
      */
     protected void handleWriteOperationIfWriteDisabled(String sql, String databaseName,
             Set<String> prohibitionDatabases, ExecuteContext context) {

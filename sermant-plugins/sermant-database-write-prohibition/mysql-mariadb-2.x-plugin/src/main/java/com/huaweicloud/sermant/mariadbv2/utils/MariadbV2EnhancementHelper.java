@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.mariadbv2.interceptors.ExecuteServerInterceptor;
 import com.huaweicloud.sermant.mariadbv2.interceptors.PrepareInterceptor;
 
 /**
- * mariadb2.x拦截点辅助类
+ * mariadb2.x intercept point helper class
  *
  * @author daizhenyu
  * @since 2024-01-26
@@ -56,18 +56,18 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类的ClassMatcher
+     * Gets the Class Matcher of the AbstractQueryProtocol class
      *
-     * @return ClassMatcher 类匹配器
+     * @return ClassMatcher class matcher
      */
     public static ClassMatcher getQueryProtocolClassMatcher() {
         return ClassMatcher.nameEquals(QUERY_PROTOCOL_CLASS);
     }
 
     /**
-     * 获取AbstractQueryProtocol类sql执行无参拦截器数组
+     * Get the AbstractQueryProtocol class sql to execute an array of parameterless interceptors
      *
-     * @return InterceptDeclarer[] AbstractQueryProtocol类sql执行无参拦截器数组
+     * @return InterceptDeclarer[] AbstractQueryProtocol sql to execute an array of parameterless interceptors
      */
     public static InterceptDeclarer[] getQueryProtocolInterceptDeclarers() {
         ExecuteInterceptor executeInterceptor = new ExecuteInterceptor();
@@ -83,9 +83,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeQuery方法无参拦截器
+     * Gets the parameterless interceptor for the executeQuery method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类executeQuery方法无参拦截器
+     * @return InterceptDeclarer the parameterless interceptor for the executeQuery method
      */
     public static InterceptDeclarer getExecuteQueryInterceptDeclarer() {
         return InterceptDeclarer.build(getExecuteQueryMethodMatcher(),
@@ -93,10 +93,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeQuery方法有参拦截器
+     * Gets the parameterized interceptor of the AbstractQueryProtocol class executeQuery method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类execute方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer the parameterized interceptor of the executeQuery method
      */
     public static InterceptDeclarer getExecuteQueryInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getExecuteQueryMethodMatcher(),
@@ -104,9 +104,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchClient方法无参拦截器
+     * Gets the parameterless interceptor for the executeBatchClient method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchClient方法无参拦截器
+     * @return InterceptDeclarer the parameterless interceptor for the executeBatchClient method
      */
     public static InterceptDeclarer getExecuteBatchClientInterceptDeclarer() {
         return InterceptDeclarer.build(getExecuteBatchClientMethodMatcher(),
@@ -114,10 +114,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchClient方法有参拦截器
+     * Gets the parameterized interceptor of the AbstractQueryProtocol class executeBatchClient method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchClient方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer the parameterized interceptor of the executeBatchClient method
      */
     public static InterceptDeclarer getExecuteBatchClientInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getExecuteBatchClientMethodMatcher(),
@@ -125,9 +125,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchStmt方法无参拦截器
+     * Gets the parameterless interceptor for the executeBatchStmt method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchStmt方法无参拦截器
+     * @return InterceptDeclarer the parameterless interceptor for the executeBatchStmt method
      */
     public static InterceptDeclarer getExecuteBatchStmtInterceptDeclarer() {
         return InterceptDeclarer.build(getExecuteBatchStmtMethodMatcher(),
@@ -135,10 +135,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchStmt方法有参拦截器
+     * Gets the parameterized interceptor of the AbstractQueryProtocol class executeBatchStmt method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchStmt方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer A parameterized interceptor for the executeBatchStmt method
      */
     public static InterceptDeclarer getExecuteBatchStmtInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getExecuteBatchStmtMethodMatcher(),
@@ -146,9 +146,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executePreparedQuery方法无参拦截器
+     * Gets the parameterless interceptor for the executePreparedQuery method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类executePreparedQuery方法无参拦截器
+     * @return InterceptDeclarer A parameterless interceptor for the executePreparedQuery method
      */
     public static InterceptDeclarer getExecutePreparedQueryInterceptDeclarer() {
         return InterceptDeclarer.build(getExecutePreparedQueryMethodMatcher(),
@@ -156,10 +156,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executePreparedQuery方法有参拦截器
+     * Gets the parameterized interceptor of the AbstractQueryProtocol class executePreparedQuery method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类executePreparedQuery方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer Parameter interceptor of the AbstractQueryProtocol class executePreparedQuery method
      */
     public static InterceptDeclarer getExecutePreparedQueryInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getExecutePreparedQueryMethodMatcher(),
@@ -167,9 +167,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchServer方法无参拦截器
+     * Gets the parameterless interceptor for the executeBatchServer method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchServer方法无参拦截器
+     * @return InterceptDeclarer Parameterless interceptor for the AbstractQueryProtocol class executeBatchServer method
      */
     public static InterceptDeclarer getExecuteBatchServerInterceptDeclarer() {
         return InterceptDeclarer.build(getExecuteBatchServerMethodMatcher(),
@@ -177,10 +177,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类executeBatchServer方法有参拦截器
+     * Gets the parameterised interceptor of the AbstractQueryProtocol class executeBatchServer method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类executeBatchServer方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer Parameter interceptor of the AbstractQueryProtocol class executeBatchServer method
      */
     public static InterceptDeclarer getExecuteBatchServerInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getExecuteBatchServerMethodMatcher(),
@@ -188,9 +188,9 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类prepare方法无参拦截器
+     * Gets the parameterless interceptor for the prepare method of the AbstractQueryProtocol class
      *
-     * @return InterceptDeclarer AbstractQueryProtocol类prepare方法无参拦截器
+     * @return InterceptDeclarer The parameterless interceptor of the AbstractQueryProtocol class prepare method
      */
     public static InterceptDeclarer getPrepareInterceptDeclarer() {
         return InterceptDeclarer.build(getPrepareMethodMatcher(),
@@ -198,10 +198,10 @@ public class MariadbV2EnhancementHelper {
     }
 
     /**
-     * 获取AbstractQueryProtocol类prepare方法有参拦截器
+     * Gets the parameterized interceptor of the AbstractQueryProtocol class prepare method
      *
-     * @param handler 数据库自定义处理器
-     * @return InterceptDeclarer AbstractQueryProtocol类prepare方法有参拦截器
+     * @param handler database custom processor
+     * @return InterceptDeclarer The parameterized interceptor of the AbstractQueryProtocol class prepare method
      */
     public static InterceptDeclarer getPrepareInterceptDeclarer(DatabaseHandler handler) {
         return InterceptDeclarer.build(getPrepareMethodMatcher(),

@@ -20,18 +20,18 @@ package com.huawei.dynamic.config.resolver;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 配置解析器
+ * configuration parser
  *
- * @param <T> 解析后的類型
+ * @param <T> the parsed type
  * @author zhouss
  * @since 2022-04-13
  */
 public interface ConfigResolver<T> {
     /**
-     * 配置解析器
+     * configuration parser
      *
-     * @param event 配置更新時
-     * @return 解析数据
+     * @param event when updating layout
+     * @return parseData
      */
     T resolve(DynamicConfigEvent event);
 }

@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 负载均衡配置
+ * load balancing configuration
  *
  * @author provenceee
  * @since 2022-01-21
@@ -29,32 +29,34 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("loadbalancer.plugin")
 public class LoadbalancerConfig implements PluginConfig {
     /**
-     * dubbo负载均衡策略
+     * dubbo load balance strategy
      */
     private DubboLoadbalancerType dubboType = DubboLoadbalancerType.RANDOM;
 
     /**
-     * spring cloud loadbalancer负载均衡策略
+     * spring cloud loadbalancer load balance strategy
      */
     private SpringLoadbalancerType springType = SpringLoadbalancerType.ROUND_ROBIN;
 
     /**
-     * ribbon负载均衡策略
+     * ribbon load balance strategy
      */
     private RibbonLoadbalancerType ribbonType = RibbonLoadbalancerType.ROUND_ROBIN;
 
     /**
-     * 默认负载均衡规则
+     * default load balance strategy
      */
     private String defaultRule;
 
     /**
-     * 是否使用cse规则
+     * whether to use cse rules
      */
     private boolean useCseRule = true;
 
     /**
-     * 是否强制使用插件的负载均衡, 当前配置仅对ribbon生效。ribbon可能存在用户自身的负载均衡key, 若用户不想影响自身的负载均衡key, 则可将之设置为false
+     * Whether to force the use of plugin load balancing, the current configuration only takes effect on the ribbon.
+     * Ribbon may have the user's own load balancing key. If the user does not want to affect his own load balancing
+     * key, he can set it to false.
      */
     private boolean forceUseSermantLb = true;
 

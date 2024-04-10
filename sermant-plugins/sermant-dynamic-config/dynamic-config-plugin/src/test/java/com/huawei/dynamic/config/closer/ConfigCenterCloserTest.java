@@ -45,14 +45,14 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
- * 关闭器测试
+ * closer test
  *
  * @author zhouss
  * @since 2022-09-05
  */
 public class ConfigCenterCloserTest {
     /**
-     * 测试加载api
+     * test loading api
      */
     @Test
     public void loadSpi() {
@@ -64,7 +64,7 @@ public class ConfigCenterCloserTest {
     }
 
     /**
-     * 测试nacos关闭器
+     * test the nacos closer
      */
     @Test
     public void testNacosClose() {
@@ -94,10 +94,10 @@ public class ConfigCenterCloserTest {
     }
 
     /**
-     * nacos源构建
+     * nacos source construction
      *
      * @return source
-     * @throws Exception 不会抛出
+     * @throws Exception will not throw
      */
     public NacosPropertySource buildNacosPropertySource() throws Exception {
         final Class<?> sourceClass = Thread.currentThread().getContextClassLoader()
@@ -110,7 +110,7 @@ public class ConfigCenterCloserTest {
     }
 
     /**
-     * 测试zk关闭器
+     * test the zk closer
      */
     @Test
     public void testZkClose() {
@@ -141,10 +141,10 @@ public class ConfigCenterCloserTest {
     }
 
     /**
-     * 构建zk配置源
+     * build the zk configuration source
      *
      * @return source
-     * @throws Exception 不会抛出
+     * @throws Exception will not throw
      */
     public ZookeeperPropertySource buildZkSource() throws Exception {
         final CuratorFramework framework = Mockito.mock(CuratorFramework.class);
@@ -155,7 +155,7 @@ public class ConfigCenterCloserTest {
     }
 
     /**
-     * 测试用watch
+     * test watch
      *
      * @since 2022-09-05
      */

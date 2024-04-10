@@ -19,30 +19,30 @@ package com.huaweicloud.sermant.database.handler;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 数据库禁写处理接口
+ * database write forbidden processing interface
  *
  * @author daizhenyu
  * @since 2024-01-15
  **/
 public interface DatabaseHandler {
     /**
-     * 拦截点前置处理
+     * intercept point preprocessing
      *
-     * @param context 上下文信息
+     * @param context contextual information
      */
     void doBefore(ExecuteContext context);
 
     /**
-     * 拦截点后置处理
+     * intercept point post processing
      *
-     * @param context 上下文信息
+     * @param context contextual information
      */
     void doAfter(ExecuteContext context);
 
     /**
-     * 拦截点异常处理
+     * intercept point exception handling
      *
-     * @param context 上下文信息
+     * @param context contextual information
      */
     void doOnThrow(ExecuteContext context);
 }

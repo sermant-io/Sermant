@@ -41,19 +41,26 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * URL增强类
+ * URL enhancement class
  *
  * @author provenceee
  * @since 2022-01-20
  */
 public class UrlInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final String ALIBABA_LOADER = "com.alibaba.dubbo.common.extension.ExtensionLoader";
+
     private static final String ALIBABA_LB = "com.alibaba.dubbo.rpc.cluster.LoadBalance";
+
     private static final String APACHE_LOADER = "org.apache.dubbo.common.extension.ExtensionLoader";
+
     private static final String APACHE_LB = "org.apache.dubbo.rpc.cluster.LoadBalance";
+
     private static final String LOAD_METHOD = "loadExtensionClasses";
+
     private static final String GET_LOADER_METHOD = "getExtensionLoader";
+
     private final LoadbalancerConfig config;
 
     private Set<String> supportRules;
@@ -117,8 +124,8 @@ public class UrlInterceptor extends AbstractInterceptor {
 
             // 获取指定的ExtensionLoader
             final Optional<Object> loader = ReflectUtils.invokeMethod(extensionLoaderClazz, GET_LOADER_METHOD,
-                    new Class[] {Class.class},
-                    new Object[] {lbClazz.get()});
+                    new Class[]{Class.class},
+                    new Object[]{lbClazz.get()});
             if (!loader.isPresent()) {
                 return;
             }

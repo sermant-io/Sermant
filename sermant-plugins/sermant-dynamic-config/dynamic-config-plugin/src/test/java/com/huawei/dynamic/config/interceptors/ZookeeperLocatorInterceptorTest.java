@@ -37,7 +37,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 测试zk拦截
+ * test zk intercept
  *
  * @author zhouss
  * @since 2022-09-05

@@ -37,7 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * prepare方法拦截器单元测试
+ * the prepare method interceptor the unit test
  *
  * @author daizhenyu
  * @since 2024-02-06
@@ -82,32 +82,34 @@ public class SendQueryInterceptorTest {
 
     @Test
     public void testDoBefore() throws Exception {
-        // 数据库禁写开关关闭
+        // the database write prohibition switch is disabled
         globalConfig.setEnableMySqlWriteProhibition(false);
         context = ExecuteContext.forMemberMethod(clientMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        // 数据库禁写开关关闭，禁写数据库set包含被拦截的数据库
+        // The database write prohibition function is disabled.
+        // The write prohibition database set contains the database that is blocked
         Set<String> databases = new HashSet<>();
         databases.add("database-test");
         globalConfig.setMySqlDatabases(databases);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        // 数据库禁写开关打开，禁写数据库set包含被拦截的数据库
+        // The database write prohibition switch is enabled, and the database set contains the database that is blocked
         globalConfig.setEnableMySqlWriteProhibition(true);
         interceptor.before(context);
         Assert.assertEquals("Database prohibit to write, database: database-test",
                 context.getThrowableOut().getMessage());
 
-        //数据库禁写开关打开，sql没有写操作，禁写数据库集合包含被拦截的数据库
+        //The database write prohibition switch is turned on, the sql does not write,
+        // and the database set contains the blocked database
         Mockito.when(messageMock.description()).thenReturn("SELECT * FROM table");
         context = ExecuteContext.forMemberMethod(clientMock, methodMock, argument, null, null);
         interceptor.before(context);
         Assert.assertNull(context.getThrowableOut());
 
-        //数据库禁写开关打开，禁写数据库集合不包含被拦截的数据库
+        //The database write prohibition switch is enabled. The database set does not contain the database that is blocked
         Mockito.when(messageMock.description()).thenReturn("INSERT INTO table (name) VALUES ('test')");
         globalConfig.setMySqlDatabases(new HashSet<>());
         interceptor.before(context);

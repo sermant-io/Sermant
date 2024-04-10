@@ -24,7 +24,7 @@ package com.huawei.flowcontrol.common.context;
  */
 public enum FlowControlContext {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

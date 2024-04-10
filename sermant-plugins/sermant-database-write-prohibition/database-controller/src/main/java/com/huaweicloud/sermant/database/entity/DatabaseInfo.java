@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.database.entity;
 import com.huaweicloud.sermant.database.constant.DatabaseType;
 
 /**
- * 数据库示例信息
+ * database ample information
  *
  * @author daizhenyu
  * @since 2024-02-01
@@ -34,15 +34,15 @@ public class DatabaseInfo {
     private int port;
 
     /**
-     * 无参构造方法
+     * no parameter construction method
      */
     public DatabaseInfo() {
     }
 
     /**
-     * 有参构造方法
+     * parameter construction method
      *
-     * @param type 数据库类型
+     * @param type database type
      */
     public DatabaseInfo(DatabaseType type) {
         databaseType = type;

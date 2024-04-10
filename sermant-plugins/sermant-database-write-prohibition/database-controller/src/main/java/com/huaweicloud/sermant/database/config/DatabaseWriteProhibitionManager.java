@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 数据库禁写配置管理类
+ * configuration management classes of write prohibition plugin
  *
  * @author daizhenyu
  * @since 2024-01-22
@@ -35,9 +35,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取MongoDb禁止写入的数据库集合
+     * Gets a collection of databases that MongoDb prohibits writing to
      *
-     * @return MongoDb禁止写入的数据库集合
+     * @return A collection of databases that MongoDb prohibits writing to
      */
     public static Set<String> getMongoDbProhibitionDatabases() {
         if (globalConfig.isEnableMongoDbWriteProhibition()) {
@@ -50,9 +50,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取Mysql要禁止写入的数据库集合
+     * Gets a collection of databases that MySQL prohibits writing to
      *
-     * @return Mysql禁止写入的数据库集合
+     * @return A collection of databases that MySQL prohibits writing to
      */
     public static Set<String> getMySqlProhibitionDatabases() {
         if (globalConfig.isEnableMySqlWriteProhibition()) {
@@ -65,9 +65,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取PostgreSQL要禁止写入的数据库集合
+     * Gets a collection of databases that PostgreSQL prohibits writing to
      *
-     * @return PostgreSQL禁止写入的数据库集合
+     * @return A collection of databases that PostgreSQL prohibits writing to
      */
     public static Set<String> getPostgreSqlProhibitionDatabases() {
         if (globalConfig.isEnablePostgreSqlWriteProhibition()) {
@@ -80,9 +80,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取OpenGauss要禁止写入的数据库集合
+     * Gets a collection of databases that OpenGauss prohibits writing to
      *
-     * @return OpenGauss禁止写入的数据库集合
+     * @return A collection of databases that OpenGauss prohibits writing to
      */
     public static Set<String> getOpenGaussProhibitionDatabases() {
         if (globalConfig.isEnableOpenGaussWriteProhibition()) {
@@ -95,27 +95,27 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 获取全局配置
+     * get global configuration
      *
-     * @return 全局配置
+     * @return global configuration
      */
     public static DatabaseWriteProhibitionConfig getGlobalConfig() {
         return globalConfig;
     }
 
     /**
-     * 获取局部配置
+     * get local configuration
      *
-     * @return 局部配置
+     * @return local configuration
      */
     public static DatabaseWriteProhibitionConfig getLocalConfig() {
         return localConfig;
     }
 
     /**
-     * 更新全局配置
+     * update global configuration
      *
-     * @param config 禁止写数据库配置
+     * @param config database write prohibition configurations
      */
     public static void updateGlobalConfig(DatabaseWriteProhibitionConfig config) {
         if (config == null) {
@@ -126,9 +126,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 更新局部配置
+     * update local configuration
      *
-     * @param config 禁止写数据库配置
+     * @param config database write prohibition configurations
      */
     public static void updateLocalConfig(DatabaseWriteProhibitionConfig config) {
         if (config == null) {
@@ -139,9 +139,9 @@ public class DatabaseWriteProhibitionManager {
     }
 
     /**
-     * 打印配置信息
+     * print configuration information
      *
-     * @return 配置信息
+     * @return configuration information
      */
     public static String printConfig() {
         return "Global WriteProhibitionConfig: " + globalConfig.toString() + "; Local WriteProhibitionConfig: "

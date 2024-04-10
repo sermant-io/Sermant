@@ -23,14 +23,15 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法, 该拦截点主要用于获取dubbo下游接口与下游服务名间的关系
+ * Enhance the mergeUrl method of the ClusterUtils class. This interception point is mainly used to obtain the
+ * relationship between dubbo downstream interface and downstream service name.
  *
  * @author provenceee
  * @since 2021-06-28
  */
 public class ClusterDeclarer extends AbstractPluginDeclarer {
     private static final String[] ENHANCE_CLASS = {"org.apache.dubbo.rpc.cluster.support.ClusterUtils",
-        "com.alibaba.dubbo.rpc.cluster.support.ClusterUtils"};
+            "com.alibaba.dubbo.rpc.cluster.support.ClusterUtils"};
 
     private static final String INTERCEPT_CLASS = ClusterInterceptor.class.getCanonicalName();
 
@@ -45,10 +46,10 @@ public class ClusterDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
+        return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
                                 .and(MethodMatcher.isStaticMethod()
-                                .and(MethodMatcher.paramCountEquals(PARAMS_LEN))),
+                                        .and(MethodMatcher.paramCountEquals(PARAMS_LEN))),
                         INTERCEPT_CLASS)
         };
     }

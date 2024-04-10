@@ -33,21 +33,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * dubbo负载均衡缓存
+ * dubbo load balancing cache
  *
  * @author zhouss
  * @since 2022-08-15
  */
 public enum DubboLoadbalancerCache {
     /**
-     * 单例
+     * instance
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 配置负载均衡类型
+     * configure the load balancing type
      * <pre>
      *     key: remote-application
      *     value: DubboLoadbalancerType

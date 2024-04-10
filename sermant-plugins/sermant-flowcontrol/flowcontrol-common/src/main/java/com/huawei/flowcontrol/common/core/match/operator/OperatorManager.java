@@ -29,7 +29,7 @@ import java.util.ServiceLoader;
  */
 public enum OperatorManager {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

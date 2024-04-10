@@ -25,7 +25,7 @@ import org.mariadb.jdbc.HostAddress;
 import org.mariadb.jdbc.internal.protocol.Protocol;
 
 /**
- * mariadb2.x抽象interceptor
+ * mariadb2.x abstract interceptor
  *
  * @author daizhenyu
  * @since 2024-02-02

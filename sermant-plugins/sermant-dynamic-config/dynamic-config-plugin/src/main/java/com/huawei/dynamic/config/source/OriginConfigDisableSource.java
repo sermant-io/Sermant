@@ -26,14 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 用于屏蔽原配置中心的开关配置源,当前支持zookeeper/nacos
+ * Mask the switch configuration source of the original configuration center,current support zookeeper/nacos
  *
  * @author zhouss
  * @since 2022-07-12
  */
 public class OriginConfigDisableSource extends MapPropertySource implements ConfigSource {
     /**
-     * zookeeper配置中心开关
+     * zookeeper configuration center switch
      */
     public static final String ZK_CONFIG_CENTER_ENABLED = "spring.cloud.zookeeper.config.enabled";
 
@@ -42,9 +42,9 @@ public class OriginConfigDisableSource extends MapPropertySource implements Conf
     private static final Map<String, Object> SOURCE = new HashMap<>();
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param name 资源名称
+     * @param name resource name
      */
     public OriginConfigDisableSource(String name) {
         super(name, SOURCE);

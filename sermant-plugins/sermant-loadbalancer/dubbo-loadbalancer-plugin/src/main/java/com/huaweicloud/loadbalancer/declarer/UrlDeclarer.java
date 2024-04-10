@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * URL增强类
+ * URL enhancement class
  *
  * @author provenceee
  * @since 2022-01-20
@@ -43,8 +43,8 @@ public class UrlDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
-                    .and(MethodMatcher.paramTypesEqual("java.lang.String", "java.lang.String")), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
+                        .and(MethodMatcher.paramTypesEqual("java.lang.String", "java.lang.String")), INTERCEPT_CLASS)
         };
     }
 }

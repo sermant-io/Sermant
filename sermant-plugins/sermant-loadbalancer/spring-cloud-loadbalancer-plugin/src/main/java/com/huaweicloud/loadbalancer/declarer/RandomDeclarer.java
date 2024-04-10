@@ -20,7 +20,7 @@ package com.huaweicloud.loadbalancer.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * RandomLoadBalancer增强类
+ * RandomLoadBalancer enhancement class
  *
  * @author provenceee
  * @since 2022-01-20
@@ -31,7 +31,7 @@ public class RandomDeclarer extends AbstractDeclarer {
     private static final String INTERCEPT_CLASS = "com.huaweicloud.loadbalancer.interceptor.LoadBalancerInterceptor";
 
     /**
-     * 构造方法
+     * construction method
      */
     public RandomDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, null);

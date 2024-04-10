@@ -22,16 +22,16 @@ import com.huawei.dynamic.config.ConfigHolder;
 import org.springframework.core.env.EnumerablePropertySource;
 
 /**
- * 动态配置
+ * dynamic configuration
  *
  * @author zhouss
  * @since 2022-04-20
  */
 public class DynamicConfigPropertySource extends EnumerablePropertySource<ConfigHolder> {
     /**
-     * 构造器
+     * constructor
      *
-     * @param name 配置名
+     * @param name configuration name
      */
     public DynamicConfigPropertySource(String name) {
         super(name);

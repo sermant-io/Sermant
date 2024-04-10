@@ -29,8 +29,11 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 针对addFirst方法拦截, 当用户在配置中心下发配置, 动态关闭原生配置中心, 此拦截点开始拦截添加原生配置中心配置源, 阻止配置生效
- * 生效见{@link com.huawei.dynamic.config.source.OriginConfigCenterDisableListener}添加禁止配置源
+ * When a user sends a configuration in the configuration center, the native configuration center is dynamically closed,
+ * The intercept point starts to block the native configuration center configuration source and
+ * prevents the configuration from taking effect
+ * effectiveView{@link com.huawei.dynamic.config.source.OriginConfigCenterDisableListener}
+ * the forbidden configuration source was added
  *
  * @author zhouss
  * @since 2022-04-08
@@ -47,7 +50,7 @@ public class MutableSourceInterceptor extends DynamicConfigSwitchSupport {
     private final DynamicConfiguration configuration;
 
     /**
-     * 构造器
+     * constructor
      */
     public MutableSourceInterceptor() {
         configuration = PluginConfigManager.getPluginConfig(DynamicConfiguration.class);

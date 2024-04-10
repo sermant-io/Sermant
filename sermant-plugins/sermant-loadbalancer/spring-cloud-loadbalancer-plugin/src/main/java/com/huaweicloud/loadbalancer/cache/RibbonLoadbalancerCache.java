@@ -37,30 +37,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * ribbon loadbalancer负载均衡缓存
+ * ribbon loadbalancer load balancing cache
  *
  * @author zhouss
  * @since 2022-08-12
  */
 public enum RibbonLoadbalancerCache {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 新负载均衡缓存
+     * new load balancing cache
      * <pre>
      *     key: service name
-     *     value: 负载均衡类型
+     *     value: load balancing type
      * </pre>
      */
     private final Map<String, Optional<RibbonLoadbalancerType>> newTypeCache = new ConcurrentHashMap<>();
 
     /**
-     * 原始负载均衡缓存key: 服务名, value: 负载均衡类型
+     * raw load balancing cache. key: serviceName, value: loadBalancingType
      */
     private final Map<String, RibbonLoadbalancerType> originTypeCache = new ConcurrentHashMap<>();
 
@@ -136,16 +136,16 @@ public enum RibbonLoadbalancerCache {
     private void recoverOldType(LoadbalancerRule rule) {
         final String oldServiceName = rule.getServiceName();
         if (oldServiceName != null) {
-            // 恢复
+            // recover
             newTypeCache.put(oldServiceName, Optional.ofNullable(originTypeCache.get(oldServiceName)));
         }
     }
 
     /**
-     * 存放负载均衡类型
+     * the load balancing type is stored
      *
-     * @param serviceName 服务名
-     * @param loadbalancerType 负载均衡类型
+     * @param serviceName service name
+     * @param loadbalancerType load balancing type
      * @see IRule
      */
     public void put(String serviceName, RibbonLoadbalancerType loadbalancerType) {
@@ -153,15 +153,15 @@ public enum RibbonLoadbalancerCache {
     }
 
     /**
-     * 获取指定服务名的缓存负载均衡类型
+     * Gets the cache load balancing type for the specified service name
      *
-     * @param serviceName 缓存
-     * @return 负载均衡
+     * @param serviceName cache
+     * @return load balancing
      */
     public Optional<RibbonLoadbalancerType> getTargetServiceLbType(String serviceName) {
         final Optional<RibbonLoadbalancerType> ribbonLoadbalancerType = newTypeCache.get(serviceName);
         if (ribbonLoadbalancerType == null || !ribbonLoadbalancerType.isPresent()) {
-            // 尝试匹配
+            // try to match
             final Optional<LoadbalancerRule> targetServiceRule = RuleManager.INSTANCE.getTargetServiceRule(serviceName);
             Optional<RibbonLoadbalancerType> matchType;
             if (targetServiceRule.isPresent()) {
@@ -177,10 +177,10 @@ public enum RibbonLoadbalancerCache {
     }
 
     /**
-     * 备份原始类型
+     * backup origin type
      *
-     * @param serviceName 服务名
-     * @param targetOriginType 原始类型
+     * @param serviceName service name
+     * @param targetOriginType target origin type
      */
     public void backUpOriginType(String serviceName, RibbonLoadbalancerType targetOriginType) {
         this.originTypeCache.put(serviceName, targetOriginType);

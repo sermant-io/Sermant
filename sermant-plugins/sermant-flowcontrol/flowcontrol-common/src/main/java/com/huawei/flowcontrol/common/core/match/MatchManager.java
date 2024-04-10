@@ -33,7 +33,7 @@ import java.util.Set;
  */
 public enum MatchManager {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

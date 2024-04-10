@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigLi
 import java.util.Locale;
 
 /**
- * 配置监听器
+ * configure listener
  *
  * @author zhouss
  * @since 2022-04-13
@@ -36,8 +36,8 @@ public class ConfigListener implements DynamicConfigListener {
     public void process(DynamicConfigEvent event) {
         ConfigHolder.INSTANCE.resolve(event);
         LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
-            "[DynamicConfig] Received source [%s], and [%s] it", event.getKey(), event.getEventType()));
+                "[DynamicConfig] Received source [%s], and [%s] it", event.getKey(), event.getEventType()));
         LoggerFactory.getLogger().fine(String.format(Locale.ENGLISH,
-            "[DynamicConfig] the value of source is %s", event.getContent()));
+                "[DynamicConfig] the value of source is %s", event.getContent()));
     }
 }

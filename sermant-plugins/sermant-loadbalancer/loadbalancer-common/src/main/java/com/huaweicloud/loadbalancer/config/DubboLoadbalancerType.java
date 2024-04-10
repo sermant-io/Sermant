@@ -20,39 +20,39 @@ package com.huaweicloud.loadbalancer.config;
 import java.util.Optional;
 
 /**
- * dubbo负载均衡策略
+ * dubbo load balance strategy
  *
  * @author provenceee
  * @since 2022-01-21
  */
 public enum DubboLoadbalancerType {
     /**
-     * 随机
+     * Random
      */
     RANDOM("Random"),
 
     /**
-     * 轮询
+     * Round Robin
      */
     ROUNDROBIN("RoundRobin"),
 
     /**
-     * 最少活跃
+     * least active
      */
     LEASTACTIVE("LeastActive"),
 
     /**
-     * 一致性HASH
+     * Consistent Hash
      */
     CONSISTENTHASH("ConsistEntHash"),
 
     /**
-     * 最短响应时间（仅支持dubbo 2.7.7+）
+     * shortest response（only dubbo2.7.7+ is supported）
      */
     SHORTESTRESPONSE("ShortestResponse");
 
     /**
-     * 实际配置映射名称
+     * name of the actual mapping
      */
     private final String mapperName;
 
@@ -61,10 +61,10 @@ public enum DubboLoadbalancerType {
     }
 
     /**
-     * 匹配负载均衡类型
+     * match the load balancing type
      *
-     * @param loadbalancerType 负载均衡
-     * @return 负载均衡类型
+     * @param loadbalancerType loadbalancer type
+     * @return loadbalancerType
      */
     public static Optional<DubboLoadbalancerType> matchLoadbalancer(String loadbalancerType) {
         if (loadbalancerType == null) {

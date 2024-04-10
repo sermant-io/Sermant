@@ -37,7 +37,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试BaseLoadBalancer chooseServer方法的拦截点
+ * Test the interception point of the BaseLoadBalancer chooseServer method
  *
  * @author provenceee
  * @see com.netflix.loadbalancer.BaseLoadBalancer
@@ -51,7 +51,7 @@ public class RibbonLoadBalancerInterceptorTest {
     private MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -66,7 +66,7 @@ public class RibbonLoadBalancerInterceptorTest {
     }
 
     /**
-     * 构造方法
+     * construction method
      */
     public RibbonLoadBalancerInterceptorTest() {
         loadBalancer = new BaseLoadBalancer();
@@ -75,32 +75,32 @@ public class RibbonLoadBalancerInterceptorTest {
 
     @Test
     public void test() {
-        // 测试配置为null
+        // test: configure is null
         RibbonLoadBalancerInterceptor nullConfigInterceptor = new RibbonLoadBalancerInterceptor();
         nullConfigInterceptor.before(context);
         Assert.assertEquals(loadBalancer, context.getObject());
         Assert.assertEquals(RoundRobinRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
-        // 测试未配置负载均衡的场景
+        // test: Scenarios in which load balancing is not configured
         try (final MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic = Mockito
                 .mockStatic(PluginConfigManager.class)){
             pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(LoadbalancerConfig.class))
                     .thenReturn(new LoadbalancerConfig());
             RibbonLoadBalancerInterceptor interceptor = new RibbonLoadBalancerInterceptor();
 
-            // 无匹配负载均衡场景
+            // no matching load balancing scenario
             interceptor.before(context);
             Assert.assertEquals(loadBalancer, context.getObject());
             Assert.assertEquals(RoundRobinRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
-            // 测试负载均衡器类型一致
+            // the load balancer type is consistent
             RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RETRY.getMapperName());
             loadBalancer.setRule(new RetryRule());
             interceptor.before(context);
             Assert.assertEquals(loadBalancer, context.getObject());
             Assert.assertEquals(RetryRule.class, ((BaseLoadBalancer) context.getObject()).getRule().getClass());
 
-            // 测试把重试换成随机
+            // tests replace RETRY with RANDOM
             RuleManagerHelper.publishRule(loadBalancer.getName(), RibbonLoadbalancerType.RANDOM.getMapperName());
             interceptor.before(context);
             Assert.assertEquals(loadBalancer, context.getObject());

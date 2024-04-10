@@ -24,14 +24,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 线程工厂测试
+ * thread factory test
  *
  * @author zhouss
  * @since 2022-09-05
  */
 public class DynamicConfigThreadFactoryTest {
     /**
-     * 测试线程工厂是否生效
+     * tests if the thread factory is in effect
      */
     @Test
     public void test() {

@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * Flow control plug-in public capability unified initialization entry
+ * Flow control plugin public capability unified initialization entry
  *
  * @author zhouss
  * @since 2022-01-25

@@ -52,7 +52,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 监听器测试
+ * monitorTest
  *
  * @author zhouss
  * @since 2022-09-05
@@ -74,7 +74,7 @@ public class OriginConfigCenterDisableListenerTest {
     }
 
     /**
-     * 测试通知流程
+     * test notification process
      */
     @Test
     public void test() {
@@ -134,7 +134,7 @@ public class OriginConfigCenterDisableListenerTest {
     }
 
     /**
-     * 判断是否添加监听器, 并返回监听器
+     * Determines whether to add a listener and returns the listener
      * @return RefreshNotifier
      */
     public RefreshNotifier checkConfigListeners() {

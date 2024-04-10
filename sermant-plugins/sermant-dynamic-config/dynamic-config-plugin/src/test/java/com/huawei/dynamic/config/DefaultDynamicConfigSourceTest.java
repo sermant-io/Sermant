@@ -27,7 +27,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 默认配置
+ * default setting
  *
  * @author zhouss
  * @since 2022-09-05

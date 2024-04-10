@@ -18,20 +18,21 @@
 package com.huaweicloud.loadbalancer.rule;
 
 /**
- * 修改后负载均衡规则, 此处将添加修改前的负载均衡规则
+ * Modified load balancing rule. The load balancing rule before the modification is added here
  *
  * @author zhouss
  * @since 2022-08-15
  */
 public class ChangedLoadbalancerRule extends LoadbalancerRule {
     private final LoadbalancerRule oldRule;
+
     private final LoadbalancerRule newRule;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param oldRule 旧负载均衡规则
-     * @param newRule 新负载均衡规则
+     * @param oldRule old load balancing rule
+     * @param newRule new load balancing rule
      */
     public ChangedLoadbalancerRule(LoadbalancerRule oldRule, LoadbalancerRule newRule) {
         this.oldRule = oldRule;

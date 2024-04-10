@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * 测试优先级使用
+ * test priority is used
  *
  * @author zhouss
  * @since 2022-04-16

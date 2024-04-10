@@ -42,7 +42,7 @@ import org.springframework.core.env.PropertySource;
 import java.util.Collections;
 
 /**
- * 配置源测试
+ * configuration source test
  *
  * @author zhouss
  * @since 2022-04-16
@@ -88,9 +88,9 @@ public class SpringEnvironmentProcessorTest {
         springEnvironmentProcessor.postProcessEnvironment(mockEnvironment, null);
         final PropertySource<?> source = mockEnvironment.getPropertySources().get("Sermant-Dynamic-Config");
         Assert.assertNotNull(source);
-        // 注意此处有进行configSource注入测试, 看查看spi文件，会按照指定顺序排序
+        // Note the configSource injection test is performed. The spi file is viewed and sorted in the specified order
         ConfigHolder.INSTANCE.resolve(event);
-        // 由于此处为异步执行, 因此这里等待异步执行完成
+        // Because this is an asynchronous execution, it waits for the asynchronous execution to complete
         Thread.sleep(1000);
         Assert.assertEquals(mockEnvironment.getProperty(KEY), VALUE);
     }

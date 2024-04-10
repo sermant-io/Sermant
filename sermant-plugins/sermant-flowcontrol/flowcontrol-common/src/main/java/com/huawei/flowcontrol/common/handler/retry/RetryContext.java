@@ -34,7 +34,7 @@ import java.util.List;
  */
 public enum RetryContext {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 

@@ -17,7 +17,7 @@
 package com.huaweicloud.loadbalancer.constants;
 
 /**
- * dubbo url参数常量, 见
+ * dubbo url parameter constant, see
  * <p/>
  * org.apache.dubbo.common.URL#getParameter
  * <p/>
@@ -28,22 +28,22 @@ package com.huaweicloud.loadbalancer.constants;
  */
 public class DubboUrlParamsConstants {
     /**
-     * 接口
+     * interface
      */
     public static final String DUBBO_INTERFACE = "interface";
 
     /**
-     * 服务名
+     * service name
      */
     public static final String DUBBO_APPLICATION = "application";
 
     /**
-     * 远程服务名
+     * remote service name
      */
     public static final String DUBBO_REMOTE_APPLICATION = "remote.application";
 
     /**
-     * 负载均衡
+     * loadbalancing
      */
     public static final String DUBBO_LOAD_BALANCER_KEY = "loadbalance";
 

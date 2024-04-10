@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.mariadbv2.utils.MariadbV2EnhancementHelper;
 
 /**
- * AbstractQueryProtocol类增强声明器
+ * AbstractQueryProtocol Declarer
  *
  * @author daizhenyu
  * @since 2024-01-26

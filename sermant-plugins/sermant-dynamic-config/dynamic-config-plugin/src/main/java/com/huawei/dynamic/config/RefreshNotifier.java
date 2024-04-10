@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * 配置刷新通知器
+ * configure the refresh notifier
  *
  * @author zhouss
  * @since 2022-04-13
@@ -35,9 +35,9 @@ public class RefreshNotifier {
     private final List<DynamicConfigListener> dynamicConfigListeners = new ArrayList<>(LISTENER_INIT_SIZE);
 
     /**
-     * 添加监听数据
+     * add listening data
      *
-     * @param listener 监听器
+     * @param listener listener
      */
     public void addListener(DynamicConfigListener listener) {
         dynamicConfigListeners.add(listener);
@@ -45,9 +45,9 @@ public class RefreshNotifier {
     }
 
     /**
-     * 通知事件
+     * notification event
      *
-     * @param event 通知事件
+     * @param event notification event
      */
     public void refresh(DynamicConfigEvent event) {
         for (DynamicConfigListener listener : dynamicConfigListeners) {

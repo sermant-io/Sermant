@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public enum HandlerChainEntry {
     /**
-     * single case
+     * singleton
      */
     INSTANCE;
 
