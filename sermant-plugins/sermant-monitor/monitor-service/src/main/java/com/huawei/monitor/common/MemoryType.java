@@ -19,7 +19,7 @@ package com.huawei.monitor.common;
 import java.util.Optional;
 
 /**
- * JVM内存性能类型
+ * jvm memory performance type
  *
  * @author zhp
  * @version 1.0.0
@@ -27,113 +27,113 @@ import java.util.Optional;
  */
 public enum MemoryType {
     /**
-     * 堆内存
+     * heap memory
      */
     HEAP_MEMORY("heap_memory", MetricEnum.HEAP_MEMORY_INIT, MetricEnum.HEAP_MEMORY_USED, MetricEnum.HEAP_MEMORY_MAX,
             MetricEnum.HEAP_MEMORY_COMMITTED),
 
     /**
-     * 非堆内存
+     * non heap memory
      */
     NON_HEAP_MEMORY("non_heap_memory", MetricEnum.NON_HEAP_MEMORY_INIT, MetricEnum.NON_HEAP_MEMORY_USED,
             MetricEnum.NON_HEAP_MEMORY_MAX, MetricEnum.NON_HEAP_MEMORY_COMMITTED),
 
     /**
-     * CodeCache内存池
+     * Code Cache memory pool
      */
     CODE_CACHE("Code Cache", MetricEnum.CODE_CACHE_INIT, MetricEnum.CODE_CACHE_USED, MetricEnum.CODE_CACHE_MAX,
             MetricEnum.CODE_CACHE_COMMITTED),
 
     /**
-     * Metaspace 内存指标信息
+     * Metaspace memory pointer information
      */
     META_SPACE("Metaspace", MetricEnum.META_SPACE_INIT, MetricEnum.META_SPACE_USED, MetricEnum.META_SPACE_MAX,
             MetricEnum.META_SPACE_COMMITTED),
 
     /**
-     * 类加载
+     * class loading
      */
     CLASS_SPACE("Compressed Class Space", MetricEnum.COMPRESSED_CLASS_SPACE_INIT,
             MetricEnum.COMPRESSED_CLASS_SPACE_USED, MetricEnum.COMPRESSED_CLASS_SPACE_MAX,
             MetricEnum.COMPRESSED_CLASS_SPACE_COMMITTED),
     /**
-     * EDEN区指标枚举
+     * eden zone metric enumeration
      */
     EDEN_SPACE("PS Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
             MetricEnum.EDEN_COMMITTED),
 
     /**
-     * SURVIVOR指标枚举信息
+     * survivor metric enumeration information
      */
     SURVIVOR_SPACE("PS Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED, MetricEnum.SURVIVOR_MAX,
             MetricEnum.SURVIVOR_COMMITTED),
 
     /**
-     * 老年代指标信息
+     * old generation metric information
      */
     OLD_GEN_SPACE("PS Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
 
     /**
-     * 年轻代指标信息
+     * young generation indicator information
      */
     EDEN_SPACE_CMS("Par Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
             MetricEnum.EDEN_COMMITTED),
 
     /**
-     * CMS年轻代指标信息
+     * cms young generation metric information
      */
     SURVIVOR_SPACE_CMS("Par Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
             MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
 
     /**
-     * 老年代指标枚举
+     * enumeration of old generation metric
      */
     OLD_EDEN_SPACE_CMS("CMS Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
 
     /**
-     * SERIAL年轻代Eden指标信息
+     * SERIAL young generation Eden metric information
      */
     EDEN_SPACE_SERIAL("Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
             MetricEnum.EDEN_COMMITTED),
 
     /**
-     * SERIAL年轻代Survivor指标信息
+     * SERIAL young generation Survivor metric information
      */
     SURVIVOR_SPACE_SERIAL("Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
             MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
 
     /**
-     * SERIAL老年代指标枚举
+     * SERIAL old generation metric enumeration
      */
     OLD_EDEN_SPACE_SERIAL("Tenured Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
     /**
-     * G1年轻代Eden指标信息
+     * G1 young generation Eden metric information
      */
     EDEN_SPACE_G1("G1 Eden Space", MetricEnum.EDEN_INIT, MetricEnum.EDEN_USED, MetricEnum.EDEN_MAX,
             MetricEnum.EDEN_COMMITTED),
 
     /**
-     * G1年轻代Survivor指标信息
+     * G1 young generation Survivor metric information
      */
     SURVIVOR_SPACE_G1("G1 Survivor Space", MetricEnum.SURVIVOR_INIT, MetricEnum.SURVIVOR_USED,
             MetricEnum.SURVIVOR_MAX, MetricEnum.SURVIVOR_COMMITTED),
 
     /**
-     * G1老年代指标枚举
+     * G1 old generation metric enum
      */
     OLD_EDEN_SPACE_G1("G1 Old Gen", MetricEnum.OLD_GEN_INIT, MetricEnum.OLD_GEN_USED, MetricEnum.OLD_GEN_MAX,
             MetricEnum.OLD_GEN_COMMITTED),
     /**
-     * CodeCache内存池
+     * CodeCache memory pool
      */
     CODE_CACHE_G1("CodeCache", MetricEnum.CODE_CACHE_INIT, MetricEnum.CODE_CACHE_USED, MetricEnum.CODE_CACHE_MAX,
             MetricEnum.CODE_CACHE_COMMITTED),
 
     /**
-     * JDK11存储经过性能分析的编译代码的codeCache内存池
+     * JDK11 codeCache memory pool that stores profiled compiled code
      */
     PROFILED_NMETHODS("CodeHeap 'profiled nmethods'", MetricEnum.PROFILED_NMETHODS_INIT,
             MetricEnum.PROFILED_NMETHODS_USED,
@@ -141,66 +141,66 @@ public enum MemoryType {
             MetricEnum.PROFILED_NMETHODS_COMMITTED),
 
     /**
-     * JDK11存储未经过性能分析的编译代码的codeCache内存池
+     * JDK11 codeCache memory pool that stores compiled code that has not been profiled
      */
     NON_PROFILED_NMETHODS("CodeHeap 'non-profiled nmethods'", MetricEnum.NON_PROFILED_NMETHODS_INIT,
             MetricEnum.NON_PROFILED_NMETHODS_USED, MetricEnum.NON_PROFILED_NMETHODS_MAX,
             MetricEnum.NON_PROFILED_NMETHODS_COMMITTED),
 
     /**
-     * JDK11存储其他类型编译代码的codeCache内存池
+     * JDK11 codeCache memory pool that stores other types of compiled code
      */
     NON_NMETHODS("CodeHeap 'non-nmethods'", MetricEnum.NON_NMETHODS_INIT, MetricEnum.NON_NMETHODS_USED,
             MetricEnum.NON_NMETHODS_MAX,
             MetricEnum.NON_NMETHODS_COMMITTED),
 
     /**
-     * Epsilon收集器指标枚举
+     * Epsilon collector metric enumeration
      */
     EPSILON_HEAP("Epsilon Heap", MetricEnum.EPSILON_HEAP_INIT, MetricEnum.EPSILON_HEAP_USED,
             MetricEnum.EPSILON_HEAP_MAX,
             MetricEnum.EPSILON_HEAP_COMMITTED),
 
     /**
-     * JDK17的Shenandoah收集器指标枚举
+     * Enumeration of Shenandoah collector metric for JDK 17
      */
     SHENANDOAH("Shenandoah", MetricEnum.SHENANDOAH_INIT, MetricEnum.SHENANDOAH_USED,
             MetricEnum.SHENANDOAH_MAX,
             MetricEnum.SHENANDOAH_COMMITTED);
 
     /**
-     * 类型
+     * type
      */
     private String type;
 
     /**
-     * 初始化枚举
+     * initialization enumeration
      */
     private MetricEnum initEnum;
 
     /**
-     * 使用的枚举
+     * enumeration used
      */
     private MetricEnum usedEnum;
 
     /**
-     * 最大值对应的枚举
+     * enumeration corresponding to the maximum value
      */
     private MetricEnum maxEnum;
 
     /**
-     * 提交值对应的枚举
+     * submit the enumeration corresponding to the value
      */
     private MetricEnum committedEnum;
 
     /**
-     * 构造方法
+     * construction method
      *
-     * @param type 类型
-     * @param initEnum 初始化枚举
-     * @param usedEnum 已使用对应的枚举
-     * @param maxEnum 最大值对应的枚举
-     * @param committedEnum 提交值对应的枚举
+     * @param type type
+     * @param initEnum initialization enumeration
+     * @param usedEnum the corresponding enumeration has been used
+     * @param maxEnum enumeration corresponding to the maximum value
+     * @param committedEnum submit the enumeration corresponding to the value
      */
     MemoryType(String type, MetricEnum initEnum, MetricEnum usedEnum, MetricEnum maxEnum, MetricEnum committedEnum) {
         this.type = type;
@@ -231,10 +231,10 @@ public enum MemoryType {
     }
 
     /**
-     * 获取枚举通过类型
+     * gets enumeration by type
      *
-     * @param type 类型
-     * @return 对应的枚举
+     * @param type type
+     * @return corresponding enumeration
      */
     public static Optional<MemoryType> getEnumByType(String type) {
         for (MemoryType memoryType : MemoryType.values()) {

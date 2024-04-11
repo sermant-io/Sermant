@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.kafka.interceptors.KafkaConsumerRecordInterceptor;
 
 /**
- * kafka获取消息内容的拦截点声明，支持1.x, 2.x, 3.x
+ * kafka interception point declarer to obtain message content, supporting 1.x, 2.x, 3.x
  *
  * @author lilai
  * @since 2023-07-18
  */
 public class KafkaConsumerRecordDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASSES = "org.apache.kafka.clients.consumer.ConsumerRecord";
 

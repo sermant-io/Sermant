@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * CPU信息命令
+ * cpu information command
  *
  * @author zhp
  * @version 1.0.0
@@ -48,10 +48,10 @@ public class CpuInfoCommand extends CommonMonitorCommand<CpuInfoCommand.CpuInfoS
     }
 
     /**
-     * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.CpuParser parse方法
+     * Refactor the pan-PaaS class: com.huawei.sermant.plugin.collection.util.CpuParser parse method
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after analysis
      */
     @Override
     public CpuInfoStat parseResult(InputStream inputStream) {
@@ -79,21 +79,21 @@ public class CpuInfoCommand extends CommonMonitorCommand<CpuInfoCommand.CpuInfoS
     }
 
     /**
-     * CPU信息
+     * cpu information
      *
      * @since 2022-08-02
      */
     public static class CpuInfoStat {
 
         /**
-         * 核心数
+         * number of cores
          */
         private final int totalCores;
 
         /**
-         * 构造方法
+         * constructionMethod
          *
-         * @param totalCores 核心数
+         * @param totalCores number of cores
          */
         public CpuInfoStat(int totalCores) {
             this.totalCores = totalCores;

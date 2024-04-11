@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.utils.tag.TrafficData;
 import com.huaweicloud.sermant.core.utils.tag.TrafficTag;
 
 /**
- * TrafficMessage，包含TrafficTag和TrafficData
+ * TrafficMessage，contains the traffic tag and traffic data
  *
  * @author daizhenyu
  * @since 2023-09-05
@@ -31,16 +31,16 @@ public class TrafficMessage {
     private TrafficData trafficData;
 
     /**
-     * 无参构造方法
+     * no parameter constructor
      */
     public TrafficMessage() {
     }
 
     /**
-     * 有参构造方法
+     * parameter constructor
      *
-     * @param trafficTag 流量标签
-     * @param trafficData 流量数据
+     * @param trafficTag trafficTag
+     * @param trafficData trafficData
      */
     public TrafficMessage(TrafficTag trafficTag, TrafficData trafficData) {
         this.trafficTag = trafficTag;

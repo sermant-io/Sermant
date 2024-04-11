@@ -23,7 +23,8 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.apachedubbov2.interceptors.ApacheDubboConsumerInterceptor;
 
 /**
- * dubbo流量标签透传的consumer端增强声明，支持dubbo2.7.x
+ * Enhanced Declarer on the consumer side of dubbo traffic tag transparent transmission,
+ * supporting dubbo2.7.x
  *
  * @author daizhenyu
  * @since 2023-08-12

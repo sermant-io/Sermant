@@ -17,7 +17,7 @@
 package com.huawei.monitor.command;
 
 /**
- * 命令
+ * command
  *
  * @author zhp
  * @version 1.0.0
@@ -26,32 +26,32 @@ package com.huawei.monitor.command;
 public class Command {
 
     /**
-     * CPU使用命令
+     * cpu usage command
      */
     public static final CpuCommand CPU = new CpuCommand();
 
     /**
-     * 网络信息命令
+     * network message command
      */
     public static final NetworkCommand NETWORK = new NetworkCommand();
 
     /**
-     * 内存信息命令
+     * memory information command
      */
     public static final MemoryCommand MEMORY = new MemoryCommand();
 
     /**
-     * 磁盘信息命令
+     * disk information command
      */
     public static final DiskCommand DISK = new DiskCommand();
 
     /**
-     * CPU信息命令
+     * cpu information command
      */
     public static final CpuInfoCommand CPU_INFO = new CpuInfoCommand();
 
     /**
-     * 构造方法
+     * construction method
      */
     private Command() {
     }

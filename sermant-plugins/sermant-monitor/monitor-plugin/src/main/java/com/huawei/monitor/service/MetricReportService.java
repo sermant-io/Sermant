@@ -17,7 +17,7 @@
 package com.huawei.monitor.service;
 
 /**
- * 监控上报接口
+ * monitor report interface
  *
  * @author zhp
  * @since 2022-11-02
@@ -25,12 +25,12 @@ package com.huawei.monitor.service;
 public interface MetricReportService {
 
     /**
-     * 开始指标上报
+     * start metric report
      */
     void startMonitorServer();
 
     /**
-     * 关闭指标上报
+     * stop metric report
      */
     void stopMonitorServer();
 }

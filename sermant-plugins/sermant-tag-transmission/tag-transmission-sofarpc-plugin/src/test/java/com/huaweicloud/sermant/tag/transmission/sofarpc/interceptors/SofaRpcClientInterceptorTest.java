@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * SofaRpcClientInterceptor类的单元测试
+ * SofaRpcClientInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-29
@@ -47,37 +47,37 @@ public class SofaRpcClientInterceptorTest extends AbstractRpcInterceptorTest {
 
     @Test
     public void testSofaRpcClient() {
-        // 定义参数
+        // defineParameter
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, Object> expectRequestProps;
 
-        // SofaRequest 为null
+        // SofaRequest is null
         context = buildContext(null);
         returnContext = interceptor.before(context);
         Assert.assertNull(returnContext.getArguments()[0]);
 
-        // 流量标签透传开关关闭
+        // The traffic tag tranmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new SofaRequest());
         returnContext = interceptor.before(context);
         Assert.assertNull(((SofaRequest) returnContext.getArguments()[0]).getRequestProps());
         tagTransmissionConfig.setEnabled(true);
 
-        // SofaRequest不为null,TrafficTag包含完整的流量标签
+        // SofaRequest is not null. The Traffic Tag contains the complete traffic tag
         context = buildContext(new SofaRequest());
         returnContext = interceptor.before(context);
         expectRequestProps = buildExpectRequestProps("id", "name");
         Assert.assertEquals(((SofaRequest) returnContext.getArguments()[0]).getRequestProps(), expectRequestProps);
 
-        // TrafficTag只有部分流量标签
+        // TrafficTag indicates only partial traffic tags
         context = buildContext(new SofaRequest());
         TrafficUtils.getTrafficTag().getTag().remove("id");
         returnContext = interceptor.before(context);
         expectRequestProps = buildExpectRequestProps("name");
         Assert.assertEquals(((SofaRequest) returnContext.getArguments()[0]).getRequestProps(), expectRequestProps);
 
-        // TrafficTa没有tag信息
+        // TrafficTag does not have tag information
         TrafficUtils.removeTrafficTag();
         context = buildContext(new SofaRequest());
         returnContext = interceptor.before(context);

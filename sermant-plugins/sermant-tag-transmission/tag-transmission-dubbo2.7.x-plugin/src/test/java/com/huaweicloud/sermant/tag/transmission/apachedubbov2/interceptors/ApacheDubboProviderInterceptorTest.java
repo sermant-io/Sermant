@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ApacheDubboProviderInterceptor类的单元测试
+ * ApacheDubboProviderInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-29
@@ -49,30 +49,30 @@ public class ApacheDubboProviderInterceptorTest extends AbstractRpcInterceptorTe
 
     @Test
     public void testApacheDubboProvider() {
-        // 定义参数
+        // defineParameter
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, String> attachments;
         Map<String, List<String>> expectTag;
 
-        // invoker为consumer端
+        // invoker is consumer side
         context = buildContext(new RpcInvocation(), new HashMap<>(), "consumer");
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());
 
-        // 后续test均为provider端, Invocation对象为null
+        // Subsequent tests are all on the provider side. Invocation is null
         context = buildContext(null, new HashMap<>(), "provider");
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());
 
-        // 流量标签透传开关关闭
+        // The traffic tag transmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new RpcInvocation(), new HashMap<>(), "provider");
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());
         tagTransmissionConfig.setEnabled(true);
 
-        // Invocation对象的attachments包含全部key
+        // The attachments of the Invocation object contain all tags
         attachments = new HashMap<>();
         attachments.put("id", "001");
         attachments.put("name", "test001");
@@ -82,7 +82,7 @@ public class ApacheDubboProviderInterceptorTest extends AbstractRpcInterceptorTe
         Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTag);
         interceptor.after(returnContext);
 
-        // Invocation对象的attachments包含部分流量标签
+        // The attachments of the Invocation object contain partial traffic labels
         attachments = new HashMap<>();
         attachments.put("id", "001");
         context = buildContext(new RpcInvocation(), attachments, "provider");

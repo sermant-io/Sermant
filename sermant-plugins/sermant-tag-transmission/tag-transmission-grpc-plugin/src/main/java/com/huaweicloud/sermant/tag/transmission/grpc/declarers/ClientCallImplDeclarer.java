@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.grpc.interceptors.ClientCallImplInterceptor;
 
 /**
- * grpc client端Declarer，拦截header参数注入流量标签，支持grpc 1.13+版本
+ * grpc client Declarer，Intercepts the header parameter injected traffic label，supporting grpc 1.13+
  *
  * @author daizhenyu
  * @since 2023-08-21

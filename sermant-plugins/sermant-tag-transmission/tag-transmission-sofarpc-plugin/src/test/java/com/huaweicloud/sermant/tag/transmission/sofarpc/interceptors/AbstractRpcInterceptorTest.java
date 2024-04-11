@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * rpc模块 单元测试抽象类
+ * AbstractRpcInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-09-06
  **/
 public abstract class AbstractRpcInterceptorTest extends BaseInterceptorTest {
-    // 构建流量标签的key-value关系，用于构建参数
+    // Create a key-value relationship for traffic labels to build parameters
     public Map<String, List<String>> fullTrafficTag;
 
     public AbstractRpcInterceptorTest() {
@@ -44,7 +44,7 @@ public abstract class AbstractRpcInterceptorTest extends BaseInterceptorTest {
         fullTrafficTag.put("id", Collections.singletonList("001"));
         fullTrafficTag.put("name", Collections.singletonList("test001"));
 
-        // 初始化流量标签
+        // initialize traffic tag
         Map<String, List<String>> tag = new HashMap<>();
         tag.put("id", Collections.singletonList("001"));
         tag.put("name", Collections.singletonList("test001"));

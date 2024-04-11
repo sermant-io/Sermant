@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ApacheDubboConsumerInterceptor类的单元测试
+ * ApacheDubboConsumerInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-29
@@ -46,17 +46,17 @@ public class ApacheDubboConsumerInterceptorTest extends AbstractRpcInterceptorTe
 
     @Test
     public void testApacheDubboConsumer() {
-        // 定义参数
+        // defineParameter
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, String> expectAttachments;
 
-        // RpcInvocation为null
+        // RpcInvocation is null
         context = buildContext(null);
         returnContext = interceptor.before(context);
         Assert.assertNull(returnContext.getArguments()[1]);
 
-        // 流量标签透传开关关闭
+        // The traffic tag transmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
@@ -64,14 +64,14 @@ public class ApacheDubboConsumerInterceptorTest extends AbstractRpcInterceptorTe
         Assert.assertEquals(expectAttachments, ((RpcInvocation) returnContext.getArguments()[1]).getAttachments());
         tagTransmissionConfig.setEnabled(true);
 
-        // TrafficTag包含完整的流量标签
+        // traffic tag contains a complete traffic tag
         expectAttachments = buildExpectAttachments("id", "name");
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
         Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(),
                 expectAttachments);
 
-        // TrafficTag包含部分的流量标签
+        // traffic tag contains partial traffic tags
         TrafficUtils.getTrafficTag().getTag().remove("id");
         expectAttachments = buildExpectAttachments("name");
         context = buildContext(new RpcInvocation());
@@ -79,7 +79,7 @@ public class ApacheDubboConsumerInterceptorTest extends AbstractRpcInterceptorTe
         Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(),
                 expectAttachments);
 
-        // TrafficTag没有流量标签
+        // traffic tag there is no traffic tag
         TrafficUtils.removeTrafficTag();
         expectAttachments = buildExpectAttachments();
         context = buildContext(new RpcInvocation());

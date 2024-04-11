@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * SofaRpcServerInterceptor类的单元测试
+ * SofaRpcServerInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-30
@@ -47,25 +47,25 @@ public class SofaRpcServerInterceptorTest extends AbstractRpcInterceptorTest {
 
     @Test
     public void testSofaRpcServer() {
-        // 定义参数
+        // defineParameter
         Map<String, Object> requestProp;
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, List<String>> expectTrafficTag;
 
-        // SofaRequest 为null
+        // SofaRequest is null
         context = buildContext(null, null);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());
 
-        // 流量标签透传开关关闭
+        // The traffic tag tranmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new SofaRequest(), new HashMap<>());
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());
         tagTransmissionConfig.setEnabled(true);
 
-        // SofaRequest包含完整的tag
+        // SofaRequest includes full tag
         requestProp = new HashMap<>();
         requestProp.put("id", "001");
         requestProp.put("name", "test001");
@@ -75,7 +75,7 @@ public class SofaRpcServerInterceptorTest extends AbstractRpcInterceptorTest {
         Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTrafficTag);
         interceptor.after(returnContext);
 
-        // SofaRequest包含部分的tag
+        // SofaRequest contains partial tag
         requestProp = new HashMap<>();
         requestProp.put("id", "001");
         context = buildContext(new SofaRequest(), requestProp);

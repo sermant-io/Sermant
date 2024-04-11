@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 收集服务数据
+ * collect service data
  *
  * @author zhp
  * @since 2022-11-02
@@ -74,12 +74,12 @@ public class ServiceCollectorService extends SwitchService implements PluginServ
     }
 
     /**
-     * 添加监控指标数据
+     * add monitoring metric data
      *
-     * @param metricFamilySamplesList 指标集合
-     * @param key 本次采集指标标签
-     * @param metricCalEntity 本次采集指标数据
-     * @param currentTime 当前时间
+     * @param metricFamilySamplesList metric collection
+     * @param key label of the metric to be collected
+     * @param metricCalEntity this collection of metric data
+     * @param currentTime current time
      */
     private static void addMetricFamilySamples(List<MetricFamilySamples> metricFamilySamplesList,
             String key, MetricCalEntity metricCalEntity, long currentTime) {

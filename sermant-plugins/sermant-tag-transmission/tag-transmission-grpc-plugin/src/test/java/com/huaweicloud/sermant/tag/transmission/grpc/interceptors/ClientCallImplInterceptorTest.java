@@ -29,7 +29,7 @@ import org.junit.Test;
 import java.util.Collections;
 
 /**
- * ClientCallImplInterceptor类的单元测试
+ * ClientCallImplInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-31
@@ -55,13 +55,13 @@ public class ClientCallImplInterceptorTest extends AbstractRpcInterceptorTest {
         Key<String> id = Key.of("id", Metadata.ASCII_STRING_MARSHALLER);
         Key<String> key = Key.of("key", Metadata.ASCII_STRING_MARSHALLER);
 
-        // Metadata 为null
+        // Metadata is null
         arguments = new Object[]{null, null};
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
         returnContext = interceptor.before(context);
         Assert.assertNull(returnContext.getArguments()[1]);
 
-        // 流量标签关闭
+        // traffic label off
         tagTransmissionConfig.setEnabled(false);
         metadata = new Metadata();
         arguments = new Object[]{null, metadata};
@@ -71,7 +71,7 @@ public class ClientCallImplInterceptorTest extends AbstractRpcInterceptorTest {
         Assert.assertNull(((Metadata) returnContext.getArguments()[1]).get(id));
         tagTransmissionConfig.setEnabled(true);
 
-        // Metadata不为null, TrafficTag都是匹配的流量标签
+        // Metadata is not null, TrafficTag is all matching traffic tags
         metadata = new Metadata();
         arguments = new Object[]{null, metadata};
         context = ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
@@ -79,7 +79,7 @@ public class ClientCallImplInterceptorTest extends AbstractRpcInterceptorTest {
         Assert.assertEquals("001", metadata.get(id));
         Assert.assertEquals("test001", metadata.get(name));
 
-        // Metadata不为null, TrafficTag含有不匹配的流量标签
+        // Metadata is not null, TrafficTag contains unmatched traffic tags
         TrafficUtils.getTrafficTag().getTag().put("key", Collections.singletonList("value"));
         metadata = new Metadata();
         arguments = new Object[]{null, metadata};

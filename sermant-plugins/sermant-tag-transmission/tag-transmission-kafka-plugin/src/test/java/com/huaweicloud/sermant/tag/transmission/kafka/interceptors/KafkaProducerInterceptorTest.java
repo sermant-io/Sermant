@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试KafkaProducerInterceptor
+ * KafkaProducerInterceptorTest
  *
  * @author tangle
  * @since 2023-07-27
@@ -57,13 +57,13 @@ public class KafkaProducerInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers无Tags
+        // there are headers but no tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
         resContext = interceptor.before(context);
         Assert.assertEquals(Collections.singletonList("defaultValue"), getValuesFromRecord(resContext, "defaultKey"));
 
-        // 有Headers有Tags
+        // there are headers and tags
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
@@ -74,7 +74,7 @@ public class KafkaProducerInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals(ids, getValuesFromRecord(resContext, "id"));
         TrafficUtils.removeTrafficTag();
 
-        // 第二次生产，测试tags是否污染其他消费
+        // Second production, test whether tags pollute other consumption
         tags.clear();
         List<String> names = new ArrayList<>();
         names.add("testName001");
@@ -86,7 +86,7 @@ public class KafkaProducerInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals(names, getValuesFromRecord(resContext, "name"));
         TrafficUtils.removeTrafficTag();
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         tagTransmissionConfig.setEnabled(false);
         TrafficUtils.updateTrafficTag(tags);
         context = buildContext(addHeaders);

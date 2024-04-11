@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 流量标签动态配置监听器
+ * traffic tag dynamically configures the listener
  *
  * @author lilai
  * @since 2023-07-20
@@ -45,7 +45,7 @@ public class TagConfigListener implements DynamicConfigListener {
     private final Yaml yaml;
 
     /**
-     * 构造方法
+     * construction method
      */
     public TagConfigListener() {
         Representer representer = new Representer(new DumperOptions());

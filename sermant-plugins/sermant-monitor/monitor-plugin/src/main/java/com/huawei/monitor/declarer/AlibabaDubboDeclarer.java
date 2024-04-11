@@ -19,7 +19,7 @@ package com.huawei.monitor.declarer;
 import com.huawei.monitor.interceptor.AlibabaDubboInterceptor;
 
 /**
- * Dubbo拦截器
+ * Alibaba dubbo Declarer
  *
  * @author zhp
  * @since 2022-11-01
@@ -32,7 +32,7 @@ public class AlibabaDubboDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "invoke";
 
     /**
-     * 构造方法
+     * construction method
      */
     public AlibabaDubboDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

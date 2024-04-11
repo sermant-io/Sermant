@@ -23,7 +23,7 @@ import com.alibaba.fastjson.JSON;
 import java.util.Map;
 
 /**
- * HeaderParseService的实现类，用于解析servicecomb rpc服务的header
+ * Implementation class of HeaderParseService, used to parse the header of servicecomb rpc service
  *
  * @author daizhenyu
  * @since 2023-09-14

@@ -31,18 +31,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * OkHttp 流量标签透传的拦截器, 仅针对2.x版本
+ * OkHttp Interceptor for transparent transmission of traffic tag, for 2.x only
  *
  * @author lilai
  * @since 2023-08-08
  */
 public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
-
     /**
-     * 过滤一次处理过程中拦截器的多次调用
+     * Filter multiple calls of interceptors during a single processing
      */
     protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
@@ -64,9 +64,9 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
     }
 
     /**
-     * 向Request.Builder中添加流量标签
+     * Add traffic tags to Request.Builder
      *
-     * @param builder OkHttp 2.x 标签传递载体
+     * @param builder OkHttp 2.x label transfer carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(Builder builder) {
@@ -77,7 +77,8 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 builder.addHeader(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to okhttp.", entry);

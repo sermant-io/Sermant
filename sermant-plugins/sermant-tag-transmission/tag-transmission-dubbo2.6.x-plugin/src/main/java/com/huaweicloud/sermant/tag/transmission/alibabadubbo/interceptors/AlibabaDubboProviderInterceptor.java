@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * dubbo流量标签透传的provider端拦截器，支持alibaba dubbo2.6.x版本
+ * Dubbo traffic tag transparent transmission provider side interceptor, supports alibaba dubbo2.6.x version
  *
  * @author daizhenyu
  * @since 2023-08-02
@@ -44,27 +44,27 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * invoker参数在invoke方法的参数下标
+     * parameter subscript of invoker
      */
     private static final int ARGUMENT_INVOKER_INDEX = 0;
 
     /**
-     * invocation参数在invoke方法的参数下标
+     * parameter subscript of invocation
      */
     private static final int ARGUMENT_INVOCATION_INDEX = 1;
 
     /**
-     * dubbo客户端
+     * dubbo consumer
      */
     private static final String DUBBO_CONSUMER = "consumer";
 
     /**
-     * dubbo服务端
+     * dubbo provider
      */
     private static final String DUBBO_PROVIDER = "provider";
 
     /**
-     * 区分dubbo调用端 provider 服务端 consumer 客户端
+     * distinguish between dubbo callers: provider or consumer
      */
     private static final String DUBBO_SIDE = "side";
 
@@ -90,10 +90,10 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
     }
 
     /**
-     * 从RpcInvocation中解析流量标签
+     * Parse traffic tag from RpcInvocation
      *
-     * @param invocation Alibaba Dubbo服务端的流量标签载体
-     * @return 流量标签
+     * @param invocation Alibaba Dubbo carrier of the traffic tag on provider
+     * @return traffic tag
      */
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(RpcInvocation invocation) {
@@ -109,7 +109,8 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
             }
             String value = entry.getValue();
 
-            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            // When the value of the traffic label is null, it also needs to be stored in a local variable to overwrite
+            // the original value to prevent misuse of the old traffic label.
             if (value == null) {
                 tag.put(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been extracted from dubbo.", entry);

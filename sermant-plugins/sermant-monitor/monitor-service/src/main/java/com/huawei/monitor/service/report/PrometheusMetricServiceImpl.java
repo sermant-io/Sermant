@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 监控插件配置服务接口实现
+ * Implementation of monitoring plugin configuration service interface
  *
  * @author zhp
  * @since 2022-09-15
@@ -46,7 +46,7 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
     private static final int TCP_NUM = 3;
 
     /**
-     * 日志
+     * log
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -80,7 +80,7 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
     }
 
     /**
-     * 服务关闭方法
+     * service shutdown method
      */
     public void stopMonitorServer() {
         if (httpServer != null) {
@@ -89,7 +89,7 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
     }
 
     /**
-     * 授权认证
+     * authorization authentication
      *
      * @author zhp
      * @since 2022-11-11

@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.sofarpc.interceptors.SofaRpcServerInterceptor;
 
 /**
- * sofarpc server端declarer，，支持5.0+版本
+ * sofarpc server declarer, supports 5.0+
  *
  * @author daizhenyu
  * @since 2023-08-22

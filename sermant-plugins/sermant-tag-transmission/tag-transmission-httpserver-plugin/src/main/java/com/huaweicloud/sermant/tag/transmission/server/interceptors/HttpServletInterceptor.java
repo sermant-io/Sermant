@@ -36,14 +36,14 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * HttpServlet 流量标签透传的拦截器,支持servlet3.0+
+ * HttpServlet Interceptor for transparent transmission of traffic tag, supporting servlet3.0+
  *
  * @author tangle
  * @since 2023-07-18
  */
 public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServletRequest> {
     /**
-     * 过滤一次处理过程中拦截器的多次调用
+     * Filter multiple calls of interceptors during a single processing
      */
     protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
 
@@ -86,16 +86,17 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
     }
 
     /**
-     * 从HttpServletRequest中解析流量标签
+     * Parse the traffic tag from the HttpServletRequest
      *
-     * @param httpServletRequest servlet服务端的流量标签载体
+     * @param httpServletRequest servlet carrier of the traffic tag on the server
      * @return 流量标签
      */
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(HttpServletRequest httpServletRequest) {
         Map<String, List<String>> tagMap = new HashMap<>();
 
-        // servicecomb场景，consumer端为servicecomb rpc，需从http的request中获取servicecomb的header字符串并解析
+        // In the servicecomb scenario, the consumer side is servicecomb rpc. Need to obtain the servicecomb header
+        // string from the http request and parse it.
         String serviceCombHeaderValue = httpServletRequest.getHeader(SERVICECOMB_HEADER_KEY);
         if (!StringUtils.isBlank(serviceCombHeaderValue)) {
             Map<String, String> headers = parseService.parseHeaderFromJson(serviceCombHeaderValue);
@@ -118,7 +119,7 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
             }
         }
 
-        // 常规http访问场景
+        // general http scenario
         Enumeration<String> keyEnumeration = httpServletRequest.getHeaderNames();
         while (keyEnumeration.hasMoreElements()) {
             String key = keyEnumeration.nextElement();
@@ -134,7 +135,8 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
                 continue;
             }
 
-            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            // If the value of the traffic label is null, you need to store the local variable to override the original
+            // value to prevent misuse of the old traffic label
             tagMap.put(key, null);
             LOGGER.log(Level.FINE, "Traffic tag {0}=null have been extracted from servlet.", key);
         }

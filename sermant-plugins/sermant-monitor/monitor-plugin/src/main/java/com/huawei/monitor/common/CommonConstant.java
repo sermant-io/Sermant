@@ -18,29 +18,29 @@
 package com.huawei.monitor.common;
 
 /**
- * 普通常量类
+ * ordinary constant class
  *
  * @author zhp
  * @since 2022-11-02
  */
 public class CommonConstant {
     /**
-     * dubbo客户端
+     * dubbo consumer
      */
     public static final String DUBBO_CONSUMER = "consumer";
 
     /**
-     * dubbo服务端
+     * dubbo provider
      */
     public static final String DUBBO_PROVIDER = "provider";
 
     /**
-     * 区分dubbo调用端 provider 服务端 consumer 客户端
+     * distinguish between dubbo callers: provider or consumer
      */
     public static final String DUBBO_SIDE = "side";
 
     /**
-     * dubbo从url中获取当前服务名
+     * dubbo gets the current service name from the url
      *
      * @see org.apache.dubbo.common.URL#getParameter(String)
      * @see com.alibaba.dubbo.common.URL#getParameter(String)

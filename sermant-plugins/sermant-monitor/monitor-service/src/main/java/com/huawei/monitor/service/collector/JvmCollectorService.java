@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * JVM性能指标采集器
+ * jvm performance metric collector
  *
  * @author zhp
  * @version 1.0.0
@@ -52,7 +52,7 @@ public class JvmCollectorService extends SwitchService implements PluginService 
             "G1 Young Generation", "ZGC Cycles", "Shenandoah Cycles"));
 
     /**
-     * JDK11中不分代的Epsilon GC的名称
+     * The name of the generationless Epsilon GC in JDK11
      */
     private static final String EPSILON_GEN_NAME = "Epsilon Heap";
 
@@ -79,10 +79,10 @@ public class JvmCollectorService extends SwitchService implements PluginService 
     }
 
     /**
-     * 填充GC指标信息
+     * fill in gc metric information
      *
-     * @param metricList 指标收集集合
-     * @param gcMxBeans GC信息
+     * @param metricList metric collection list
+     * @param gcMxBeans GC information
      */
     private void fillGcMetric(List<MetricFamilySamples> metricList, List<GarbageCollectorMXBean> gcMxBeans) {
         if (CollectionUtil.isEmpty(gcMxBeans)) {
@@ -115,10 +115,10 @@ public class JvmCollectorService extends SwitchService implements PluginService 
     }
 
     /**
-     * 填充内存指标信息
+     * fill in the memory metric information
      *
-     * @param metricList 指标信息集合
-     * @param memoryPoolMxBeans 内存指标信息
+     * @param metricList metric information list
+     * @param memoryPoolMxBeans memory metric information
      */
     private void fillMemoryMetric(List<MetricFamilySamples> metricList, List<MemoryPoolMXBean> memoryPoolMxBeans) {
         if (CollectionUtil.isEmpty(memoryPoolMxBeans)) {
@@ -132,10 +132,10 @@ public class JvmCollectorService extends SwitchService implements PluginService 
     }
 
     /**
-     * 收集线程指标信息
+     * collect thread metric information
      *
-     * @param metricList 性能指标信息
-     * @param threadMxBean 线程信息
+     * @param metricList performance metric information
+     * @param threadMxBean thread information
      */
     private void fillThreadMetric(List<MetricFamilySamples> metricList, ThreadMXBean threadMxBean) {
         metricList.add(MetricFamilyBuild.buildGaugeMetric(MetricEnum.THREAD_LIVE, threadMxBean.getThreadCount()));
@@ -145,11 +145,11 @@ public class JvmCollectorService extends SwitchService implements PluginService 
     }
 
     /**
-     * 填充内存指标
+     * fill memory metric
      *
-     * @param metricFamilySamplesList 指标集合
-     * @param type 类型
-     * @param memoryUsage 指标信息
+     * @param metricFamilySamplesList metric information list
+     * @param type type
+     * @param memoryUsage metric information
      */
     private void fillMetric(List<MetricFamilySamples> metricFamilySamplesList, String type, MemoryUsage memoryUsage) {
         Optional<MemoryType> optional = MemoryType.getEnumByType(type);

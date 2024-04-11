@@ -31,7 +31,7 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- * 测试性能指标收集
+ * test performance metric collection
  *
  * @author zhp
  * @since 2022-08-02

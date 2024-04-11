@@ -37,7 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * grpc内部的server interceptor，从grpc的header中提取流量标签
+ * grpc ServerHeaderInterceptor，extract traffic labels from the header of the grpc
  *
  * @author daizhenyu
  * @since 2023-08-15
@@ -46,31 +46,31 @@ public class ServerHeaderInterceptor implements ServerInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 流量标签透传配置类
+     * Traffic label transparent transmission configuration class
      */
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**
-     * 构造方法
+     * construction method
      */
     public ServerHeaderInterceptor() {
         tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
     }
 
     /**
-     * 使用grpc提供的server端拦截器获取header中的流量标签
+     * Get the traffic label in the header using the server side interceptor provided by grpc
      *
-     * @param call 服务端call
-     * @param requestHeaders 请求头
-     * @param next call处理器
-     * @return ServerCall.Listener 监听器
+     * @param call server call
+     * @param requestHeaders request headers
+     * @param next call
+     * @return ServerCall.Listener listener
      */
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call,
             final Metadata requestHeaders,
             ServerCallHandler<ReqT, RespT> next) {
-        // 处理header
+        // handle header
         if (requestHeaders != null) {
             extractTrafficTagFromCarrier(requestHeaders);
         }
@@ -87,7 +87,8 @@ public class ServerHeaderInterceptor implements ServerInterceptor {
             }
             String value = requestHeaders.get(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER));
 
-            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            // When the value of the traffic label is null, it also needs to be stored in a local variable to
+            // overwrite the original value to prevent misuse of the old traffic label.
             if (value == null || "null".equals(value)) {
                 tag.put(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0}=null have been extracted from grpc.", key);
