@@ -28,7 +28,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * 启动配置索引器
+ * BootArgsIndexer
  *
  * @author HapThorin
  * @version 1.0.0
@@ -36,37 +36,37 @@ import java.util.logging.Logger;
  */
 public class BootArgsIndexer {
     /**
-     * 日志
+     * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * java agent的版本
+     * Version of java agent
      */
     private static final String CORE_VERSION;
 
     /**
-     * 核心功能实现包所在目录
+     * Directory where the core function implementation package resides
      */
     private static File implementDir;
 
     /**
-     * 配置文件
+     * Config File
      */
     private static File configFile;
 
     /**
-     * 插件的设置配置
+     * Plugin settings file
      */
     private static File pluginSettingFile;
 
     /**
-     * 日志配置
+     * Log Setting File
      */
     private static File logSettingFile;
 
     /**
-     * pluginPackage插件包
+     * PluginPackage directory
      */
     private static File pluginPackageDir;
 

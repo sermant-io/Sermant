@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 通用的方法Adviser
+ * General default Adviser
  *
  * @author HapThorin
  * @version 1.0.0
@@ -36,12 +36,12 @@ public class DefaultAdviser implements AdviserInterface {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 输出错误日志
+     * Output error log
      *
-     * @param scene 场景
-     * @param context 执行上下文
-     * @param interceptor 拦截器对象
-     * @param throwable 错误对象
+     * @param scene scene
+     * @param context ExecuteContext
+     * @param interceptor Interceptor
+     * @param throwable Throwable
      */
     private void logError(String scene, ExecuteContext context, Interceptor interceptor, Throwable throwable) {
         LOGGER.log(Level.SEVERE, String.format(Locale.ROOT, "An error occurred %s [%s] in interceptor [%s]: ", scene,

@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
- * 监听器适配, 多个监听器集成到一个processor处理
+ * Listener adapter, multiple listeners are integrated into one processor
  *
  * @author zhouss
  * @since 2022-04-21
@@ -31,14 +31,14 @@ public class IntegratedEventListenerAdapter implements DynamicConfigListener {
 
     private final String rawGroup;
 
-    // 订阅时的类加载器
+    // Classloader at subscription time
     private final ClassLoader classLoader;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param processor 配置处理器
-     * @param rawGroup 组标签
+     * @param processor Configuration processor
+     * @param rawGroup Group label
      */
     public IntegratedEventListenerAdapter(ConfigProcessor processor, String rawGroup) {
         this.processor = processor;
@@ -52,7 +52,8 @@ public class IntegratedEventListenerAdapter implements DynamicConfigListener {
             return;
         }
 
-        // 订阅时的类加载器与配置监听时的类加载器有可能不是同一个，所以需要还原
+        // The classloader at subscription time may not be the same as the classloader at listener configuration
+        // time, so need to restore it
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);

@@ -19,8 +19,9 @@ package com.huaweicloud.sermant.core.plugin.agent.declarer;
 import net.bytebuddy.agent.builder.AgentBuilder;
 
 /**
- * 插件描述，{@link PluginDeclarer}的低阶api
- * <p>用于描述插件的最终必要对象，由byte-buddy的{@link AgentBuilder.RawMatcher}和{@link AgentBuilder.Transformer}构成
+ * PluginDescription，lower level api for {@link PluginDeclarer}
+ * <p>The final necessary objects used to describe the plugin, consisting of byte-buddy's
+ * {@link AgentBuilder.RawMatcher} and {@link AgentBuilder.Transformer}
  *
  * @author HapThorin
  * @version 1.0.0

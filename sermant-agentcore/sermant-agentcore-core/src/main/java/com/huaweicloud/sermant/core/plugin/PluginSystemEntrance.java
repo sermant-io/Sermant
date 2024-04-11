@@ -35,7 +35,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 插件系统入口这里将依据插件设定文件调用{@link PluginManager}安装插件
+ * Plugin system entrance, where the plugins are installed by invoking {@link PluginManager} according to the plugin
+ * configuration file
  *
  * @author HapThorin
  * @version 1.0.0
@@ -43,7 +44,7 @@ import java.util.logging.Logger;
  */
 public class PluginSystemEntrance {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -51,15 +52,18 @@ public class PluginSystemEntrance {
     }
 
     /**
-     * 安装插件,区分是否为动态挂载场景 isDynamic->true 仅安装支持动态安装的active插件，passive插件通过下发指令安装 isDynamic->false加载支持静态安装的插件，默认启动；
+     * Dynamic installation scenario: isDynamic->true indicates that only active plug-ins supporting dynamic
+     * installation are installed. passive plugins are installed by delivering commands. isDynamic->false indicates that
+     * plugins supporting static installation are loaded.
      *
-     * @param isDynamic 是否为动态安装，基于premain方式启动及agentmain方式启动来判断，premain方式时为false，agentmain方式时为false
+     * @param isDynamic Whether the installation is dynamic is determined based on the startup mode of premain and the
+     * startup mode of agentmain. The value is false for premain and true for agentmain
      */
     public static void initialize(boolean isDynamic) {
         final PluginSetting pluginSetting = loadSetting();
         Set<String> staticPlugins = pluginSetting.getPlugins();
         if (!isDynamic) {
-            // 初始化支持静态安装的插件 premain方式启动时执行
+            // Initialize plugins that supports static installation when it is started in premain mode
             if (CollectionUtils.isEmpty(staticPlugins)) {
                 LOGGER.info("Non static-support-plugin is configured to be loaded.");
                 return;
@@ -68,7 +72,7 @@ public class PluginSystemEntrance {
         }
 
         if (isDynamic) {
-            // 初始化支持动态安装的主动启动插件 agentmain方式启动时执行
+            // Initialize active plugins that supports dynamic installation when it is started in agentmain mode
             Map<String, Set<String>> dynamicPlugins = pluginSetting.getDynamicPlugins();
             if (MapUtils.isEmpty(dynamicPlugins)) {
                 LOGGER.info("Non dynamic-support-plugin is configured to be loaded.");
@@ -84,9 +88,9 @@ public class PluginSystemEntrance {
     }
 
     /**
-     * 加载插件设定配置，获取所有需要加载的插件文件夹
+     * Load the plugin Settings configuration and get all the plugin folders that need to be loaded
      *
-     * @return 插件设定配置
+     * @return Plugin configuration
      */
     private static PluginSetting loadSetting() {
         Reader reader = null;

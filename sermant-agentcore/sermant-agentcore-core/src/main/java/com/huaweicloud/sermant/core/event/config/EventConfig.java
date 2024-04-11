@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * 事件配置
+ * Event configuration
  *
  * @author luanwenfei
  * @since 2023-03-08
@@ -28,37 +28,37 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 @ConfigTypeKey("event")
 public class EventConfig implements BaseConfig {
     /**
-     * 默认事件发送时间间隔
+     * Default event sending interval
      */
     private static final long DEFAULT_SEND_INTERVAL = 30000L;
 
     /**
-     * 默认事件记录间隔
+     * Default event recording interval
      */
     private static final long DEFAULT_OFFER_INTERVAL = 60000L;
 
     /**
-     * 事件开关
+     * event switch
      */
     private boolean enable = false;
 
     /**
-     * 上报Error日志开关
+     * Error log switch
      */
     private boolean offerErrorLog = false;
 
     /**
-     * 上报Warn日志开关
+     * Warning log switch
      */
     private boolean offerWarnLog = false;
 
     /**
-     * 事件发送时间间隔(ms)
+     * Event sending interval (ms)
      */
     private long sendInterval = DEFAULT_SEND_INTERVAL;
 
     /**
-     * 事件记录时间间隔(ms),在一定时间内重复事件压缩
+     * Event recording interval (ms), where event compression is repeated for a certain amount of time
      */
     private long offerInterval = DEFAULT_OFFER_INTERVAL;
 

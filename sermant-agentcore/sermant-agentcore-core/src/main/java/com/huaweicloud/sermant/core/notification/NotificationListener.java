@@ -17,16 +17,16 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知监听器
+ * Notification Listener
  *
  * @author zhp
  * @since 2023-06-16
  */
 public interface NotificationListener {
     /**
-     * 处理通知信息
+     * process notification
      *
-     * @param notificationInfo 通知信息
+     * @param notificationInfo information
      */
     void process(NotificationInfo notificationInfo);
 }

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.exception;
 
 /**
- * 日志初始化异常
+ * Logger initialization exception
  *
  * @author tangle
  * @since 2023-11-08
@@ -26,9 +26,9 @@ public class LoggerInitException extends RuntimeException {
     private static final long serialVersionUID = 4472931852795263687L;
 
     /**
-     * 日志初始化异常
+     * constructor
      *
-     * @param message 异常信息
+     * @param message message
      */
     public LoggerInitException(String message) {
         super(message);

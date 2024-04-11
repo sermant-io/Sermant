@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.service;
 import com.huaweicloud.sermant.core.service.BaseService;
 
 /**
- * 插件服务基类
+ * Plugin service base class
  *
  * @author HapThorin
  * @version 1.0.0

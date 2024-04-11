@@ -26,10 +26,10 @@ import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 超类声明器，禁用自定义实现，仅提供一下两种类型的实现：
+ * SuperTypeDeclarer, which disables custom implementations, provides only the following two types of implementations:
  * <pre>
- *     1.使用接口实现去实现超类接口
- *     2.依{@link BeanPropertyFlag#value()}值生成字段和get、set方法
+ *     1.Use the interface implementation to implement the superclass interface
+ *     2.Generate fields, get and set methods based on {@link BeanPropertyFlag#value()}
  * </pre>
  *
  * @author HapThorin
@@ -38,40 +38,44 @@ import net.bytebuddy.matcher.ElementMatchers;
  */
 public abstract class SuperTypeDeclarer {
     /**
-     * 禁用构造函数，因此，禁用外界自定义实现
+     * Do not use constructors and external custom implementations
      */
     private SuperTypeDeclarer() {
     }
 
     /**
-     * 获取超类类型，籍由判断是否处理增强
+     * Gets the superclass type and determines whether to process enhancements
      *
-     * @return 超类类型
+     * @return superclass type
      */
     public abstract Class<?> getSuperType();
 
     /**
-     * 处理增强
+     * process enhancement
      *
-     * @param superType 超类类型
-     * @param builder   构建器
-     * @return 构建器
+     * @param superType superclass type
+     * @param builder builder
+     * @return builder
      */
     public abstract DynamicType.Builder<?> resolve(Class<?> superType, DynamicType.Builder<?> builder);
 
     /**
-     * 使用接口实现去实现超类接口的{@link SuperTypeDeclarer}实现
+     * The {@link SuperTypeDeclarer} implementation uses the interface implementation to implement the superclass
+     * interface
      *
-     * @param <T> 超类类型
+     * @param <T> superclass type
+     * @since 2022-01-24
      */
     public abstract static class ForImplInstance<T> extends SuperTypeDeclarer {
         /**
-         * 构建使用接口实现去实现超类接口的{@link SuperTypeDeclarer}实现
+         * Build a {@link SuperTypeDeclarer} implementation that uses the interface implementation to implement the
+         * superclass interface
          *
-         * @param superType    超类类型
-         * @param implInstance 超类实现
-         * @param <T>          超类泛型
-         * @return SuperTypeDeclarer实例
+         * @param superType superclass type
+         * @param implInstance implement instance
+         * @param <T> superclass generic type
+         * @return SuperTypeDeclarer
+         * @throws IllegalArgumentException IllegalArgumentException
          */
         public static <T> SuperTypeDeclarer build(Class<T> superType, T implInstance) {
             if (superType == null || !superType.isInterface() || implInstance == null) {
@@ -104,22 +108,26 @@ public abstract class SuperTypeDeclarer {
         }
 
         /**
-         * 获取超类的实例
+         * Gets an instance of the superclass
          *
-         * @return 超类实例
+         * @return instance
          */
         protected abstract T getImplInstance();
     }
 
     /**
-     * 依{@link BeanPropertyFlag#value()}值生成字段和get、set方法的{@link SuperTypeDeclarer}实现
+     * {@link SuperTypeDeclarer} implementation that generates fields and get and set methods based on
+     * {@link BeanPropertyFlag#value()}
+     *
+     * @since 2022-01-24
      */
     public abstract static class ForBeanProperty extends SuperTypeDeclarer {
         /**
-         * 构建依{@link BeanPropertyFlag#value()}值生成字段和get、set方法的{@link SuperTypeDeclarer}实现
+         * build {@link SuperTypeDeclarer} implementation
          *
-         * @param superType 超类类型
-         * @return SuperTypeDeclarer实现
+         * @param superType superclass type
+         * @return SuperTypeDeclarer
+         * @throws IllegalArgumentException IllegalArgumentException
          */
         public static SuperTypeDeclarer build(Class<?> superType) {
             if (superType == null || !superType.isInterface()

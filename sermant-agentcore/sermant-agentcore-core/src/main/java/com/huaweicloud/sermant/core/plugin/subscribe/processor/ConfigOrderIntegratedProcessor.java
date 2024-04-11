@@ -33,42 +33,43 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 多个标签场景, 根据指定优先级集中处理, 基于优先级覆盖配置顺序
+ * Multiple label scenarios, processed in a centralized manner based on the specified priority, and the configuration
+ * sequence is overwritten based on the order
  *
  * @author zhouss
  * @since 2022-04-22
  */
 public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
     /**
-     * map初始化容量
+     * map initialization capacity
      */
     private static final int CAP_SIZE = 8;
 
     /**
-     * 原监听器
+     * origin listener
      */
     private final DynamicConfigListener originListener;
 
     /**
-     * 配置持有
+     * ConfigDataHolder list
      */
     private List<ConfigDataHolder> dataHolders;
 
     private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param listener 原始监听器
+     * @param listener origin listener
      */
     public ConfigOrderIntegratedProcessor(DynamicConfigListener listener) {
         this.originListener = listener;
     }
 
     /**
-     * 添加数据持有器
+     * Add a data holder
      *
-     * @param dataHolder 数据持有器
+     * @param dataHolder data holder
      */
     @Override
     public final void addHolder(ConfigDataHolder dataHolder) {
@@ -88,22 +89,22 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
     }
 
     /**
-     * 重构事件
+     * rebuild event
      *
-     * @param targetHolder 目标数据持有器
-     * @param originEvent 原始事件
+     * @param targetHolder Target data holder
+     * @param originEvent origin event
      * @return DynamicConfigEvent
      */
     private DynamicConfigEvent rebuildEvent(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
         if (updateHolder(targetHolder, originEvent)) {
             return new OrderConfigEvent(originEvent.getKey(), originEvent.getGroup(),
-                yamlConverter.dump(buildOrderData(originEvent)), originEvent.getEventType(), buildOrderData());
+                    yamlConverter.dump(buildOrderData(originEvent)), originEvent.getEventType(), buildOrderData());
         }
         return originEvent;
     }
 
     /**
-     * 构建按照优先级覆盖的数据
+     * Build data that is overlaid by order
      *
      * @return orderData
      */
@@ -111,7 +112,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
         final Map<String, Object> result = new HashMap<>(CAP_SIZE);
         for (ConfigDataHolder dataHolder : dataHolders) {
             for (Map<String, Object> data : dataHolder.getHolder().values()) {
-                // 为避免多个层次配置相互覆盖, 此处直接将全键名解析出来
+                // To prevent multiple layers from overwriting each other, the full key name is resolved here
                 final HashMap<String, Object> resolveData = new HashMap<>(data.size());
                 MapUtils.resolveNestMap(resolveData, data, null);
                 result.putAll(resolveData);
@@ -135,7 +136,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
 
     private boolean updateHolder(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
         final Map<String, Object> olderDataMap =
-            targetHolder.getHolder().getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
+                targetHolder.getHolder().getOrDefault(originEvent.getKey(), new HashMap<>(CAP_SIZE));
         olderDataMap.clear();
         if (originEvent.getEventType() != DynamicConfigEventType.DELETE) {
             Optional<Object> convert = yamlConverter.convert(originEvent.getContent(), Object.class);

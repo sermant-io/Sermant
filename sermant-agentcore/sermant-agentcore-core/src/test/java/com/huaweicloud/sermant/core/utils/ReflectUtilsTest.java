@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 反射工具类测试
+ * Reflection tool class tests
  *
  * @author zhouss
  * @since 2022-09-15
@@ -79,7 +79,7 @@ public class ReflectUtilsTest {
         Assert.assertTrue(staticMethod.isPresent() && staticMethod.get() instanceof String);
         Assert.assertEquals(TestReflect.staticMethod(params), staticMethod.get());
 
-        // 没有找到方法
+        // can not find method
         final Optional<Object> test = ReflectUtils.invokeMethod(TestReflect.class, "test", new Class[]{int.class},
                 new Object[]{params});
         Assert.assertFalse(test.isPresent());

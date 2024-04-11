@@ -19,43 +19,43 @@ package com.huaweicloud.sermant.core.service.send.api;
 import com.huaweicloud.sermant.core.service.BaseService;
 
 /**
- * 网关的客户端
+ * Client of the gateway
  *
  * @since 2022-03-26
  */
 public interface GatewayClient extends BaseService {
 
     /**
-     * 向统一网关发送数据
+     * Sends data to the gateway
      *
-     * @param data 数据字节
-     * @param typeNum 数据类型号
+     * @param data byte data
+     * @param typeNum data type
      */
     void send(byte[] data, int typeNum);
 
     /**
-     * 将传输对象序列化，并向统一网关发送数据
+     * Serialize the transmission object and send data to the gateway
      *
-     * @param object 待传输对象
-     * @param typeNum 消息类型
+     * @param object Object to be transmitted
+     * @param typeNum data type
      */
     void send(Object object, int typeNum);
 
     /**
-     * [立刻发送]向统一网关发送数据
+     * [Send immediately] Sends data to the gateway
      *
-     * @param data 数据字节
-     * @param typeNum 数据类型号
-     * @return boolean 是否发送成功
+     * @param data byte data
+     * @param typeNum data type
+     * @return send result
      */
     boolean sendImmediately(byte[] data, int typeNum);
 
     /**
-     * [立刻发送]将传输对象序列化，并向统一网关发送数据
+     * [Send immediately] Serialize the transmission object and send data to the gateway
      *
-     * @param object 待传输对象
-     * @param typeNum 消息类型
-     * @return boolean 是否发送成功
+     * @param object Object to be transmitted
+     * @param typeNum data type
+     * @return send result
      */
     boolean sendImmediately(Object object, int typeNum);
 }

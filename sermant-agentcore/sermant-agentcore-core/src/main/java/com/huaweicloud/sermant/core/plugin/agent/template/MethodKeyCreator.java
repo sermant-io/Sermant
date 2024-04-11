@@ -24,8 +24,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * 方法键的构建者
- * <p>明确类中的一个特定方法，效果同{@code @Advice.Origin("#t\\##m#s")}，详见{@link net.bytebuddy.asm.Advice.Origin}
+ * The creator of the method key
+ * <p>Specify a particular method in a class, has the same effect as {@code @Advice.Origin("#t\\##m#s")}, see
+ * {@link net.bytebuddy.asm.Advice.Origin}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -36,10 +37,10 @@ public class MethodKeyCreator {
     }
 
     /**
-     * 构建构造函数的方法键
+     * Builds the method key of the constructor
      *
-     * @param constructor 构造器
-     * @return 方法键
+     * @param constructor constructor
+     * @return method key
      */
     public static String getConstKey(Constructor<?> constructor) {
         final StringBuilder sb = new StringBuilder().append(constructor.getName()).append("#<init>(");
@@ -55,10 +56,10 @@ public class MethodKeyCreator {
     }
 
     /**
-     * 构建一个方法的方法键
+     * Build a method key for a method
      *
-     * @param method 方法
-     * @return 方法键
+     * @param method method
+     * @return method key
      */
     public static String getMethodKey(Method method) {
         if (method == null) {
@@ -81,10 +82,10 @@ public class MethodKeyCreator {
     }
 
     /**
-     * 构建一个方法描述的方法键
+     * Build a method key for a MethodDescription
      *
-     * @param methodDesc 方法描述
-     * @return 方法键
+     * @param methodDesc method description
+     * @return method key
      */
     public static String getMethodDescKey(MethodDescription.InDefinedShape methodDesc) {
         final StringBuilder sb = new StringBuilder().append(methodDesc.getDeclaringType().asErasure().getTypeName());

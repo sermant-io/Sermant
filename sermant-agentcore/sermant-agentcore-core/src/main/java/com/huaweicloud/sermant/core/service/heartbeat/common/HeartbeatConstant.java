@@ -17,19 +17,19 @@
 package com.huaweicloud.sermant.core.service.heartbeat.common;
 
 /**
- * 心跳发送服务涉及到的常量
+ * Constant involved in the heartbeat sending service
  *
  * @author luanwenfei
  * @since 2022-03-28
  */
 public class HeartbeatConstant {
     /**
-     * 心跳间隔
+     * Heartbeat interval
      */
     public static final long INTERVAL = 3000L;
 
     /**
-     * 最小心跳间隔
+     * Minimum heartbeat interval
      */
     public static final long HEARTBEAT_MINIMAL_INTERVAL = 3000L;
 

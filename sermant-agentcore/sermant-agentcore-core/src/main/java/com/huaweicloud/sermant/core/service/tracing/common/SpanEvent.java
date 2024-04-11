@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Span实体数据
+ * Span Event
  *
  * @author luanwenfei
  * @since 2022-02-28
@@ -35,7 +35,7 @@ public class SpanEvent {
     private transient String spanIdPrefix;
 
     /**
-     * 下一进程的spanIdPrefix
+     * spanIdPrefix of next process
      */
     private transient String nextSpanIdPrefix;
 
@@ -46,12 +46,12 @@ public class SpanEvent {
     private transient SpanEvent parentSpan;
 
     /**
-     * Span所标识工作单元执行的操作描述
+     * operation description of span
      */
     private String operationDescription;
 
     /**
-     * Span所标识工作单元的类型 mysql、kafka、http等
+     * type of span, such as: mysql、kafka、http
      */
     private String type;
 
@@ -64,30 +64,30 @@ public class SpanEvent {
     private String errorInfo;
 
     /**
-     * Span所标识工作单元是否为异步
+     * whether span is async
      */
     private boolean isAsync;
 
     /**
-     * 调用当前Span所标识工作单元的节点信息
+     * source information of node who invoke this span
      */
     private SourceInfo sourceInfo;
 
     /**
-     * Span所标识工作单元调用的目的地的节点信息
+     * target information of node who invoke this span
      */
     private TargetInfo targetInfo;
 
     private Map<String, String> tags = new LinkedHashMap<>();
 
     /**
-     * 无参构造方法
+     * constructor without parameters
      */
     public SpanEvent() {
     }
 
     /**
-     * 通过ParentSpan创建ChildrenSpan
+     * Create ChildrenSpan from ParentSpan
      *
      * @param spanEvent ParentSpan
      */
@@ -99,9 +99,9 @@ public class SpanEvent {
     }
 
     /**
-     * 为Span添加标签
+     * add tag to span
      *
-     * @param key   key
+     * @param key key
      * @param value value
      */
     public void addTag(String key, String value) {

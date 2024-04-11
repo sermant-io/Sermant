@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * ClassLoader拦截器
+ * ClassLoader loadClass interceptor
  *
  * @author luanwenfei
  * @since 2023-04-28
@@ -39,7 +39,7 @@ public class ClassLoaderLoadClassInterceptor implements Interceptor {
     private final Set<String> essentialPackage;
 
     /**
-     * 构造函数
+     * constructor
      */
     public ClassLoaderLoadClassInterceptor() {
         essentialPackage = ConfigManager.getConfig(InjectConfig.class).getEssentialPackage();

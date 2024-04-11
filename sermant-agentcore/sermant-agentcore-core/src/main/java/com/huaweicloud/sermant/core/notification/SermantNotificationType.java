@@ -17,14 +17,14 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知类型父类
+ * Sermant Notification Type
  *
  * @author zhp
  * @since 2023-06-16
  */
 public enum SermantNotificationType implements NotificationType {
     /**
-     * sermant启动完成通知
+     * sermant start-up completion notification
      */
     LOAD_COMPLETE("LOAD_COMPLETE", "sermant startup completed");
 

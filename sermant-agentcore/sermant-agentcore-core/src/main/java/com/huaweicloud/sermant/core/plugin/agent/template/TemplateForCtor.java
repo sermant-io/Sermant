@@ -25,7 +25,7 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import java.lang.reflect.Constructor;
 
 /**
- * 构造方法advice模板
+ * Advice template for constructor
  *
  * @author luanwenfei
  * @since 2023-07-18
@@ -35,15 +35,15 @@ public class TemplateForCtor {
     }
 
     /**
-     * 调用方法的前置触发点
+     * The preceding trigger point of method
      *
-     * @param cls 被增强的类
-     * @param constructor 构造函数
-     * @param methodKey 方法键，用于查找模板类
-     * @param arguments 方法入参
-     * @param adviceKey advice类名
-     * @param context 执行上下文
-     * @throws Throwable 执行异常
+     * @param cls enhanced class
+     * @param constructor constructor
+     * @param methodKey method key, which is used to find template class
+     * @param arguments arguments of method
+     * @param adviceKey advice class name
+     * @param context execute context
+     * @throws Throwable execute exception
      */
     @Advice.OnMethodEnter
     public static void onMethodEnter(
@@ -61,12 +61,12 @@ public class TemplateForCtor {
     }
 
     /**
-     * 调用方法的后置触发点
+     * The post trigger point of method
      *
-     * @param obj 被增强的对象
-     * @param adviceKey advice类名
-     * @param context 执行上下文
-     * @throws Throwable 执行异常
+     * @param obj the object being enhanced
+     * @param adviceKey advice class name
+     * @param context execute context
+     * @throws Throwable execute exception
      */
     @Advice.OnMethodExit
     public static void onMethodExit(
@@ -74,7 +74,7 @@ public class TemplateForCtor {
             @Advice.Local(value = "_ADVICE_KEY_$SERMANT_LOCAL") String adviceKey,
             @Advice.Local(value = "_EXECUTE_CONTEXT_$SERMANT_LOCAL") Object context
     ) throws Throwable {
-        context = ((ExecuteContext) context).afterConstructor(obj,null);
+        context = ((ExecuteContext) context).afterConstructor(obj, null);
         AdviserScheduler.onMethodExit(context, adviceKey);
     }
 }

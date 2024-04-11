@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.service.heartbeat.common;
 import java.util.Map;
 
 /**
- * 插件信息
+ * Plugin information
  *
  * @author luanwenfei
  * @since 2022-10-28

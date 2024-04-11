@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 对配置中参数值进行处理的工具
+ * Tool for processing parameter values in the configuration
  *
  * @author HapThorin
  * @version 1.0.0
@@ -46,33 +46,34 @@ import java.util.regex.Pattern;
  */
 public class ConfigValueUtil {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 配置分隔符
+     * CONFIG_SEPARATOR
      */
     private static final String CONFIG_SEPARATOR = ",";
 
     /**
-     * 环境前缀长度
+     * ENV_PREFIX_LEN
      */
     private static final int ENV_PREFIX_LEN = 2;
 
     /**
-     * Map kv长度
+     * MAP_KV_LEN
      */
     private static final int MAP_KV_LEN = 2;
 
     /**
-     * 驼峰匹配pattern
+     * Humps match pattern
      */
     private static final Pattern PATTERN = Pattern.compile("[A-Z]");
 
     /**
-     * 配置键格式化器, 针对不同环境变量格式读取
-     * <p>若读取环境变量 service.meta.applicationName, 则会尝试从下面的变量进行读取， 否则取默认值</p>
+     * Configure the key formatter to read for different environment variable formats
+     * <p>If reading environment variables for service.meta.applicationName, will attempt to read from the following
+     * variables, or take the default values</p>
      * <li>service.meta.applicationName</li>
      * <li>service_meta_applicationName</li>
      * <li>service-meta-applicationName</li>
@@ -96,8 +97,8 @@ public class ConfigValueUtil {
     };
 
     /**
-     * 配置参考值获取表达式
-     * <p>优先级: 启动配置 > 环境变量 > 启动参数 > 配置文件</p>
+     * function for obtaining reference config values
+     * <p>Priority: Startup Configuration > Environment Variables > Startup Parameters > Configuration File</p>
      */
     private static final List<ValueReferFunction<String, Map<String, Object>, String>>
             VALUE_REFER_FUNCTION = Arrays.asList(
@@ -110,8 +111,8 @@ public class ConfigValueUtil {
     );
 
     /**
-     * 值获取表达式
-     * <p>优先级: 启动配置 > 环境变量 > 启动参数 > 配置文件</p>
+     * function for obtaining reference config values
+     * <p>Priority: Startup Configuration > Environment Variables > Startup Parameters > Configuration Files</p>
      */
     private static final List<ValueFixFunction<String, Map<String, Object>, FixedValueProvider, String>>
             VALUE_FIX_FUNCTIONS = Arrays.asList(
@@ -128,16 +129,17 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 将配置信息字符串转换为数组，需要注意以下内容：
+     * To convert a configuration information string to an array, note the following:
      * <pre>
-     *     1.数组的数据类型必须可被{@link #toBaseType}转换
-     *     2.配置信息字符串形如：{@code value,value1,value2}
-     *     3.以数组的形式返回，意味着该配置可以被修改，建议get方法返回它的复制{@link java.util.Arrays#copyOf}
+     *     1.The data type of the array must can be convert by {@link #toBaseType}
+     *     2.The configuration information string is as follows: {@code value,value1,value2}
+     *     3.Return as an array, meaning that the configuration can be modified. It is recommended that the get method
+     *     return a copy of it {@link java.util.Arrays#copyOf}
      * </pre>
      *
-     * @param configStr 配置信息字符串
-     * @param type 数组的数据类型
-     * @return 转换后的数组
+     * @param configStr configuration information string
+     * @param type type
+     * @return The converted array
      */
     public static Object toArrayType(String configStr, Class<?> type) {
         final String[] configSlices = configStr.split(CONFIG_SEPARATOR);
@@ -149,17 +151,18 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 将配置信息字符串转换为List，需要注意以下内容：
+     * To convert the configuration information string to a List, note the following:
      * <pre>
-     *     1.List的数据类型必须可被{@link #toBaseType}转换，空值跳过
-     *     2.配置信息字符串形如：{@code value,value1,value2}
-     *     3.返回的List为不可变List，不要尝试修改配置中List的内容
+     *     1.The data type of List must can be convert by {@link #toBaseType}, null is skipped
+     *     2.The configuration information string is as follows: {@code value,value1,value2}
+     *     3.The List returned is an immutable List. Do not attempt to modify the contents of the List in the
+     *     configuration
      * </pre>
      *
-     * @param configStr 配置信息字符串
-     * @param type List中数据的类型
-     * @param <R> List中数据的泛型
-     * @return 转换后的List
+     * @param configStr configuration information string
+     * @param type type in List
+     * @param <R> generic type of the data in List
+     * @return The converted List
      */
     public static <R> List<R> toListType(String configStr, Class<R> type) {
         final List<R> result = new ArrayList<R>();
@@ -168,17 +171,17 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 将配置信息字符串转换为Set，需要注意以下内容：
+     * To convert the configuration information string to Set, note the following:
      * <pre>
-     *     1.Set的数据类型必须可被{@link #toBaseType}转换，空值跳过
-     *     2.配置信息字符串形如：{@code value,value1,value2}
-     *     3.返回的Set为不可变Set，不要尝试修改配置中Set的内容
+     *     1.The data type of Set must be convertible by {@link #toBaseType}, null is skipped
+     *     2.The configuration information string is as follows: {@code value,value1,value2}
+     *     3.The Set returned is an immutable Set. Do not attempt to modify the contents of the Set in the configuration
      * </pre>
      *
-     * @param configStr 配置信息字符串
-     * @param type Set中数据的类型
-     * @param <R> Set中数据的泛型
-     * @return 转换后的Set
+     * @param configStr configuration information string
+     * @param type type in Set
+     * @param <R> generic type of the data in Set
+     * @return The converted Set
      */
     public static <R> Set<R> toSetType(String configStr, Class<R> type) {
         final Set<R> result = new HashSet<>();
@@ -202,21 +205,21 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 将配置信息字符串转换为Map，需要注意以下内容：
+     * To convert the configuration information string to a Map, note the following:
      * <pre>
-     *     1.Map的键值类型必须可被{@link #toBaseType}转换，空值跳过
-     *     2.配置信息字符串形如：{@code key:value,key2:value2}
-     *     3.如果{@code :}分割的键值对字符串数组长度不为2时，将跳过该键值对
-     *     4.如果存在相同的键，后者将覆盖前者
-     *     5.返回的Map为不可变Map，不要尝试修改配置中Map的内容
+     *     1.Map key-value types must be convertible by {@link #toBaseType}, null is skipped
+     *     2.The configuration information string is as follows: {@code key:value,key2:value2}
+     *     3.If the string array length of the key-value pair split by {@code :} is not 2, the key-value pair is skipped
+     *     4.The same key exists, the latter overrides the former
+     *     5.The returned Map is an immutable Map. Do not attempt to modify the contents of the Map in the configuration
      * </pre>
      *
-     * @param configStr 配置信息字符串
-     * @param keyType Map的键类型
-     * @param valueType Map的值类型
-     * @param <K> Map的键泛型
-     * @param <V> Map的值泛型
-     * @return 转换后的Map
+     * @param configStr configuration information string
+     * @param keyType key type in Map
+     * @param valueType value type in Map
+     * @param <K> generic type of key in Map
+     * @param <V> generic type of value in Map
+     * @return The converted Map
      */
     public static <K, V> Map<K, V> toMapType(String configStr, Class<K> keyType, Class<V> valueType) {
         final Map<K, V> result = new HashMap<K, V>();
@@ -242,12 +245,13 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 将配置信息字符串进行类型转换，支持int、short、long、float、double、枚举、String和Object类型，转换失败时返回null
+     * Converts configuration information strings to int, short, long, float, double, enumeration, String, and
+     * Object, and returns null if conversion fails
      *
-     * @param configStr 配置信息字符串
-     * @param type 配置对象属性类型
-     * @param <R> 配置对象属性泛型
-     * @return 配置信息
+     * @param configStr configuration information string
+     * @param type type of object
+     * @param <R> generic type of object
+     * @return configuration information
      */
     public static <R> R toBaseType(String configStr, Class<R> type) {
         Object result = null;
@@ -289,14 +293,15 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 修正形如"${}"的配置，解析为配置、环境变量或系统变量
+     * Fixes a configuration in the shape of "${}", resolved as a configuration, environment variable, or system
+     * variable
      *
-     * @param configKey 配置信息键
-     * @param configVal 配置信息字符串
-     * @param argsMap 入参
-     * @param provider 修正值获取方式
-     * @return 修正后的配置信息字符串
-     * @throws DupConfIndexException 配置重复索引异常
+     * @param configKey config key
+     * @param configVal config value
+     * @param argsMap argsMap
+     * @param provider function provider
+     * @return Modified configuration information string
+     * @throws DupConfIndexException An exception occurred when configuring duplicate indexes
      */
     public static String fixValue(String configKey, String configVal, Map<String, Object> argsMap,
             FixedValueProvider provider) {
@@ -320,14 +325,15 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 获取修正的字段，优先级：入参 > 环境变量 > 系统变量 > 配置  > 默认值
-     * <p>修正不同配置格式获取值, 含'-','_','.',大写以及小写</p>
+     * Get the modified field, priority: Startup Configuration > Environment Variables > Startup Parameters >
+     * Configuration File > Default Value
+     * <p>Fixed getting values in different configuration formats, including '-','_','.', upper and lower case</p>
      *
-     * @param key 键
-     * @param defaultVal 默认值
-     * @param provider 配置信息
-     * @param argsMap 参数Map
-     * @return 环境变量或系统变量
+     * @param key key
+     * @param defaultVal default value
+     * @param provider configuration information
+     * @param argsMap argsMap
+     * @return Environment variable or system variable
      */
     private static String getFormatKeyFixVal(String key, String defaultVal, Map<String, Object> argsMap,
             FixedValueProvider provider) {
@@ -343,23 +349,24 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 获取配置键的参考值，优先级：入参 > 环境变量 > 系统变量 > 配置
-     * <p>修正不同配置格式获取值, 含'-','_','.',大写以及小写</p>
+     * Get the modified field, priority: Startup Configuration > Environment Variables > Startup Parameters >
+     * Configuration File
+     * <p>Fixed getting values in different configuration formats, including '-','_','.', upper and lower case</p>
      *
-     * @param key 键
-     * @param configVal 配置值
-     * @param argsMap 参数Map
-     * @return 最终配置参考值
+     * @param key key
+     * @param configVal default value
+     * @param argsMap argsMap
+     * @return The final configuration reference value
      */
     private static String getValByFixedKey(String key, String configVal, Map<String, Object> argsMap) {
-        // appName直接获取、app-name处理为app.name再获取
+        // appName is obtained directly, app-name is processed as app.name and then obtained
         String keyReplaceMiddleLine = transFromMiddleLine(key);
         Optional<String> fixedValue = getValueByOrder(argsMap, keyReplaceMiddleLine);
         if (fixedValue.isPresent()) {
             return fixedValue.get();
         }
 
-        // appName分割为app.name
+        // appName is split into app.name
         String keyWithoutCamel = transFromCamel(keyReplaceMiddleLine);
         if (!keyReplaceMiddleLine.equals(keyWithoutCamel)) {
             fixedValue = getValueByOrder(argsMap, keyWithoutCamel);
@@ -371,11 +378,12 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 由KeyFormatter处理后读取环境变量 优先级：入参 > 环境变量 > 系统变量 > 配置
+     * Environment variables are read after being processed by KeyFormatter. The priorities are: Startup
+     * Configuration > Environment Variables > Startup Parameters > Configuration File
      *
-     * @param key 键
-     * @param argsMap 入参
-     * @return 最终配置参考值
+     * @param key key
+     * @param argsMap argsMap
+     * @return The final configuration reference value
      */
     private static Optional<String> getValueByOrder(Map<String, Object> argsMap, String key) {
         Optional<String> fixedValue;
@@ -391,12 +399,12 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 配置键分割驼峰单词
-     * <p>若需读取环境变量，service.meta.applicationName先处理为service.meta.application.name再
-     * 由KeyFormatter处理后读取环境变量</p>
+     * Configuration key split into camel words
+     * <p>Before reading environment variables，transform service.meta.applicationName to service.meta.application
+     * .name then process by the KeyFormatter</p>
      *
-     * @param key 需处理的键
-     * @return 处理后的键
+     * @param key key which needs to be processed
+     * @return key processed
      */
     private static String transFromCamel(String key) {
         Matcher matcher = PATTERN.matcher(key);
@@ -409,89 +417,75 @@ public class ConfigValueUtil {
     }
 
     /**
-     * 配置键中划线格式化
-     * <p>若需读取环境变量 service.meta.application-name, 则先处理为service.meta.application.name再
-     * 由KeyFormatter处理后读取环境变量</p>
+     * Configuration key hyphen formatting
+     * <p>Before reading environment variables，transform service.meta.application-name to service.meta.application
+     * .name then process by the KeyFormatter</p>
      *
-     * @param key 需处理的键
-     * @return 处理后的键
+     * @param key key which needs to be processed
+     * @return key processed
      */
     private static String transFromMiddleLine(String key) {
         return key.replace("-", ".");
     }
 
     /**
-     * 通过环境变量或者系统变量获取 环境变量 > 系统变量
+     * Value correction, this class is only used to configure value correction
      *
-     * @param key 配置键
-     * @return 变量值
-     */
-    public static String getValFromEnv(String key) {
-        final String envVal = System.getenv(key);
-        if (envVal != null) {
-            return envVal;
-        }
-        return System.getProperty(key);
-    }
-
-    /**
-     * 值修正, 该类仅用于配置值修正
-     *
-     * @param <K> 键
-     * @param <B> 源数据1
-     * @param <P> 源数据2
-     * @param <R> 结果
+     * @param <K> key
+     * @param <B> bootstrapArgsMap
+     * @param <P> sourceProvider
+     * @param <R> result
      * @since 2022-07-05
      */
     interface ValueFixFunction<K, B, P, R> {
         /**
-         * 应用修正
+         * apply correction
          *
-         * @param key 键
-         * @param bootstrapArgsMap 启动参数Map
-         * @param sourceProvider 配置数据提供
-         * @return 修正后的值
+         * @param key key
+         * @param bootstrapArgsMap bootstrapArgsMap
+         * @param sourceProvider sourceProvider
+         * @return value modified
          */
         R apply(K key, B bootstrapArgsMap, P sourceProvider);
     }
 
     /**
-     * 配置值参考, 该类仅用于配置值参考
+     * Configuration value reference, this class is used only for configuration value reference
      *
-     * @param <K> 键
-     * @param <B> 源数据
-     * @param <R> 结果
+     * @param <K> key
+     * @param <B> bootstrapArgsMap
+     * @param <R> result
      * @since 2022-08-18
      */
     interface ValueReferFunction<K, B, R> {
         /**
-         * 应用修正
+         * apply reference
          *
-         * @param key 键
-         * @param bootstrapArgsMap 启动参数Map
-         * @return 最终参考值
+         * @param key key
+         * @param bootstrapArgsMap bootstrapArgsMap
+         * @return reference value
          */
         R apply(K key, B bootstrapArgsMap);
     }
 
     /**
-     * 配置键格式化器
+     * Configuration KeyFormatter
      *
      * @since 2021-11-16
      */
     @FunctionalInterface
     interface KeyFormatter {
         /**
-         * 配置格式化, 识别不同配置格式, 包含'-','_','.'以及大小写
+         * Configuration formatting, identifying different configuration formats, including '-','_','.', and case
          *
-         * @param key 原配置键
-         * @return 格式化之后的key
+         * @param key Original configuration key
+         * @return The formatted key
          */
         String format(String key);
     }
 
     /**
-     * 值更正
+     * Value correction provider
      *
      * @author HapThorin
      * @version 1.0.0
@@ -499,10 +493,10 @@ public class ConfigValueUtil {
      */
     public interface FixedValueProvider {
         /**
-         * 获取修正的字段
+         * Gets the corrected field
          *
-         * @param key 键
-         * @return 修正后的字段
+         * @param key key
+         * @return Corrected value
          */
         String getFixedValue(String key);
     }

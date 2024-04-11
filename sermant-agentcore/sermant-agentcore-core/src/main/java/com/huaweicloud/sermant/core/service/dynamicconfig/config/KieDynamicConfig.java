@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * KIE配置
+ * KieDynamicConfig
  *
  * @author HapThorin
  * @version 1.0.0
@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 @ConfigTypeKey("kie.dynamic.config")
 public class KieDynamicConfig implements BaseConfig {
     /**
-     * 默认kie的命名空间
+     * default namespace of kie
      */
     private String project = "default";
 

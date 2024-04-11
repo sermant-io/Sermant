@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import java.util.Map;
 
 /**
- * 配置当前服务信息
+ * Configure the information of current service instance
  *
  * @author zhouss
  * @since 2022-02-09
@@ -30,47 +30,47 @@ import java.util.Map;
 @ConfigTypeKey("service.meta")
 public class ServiceMeta implements BaseConfig {
     /**
-     * 默认配置值
+     * default value
      */
     public static final String DEFAULT = "default";
 
     /**
-     * 服务名
+     * Service name
      */
     private String service = DEFAULT;
 
     /**
-     * app名称 服务分组
+     * Application name
      */
     private String application = DEFAULT;
 
     /**
-     * 当前版本
+     * Current version
      */
     private String version = "0.0.0";
 
     /**
-     * 区域
+     * Zone
      */
     private String zone = DEFAULT;
 
     /**
-     * 命名空间
+     * Project
      */
     private String project = DEFAULT;
 
     /**
-     * 环境
+     * Environment
      */
     private String environment = "";
 
     /**
-     * 自定义标签值
+     * Custom label
      */
     private String customLabel = "public";
 
     /**
-     * 自定义标签值
+     * Custom label value
      */
     private String customLabelValue = DEFAULT;
 

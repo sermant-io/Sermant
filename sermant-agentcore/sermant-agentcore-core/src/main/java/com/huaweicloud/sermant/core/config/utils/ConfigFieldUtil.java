@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 统一配置系统的字段工具类
+ * Field tools of configuration system
  *
  * @author HapThorin
  * @version 1.0.0
@@ -35,27 +35,27 @@ import java.util.logging.Logger;
  */
 public class ConfigFieldUtil {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * boolean类型的get或set方法中属性名的最短长度
+     * The minimal length of a boolean property name in a get or set method
      */
     private static final int FIELD_NAME_MIN_LENGTH = 3;
 
     /**
-     * boolean类型的get或set方法中属性名的首字母下标
+     * The fist letter subscript of a boolean property name in a get or set method
      */
     private static final int FIELD_NAME_CHECK_INDEX = 2;
 
     /**
-     * boolean类型的get方法前缀，首字母小写字母
+     * BOOLEAN_FUNCTION_PREFIX_LOWERCASE
      */
     private static final String BOOLEAN_FUNCTION_PREFIX_LOWERCASE = "is";
 
     /**
-     * boolean类型的get方法前缀，首字母大写字母
+     * BOOLEAN_FUNCTION_PREFIX_UPPERCASE
      */
     private static final String BOOLEAN_FUNCTION_PREFIX_UPPERCASE = "Is";
 
@@ -63,12 +63,13 @@ public class ConfigFieldUtil {
     }
 
     /**
-     * 设置值，优先查找{@code setter}调用，不存在时尝试直接赋值
-     * <p>因此，要求配置对象的属性值需要拥有相应的{@code setter}，或者要求改属性值是公有的
+     * Set the value, look for {@code setter} calls first, try direct assignment if none exists
+     * <p>Therefore, the property value of the configuration object is required to have the corresponding {@code
+     * setter}, or the property value is required to be public
      *
-     * @param obj 被设置值的对象
-     * @param field 被设置的字段
-     * @param value 被设置的字段值
+     * @param obj The object to which the value is set
+     * @param field The field to be set
+     * @param value The value of the field to be set
      */
     public static void setField(Object obj, Field field, Object value) {
         try {
@@ -90,12 +91,12 @@ public class ConfigFieldUtil {
     }
 
     /**
-     * 通过属性名称获取{@code setter}
+     * Get by property name {@code setter}
      *
-     * @param cls 配置对象类
-     * @param fieldName 属性名称
-     * @param type 属性类型
-     * @return setter方法
+     * @param cls Configuration object class
+     * @param fieldName field name
+     * @param type class type of attribute
+     * @return setter method
      */
     private static Method getSetter(Class<?> cls, String fieldName, Class<?> type) {
         final String setterName;
@@ -132,11 +133,11 @@ public class ConfigFieldUtil {
     }
 
     /**
-     * 获取属性对象
+     * Get attribute object
      *
-     * @param obj 目标对象
-     * @param field 属性
-     * @return 属性对象
+     * @param obj Target object
+     * @param field field
+     * @return attribute object
      */
     public static Object getField(Object obj, Field field) {
         try {

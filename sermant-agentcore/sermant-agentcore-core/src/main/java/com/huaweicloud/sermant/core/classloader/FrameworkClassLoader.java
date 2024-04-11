@@ -29,14 +29,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 框架核心能力实现的类加载器
+ * The classloader of the core capabilities of framework
  *
  * @author luanwenfei
  * @since 2022-06-18
  */
 public class FrameworkClassLoader extends URLClassLoader {
     /**
-     * 对FrameClassLoader已经加载的类进行管理
+     * Manages classes that have been loaded by FrameworkClassLoader
      */
     private final Map<String, Class<?>> frameworkClassMap = new HashMap<>();
 
@@ -71,14 +71,15 @@ public class FrameworkClassLoader extends URLClassLoader {
         synchronized (getClassLoadingLock(name)) {
             Class<?> clazz = null;
 
-            // 对于core中已经加载的类则遵循双亲委派原则,其他类则破坏双亲委派机制
+            // For classes already loaded in core, the parent delegation principle is followed, and other classes
+            // break the parent delegation principle
             if (name != null) {
                 clazz = findFrameworkClass(name);
             }
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
 
-                // 通过FrameworkClassLoader的super.loadClass方法把从自身加载的类放入缓存
+                // Use the super.loadClass method of the FrameworkClassLoader to load classes from itself into the cache
                 if (clazz != null && clazz.getClassLoader() == this) {
                     frameworkClassMap.put(name, clazz);
                 }
@@ -95,7 +96,7 @@ public class FrameworkClassLoader extends URLClassLoader {
     public URL getResource(String name) {
         URL url = null;
 
-        // 针对日志配置文件，定制化getResource方法，获取FrameworkClassloader下资源文件中的logback.xml
+        // Customize the getResource method to obtain logback.xml in the resource file of FrameworkClassloader
         if (CommonConstant.LOG_SETTING_FILE_NAME.equals(name)) {
             File logSettingFile = BootArgsIndexer.getLogSettingFile();
             if (logSettingFile.exists() && logSettingFile.isFile()) {
@@ -116,7 +117,8 @@ public class FrameworkClassLoader extends URLClassLoader {
 
     @Override
     public Enumeration<URL> getResources(String name) throws IOException {
-        // 由于类隔离的原因针对StaticLoggerBinder不再通过父类加载器获取重复资源，只返回加载器内的资源
+        // Due to class isolation, the StaticLoggerBinder does not obtain duplicate resources from the parent
+        // classloader, but returns only the resources in the classloader
         if ("org/slf4j/impl/StaticLoggerBinder.class".equals(name)) {
             return findResources(name);
         }

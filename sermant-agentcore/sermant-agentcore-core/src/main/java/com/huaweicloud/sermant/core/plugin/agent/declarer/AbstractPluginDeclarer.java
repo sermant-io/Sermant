@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.plugin.agent.declarer;
 
 /**
- * 抽象的类声明器，默认处理超类声明器
+ * AbstractPluginDeclarer, handles superclass declarers by default
  *
  * @author HapThorin
  * @version 1.0.0

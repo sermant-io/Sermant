@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试文件工具类
+ *  FileUtils tests
  *
  * @author lilai
  * @since 2022-10-11

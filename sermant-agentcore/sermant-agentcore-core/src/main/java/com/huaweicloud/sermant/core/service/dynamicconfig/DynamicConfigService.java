@@ -31,7 +31,8 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 动态配置服务抽象类，对入参进行判空校验，所有空group都会修正为默认group，key和listener则不允许为空
+ * Abstract class for dynamically configure service, performs null check on input parameters, all empty groups are
+ * modified to the default group. key and listener are not allowed to be empty
  *
  * @author HapThorin
  * @version 1.0.0
@@ -39,7 +40,7 @@ import java.util.logging.Logger;
  */
 public abstract class DynamicConfigService implements BaseService, KeyService, KeyGroupService, GroupService {
     /**
-     * 动态配置信息
+     * Dynamic configuration information
      */
     protected static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
 
@@ -49,10 +50,10 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 修正组，如果组为空，使用默认组替代
+     * Fix the group, if the group is empty, use the default group instead
      *
-     * @param group 组
-     * @return 修正后的组
+     * @param group group
+     * @return fixed group
      */
     protected String fixGroup(String group) {
         return group == null || group.length() <= 0 ? CONFIG.getDefaultGroup() : group;
@@ -109,25 +110,27 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     }
 
     /**
-     * 为某个键添加监听器(默认组)，根据入参决定是否触发初始化事件
+     * Add a listener (default group) for a key that determines whether an initialization event is triggered based on
+     * the input parameter
      *
-     * @param key      键
-     * @param listener 监听器
-     * @param ifNotify 是否在添加监听器时响应初始化时间
-     * @return 是否操作成功
+     * @param key key
+     * @param listener listener
+     * @param ifNotify if notify
+     * @return add result
      */
     public boolean addConfigListener(String key, DynamicConfigListener listener, boolean ifNotify) {
         return addConfigListener(key, null, listener, ifNotify);
     }
 
     /**
-     * 为组下某个键添加监听器，根据入参决定是否触发初始化事件
+     * Add a listener for a key under the group and determines whether an initialization event is triggered based on the
+     * input parameter
      *
-     * @param key      键
-     * @param group    组
-     * @param listener 监听器
-     * @param ifNotify 是否在添加监听器时响应初始化时间
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @param listener listener
+     * @param ifNotify if notify
+     * @return add result
      */
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
         final boolean addResult = addConfigListener(key, group, listener);
@@ -177,12 +180,13 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     }
 
     /**
-     * 为组下所有的键添加监听器，根据入参决定是否触发初始化事件
+     * Add listeners for all keys under the group, and decide whether to fire an initialization event based on the input
+     * parameter
      *
-     * @param group    组名
-     * @param listener 监听器
-     * @param ifNotify 是否在添加监听器时响应初始化时间
-     * @return 是否添加成功
+     * @param group group
+     * @param listener listener
+     * @param ifNotify if notify
+     * @return add result
      */
     public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
         final boolean addResult = addGroupListener(group, listener);
@@ -200,74 +204,74 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     }
 
     /**
-     * 获取组下某个键的配置值
+     * Get the configuration value for a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 配置值
+     * @param key key
+     * @param group group
+     * @return Configuration value
      */
     public abstract Optional<String> doGetConfig(String key, String group);
 
     /**
-     * 设置组下某个键的配置值
+     * Set the configuration value of a key under the group
      *
-     * @param key     键
-     * @param group   组
-     * @param content 配置值
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @param content config content
+     * @return publish result
      */
     public abstract boolean doPublishConfig(String key, String group, String content);
 
     /**
-     * 移除组下某个键的配置值
+     * Remove the configuration value of a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @return remove result
      */
     public abstract boolean doRemoveConfig(String key, String group);
 
     /**
-     * 为组下某个键添加监听器
+     * Adds a listener for a key under the group
      *
-     * @param key      键
-     * @param group    组
-     * @param listener 监听器
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @param listener listener
+     * @return add result
      */
     public abstract boolean doAddConfigListener(String key, String group, DynamicConfigListener listener);
 
     /**
-     * 移除组下所有键的监听器
+     * Remove listeners for all keys under the group
      *
-     * @param group 组名
-     * @return 是否全部移除成功
+     * @param group group
+     * @return remove result
      */
     public abstract boolean doRemoveGroupListener(String group);
 
     /**
-     * 移除组下某个键的监听器
+     * Removes the listener for a key under the group
      *
-     * @param key   键
-     * @param group 组
-     * @return 是否操作成功
+     * @param key key
+     * @param group group
+     * @return remove result
      */
     public abstract boolean doRemoveConfigListener(String key, String group);
 
     /**
-     * 获取组中所有键
+     * Gets all keys in the group
      *
-     * @param group 组名
-     * @return 键集合
+     * @param group group
+     * @return key list
      */
     public abstract List<String> doListKeysFromGroup(String group);
 
     /**
-     * 为组下所有的键添加监听器
+     * Add listeners for all keys under the group
      *
-     * @param group    组名
-     * @param listener 监听器
-     * @return 是否添加成功
+     * @param group group
+     * @param listener listener
+     * @return add result
      */
     public abstract boolean doAddGroupListener(String group, DynamicConfigListener listener);
 

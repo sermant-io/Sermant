@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.agent.matcher;
 import net.bytebuddy.description.method.MethodDescription;
 
 /**
- * 方法类型
+ * Method Type
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,7 +27,7 @@ import net.bytebuddy.description.method.MethodDescription;
  */
 public enum MethodType {
     /**
-     * 静态方法
+     * static method
      */
     STATIC() {
         @Override
@@ -36,7 +36,7 @@ public enum MethodType {
         }
     },
     /**
-     * 构造函数
+     * constructor
      */
     CONSTRUCTOR() {
         @Override
@@ -45,7 +45,7 @@ public enum MethodType {
         }
     },
     /**
-     * 成员方法
+     * member method
      */
     MEMBER() {
         @Override
@@ -54,7 +54,7 @@ public enum MethodType {
         }
     },
     /**
-     * 公有方法
+     * public method
      */
     PUBLIC() {
         @Override
@@ -64,10 +64,10 @@ public enum MethodType {
     };
 
     /**
-     * 判断方法描述是否匹配
+     * Check whether the method description matches
      *
-     * @param methodDescription 方法描述
-     * @return 是否匹配
+     * @param methodDescription method description
+     * @return match result
      */
     public abstract boolean match(MethodDescription methodDescription);
 }

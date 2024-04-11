@@ -17,41 +17,41 @@
 package com.huaweicloud.sermant.core.utils;
 
 /**
- * 字段名工具类
+ * Field tool class
  *
  * @author HapThorin
  * @version 1.0.0
- * @since 2022-11-17
+ * @since 2021-11-17
  */
 public class FieldUtils {
     private FieldUtils() {
     }
 
     /**
-     * 判断字符是否为大写字母
+     * Whether the character is uppercase
      *
-     * @param ch 字符
-     * @return 是否为大写字母
+     * @param ch character
+     * @return Whether the value is uppercase letters
      */
     private static boolean isUpper(char ch) {
         return ch >= 'A' && ch <= 'Z';
     }
 
     /**
-     * 判断字符是否为小写字母
+     * Whether the character is lowercase
      *
-     * @param ch 字符
-     * @return 是否为小写字母
+     * @param ch character
+     * @return Whether the value is lowercase
      */
     private static boolean isLower(char ch) {
         return ch >= 'a' && ch <= 'z';
     }
 
     /**
-     * 将字符转换为大写形式
+     * Converts character to uppercase
      *
-     * @param ch 字符
-     * @return 大写形式字符
+     * @param ch character
+     * @return Uppercase character
      */
     private static char toUpper(char ch) {
         if (isLower(ch)) {
@@ -61,10 +61,10 @@ public class FieldUtils {
     }
 
     /**
-     * 将字符转换为小写形式
+     * Converts character to lowercase
      *
-     * @param ch 字符
-     * @return 小写形式字符
+     * @param ch character
+     * @return Lowercase character
      */
     private static char toLower(char ch) {
         if (isUpper(ch)) {
@@ -74,43 +74,43 @@ public class FieldUtils {
     }
 
     /**
-     * 驼峰字符串转大写下划线字符串
+     * Camel string to uppercase underscore string
      *
-     * @param src 驼峰字符串
-     * @return 大写下划线字符串
+     * @param src Camel string
+     * @return uppercase underscore string
      */
     public static String toUpperUnderline(String src) {
         return toUnderline(src, '_', true);
     }
 
     /**
-     * 驼峰字符串转小写下划线字符串
+     * Camel string to lowercase underscore string
      *
-     * @param src 驼峰字符串
-     * @return 小写下划线字符串
+     * @param src Camel string
+     * @return lowercase underscore string
      */
     public static String toLowerUnderline(String src) {
         return toUnderline(src, '_', false);
     }
 
     /**
-     * 驼峰字符串转下划线字符串
+     * Camel string to underscore string
      *
-     * @param src     驼峰字符串
-     * @param isUpper 是否为大写
-     * @return 下划线字符串
+     * @param src Camel string
+     * @param isUpper is uppercase
+     * @return underscore string
      */
     public static String toUnderline(String src, boolean isUpper) {
         return toUnderline(src, '_', isUpper);
     }
 
     /**
-     * 驼峰字符串转下划线字符串
+     * Camel string to underscore string
      *
-     * @param src       驼峰字符串
-     * @param underline 下划线字符
-     * @param isUpper   是否为大写
-     * @return 下划线字符串
+     * @param src Camel string
+     * @param underline underscore character
+     * @param isUpper is uppercase
+     * @return underscore string
      */
     public static String toUnderline(String src, char underline, boolean isUpper) {
         final StringBuilder sb = new StringBuilder();
@@ -127,43 +127,43 @@ public class FieldUtils {
     }
 
     /**
-     * 下划线字符串转大驼峰字符串
+     * Underscore string to upper camel string
      *
-     * @param src 下划线字符串
-     * @return 大驼峰字符串
+     * @param src Underscore string
+     * @return upper camel string
      */
     public static String toUpperCamel(String src) {
         return toUnderline(src, true);
     }
 
     /**
-     * 下划线字符串转小驼峰字符串
+     * Underscore string to lower camel string
      *
-     * @param src 下划线字符串
-     * @return 小驼峰字符串
+     * @param src Underscore string
+     * @return lower camel string
      */
     public static String toLowerCamel(String src) {
         return toUnderline(src, false);
     }
 
     /**
-     * 下划线字符串转驼峰字符串
+     * Underscore string to camel string
      *
-     * @param src     下划线字符串
-     * @param isUpper 大驼峰或小驼峰
-     * @return 驼峰字符串
+     * @param src Underscore string
+     * @param isUpper upper camel or lower camel
+     * @return camel string
      */
     public static String toCamel(String src, boolean isUpper) {
         return toUnderline(src, '_', isUpper);
     }
 
     /**
-     * 下划线字符串转驼峰字符串
+     * Underscore string to camel string
      *
-     * @param src       下划线字符串
-     * @param underline 下划线字符
-     * @param isUpper   大驼峰或小驼峰
-     * @return 驼峰字符串
+     * @param src Underscore string
+     * @param underline Underscore character
+     * @param isUpper upper camel or lower camel
+     * @return camel string
      */
     public static String toCamel(String src, char underline, boolean isUpper) {
         final StringBuilder sb = new StringBuilder();

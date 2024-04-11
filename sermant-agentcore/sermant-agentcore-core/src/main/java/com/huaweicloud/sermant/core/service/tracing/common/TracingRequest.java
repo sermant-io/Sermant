@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.service.tracing.common;
 
 /**
- * 调用链路追踪生命周期时需要传入的参数
+ * Parameters that are transmitted in when calling the link trace lifecycle
  *
  * @author luanwenfei
  * @since 2022-03-01
@@ -28,7 +28,7 @@ public class TracingRequest {
     private String parentSpanId;
 
     /**
-     * 当前进程生成SpanId的前缀
+     * spanIdPrefix of current process
      */
     private String spanIdPrefix;
 
@@ -37,14 +37,14 @@ public class TracingRequest {
     private String method;
 
     /**
-     * SpanContext的来源信息
+     * sourceInfo of SpanContext
      */
     private SourceInfo sourceInfo;
 
     private TargetInfo targetInfo;
 
     /**
-     * 构造函数
+     * Constructor
      *
      * @param traceId traceId
      * @param parentSpanId parentSpanId
@@ -61,7 +61,7 @@ public class TracingRequest {
     }
 
     /**
-     * 构造函数
+     * Constructor
      *
      * @param className className
      * @param method method

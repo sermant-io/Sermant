@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.config;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
 
 /**
- * 插件服务包的统一配置基类
+ * A unified configuration base class for the plugin package
  *
  * @author HapThorin
  * @version 1.0.0

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 插件设定配置
+ * Plugin setting
  *
  * @author HapThorin
  * @version 1.0.0
@@ -28,22 +28,22 @@ import java.util.Set;
  */
 public class PluginSetting {
     /**
-     * 插件名称集
+     * Plugin name set
      */
     private Set<String> plugins;
 
     /**
-     * 支持动态安装的插件 分为active和passive两类
+     * Dynamic installation plugins, classified into active and passive plugins
      */
     private Map<String, Set<String>> dynamicPlugins;
 
     /**
-     * 场景与插件映射关系
+     * Map between scenarios and plugins
      */
     private Map<String, Set<String>> profiles;
 
     /**
-     * 启动场景名
+     * scenarios name
      */
     private String profile;
 

@@ -32,29 +32,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 通用配置订阅器
+ * Common configuration subscriber
  *
  * @author lilai
  * @since 2023-12-09
  */
 public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
     /**
-     * application的key
+     * key of application
      */
     public static final String APP = "app";
 
     /**
-     * service的key
+     * key of service
      */
     public static final String SERVICE = "service";
 
     /**
-     * environment的key
+     * key of environment
      */
     public static final String ENVIRONMENT = "environment";
 
     /**
-     * zone的key
+     * key of zone
      */
     public static final String ZONE = "zone";
 
@@ -77,23 +77,23 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
     private final ConfigProcessor configOrderIntegratedProcessor;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param serviceName 服务名
-     * @param listener 监听器
-     * @param pluginName 插件名称
+     * @param serviceName service_name
+     * @param listener listener
+     * @param pluginName plugin name
      */
     public CommonGroupConfigSubscriber(String serviceName, DynamicConfigListener listener, String pluginName) {
         this(serviceName, listener, null, pluginName);
     }
 
     /**
-     * 自定义配置中心实现的构造方法
+     * Custom configuration center implementation constructor
      *
-     * @param serviceName 服务名
-     * @param listener 监听器
-     * @param dynamicConfigService 配置中心实现
-     * @param pluginName 插件名称
+     * @param serviceName service name
+     * @param listener listener
+     * @param dynamicConfigService Configuration center implementation
+     * @param pluginName plugin name
      */
     public CommonGroupConfigSubscriber(String serviceName, DynamicConfigListener listener,
             DynamicConfigService dynamicConfigService, String pluginName) {

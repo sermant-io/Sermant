@@ -26,41 +26,43 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 加载配置对象的策略
- * <p>加载配置信息主要分两步：
+ * Strategy for loading configuration object
+ * <p>Loading configuration information consists of two steps:
  * <pre>
- *     1.加载配置文件为配置信息{@link #getConfigHolder(File, Map)}
- *     2.将配置信息加载到配置对象中{@link #loadConfig(Object, BaseConfig)}
+ *     1.Load the configuration file as configuration information{@link #getConfigHolder(File, Map)}
+ *     2.Load the configuration information into the configuration object{@link #loadConfig(Object, BaseConfig)}
  * </pre>
  *
- * @param <T> 配置主体
+ * @param <T> configuration type
  * @author HapThorin
  * @version 1.0.0
  * @since 2021-08-18
  */
 public interface LoadConfigStrategy<T> {
     /**
-     * 能否加载
+     * whether it can load
      *
-     * @param file 配置文件
-     * @return 能否加载
+     * @param file configuration file
+     * @return boolean result
      */
     boolean canLoad(File file);
 
     /**
-     * 获取配置信息主要承载对象
-     * <P>承载对象与配置文件格式有关，如properties文件之于{@code Properties}对象，xml之于{@code Document}对象
-     * <p>需要实现类定制通过配置文件名获取配置信息主要承载对象的方式，一般有以下几种：
+     * The host object for obtaining configuration information
+     * <p>The host object is related to the configuration file format, such as the properties file for the {@code
+     * Properties} object and the xml for the {@code Document} object
+     * <p>You need to customize the class to obtain configuration information by configuring the file name. There are
+     * generally the following methods for carrying objects:
      * <pre>
-     *     1.通过特定的配置文件目录或相对目录获取外部的配置文件
-     *     2.获取内部resource资源中的配置文件
-     *     3.通过网络socket流获取配置文件
+     *     1.Get an external configuration file through a specific configuration file directory or relative directory
+     *     2.Obtain the configuration file in the internal resource directory
+     *     3.Get the configuration file through the network socket stream
      * </pre>
-     * {@code argsMap}为启动时设定的参数，优先级最高，需要定制化处理
+     * {@code argsMap} is the parameter set at startup. It has the highest priority and needs to be customized
      *
-     * @param config  配置文件
-     * @param argsMap 启动时设定的参数
-     * @return 配置信息主要承载对象
+     * @param config configuration file
+     * @param argsMap argsMap
+     * @return host object
      */
     T getConfigHolder(File config, Map<String, Object> argsMap);
 
@@ -75,7 +77,9 @@ public interface LoadConfigStrategy<T> {
     <R extends BaseConfig> R loadConfig(T holder, R config);
 
     /**
-     * 默认的{@link LoadConfigStrategy}，不做任何逻辑操作
+     * default {@link LoadConfigStrategy}, do not perform any logical operations
+     *
+     * @since 2021-08-18
      */
     class DefaultLoadConfigStrategy implements LoadConfigStrategy<Object> {
         /**

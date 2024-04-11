@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 方法匹配器
+ * MethodMatcher
  *
  * @author HapThorin
  * @version 1.0.0
@@ -37,9 +37,9 @@ import java.util.Set;
  */
 public abstract class MethodMatcher implements ElementMatcher<MethodDescription> {
     /**
-     * 匹配任意方法
+     * Match any methods
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher any() {
         return new MethodMatcher() {
@@ -51,7 +51,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配名称完全一致的方法
+     * Match methods with exact name
      *
      * @param methodName 方法名称
      * @return 方法匹配器对象
@@ -66,20 +66,20 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配多个方法
+     * Match multiple methods
      *
-     * @param methodNames 方法集
-     * @return 方法匹配器对象
+     * @param methodNames method name set
+     * @return MethodMatcher
      */
     public static MethodMatcher nameContains(String... methodNames) {
         return nameContains(new HashSet<>(Arrays.asList(methodNames)));
     }
 
     /**
-     * 匹配多个方法
+     * Match multiple methods
      *
-     * @param methodNames 方法集
-     * @return 方法匹配器对象
+     * @param methodNames method name set
+     * @return MethodMatcher
      */
     public static MethodMatcher nameContains(Set<String> methodNames) {
         return new MethodMatcher() {
@@ -91,10 +91,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配方法名前缀满足要求的方法
+     * Match methods whose method name prefix meets the requirement
      *
-     * @param prefix 前缀
-     * @return 方法匹配器对象
+     * @param prefix prefix
+     * @return MethodMatcher
      */
     public static MethodMatcher namePrefixedWith(String prefix) {
         return new MethodMatcher() {
@@ -106,10 +106,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配方法名后缀满足要求的方法
+     * Match methods whose method name suffix meets the requirement
      *
-     * @param suffix 后缀
-     * @return 方法匹配器对象
+     * @param suffix suffix
+     * @return MethodMatcher
      */
     public static MethodMatcher nameSuffixedWith(String suffix) {
         return new MethodMatcher() {
@@ -121,10 +121,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配方法名内缀满足要求的方法
+     * Match methods whose method name infix meets the requirement
      *
-     * @param infix 内缀
-     * @return 方法匹配器对象
+     * @param infix infix
+     * @return MethodMatcher
      */
     public static MethodMatcher nameInfixedWith(String infix) {
         return new MethodMatcher() {
@@ -136,10 +136,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配满足正则表达式的方法
+     * Match methods that satisfy regular expression
      *
-     * @param pattern 正则表达式
-     * @return 方法匹配器对象
+     * @param pattern regular expression
+     * @return MethodMatcher
      */
     public static MethodMatcher nameMatches(String pattern) {
         return new MethodMatcher() {
@@ -151,10 +151,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配被传入所有注解修饰的方法
+     * Match methods by method annotations
      *
-     * @param annotations 注解集
-     * @return 方法匹配器对象
+     * @param annotations annotation set
+     * @return MethodMatcher
      */
     public static MethodMatcher isAnnotatedWith(String... annotations) {
         return new MethodMatcher() {
@@ -171,10 +171,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配被传入所有注解修饰的方法
+     * Match methods by method annotations
      *
-     * @param annotations 注解集
-     * @return 方法匹配器对象
+     * @param annotations annotation set
+     * @return MethodMatcher
      */
     @SafeVarargs
     public static MethodMatcher isAnnotatedWith(Class<? extends Annotation>... annotations) {
@@ -193,65 +193,65 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配由{@link Object}声明的方法
+     * Match methods declared by {@link Object}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher isDeclaredByObject() {
         return isDeclaredBy(Object.class);
     }
 
     /**
-     * 匹配由传入类声明的方法
+     * Match methods declared by specific class
      *
-     * @param cls 类
-     * @return 方法匹配器对象
+     * @param cls class
+     * @return MethodMatcher
      */
     public static MethodMatcher isDeclaredBy(Class<?> cls) {
         return build(ElementMatchers.isDeclaredBy(cls));
     }
 
     /**
-     * 匹配静态方法，见{@link #methodTypeMatches}
+     * Match static methods, see {@link #methodTypeMatches}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher isStaticMethod() {
         return methodTypeMatches(MethodType.STATIC);
     }
 
     /**
-     * 匹配构造方法，见{@link #methodTypeMatches}
+     * Match constructors, see {@link #methodTypeMatches}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher isConstructor() {
         return methodTypeMatches(MethodType.CONSTRUCTOR);
     }
 
     /**
-     * 匹配成员方法，见{@link #methodTypeMatches}
+     * Match member methods, see {@link #methodTypeMatches}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher isMemberMethod() {
         return methodTypeMatches(MethodType.MEMBER);
     }
 
     /**
-     * 匹配公有方法，见{@link #methodTypeMatches}
+     * Match public methods, see {@link #methodTypeMatches}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public static MethodMatcher isPublicMethod() {
         return methodTypeMatches(MethodType.PUBLIC);
     }
 
     /**
-     * 匹配符合类型的方法，包括静态方法，构造函数和成员方法三种
+     * Match methods with type, including static methods, constructors, and member methods
      *
-     * @param methodType 方法类型
-     * @return 方法匹配器对象
+     * @param methodType method type
+     * @return MethodMatcher
      */
     public static MethodMatcher methodTypeMatches(MethodType methodType) {
         return new MethodMatcher() {
@@ -263,10 +263,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配参数数量一致的方法
+     * Match methods with the same number of parameters
      *
-     * @param count 数量
-     * @return 方法匹配器对象
+     * @param count parameter count
+     * @return MethodMatcher
      */
     public static MethodMatcher paramCountEquals(int count) {
         return new MethodMatcher() {
@@ -278,10 +278,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配参数类型一致的方法
+     * Match methods with the same parameter types
      *
-     * @param paramTypes 参数类型集
-     * @return 方法匹配器对象
+     * @param paramTypes parameter type set
+     * @return MethodMatcher
      */
     public static MethodMatcher paramTypesEqual(String... paramTypes) {
         return new MethodMatcher() {
@@ -302,10 +302,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配参数类型一致的方法
+     * Match methods with the same parameter types
      *
-     * @param paramTypes 参数类型集
-     * @return 方法匹配器对象
+     * @param paramTypes parameter type set
+     * @return MethodMatcher
      */
     public static MethodMatcher paramTypesEqual(Class<?>... paramTypes) {
         return new MethodMatcher() {
@@ -326,10 +326,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配返回值类型一致的方法
+     * Match methods that return value of the same type
      *
-     * @param resultType 返回值类型
-     * @return 方法匹配器对象
+     * @param resultType result type
+     * @return MethodMatcher
      */
     public static MethodMatcher resultTypeEquals(String resultType) {
         return new MethodMatcher() {
@@ -341,10 +341,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 匹配返回值类型一致的方法
+     * Match methods that return value of the same type
      *
-     * @param resultType 返回值类型
-     * @return 方法匹配器对象
+     * @param resultType result type
+     * @return MethodMatcher
      */
     public static MethodMatcher resultTypeEquals(Class<?> resultType) {
         return new MethodMatcher() {
@@ -356,10 +356,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 通过byte-buddy的元素匹配器构建方法匹配器对象
+     * Build MethodMatcher objects through byte-buddy's ElementMatcher
      *
-     * @param elementMatcher 元素匹配器
-     * @return 方法匹配器对象
+     * @param elementMatcher element matcher
+     * @return MethodMatcher
      */
     public static MethodMatcher build(ElementMatcher<MethodDescription> elementMatcher) {
         return new MethodMatcher() {
@@ -371,10 +371,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code not}，方法匹配器集全为假时返回真，否则返回假
+     * Logical operation {@code not}, returns true if the MethodMatcher set is all false, and false otherwise
      *
-     * @param matchers 方法匹配器集
-     * @return 方法匹配器对象
+     * @param matchers MethodMatcher set
+     * @return MethodMatcher
      */
     @SafeVarargs
     public static MethodMatcher not(ElementMatcher<MethodDescription>... matchers) {
@@ -392,9 +392,9 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code not}，原为假时返回真，否则返回假
+     * Logical operation {@code not}
      *
-     * @return 方法匹配器对象
+     * @return MethodMatcher
      */
     public MethodMatcher not() {
         final MethodMatcher thisMatcher = this;
@@ -407,10 +407,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code and}，方法匹配器集全为真时返回真，否则返回假
+     * Logical operation {@code and}, returns true if the MethodMatcher set is all true, and false otherwise
      *
-     * @param matchers 方法匹配器集
-     * @return 方法匹配器对象
+     * @param matchers MethodMatcher set
+     * @return MethodMatcher
      */
     @SafeVarargs
     public static MethodMatcher and(ElementMatcher<MethodDescription>... matchers) {
@@ -428,10 +428,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code and}，同为真时返回真，否则返回假
+     * Logical operation {@code and}, returns true if both MethodMatchers is all true, and false otherwise
      *
-     * @param matcher 另一个方法匹配器
-     * @return 方法匹配器对象
+     * @param matcher MethodMatcher
+     * @return MethodMatcher
      */
     public MethodMatcher and(ElementMatcher<MethodDescription> matcher) {
         final MethodMatcher thisMatcher = this;
@@ -444,10 +444,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code or}，方法匹配器集其中一个为真时返回真，否则返回假
+     * Logical operation {@code or}, returns true if one of MethodMatchers is true, and false otherwise
      *
-     * @param matchers 方法匹配器集
-     * @return 方法匹配器对象
+     * @param matchers MethodMatcher set
+     * @return MethodMatcher
      */
     @SafeVarargs
     public static MethodMatcher or(ElementMatcher<MethodDescription>... matchers) {
@@ -465,10 +465,10 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     }
 
     /**
-     * 逻辑操作{@code or}，两者其一为真时返回真，否则返回假
+     * Logical operation {@code or}, returns true if one of MethodMatchers is true, and false otherwise
      *
-     * @param matcher 另一个方法匹配器
-     * @return 方法匹配器对象
+     * @param matcher MethodMatcher set
+     * @return MethodMatcher
      */
     public MethodMatcher or(ElementMatcher<MethodDescription> matcher) {
         final MethodMatcher thisMatcher = this;

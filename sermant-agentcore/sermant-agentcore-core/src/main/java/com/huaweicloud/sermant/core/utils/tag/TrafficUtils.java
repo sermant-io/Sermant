@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量中包含的请求信息
+ * Request information contained in the traffic
  *
  * @author lilai
  * @since 2023-07-17
@@ -36,7 +36,8 @@ public class TrafficUtils {
     }
 
     /**
-     * 如果开启在new Thread时跨线程传递标签，需要把ThreadLocal初始化为InheritableThreadLocal
+     * If enable cross-thread tag transmission on new threads, need to initialize ThreadLocal to
+     * InheritableThreadLocal
      */
     public static void setInheritableThreadLocal() {
         if (!(tag instanceof InheritableThreadLocal)) {
@@ -49,27 +50,27 @@ public class TrafficUtils {
     }
 
     /**
-     * 获取线程中的流量标签
+     * Get traffic tag in the thread
      *
-     * @return 流量标签
+     * @return TrafficTag
      */
     public static TrafficTag getTrafficTag() {
         return tag.get();
     }
 
     /**
-     * 获取线程中的流量信息
+     * Get traffic data in the thread
      *
-     * @return 流量信息
+     * @return TrafficData
      */
     public static TrafficData getTrafficData() {
         return data.get();
     }
 
     /**
-     * 更新线程中的流量标签
+     * Update traffic tag in the thread
      *
-     * @param tagMap 流量标签map
+     * @param tagMap TrafficTag map
      */
     public static void updateTrafficTag(Map<String, List<String>> tagMap) {
         if (MapUtils.isEmpty(tagMap)) {
@@ -84,9 +85,9 @@ public class TrafficUtils {
     }
 
     /**
-     * 重设线程中的流量标签
+     * reset Traffic Tag
      *
-     * @param trafficTag 流量标签
+     * @param trafficTag TrafficTag
      */
     public static void setTrafficTag(TrafficTag trafficTag) {
         if (trafficTag == null) {
@@ -96,14 +97,14 @@ public class TrafficUtils {
     }
 
     /**
-     * 删除线程变量
+     * remove traffic tag
      */
     public static void removeTrafficTag() {
         tag.remove();
     }
 
     /**
-     * 流量信息存入线程变量
+     * set traffic data
      *
      * @param value 线程变量
      */
@@ -112,7 +113,7 @@ public class TrafficUtils {
     }
 
     /**
-     * 删除流量信息
+     * remove traffic data
      */
     public static void removeTrafficData() {
         data.remove();

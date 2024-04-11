@@ -24,61 +24,61 @@ import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 import java.util.Optional;
 
 /**
- * 链路追踪服务接口
+ * Tracing service interface
  *
  * @author luanwenfei
  * @since 2022-02-28
  */
 public interface TracingService extends BaseService {
     /**
-     * 用于线程内全局获取SpanEventContext
+     * Used to get the SpanEventContext globally within a thread
      *
      * @return Optional< SpanEventContext >
      */
     Optional<SpanEventContext> getContext();
 
     /**
-     * 工作单元开始生命周期，用于非Provider和Consumer场景的工作单元
+     * Start of work unit, for non-provider and consumer scenarios
      *
-     * @param tracingRequest 调用链路追踪生命周期时需要传入的参数
-     * @return 构建好的SpanEvent数据
+     * @param tracingRequest information needed during trace lifecycle
+     * @return SpanEvent
      */
     Optional<SpanEvent> onNormalSpanStart(TracingRequest tracingRequest);
 
     /**
-     * 工作单元开始生命周期，用于Provider场景的工作单元
+     * Start of work unit, for provider scenarios
      *
-     * @param tracingRequest 调用链路追踪生命周期时需要传入的参数
-     * @param extractService 透传时，从载体提取数据的函数式接口
-     * @param carrier 协议载体
-     * @param <T> 泛型
-     * @return 构建好的SpanEvent数据
+     * @param tracingRequest information needed during trace lifecycle
+     * @param extractService A functional interface for extracting data from the carrier during transparent transmission
+     * @param carrier carrier
+     * @param <T> generic type
+     * @return SpanEvent
      */
     <T> Optional<SpanEvent> onProviderSpanStart(TracingRequest tracingRequest, ExtractService<T> extractService,
-        T carrier);
+            T carrier);
 
     /**
-     * 工作单元开始生命周期，用于Consumer场景的工作单元
+     * Start of work unit, for consumer scenarios
      *
-     * @param tracingRequest 调用链路追踪生命周期时需要传入的参数
-     * @param injectService 透传时，注入载体的函数式接口
-     * @param carrier 协议载体
-     * @param <T> 泛型
-     * @return 构建好的SpanEvent数据
+     * @param tracingRequest information needed during trace lifecycle
+     * @param injectService A functional interface for injecting data to the carrier during transparent transmission
+     * @param carrier carrier
+     * @param <T> generic type
+     * @return SpanEvent
      */
     <T> Optional<SpanEvent> onConsumerSpanStart(TracingRequest tracingRequest, InjectService<T> injectService,
-        T carrier);
+            T carrier);
 
     /**
-     * 工作单元结束生命周期
+     * End of work unit
      */
     void onSpanFinally();
 
     /**
-     * 工作单元异常生命周期
+     * Error period of work unit
      *
      * @param throwable throwable
-     * @return 构建好的SpanEvent数据
+     * @return SpanEvent
      */
     Optional<SpanEvent> onSpanError(Throwable throwable);
 }

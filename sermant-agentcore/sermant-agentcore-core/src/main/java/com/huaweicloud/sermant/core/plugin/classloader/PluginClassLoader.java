@@ -28,34 +28,34 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 加载插件主模块的类加载器
+ * The classloader that loads the main plugin-module of the plugin
  *
  * @author luanwenfei
  * @since 2023-04-27
  */
 public class PluginClassLoader extends URLClassLoader {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final HashMap<Long, ClassLoader> localLoader = new HashMap<>();
 
     /**
-     * 是否允许使用线程上下文类加载器
+     * Whether to use context classLoader
      */
     private final boolean useContextLoader;
 
     /**
-     * 对ClassLoader内部已加载的Class的管理
+     * Manages the loaded classes in the classLoader
      */
     private final Map<String, Class<?>> pluginClassMap = new HashMap<>();
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param urls 需要被该类加载器加载类所在lib的URL
-     * @param parent 双亲类加载器
+     * @param urls The URL of the lib where the class is to be loaded by the classloader
+     * @param parent parent classLoader
      */
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
@@ -63,10 +63,10 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 加载插件类并缓存
+     * Load the plugin class and cache it
      *
-     * @param name 全限定名
-     * @return Class对象
+     * @param name fully qualified name
+     * @return class object
      */
     private Class<?> loadPluginClass(String name) {
         if (!pluginClassMap.containsKey(name)) {
@@ -80,9 +80,9 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 向类加载器中添加类的搜索路径
+     * Adds the search path for the class to the classloader
      *
-     * @param url 搜索路径
+     * @param url search path
      */
     public void appendUrl(URL url) {
         this.addURL(url);
@@ -98,18 +98,20 @@ public class PluginClassLoader extends URLClassLoader {
         synchronized (getClassLoadingLock(name)) {
             Class<?> clazz = loadPluginClass(name);
 
-            // 自身无法加载类，则通过Sermant搜索路径中加载
+            // If the class cannot be loaded on its own, it is loaded in the Sermant search path
             if (clazz == null) {
                 try {
                     clazz = super.loadClass(name, resolve);
                 } catch (ClassNotFoundException e) {
-                    // 捕获类找不到的异常，下一步会进入localLoader中去加载类
+                    // Catch the exception that the class cannot be found. The next step is to load the class by
+                    // the localLoader
                     // ignored
                     LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
                 }
             }
 
-            // 无法从Sermant搜索路径中找到类，则尝试通过线程绑定的局部类加载器加载
+            // If the class cannot be found from the Sermant search path, it is attempted to be loaded via the
+            // thread-bound localClassLoader
             if (clazz == null) {
                 ClassLoader loader = localLoader.get(Thread.currentThread().getId());
 
@@ -117,23 +119,24 @@ public class PluginClassLoader extends URLClassLoader {
                     loader = Thread.currentThread().getContextClassLoader();
                 }
 
-                // 确保局部类加载器不是当前类加载器，否则会stackoverflow
+                // Make sure the localClassLoader is not the current classLoader or ServiceClassLoader, otherwise it
+                // will cause stackoverflow
                 if (loader != null && !this.equals(loader) && !(loader instanceof ServiceClassLoader)) {
                     try {
                         clazz = loader.loadClass(name);
                     } catch (ClassNotFoundException e) {
-                        // 无法找到类，忽略，后续抛出异常
+                        // Class not found, ignored, exception thrown later
                         LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
                     }
                 }
             }
 
-            // 如果无法找到类，则抛出异常
+            // If the class cannot be found, an exception is thrown
             if (clazz == null) {
                 throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
             }
 
-            // 如果有需要则解析该类
+            // Parse the class if necessary
             if (resolve) {
                 resolveClass(clazz);
             }
@@ -142,11 +145,12 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 只通过Sermant自身的搜索路径加载类，不利用局部类加载器，否则会stackoverflow
+     * Load classes only through Sermant's own search path, not using localClassLoader, which would otherwise cause
+     * stackoverflow
      *
-     * @param name 类名
+     * @param name class name
      * @return Class<?>
-     * @throws ClassNotFoundException 无法通过类加载
+     * @throws ClassNotFoundException class not found
      */
     public Class<?> loadSermantClass(String name) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
@@ -156,12 +160,12 @@ public class PluginClassLoader extends URLClassLoader {
                 try {
                     clazz = super.loadClass(name, false);
                 } catch (ClassNotFoundException e) {
-                    // 无法找到类，忽略，后续抛出异常
+                    // Class not found, ignored, exception thrown later
                     LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
                 }
             }
 
-            // 如果无法找到类，则抛出异常
+            // If the class cannot be found, an exception is thrown
             if (clazz == null) {
                 throw new ClassNotFoundException("Sermant pluginClassLoader can not load class: " + name);
             }
@@ -170,16 +174,16 @@ public class PluginClassLoader extends URLClassLoader {
     }
 
     /**
-     * 设置局部类加载器
+     * Set up the localClassLoader
      *
-     * @param loader 类加载器
+     * @param loader classLoader
      */
     public void setLocalLoader(ClassLoader loader) {
         localLoader.put(Thread.currentThread().getId(), loader);
     }
 
     /**
-     * 清除局部类加载器
+     * Clear the localClassLoader
      */
     public void removeLocalLoader() {
         localLoader.remove(Thread.currentThread().getId());

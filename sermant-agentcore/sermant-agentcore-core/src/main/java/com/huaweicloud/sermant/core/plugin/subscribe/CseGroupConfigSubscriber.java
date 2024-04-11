@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * CSE订阅
+ * CSE subscription
  *
  * @author zhouss
  * @since 2022-04-14
@@ -55,23 +55,23 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
     private final ConfigProcessor configOrderIntegratedProcessor;
 
     /**
-     * CSE订阅
+     * CSE subscription
      *
-     * @param serviceName 服务名
-     * @param listener    监听器
-     * @param pluginName  插件名称
+     * @param serviceName service name
+     * @param listener listener
+     * @param pluginName plugin name
      */
     public CseGroupConfigSubscriber(String serviceName, DynamicConfigListener listener, String pluginName) {
         this(serviceName, listener, null, pluginName);
     }
 
     /**
-     * 自定义配置中心实现的构造方法
+     * Custom configuration center implementation constructor
      *
-     * @param serviceName          服务名
-     * @param listener             监听器
-     * @param dynamicConfigService 配置中心实现
-     * @param pluginName           插件名称
+     * @param serviceName service name
+     * @param listener listener
+     * @param dynamicConfigService Configuration center implementation
+     * @param pluginName plugin name
      */
     public CseGroupConfigSubscriber(String serviceName, DynamicConfigListener listener,
             DynamicConfigService dynamicConfigService, String pluginName) {

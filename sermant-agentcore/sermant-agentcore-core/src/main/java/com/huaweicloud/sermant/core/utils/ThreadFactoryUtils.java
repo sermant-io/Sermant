@@ -44,7 +44,7 @@ public class ThreadFactoryUtils implements ThreadFactory {
     private final boolean isDaemon;
 
     /**
-     * 构造函数
+     * constructor
      *
      * @param threadName threadName
      */

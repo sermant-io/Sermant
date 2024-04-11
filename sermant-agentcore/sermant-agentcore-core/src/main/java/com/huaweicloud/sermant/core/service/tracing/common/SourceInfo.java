@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.service.tracing.common;
 
 /**
- * 描述上一工作单元信息
+ * Describes information about the previous span
  *
  * @author luanwenfei
  * @since 2022-03-01

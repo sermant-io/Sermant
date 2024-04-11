@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * ClassLoader增强
+ * ClassLoader enhancement declarer
  *
  * @author luanwenfei
  * @since 2023-04-28

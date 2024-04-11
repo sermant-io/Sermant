@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.service.heartbeat.api;
 import com.huaweicloud.sermant.core.service.BaseService;
 
 /**
- * 心跳服务
+ * Heartbeat service
  *
  * @author HapThorin
  * @version 1.0.0
@@ -28,19 +28,19 @@ import com.huaweicloud.sermant.core.service.BaseService;
 public interface HeartbeatService extends BaseService {
 
     /**
-     * 心跳的插件名称键
+     * plugin name
      */
     String PLUGIN_NAME_KEY = "pluginName";
 
     /**
-     * 心跳的插件版本键
+     * plugin version
      */
     String PLUGIN_VERSION_KEY = "pluginVersion";
 
     /**
-     * 设置额外信息
+     * set additional information
      *
-     * @param extInfoProvider 其他信息的提供者
+     * @param extInfoProvider extInfoProvider
      */
     void setExtInfo(ExtInfoProvider extInfoProvider);
 }

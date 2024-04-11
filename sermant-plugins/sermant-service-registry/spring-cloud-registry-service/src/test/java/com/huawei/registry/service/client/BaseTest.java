@@ -19,7 +19,6 @@ package com.huawei.registry.service.client;
 import com.huawei.registry.config.RegisterConfig;
 import com.huawei.registry.config.RegisterServiceCommonConfig;
 
-import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.utils.ConfigKeyUtil;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
@@ -50,10 +49,12 @@ public class BaseTest {
         removeFinalModify(configMap);
 
         configManagerMap = (Map<String, BaseConfig>) configMap.get(null);
-        configManagerMap.put(ConfigKeyUtil.getCLTypeKey("servicecomb.service", RegisterConfig.class.getClassLoader()),
+        configManagerMap.put(
+                ConfigKeyUtil.getTypeKeyWithClassloader("servicecomb.service", RegisterConfig.class.getClassLoader()),
                 new RegisterConfig());
         configManagerMap.put(
-                ConfigKeyUtil.getCLTypeKey("register.service", RegisterServiceCommonConfig.class.getClassLoader()),
+                ConfigKeyUtil.getTypeKeyWithClassloader("register.service",
+                        RegisterServiceCommonConfig.class.getClassLoader()),
                 new RegisterServiceCommonConfig());
     }
 

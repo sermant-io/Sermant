@@ -21,21 +21,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 数据持有器
+ * Config data holder
  *
  * @author zhouss
  * @since 2022-04-21
  */
 public class ConfigDataHolder implements Comparable<ConfigDataHolder> {
     /**
-     * 优先级， 越小优先级越高
+     * Order: smaller order means higher priority
      */
     private final int order;
 
     /**
-     * 当前该group的所有数据持有
+     * All data currently held by the group
      * <p>
-     * key: 配置键 value: 该配置键所有的值
+     * key: Configuration key value: All values of the configuration key
      * </p>
      */
     private final Map<String, Map<String, Object>> holder = new HashMap<>();
@@ -43,10 +43,10 @@ public class ConfigDataHolder implements Comparable<ConfigDataHolder> {
     private final String group;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param group 组标签
-     * @param order 优先级
+     * @param group Group label
+     * @param order order
      */
     public ConfigDataHolder(String group, int order) {
         this.group = group;

@@ -20,7 +20,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
 /**
- * 类的模糊匹配器，提供相关的逻辑操作
+ * ClassFuzzyMatcher, provides related logical operations
  *
  * @author HapThorin
  * @version 1.0.0
@@ -28,9 +28,9 @@ import net.bytebuddy.matcher.ElementMatcher;
  */
 public abstract class ClassFuzzyMatcher extends ClassMatcher {
     /**
-     * 逻辑操作{@code not}，原为假时返回真，否则返回假
+     * Logical operation {@code not}, which returns true if false, false otherwise
      *
-     * @return 类的模糊匹配器
+     * @return ClassFuzzyMatcher
      */
     public ClassFuzzyMatcher not() {
         final ClassFuzzyMatcher thisMatcher = this;
@@ -43,10 +43,10 @@ public abstract class ClassFuzzyMatcher extends ClassMatcher {
     }
 
     /**
-     * 逻辑操作{@code and}，同为真时返回真，否则返回假
+     * Logical operation {@code and} returns true if both is true, false otherwise
      *
-     * @param matcher 另一个类的模糊匹配器
-     * @return 类的模糊匹配器
+     * @param matcher Another ClassFuzzyMatcher
+     * @return ClassFuzzyMatcher
      */
     public ClassFuzzyMatcher and(ElementMatcher<TypeDescription> matcher) {
         final ClassFuzzyMatcher thisMatcher = this;
@@ -59,10 +59,10 @@ public abstract class ClassFuzzyMatcher extends ClassMatcher {
     }
 
     /**
-     * 逻辑操作{@code or}，两者其一为真时返回真，否则返回假
+     * Logical operation {@code or}, returns true if either is true, false otherwise
      *
-     * @param matcher 另一个类的模糊匹配器
-     * @return 类的模糊匹配器
+     * @param matcher Another ClassFuzzyMatcher
+     * @return ClassFuzzyMatcher
      */
     public ClassFuzzyMatcher or(ElementMatcher<TypeDescription> matcher) {
         final ClassFuzzyMatcher thisMatcher = this;

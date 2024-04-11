@@ -20,24 +20,24 @@ package com.huaweicloud.sermant.core.plugin.subscribe.processor;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 配置处理
+ * Config processor interface
  *
  * @author zhouss
  * @since 2022-04-22
  */
 public interface ConfigProcessor {
     /**
-     * 事件处理
+     * event process
      *
-     * @param rawGroup 原始订阅组
-     * @param event    配置事件
+     * @param rawGroup Original subscription group
+     * @param event Configuration event
      */
     void process(String rawGroup, DynamicConfigEvent event);
 
     /**
-     * 配置持有器， 该配置与标签相对应
+     * Config data holder, this configuration corresponds to the configuration label
      *
-     * @param dataHolder 配置持有器
+     * @param dataHolder data holder
      */
     void addHolder(ConfigDataHolder dataHolder);
 }

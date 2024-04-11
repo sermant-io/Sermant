@@ -19,7 +19,8 @@ package com.huaweicloud.sermant.core.exception;
 import java.util.Locale;
 
 /**
- * 配置重复索引异常，在使用同一个键解释其值时报出，如{@code config.key=prefix.${config.key}.suffix}
+ * DupConfIndexException，throws When using the same key to interpret its value，like
+ * {@code config.key=prefix.${config.key}.suffix}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -29,7 +30,7 @@ public class DupConfIndexException extends RuntimeException {
     private static final long serialVersionUID = -5266141076199244336L;
 
     /**
-     * 构造方法
+     * constructor
      *
      * @param key key
      */

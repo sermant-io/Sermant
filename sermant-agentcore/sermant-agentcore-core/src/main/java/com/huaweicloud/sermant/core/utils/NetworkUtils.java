@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 网络相关工具
+ * NetworkUtils
  *
  * @author luanwenfei
  * @since 2022-03-19
@@ -48,7 +48,7 @@ public class NetworkUtils {
     }
 
     /**
-     * 获取一台机器的所有的网卡的ip地址
+     * Obtain the ip addresses of all network cards of a machine
      *
      * @return List
      */
@@ -89,7 +89,7 @@ public class NetworkUtils {
     }
 
     /**
-     * 获取本机的所有的主机名字
+     * Gets all the host names of the machine
      *
      * @return String
      */
@@ -104,9 +104,9 @@ public class NetworkUtils {
     }
 
     /**
-     * 获取Linux下的IP地址
+     * Obtain the IP address of Linux
      *
-     * @return IP地址
+     * @return IP address
      */
     public static String getMachineIp() {
         try {
@@ -138,7 +138,7 @@ public class NetworkUtils {
             }
             String ipaddress = inetAddress.getHostAddress();
             if (!StringUtils.EMPTY.equals(ipaddress) && !LOCAL_HOST_IP.equals(ipaddress)) {
-                // 取第一个符合要求的IP
+                // Take the first IP address that meets the requirements
                 return ipaddress;
             }
         }

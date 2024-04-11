@@ -27,43 +27,44 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 用于适配从多个PluginClassLoader中寻找对应类和资源
+ * Used to find the corresponding class and resource from multiple PluginClassLoaders
  *
  * @author luanwenfei
  * @since 2023-05-30
  */
 public class PluginClassFinder {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final Map<String, PluginClassLoader> pluginClassLoaderMap = new HashMap<>();
 
     /**
-     * 缓存插件类加载器
+     * Cache pluginClassLoader
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public void addPluginClassLoader(Plugin plugin) {
         pluginClassLoaderMap.put(plugin.getName(), plugin.getPluginClassLoader());
     }
 
     /**
-     * 移除插件类加载器
+     * Remove pluginClassLoader
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public void removePluginClassLoader(Plugin plugin) {
         pluginClassLoaderMap.remove(plugin.getName());
     }
 
     /**
-     * 在Sermant搜索路径下加载对应类名的类
+     * Load the corresponding class name under the Sermant search path
      *
-     * @param name 需要查找的类名
+     * @param name class name
      * @return Class<?>
-     * @throws ClassNotFoundException 如果在缓存的插件类加载器中都找不到该类则抛出类找不到的异常
+     * @throws ClassNotFoundException If the class is not found in any of pluginClassLoaders, an exception is thrown
+     * that the class is not found
      */
     public Class<?> loadSermantClass(String name) throws ClassNotFoundException {
         for (PluginClassLoader pluginClassLoader : pluginClassLoaderMap.values()) {
@@ -80,10 +81,10 @@ public class PluginClassFinder {
     }
 
     /**
-     * 在Sermant搜索路径下查找对应资源路径的资源
+     * Find the resource corresponding to the resource path under the Sermant search path
      *
-     * @param path 资源路径
-     * @return URL 资源对应的URL
+     * @param path resource path
+     * @return URL of the resource
      */
     public Optional<URL> findSermantResource(String path) {
         for (PluginClassLoader pluginClassLoader : pluginClassLoaderMap.values()) {

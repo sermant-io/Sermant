@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截声明器
+ * InterceptDeclarer
  *
  * @author HapThorin
  * @version 1.0.0
@@ -40,11 +40,11 @@ public abstract class InterceptDeclarer {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 构建拦截声明器
+     * constructor
      *
-     * @param methodMatcher 方法匹配器
-     * @param interceptors 拦截器集
-     * @return 拦截声明器
+     * @param methodMatcher method matcher
+     * @param interceptors interceptors
+     * @return InterceptDeclarer
      * @throws IllegalArgumentException IllegalArgumentException
      */
     public static InterceptDeclarer build(MethodMatcher methodMatcher, Interceptor... interceptors) {
@@ -65,13 +65,13 @@ public abstract class InterceptDeclarer {
     }
 
     /**
-     * 构建拦截声明器，该api将使用
+     * build InterceptDeclarer
      *
-     * @param methodMatcher 方法匹配器
-     * @param interceptors 拦截器集
-     * @return 拦截声明器
+     * @param methodMatcher method matcher
+     * @param interceptors interceptors
+     * @return InterceptDeclarer
      * @throws IllegalArgumentException IllegalArgumentException
-     * @deprecated 已过时
+     * @deprecated Deprecated
      */
     @Deprecated
     public static InterceptDeclarer build(MethodMatcher methodMatcher, String... interceptors) {
@@ -98,14 +98,14 @@ public abstract class InterceptDeclarer {
     }
 
     /**
-     * 使用被增强类的类加载器创建所有拦截器对象
+     * Create all interceptor objects using the classLoader of the class being enhanced
      *
-     * @param interceptors 拦截器全限定名集
-     * @return 拦截器集
-     * @throws ClassNotFoundException 找不到类
-     * @throws IllegalAccessException 无法访问addURL方法或defineClass方法
-     * @throws InstantiationException 实例化失败
-     * @deprecated 已过时
+     * @param interceptors Interceptor fully qualified name set
+     * @return Interceptor set
+     * @throws ClassNotFoundException Class not found
+     * @throws IllegalAccessException The addURL method or defineClass method cannot be accessed
+     * @throws InstantiationException Instantiation failure
+     * @deprecated Deprecated
      */
     @Deprecated
     private static Interceptor[] createInterceptors(String[] interceptors)
@@ -122,17 +122,17 @@ public abstract class InterceptDeclarer {
     }
 
     /**
-     * 获取方法匹配器
+     * Get method matcher
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     public abstract MethodMatcher getMethodMatcher();
 
     /**
-     * 获取拦截器集
+     * Gets the interceptor set
      *
-     * @param classLoader 被增强类的类加载器
-     * @return 拦截器集
+     * @param classLoader The classLoader of the enhanced class
+     * @return Interceptor set
      */
     public abstract Interceptor[] getInterceptors(ClassLoader classLoader);
 }

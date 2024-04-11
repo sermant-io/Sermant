@@ -25,7 +25,7 @@ import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import java.lang.reflect.Method;
 
 /**
- * 实例方法advice模板
+ * Advice template for member method
  *
  * @author luanwenfei
  * @since 2023-07-18
@@ -35,18 +35,19 @@ public class TemplateForMember {
     }
 
     /**
-     * 调用方法的前置触发点
+     * The preceding trigger point of method
      *
-     * @param cls 被增强的类
-     * @param obj 被增强的对象
-     * @param method 被增强的方法
-     * @param methodKey 方法键，用于查找模板类
-     * @param arguments 方法入参
-     * @param adviceKey advice类名
-     * @param context 执行上下文
-     * @param isSkip 是否跳过主流程
-     * @return 是否跳过主要方法
-     * @throws Throwable 执行异常
+     * @param cls enhanced class
+     * @param obj the object being enhanced
+     * @param method the method being enhanced
+     * @param methodKey method key, which is used to find template class
+     * @param arguments arguments of method
+     * @param adviceKey advice class name
+     * @param context execute context
+     * @param isSkip Whether to skip the main execution of method
+     * @return Skip result
+     * @throws Throwable execute exception
+     *
      */
     @Advice.OnMethodEnter(skipOn = Advice.OnNonDefaultValue.class)
     public static boolean onMethodEnter(@Advice.Origin Class<?> cls,
@@ -67,14 +68,14 @@ public class TemplateForMember {
     }
 
     /**
-     * 调用方法的后置触发点
+     * The post trigger point of method
      *
-     * @param result 方法调用结果
-     * @param throwable 方法调用异常
-     * @param adviceKey advice类名
-     * @param context 执行上下文
-     * @param isSkip 是否跳过主流程
-     * @throws Throwable 执行异常
+     * @param result Method execution result
+     * @param throwable Method execution exception
+     * @param adviceKey advice class name
+     * @param context execute context
+     * @param isSkip Whether to skip the main execution of method
+     * @throws Throwable execute exception
      */
     @Advice.OnMethodExit(onThrowable = Throwable.class)
     public static void onMethodExit(@Advice.Return(readOnly = false, typing = Assigner.Typing.DYNAMIC) Object result,

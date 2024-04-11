@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * map相关解析
+ * MapUtils
  *
  * @author zhouss
  * @since 2022-04-14
@@ -33,11 +33,11 @@ public class MapUtils {
     }
 
     /**
-     * 解析嵌套map
+     * Parse nested maps
      *
-     * @param result 解析后的最终结果
-     * @param config 源配置map
-     * @param prefix 键前缀
+     * @param result result after parsing
+     * @param config source map
+     * @param prefix prefix of key
      */
     public static void resolveNestMap(Map<String, Object> result, Map<String, Object> config, String prefix) {
         if (config == null || config.isEmpty()) {
@@ -46,7 +46,6 @@ public class MapUtils {
         for (Entry<String, Object> entry : config.entrySet()) {
             String key = entry.getKey();
             if (!StringUtils.isBlank(prefix)) {
-                // 键拼凑
                 key = String.format(Locale.ENGLISH, "%s.%s", prefix, key);
             }
             final Object value = entry.getValue();
@@ -55,17 +54,17 @@ public class MapUtils {
             } else if (value instanceof Collection) {
                 result.put(key, value);
             } else {
-                // 其他类型均直接处理保留
+                // Other types are reserved directly
                 result.put(key, value == null ? "" : value);
             }
         }
     }
 
     /**
-     * 判断Map是否为null或没有键值对
+     * Determines whether Map is null or has no key-value pairs
      *
      * @param map map
-     * @return 是否为空
+     * @return result
      */
     public static boolean isEmpty(Map<?, ?> map) {
         return map == null || map.isEmpty();

@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 默认配置组订阅, 基于服务名订阅
+ * Group configuration subscription is configured by default based on the service name
  *
  * @author zhouss
  * @since 2022-04-14
@@ -39,23 +39,23 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
     private final DynamicConfigListener listener;
 
     /**
-     * 默认配置订阅
+     * Default configuration subscription
      *
-     * @param serviceName 服务名
-     * @param listener 监听器
-     * @param pluginName 插件名称
+     * @param serviceName service name
+     * @param listener listener
+     * @param pluginName plugin name
      */
     public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener, String pluginName) {
         this(serviceName, listener, null, pluginName);
     }
 
     /**
-     * 自定义配置中心实现
+     * Custom configuration center implementation
      *
-     * @param serviceName 服务名
-     * @param listener 监听器
-     * @param dynamicConfigService 配置中心实现
-     * @param pluginName 插件名称
+     * @param serviceName service name
+     * @param listener listener
+     * @param dynamicConfigService Configuration center implementation
+     * @param pluginName plugin name
      */
     public DefaultGroupConfigSubscriber(String serviceName, DynamicConfigListener listener,
             DynamicConfigService dynamicConfigService, String pluginName) {

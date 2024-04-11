@@ -17,34 +17,34 @@
 package com.huaweicloud.sermant.core.event;
 
 /**
- * 事件种类
+ * Event Type
  *
  * @author luanwenfei
  * @since 2023-03-04
  */
 public enum EventType {
     /**
-     * 运行事件
+     * operation event
      */
     OPERATION(0, "operation"),
 
     /**
-     * 治理事件
+     * governance event
      */
     GOVERNANCE(1, "governance"),
 
     /**
-     * 日志事件
+     * log event
      */
     LOG(2, "log");
 
     /**
-     * 事件种类的整型标识
+     * Integer identifier of the event type
      */
     private final int type;
 
     /**
-     * 事件种类描述
+     * event type description
      */
     private final String description;
 

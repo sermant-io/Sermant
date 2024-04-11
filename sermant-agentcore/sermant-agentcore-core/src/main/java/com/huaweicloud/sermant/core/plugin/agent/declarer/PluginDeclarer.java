@@ -20,9 +20,9 @@ import com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * 插件声明，{@link PluginDescription}的高阶api
- * <p>该接口在组装时会尝试合并，见于{@link PluginCollector}
- * <p>因此建议使用者优先使用该接口定义增强插件
+ * PluginDeclarer，high level api for {@link PluginDescription}
+ * <p>The interface attempts to merge when assembled, as shown in {@link PluginCollector}
+ * <p>Therefore, it is recommended that users use this interface first to define enhanced plugins
  *
  * @author HapThorin
  * @version 1.0.0
@@ -30,31 +30,31 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
  */
 public interface PluginDeclarer {
     /**
-     * 获取插件的类匹配器
+     * Gets the class matcher for the plugin
      *
-     * @return 类匹配器
+     * @return class matcher
      */
     ClassMatcher getClassMatcher();
 
     /**
-     * 获取插件的拦截声明
+     * Gets the plugin's InterceptDeclarers
      *
-     * @param classLoader 被增强类的类加载器
-     * @return 拦截声明集
+     * @param classLoader The classLoader of the enhanced class
+     * @return InterceptDeclarer set
      */
     InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader);
 
     /**
-     * 获取插件的超类声明
+     * Gets the superclass declarers for the plugin
      *
-     * @return 超类声明集
+     * @return SuperTypeDeclarer set
      */
     SuperTypeDeclarer[] getSuperTypeDeclarers();
 
     /**
-     * 由插件声明器决定是否需要增强被拦截的方法，默认为true
+     * It is up to the plugin declarator to decide if the declared method needs to be enhanced. The default is TRUE
      *
-     * @return 加载与否
+     * @return result
      */
     default boolean isEnabled() {
         return true;

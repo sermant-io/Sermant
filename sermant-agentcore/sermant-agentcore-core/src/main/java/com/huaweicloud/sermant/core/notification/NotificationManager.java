@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 通知管理器
+ * Notification Manager
  *
  * @author zhp
  * @since 2023-06-16
@@ -44,10 +44,10 @@ public class NotificationManager {
     }
 
     /**
-     * 通知监听器注册。监听该场景下的所有通知
+     * Registry notification listener. Listen for all notifications in this scenario
      *
-     * @param notificationListener 通知监听器
-     * @param typeClass 通知类型
+     * @param notificationListener listener
+     * @param typeClass class type
      */
     public static void registry(NotificationListener notificationListener,
             Class<? extends NotificationType> typeClass) {
@@ -60,10 +60,10 @@ public class NotificationManager {
     }
 
     /**
-     * 通知监听器取消注册。监听该场景下的所有通知
+     * Unregistry notification listener.
      *
-     * @param notificationListener 通知监听器
-     * @param typeClass 通知类型
+     * @param notificationListener listener
+     * @param typeClass class type
      */
     public static void unRegistry(NotificationListener notificationListener,
             Class<? extends NotificationType> typeClass) {
@@ -77,9 +77,9 @@ public class NotificationManager {
     }
 
     /**
-     * 事件通知
+     * do notify
      *
-     * @param notificationInfo 通知信息
+     * @param notificationInfo information
      */
     public static void doNotify(NotificationInfo notificationInfo) {
         if (!isEnable()) {
@@ -99,9 +99,9 @@ public class NotificationManager {
     }
 
     /**
-     * 通知开关是否开启
+     * whether to enable notification
      *
-     * @return 通知开关状态
+     * @return switch status
      */
     public static boolean isEnable() {
         if (notificationConfig != null && notificationConfig.isEnable()) {

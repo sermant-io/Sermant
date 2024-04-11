@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.service.heartbeat.common.HeartbeatConstant;
 
 /**
- * 心跳配置
+ * HeartbeatConfig
  *
  * @author HapThorin
  * @version 1.0.0
@@ -30,7 +30,7 @@ import com.huaweicloud.sermant.core.service.heartbeat.common.HeartbeatConstant;
 @ConfigTypeKey("heartbeat")
 public class HeartbeatConfig implements BaseConfig {
     /**
-     * 心跳发送间隔
+     * Heartbeat interval
      */
     private long interval = HeartbeatConstant.INTERVAL;
 

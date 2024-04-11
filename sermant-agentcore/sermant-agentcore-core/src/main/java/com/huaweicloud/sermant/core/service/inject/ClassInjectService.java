@@ -23,32 +23,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * spring注入类定义
+ * spring injection class definition
  *
  * @author zhouss
  * @since 2022-06-22
  */
 public interface ClassInjectService extends BaseService {
     /**
-     * 针对低版本SpringFactories注入, 对应方法loadFactoryNames
+     * For injection of earlier SpringFactories, corresponding method loadFactoryNames
      *
-     * @param factoryName 注入工厂名
-     * @param target 注入目标对象, 为该方法的的返回结果
-     * @param classInjectDefine 注入目标
-     * @param classLoader 指定类加载器, 该类加载器大部分情况为宿主classLoader
-     * @return 注入的结果
+     * @param factoryName Injection factory name
+     * @param target target object as the return result of the method
+     * @param classInjectDefine classInjectDefine
+     * @param classLoader Specifies the classloader, which in most cases is the host classLoader
+     * @return inject result
      */
     List<String> injectConfiguration(String factoryName, List<String> target,
             ClassInjectDefine classInjectDefine,
             ClassLoader classLoader);
 
     /**
-     * 注入
+     * injection
      *
-     * @param target 注入目标
-     * @param classInjectDefine 注入定义
-     * @param classLoader 指定类加载器, 该类加载器大部分情况为宿主classLoader
-     * @param isUnmodifiable 是否为不可修改集合
+     * @param target target
+     * @param classInjectDefine classInjectDefine
+     * @param classLoader Specifies the classloader, which in most cases is the host classLoader
+     * @param isUnmodifiable isUnmodifiable
      */
     void injectConfiguration(Map<String, List<String>> target, ClassInjectDefine classInjectDefine,
             ClassLoader classLoader, boolean isUnmodifiable);

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.command;
 
 /**
- * 指令执行器
+ * Instruction command executor
  *
  * @author zhp
  * @since 2023-09-09
@@ -25,9 +25,9 @@ package com.huaweicloud.sermant.core.command;
 public interface CommandExecutor {
 
     /**
-     * 执行指令
+     * execute command
      *
-     * @param args 指令参数
+     * @param args command args
      */
     void execute(String args);
 }
