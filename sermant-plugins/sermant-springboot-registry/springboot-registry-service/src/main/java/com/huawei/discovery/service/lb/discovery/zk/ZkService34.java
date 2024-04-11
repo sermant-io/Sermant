@@ -19,7 +19,7 @@ package com.huawei.discovery.service.lb.discovery.zk;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 3.4.x zk版本
+ * 3.4.x zk version
  *
  * @author zhouss
  * @since 2022-10-08

@@ -21,7 +21,7 @@ import com.huawei.discovery.entity.ServiceInstance;
 import java.util.List;
 
 /**
- * 实例过滤器
+ * Instance filters
  *
  * @author zhouss
  * @since 2022-09-28

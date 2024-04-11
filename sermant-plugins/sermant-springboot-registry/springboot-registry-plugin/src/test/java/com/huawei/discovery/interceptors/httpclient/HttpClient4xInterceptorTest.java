@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * http client拦截器测试
+ * http client interceptor test
  *
  * @author zhouss
  * @since 2022-10-12

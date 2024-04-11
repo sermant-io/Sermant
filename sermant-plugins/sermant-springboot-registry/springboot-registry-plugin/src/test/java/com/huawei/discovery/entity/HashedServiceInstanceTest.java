@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * hash测试
+ * Hash test
  *
  * @author zhouss
  * @since 2022-10-12

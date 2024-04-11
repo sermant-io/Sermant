@@ -19,96 +19,96 @@ package com.huawei.discovery.entity;
 import java.util.Map;
 
 /**
- * 实例
+ * Instance
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public interface ServiceInstance {
     /**
-     * 唯一标识符 ip:port
+     * Unique identifiers ip:port
      *
      * @return id
      */
     String getId();
 
     /**
-     * 所属服务名
+     * The name of the service to which it belongs
      *
-     * @return 服务名
+     * @return Service name
      */
     String getServiceName();
 
     /**
-     * 获取域名
+     * Get a domain name
      *
-     * @return 域名
+     * @return domain name
      */
     String getHost();
 
     /**
-     * 获取IP地址
+     * Get an IP address
      *
      * @return IP
      */
     String getIp();
 
     /**
-     * 端口
+     * Port
      *
      * @return port
      */
     int getPort();
 
     /**
-     * 获取源数据
+     * Get the source data
      *
      * @return metadata
      */
     Map<String, String> getMetadata();
 
     /**
-     * 状态
+     * State
      *
-     * @return 服务状态
+     * @return Service status
      */
     String status();
 
     /**
-     * 判断是否与目标相等
+     * Determine whether it is equal to the goal
      *
-     * @param target 目标对象
-     * @return 是否相等
+     * @param target Target Audience
+     * @return Whether it is equal
      */
     @Override
     boolean equals(Object target);
 
     /**
-     * 重写hashcode方法
+     * Rewrite the hashcode method
      *
-     * @return hash码
+     * @return hash code
      */
     @Override
     int hashCode();
 
     /**
-     * 服务实例状态
+     * Service instance status
      *
      * @since 2022-09-28
      */
     enum Status {
         /**
-         * 可用
+         * Available
          */
         UP,
 
         /**
-         * 不可用
+         * not-available
          */
         DOWN,
 
         /**
-         * 未知
+         * Unknown
          */
         UN_KNOW;
     }

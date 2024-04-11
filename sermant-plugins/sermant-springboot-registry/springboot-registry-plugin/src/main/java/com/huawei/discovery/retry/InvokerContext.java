@@ -19,7 +19,7 @@ package com.huawei.discovery.retry;
 import com.huawei.discovery.entity.ServiceInstance;
 
 /**
- * 调用上下文
+ * Call context
  *
  * @author zhouss
  * @since 2022-09-28

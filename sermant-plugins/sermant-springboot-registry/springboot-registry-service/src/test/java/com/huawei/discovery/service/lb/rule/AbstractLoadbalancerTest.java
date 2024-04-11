@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 抽象负载均衡测试
+ * Abstract load balancing testing
  *
  * @author zhouss
  * @since 2022-10-09
@@ -40,13 +40,13 @@ public class AbstractLoadbalancerTest {
         final Optional<ServiceInstance> choose = roundRobinLoadbalancer.choose(null, null);
         Assert.assertFalse(choose.isPresent());
 
-        // 测试一个实例
+        // Test an instance
         final List<ServiceInstance> serviceInstances = Collections.singletonList(build());
         final Optional<ServiceInstance> test = roundRobinLoadbalancer.choose("test", serviceInstances);
         Assert.assertTrue(test.isPresent());
         Assert.assertEquals(test.get(), serviceInstances.get(0));
 
-        // 测试多个实例
+        // Test multiple instances
         final List<ServiceInstance> serviceInstances1 = Arrays.asList(build(), build());
         final Optional<ServiceInstance> instance = roundRobinLoadbalancer.choose("name", serviceInstances1);
         Assert.assertTrue(instance.isPresent());

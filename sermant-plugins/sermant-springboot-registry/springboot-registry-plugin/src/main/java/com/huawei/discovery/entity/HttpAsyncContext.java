@@ -20,49 +20,49 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * 异步上下文, 用于存储上下文信息
+ * Asynchronous contexts, which are used to store context information
  *
  * @author zhouss
  * @since 2022-10-11
  */
 public class HttpAsyncContext {
     /**
-     * 回调参数下标
+     * The callback parameter is subscripted
      */
     public static final int CALL_BACK_INDEX = 3;
 
     /**
-     * httpclient异步处理器, 用于重新生成请求, 替换url地址
+     * HttpClient asynchronous handler to regenerate the request, replacing the URL address
      */
     private Object handler;
 
     /**
-     * 选择的实例
+     * Selected instances
      */
     private ServiceInstance selectedInstance;
 
     /**
-     * 用户指定回调
+     * The callback is specified by the user
      */
     private Object callback;
 
     /**
-     * 存储服务名与请求路径
+     * Store the service name and request path
      */
     private Map<String, String> hostAndPath;
 
     /**
-     * 方法类型
+     * Method type
      */
     private String method;
 
     /**
-     * 请求路径
+     * The path of the request
      */
     private URI uri;
 
     /**
-     * 请求域名
+     * Request a domain name
      */
     private String originHostName;
 

@@ -50,7 +50,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * zookeeper实现
+ * ZooKeeper implementation
  *
  * @author zhouss
  * @since 2022-09-26
@@ -63,12 +63,13 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     private final LbConfig lbConfig;
 
     /**
-     * 当zk状态存在问题时, 使用异步尝试重试, 此处为重试时间间隔
+     * When there is a problem with the zk state, use an asynchronous attempt to retry, in this case the retry interval
      */
     private final long registryRetryInterval;
 
     /**
-     * 当zk状态存在问题时, 使用异步尝试重试, 此处为最大从事次数
+     * When there is a problem with the zk state, use an asynchronous attempt to retry, here is the maximum number of
+     * engagements
      */
     private final int registryMaxRetry;
 
@@ -79,7 +80,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     private org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance> instance;
 
     /**
-     * zk客户端
+     * zk client
      */
     public ZkDiscoveryClient() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
@@ -135,7 +136,7 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
                 try {
                     Thread.sleep(registryRetryInterval);
                 } catch (InterruptedException e) {
-                    // ignored, 不可能会被打断
+                    // ignored, It is impossible to be interrupted
                 }
             }
         }).whenComplete((unused, throwable) -> {
@@ -265,9 +266,11 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     }
 
     /**
-     * 自定义zk序列化器, 而非使用原生的{@link org.apache.curator.x.discovery.details.JsonInstanceSerializer} 避免漏洞问题, 替换ObjectMapper
+     * Customize the zk serializer instead of using the native
+     * {@link org.apache.curator.x.discovery.details.JsonInstanceSerializer} to avoid the vulnerability and replace the
+     * ObjectMapper
      *
-     * @param <T> 实例类型
+     * @param <T> Instance type
      * @since 2022-10-08
      */
     public static class ZkInstanceSerializer<T> implements InstanceSerializer<T> {
@@ -278,9 +281,9 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
         private final JavaType type;
 
         /**
-         * 构造器
+         * Constructor
          *
-         * @param payloadClass 指定payload类型
+         * @param payloadClass Specify the payload type
          */
         public ZkInstanceSerializer(Class<T> payloadClass) {
             this.payloadClass = payloadClass;
@@ -302,16 +305,16 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     }
 
     /**
-     * 序列化的实例, 标记payload类型, 便于与其他开源的zk数据可互相识别
+     * Serialized instances, marked with payload type, for easy cross-identification with other open source zk data
      *
-     * @param <T> 实例类型
+     * @param <T> Instance type
      * @since 2022-10-08
      */
     public static class WriteAbleServiceInstance<T> extends org.apache.curator.x.discovery.ServiceInstance<T> {
         /**
-         * 构造器
+         * Constructor
          *
-         * @param instance 实例信息
+         * @param instance Instance information
          */
         public WriteAbleServiceInstance(org.apache.curator.x.discovery.ServiceInstance<T> instance) {
             super(instance.getName(), instance.getId(), instance.getAddress(), instance.getPort(),

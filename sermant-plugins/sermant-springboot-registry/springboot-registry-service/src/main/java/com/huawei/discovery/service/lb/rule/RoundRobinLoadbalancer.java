@@ -23,7 +23,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 轮询负载均衡
+ * Poll load balancing
  *
  * @author zhouss
  * @since 2022-09-26
@@ -34,7 +34,7 @@ public class RoundRobinLoadbalancer extends AbstractLoadbalancer {
     private final AtomicInteger position;
 
     /**
-     * 构造器
+     * Constructor
      */
     public RoundRobinLoadbalancer() {
         position = new AtomicInteger(new Random().nextInt(SEED));

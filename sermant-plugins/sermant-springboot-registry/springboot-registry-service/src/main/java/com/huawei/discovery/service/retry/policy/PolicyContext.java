@@ -19,27 +19,28 @@ package com.huawei.discovery.service.retry.policy;
 import com.huawei.discovery.entity.ServiceInstance;
 
 /**
- * 重试策略的上下文, 主要记录当前重试的状态。后续会根据重试策略增加
+ * The context of the retry policy, which primarily records the state of the current retries. The number of follow-ups
+ * will be increased based on the retry policy
  *
  * @author zhouss
  * @since 2022-10-21
  */
 public class PolicyContext {
     /**
-     * 当前重试同一个实例的次数
+     * The current number of retries for the same instance
      */
     private int curSameInstanceCount;
 
     /**
-     * 当前正在重试的实例
+     * The instance that is currently being retried
      */
     private ServiceInstance serviceInstance;
 
     /**
-     * 是否还是使用当前实例进行重试
+     * Whether to retry with the current instance
      *
-     * @param maxSameRetry 最大相同的实例重试次数
-     * @return true：是
+     * @param maxSameRetry The maximum number of retries for the same instance
+     * @return true：yes
      */
     public boolean isContinue(int maxSameRetry) {
         return ++curSameInstanceCount < maxSameRetry;

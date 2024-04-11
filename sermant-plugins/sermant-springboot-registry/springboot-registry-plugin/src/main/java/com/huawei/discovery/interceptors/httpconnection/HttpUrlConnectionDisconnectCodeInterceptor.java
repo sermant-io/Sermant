@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 /**
- * 该拦截点主要在最终阶段清理连接
+ * This intercept point mainly cleans up the connection at the final stage
  *
  * @author zhouss
  * @since 2022-10-20

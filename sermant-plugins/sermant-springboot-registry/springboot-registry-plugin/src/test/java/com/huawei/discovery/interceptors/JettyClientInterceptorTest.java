@@ -79,12 +79,12 @@ public class JettyClientInterceptorTest {
 
     @Test
     public void test() {
-        // 域名不符
+        // The domain name does not match
         arguments[1] = URI.create("http://www.domain1.com/foo/hello");
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 服务名不符
+        // The name of the service does not match
         arguments[1] = URI.create("http://www.domain.com/bar/hello");
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());

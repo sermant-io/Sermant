@@ -17,34 +17,35 @@
 package com.huawei.discovery.service.lb.discovery;
 
 /**
- * 实例监听变更, 此功能将与{@link com.huawei.discovery.service.lb.cache.InstanceCacheManager 绑定}
+ * Instance listening changes, this feature will be bound to
+ * {@link com.huawei.discovery.service.lb.cache.InstanceCacheManager}
  *
  * @author zhouss
  * @since 2022-10-12
  */
 public interface InstanceListenable {
     /**
-     * 初始化
+     * Initialize
      */
     void init();
 
     /**
-     * 尝试增加指定服务实例监听, 若已监听则直接返回
+     * Try to add a listener for a specified service instance, and return it if it has already listened
      *
-     * @param serviceName 指定服务名
-     * @param listener 监听器
+     * @param serviceName Specify the service name
+     * @param listener Listener
      */
     void tryAdd(String serviceName, InstanceChangeListener listener);
 
     /**
-     * 关闭监听器
+     * Turn off the listener
      */
     void close();
 
     /**
-     * 该监听器名称
+     * The name of the listener
      *
-     * @return 名称
+     * @return Name
      */
     String name();
 }

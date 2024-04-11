@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对feign请求方式，从注册中心获取实例列表拦截
+ * For the feign request mode, obtain the instance list from the registry to intercept the request
  *
  * @author chengyouling
  * @since 2022-09-27

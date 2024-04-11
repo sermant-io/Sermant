@@ -37,7 +37,7 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import com.huaweicloud.sermant.implement.operation.converter.YamlConverterImpl;
 
 /**
- * 基础测试
+ * Basic test
  *
  * @author chengyouling
  * @since 2022-10-09

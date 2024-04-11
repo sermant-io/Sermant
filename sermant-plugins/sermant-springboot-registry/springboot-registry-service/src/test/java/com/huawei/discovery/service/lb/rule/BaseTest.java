@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 基础测试
+ * Basic test
  *
  * @author zhouss
  * @since 2022-10-09
@@ -73,7 +73,7 @@ public class BaseTest {
     }
 
     /**
-     * 获取已mock的zkclient
+     * Get mocked zkclients
      *
      * @return ZkClient
      */

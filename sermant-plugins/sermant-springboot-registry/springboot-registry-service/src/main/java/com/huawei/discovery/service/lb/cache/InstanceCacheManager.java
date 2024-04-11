@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * 实例缓存
+ * Instance caching
  *
  * @author zhouss
  * @since 2022-09-26
@@ -64,10 +64,10 @@ public class InstanceCacheManager {
     private ScheduledThreadPoolExecutor instanceUpdater;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param discoveryClient 查询客户端
-     * @param instanceListenable 监听
+     * @param discoveryClient Query the client
+     * @param instanceListenable Listening
      */
     public InstanceCacheManager(ServiceDiscoveryClient discoveryClient,
             InstanceListenable instanceListenable) {
@@ -121,7 +121,7 @@ public class InstanceCacheManager {
     }
 
     /**
-     * 停止方法
+     * Stop method
      */
     public void stop() {
         if (this.instanceUpdater != null) {
@@ -130,10 +130,10 @@ public class InstanceCacheManager {
     }
 
     /**
-     * 获取实例列表
+     * Obtain the list of instances
      *
-     * @param serviceName 服务名
-     * @return 实例列表
+     * @param serviceName Service name
+     * @return List of instances
      */
     public List<ServiceInstance> getInstances(String serviceName) {
         final List<ServiceInstance> instances = getInstanceCache(serviceName).getInstances();
@@ -146,7 +146,8 @@ public class InstanceCacheManager {
     private InstanceCache getInstanceCache(String serviceName) {
         final InstanceCache instanceCache = instanceCaches.computeIfAbsent(serviceName, this::createCache);
         if (instanceCache.getInstances().isEmpty()) {
-            // 为兼容到性能问题, 此处不加锁, 多个并发更新不会影响最终结果
+            // In order to comply with performance issues, there is no lock here, and multiple concurrent updates will
+            // not affect the final result
             return tryUpdateCache(serviceName);
         }
         return instanceCache;
@@ -169,7 +170,7 @@ public class InstanceCacheManager {
         try {
             instances = discoveryClient.getInstances(serviceName);
         } catch (QueryInstanceException ex) {
-            // 注册中心可能出现问题, 返回空, 定时器将会更新实例
+            // There may be a problem with the registry, it will return empty, and the timer will update the instance
             final InstanceCache instanceCache = oldInstancesCache.get(serviceName);
             if (instanceCache != null) {
                 instanceCache.setUpdateTimestamp(System.currentTimeMillis());
@@ -183,7 +184,7 @@ public class InstanceCacheManager {
     }
 
     /**
-     * 实例刷新器, 需定时执行
+     * The instance refresher needs to be executed on a regular basis
      *
      * @since 2022-10-13
      */
@@ -216,14 +217,15 @@ public class InstanceCacheManager {
             instanceCaches.values().forEach(instanceCache -> {
                 final long createTimestamp = instanceCache.getUpdateTimestamp();
                 if (currentTimeMillis - createTimestamp >= this.instanceRefreshIntervalMs) {
-                    // 缓存过期, 刷新缓存
+                    // The cache expires and the cache is refreshed
                     final String serviceName = instanceCache.getServiceName();
                     final InstanceCache cache = createCache(serviceName);
                     if (!cache.getInstances().isEmpty()) {
                         updateCaches.put(serviceName, cache);
                         oldInstancesCache.put(serviceName, cache);
                     } else {
-                        // 注册中心可能有问题, 此时不刷新实例, 同时更新时间戳
+                        // There may be an issue with the registry, where the instance is not refreshed,
+                        // and the timestamp is updated
                         instanceCache.setUpdateTimestamp(currentTimeMillis);
                     }
                 }
@@ -233,7 +235,7 @@ public class InstanceCacheManager {
     }
 
     /**
-     * 实例更新器, 使数据更加实时
+     * Instance updater to make data more real-time
      *
      * @since 2022-10-12
      */
@@ -244,7 +246,7 @@ public class InstanceCacheManager {
             InstanceCache instanceCache = getInstanceCache(serviceName);
             List<ServiceInstance> instances = instanceCache.getInstances();
             if (instances.isEmpty()) {
-                // 尝试重试新新实例
+                // Try retrying the new instance
                 instanceCache = createCache(serviceName);
                 instances = instanceCache.getInstances();
             }

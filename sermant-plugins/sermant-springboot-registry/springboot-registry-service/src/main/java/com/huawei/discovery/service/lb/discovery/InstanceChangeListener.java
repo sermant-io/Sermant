@@ -19,38 +19,38 @@ package com.huawei.discovery.service.lb.discovery;
 import com.huawei.discovery.entity.ServiceInstance;
 
 /**
- * 实例变更监听器, 当实例发生变更, 则会通知
+ * Listeners for instance changes, and notifications are sent when the instance changes
  *
  * @author zhouss
  * @since 2022-10-12
  */
 public interface InstanceChangeListener {
     /**
-     * 通知
+     * Notice
      *
-     * @param eventType 事件类型
-     * @param serviceInstance 变更实例
+     * @param eventType The type of event
+     * @param serviceInstance Change the instance
      */
     void notify(EventType eventType, ServiceInstance serviceInstance);
 
     /**
-     * 事件类型
+     * The type of event
      *
      * @since 2022-10-12
      */
     enum EventType {
         /**
-         * 新增
+         * Add
          */
         ADDED,
 
         /**
-         * 更新
+         * Update
          */
         UPDATED,
 
         /**
-         * 删除
+         * Delete
          */
         DELETED
     }

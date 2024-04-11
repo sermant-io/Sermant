@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 /**
- * producer修饰器测试
+ * Producer modifier testing
  *
  * @author zhouss
  * @since 2022-10-12

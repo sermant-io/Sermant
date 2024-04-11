@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.apache.dubbo.rpc.Invoker;
 
 /**
- * Apache Dubbo 服务调用增强类
+ * Apache Dubbo service calls the enhanced class
  *
  * @author zhp
  * @since 2023-02-17

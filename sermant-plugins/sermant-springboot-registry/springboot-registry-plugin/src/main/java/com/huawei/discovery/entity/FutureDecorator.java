@@ -25,7 +25,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
 
 /**
- * future调用修饰器, 使之可通知到重试器
+ * future calls the decorator so that it can be notified to the retryer
  *
  * @author zhouss
  * @since 2022-10-11
@@ -40,9 +40,9 @@ public class FutureDecorator implements Future<HttpResponse> {
     private Future<HttpResponse> delegate;
 
     /**
-     * 修饰器
+     * Retouchers
      *
-     * @param retryFunc 重试器
+     * @param retryFunc Retryer
      */
     public FutureDecorator(BiFunction<Long, TimeUnit, HttpAsyncInvokerResult> retryFunc) {
         this.retryFunc = retryFunc;

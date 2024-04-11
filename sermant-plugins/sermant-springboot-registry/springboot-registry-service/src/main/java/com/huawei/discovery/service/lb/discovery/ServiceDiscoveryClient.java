@@ -23,52 +23,52 @@ import java.io.Closeable;
 import java.util.Collection;
 
 /**
- * 客户端
+ * Client
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public interface ServiceDiscoveryClient extends Closeable {
     /**
-     * 初始化
+     * Initialize
      */
     void init();
 
     /**
-     * 注册方法
+     * Registration method
      *
-     * @param serviceInstance 注册
-     * @return true注册成功
+     * @param serviceInstance register
+     * @return true, The registration is successful
      */
     boolean registry(ServiceInstance serviceInstance);
 
     /**
-     * 查询实例列表
+     * Query the list of instances
      *
-     * @param serviceId 服务名
-     * @return 实例列表
-     * @throws QueryInstanceException 查询实例出现问题抛出
+     * @param serviceId Service name
+     * @return List of instances
+     * @throws QueryInstanceException A problem is thrown if there is a query instance
      */
     Collection<ServiceInstance> getInstances(String serviceId) throws QueryInstanceException;
 
     /**
-     * 查询所有服务名
+     * Query all service names
      *
-     * @return 所有服务名列表
+     * @return A list of all service names
      */
     Collection<String> getServices();
 
     /**
-     * 当前实例下线
+     * The current instance is offline
      *
-     * @return 是否注册成功
+     * @return Whether the registration is successful
      */
     boolean unRegistry();
 
     /**
-     * 服务发现名称, 与注册中心类型关联
+     * The name of the service discovery, associated with the registry type
      *
-     * @return 名称
+     * @return Name
      */
     String name();
 }

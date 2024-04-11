@@ -19,14 +19,14 @@ package com.huaweicloud.sermant.service;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 类描述
+ * Removal configure service class
  *
  * @author lilai
  * @since 2023-04-10
  */
 public interface RemovalConfigService extends PluginService {
     /**
-     * 初始化配置监听
+     * Initialize the configuration listener
      */
     void init();
 }

@@ -36,7 +36,7 @@ import org.springframework.web.reactive.function.client.ExchangeFunction;
 import java.net.URI;
 
 /**
- * 测试RetryExchangeFilterFunction
+ * Test RetryExchangeFilterFunction
  *
  * @author provenceee
  * @since 2023-05-17
@@ -95,15 +95,15 @@ public class RetryExchangeFilterFunctionTest {
     }
 
     private void test(AbstractRetryExchangeFilterFunction function) {
-        // 域名不符
+        // The domain name does not match
         Mockito.when(request.url()).thenReturn(URI.create("http://www.domain1.com/foo/hello"));
         Assert.assertEquals(response, function.filter(request, exchangeFunction));
 
-        // 服务名不符
+        // The name of the service does not match
         Mockito.when(request.url()).thenReturn(URI.create("http://www.domain.com/bar/hello"));
         Assert.assertEquals(response, function.filter(request, exchangeFunction));
 
-        // 织入重试
+        // Weave in and try again
         Mockito.when(request.url()).thenReturn(URI.create("http://www.domain.com/foo/hello"));
         Assert.assertNotEquals(response, function.filter(request, exchangeFunction));
     }

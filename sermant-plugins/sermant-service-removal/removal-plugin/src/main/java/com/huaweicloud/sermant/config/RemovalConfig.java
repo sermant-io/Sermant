@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 import java.util.List;
 
 /**
- * 离群实例摘除配置
+ * Outlier instance removal configuration
  *
  * @author zhp
  * @since 2023-02-17
@@ -31,32 +31,32 @@ import java.util.List;
 @ConfigTypeKey("removal.config")
 public class RemovalConfig implements PluginConfig {
     /**
-     * 实例过期时间
+     * The expiration time of the instance
      */
     private int expireTime;
 
     /**
-     * 恢复时间
+     * Recovery time
      */
     private int recoveryTime;
 
     /**
-     * 支持的异常类型
+     * Supported exception types
      */
     private List<String> exceptions;
 
     /**
-     * 离群实例摘除开关
+     * The outlier instance removal switch
      */
     private boolean enableRemoval;
 
     /**
-     * 窗口时间
+     * Window time
      */
     private int windowsTime = RemovalConstants.WINDOWS_TIME;
 
     /**
-     * 窗口数量
+     * Number of windows
      */
     private int windowsNum = RemovalConstants.WINDOWS_NUM;
 

@@ -20,14 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dubbo服务名称和接口映射缓存类
+ * Dubbo service name and interface map cache class
  *
  * @author zhp
  * @since 2023-03-17
  */
 public class DubboCache {
     /**
-     * 缓存MAP
+     * Caching MAP
      */
     private static final Map<String, String> SERVICE_CACHE = new HashMap<>();
 
@@ -35,20 +35,20 @@ public class DubboCache {
     }
 
     /**
-     * 缓存接口与服务名的关系
+     * The relationship between the cache interface and the service name
      *
-     * @param interfaceName 接口名
-     * @param serviceName 服务名
+     * @param interfaceName The name of the interface
+     * @param serviceName Service name
      */
     public static void putService(String interfaceName, String serviceName) {
         SERVICE_CACHE.put(interfaceName, serviceName);
     }
 
     /**
-     * 获取应用名
+     * Obtain the app name
      *
-     * @param serviceInterface 接口
-     * @return 应用名
+     * @param serviceInterface Interface
+     * @return The name of the app
      */
     public static String getServiceName(String serviceInterface) {
         return SERVICE_CACHE.get(serviceInterface);

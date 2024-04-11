@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.Set;
 
 /**
- * 插件生效、日志打印动态配置相关工具类
+ * plugin effect, log printing, dynamic configuration of related tools
  *
  * @author chengyouling
  * @since 2022-10-09
@@ -35,7 +35,7 @@ public class PlugEffectWhiteBlackUtils {
     private static final String COMMA = ",";
 
     /**
-     * 域名列表
+     * List of domain names
      */
     private static volatile String[] domainNames;
 
@@ -43,33 +43,33 @@ public class PlugEffectWhiteBlackUtils {
     }
 
     /**
-     * 判断对应服务插件是否执行
+     * Check whether the corresponding service plugin is executed
      *
-     * @param serviceName 服务名
-     * @return 是否生效
+     * @param serviceName Service name
+     * @return Whether it is in effect
      */
     public static boolean isPlugEffect(String serviceName) {
         String strategy = PlugEffectStrategyCache.INSTANCE.getConfigContent(
                 PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY);
 
-        // 全部生效
+        // All in effect
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_ALL, strategy)) {
             return true;
         }
 
-        // 全部不生效
+        // None of them take effect
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_NONE, strategy)) {
             return false;
         }
 
         final Set<String> curServices = PlugEffectStrategyCache.INSTANCE.getCurServices();
 
-        // 白名单-插件生效
+        // Whitelist - The plugin takes effect
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_WHITE, strategy)) {
             return curServices.contains(serviceName);
         }
 
-        // 黑名单-插件不生效
+        // Blacklist - The plugin does not take effect
         if (StringUtils.equalsIgnoreCase(PlugEffectWhiteBlackConstants.STRATEGY_BLACK, strategy)) {
             return !curServices.contains(serviceName);
         }
@@ -77,10 +77,10 @@ public class PlugEffectWhiteBlackUtils {
     }
 
     /**
-     * 判断主机名称是否为设置的域名
+     * Check whether the host name is the domain name that is set
      *
-     * @param host 拦截获取的域名
-     * @return 是否等于域名
+     * @param host Intercept the obtained domain name
+     * @return Whether it is equal to the domain name
      */
     public static boolean isHostEqualRealmName(String host) {
         final String[] names = getDomainNames();
@@ -116,11 +116,11 @@ public class PlugEffectWhiteBlackUtils {
     }
 
     /**
-     * 判断是否允许请求通过插件
+     * Determine whether to allow the request to pass through the plugin
      *
-     * @param realmStr 拦截获取的域名
-     * @param serviceName 下游服务名
-     * @return 是否允许执行
+     * @param realmStr Intercept the obtained domain name
+     * @param serviceName Downstream service name
+     * @return Whether or not to allow execution
      */
     public static boolean isAllowRun(String realmStr, String serviceName) {
         if (!PlugEffectWhiteBlackUtils.isHostEqualRealmName(realmStr)) {

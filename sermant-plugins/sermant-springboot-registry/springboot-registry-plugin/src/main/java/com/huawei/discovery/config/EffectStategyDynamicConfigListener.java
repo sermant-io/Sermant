@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 插件生效规则同步监听器
+ * The plugin takes effect to synchronize the listener
  *
  * @author chengyouling
  * @since 2022-10-10

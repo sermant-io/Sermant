@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 负载均衡配置
+ * Load balancing configuration
  *
  * @author zhouss
  * @since 2022-09-26
@@ -31,160 +31,176 @@ import java.util.List;
 @ConfigTypeKey("sermant.springboot.registry.lb")
 public class LbConfig implements PluginConfig {
     /**
-     * ===============Zookeeper注册中心专属配置================ ZK连接超时时间
+     * ===============Exclusive configuration for the Zookeeper registry================ The timeout period of the ZK
+     * connection
      */
     private int connectionTimeoutMs = LbConstants.DEFAULT_CONNECTION_TIMEOUT_MS;
 
     /**
-     * ZK响应超时时间
+     * The timeout period for the ZK response
      */
     private int readTimeoutMs = LbConstants.DEFAULT_READ_TIMEOUT_MS;
 
     /**
-     * ZK连接重试时间
+     * ZK connection retry time
      */
     private int retryIntervalMs = LbConstants.DEFAULT_RETRY_INTERVAL_MS;
 
     /**
-     * zookeeper uri格式规范
+     * Zookeeper uri format specification
      */
     private String zkUriSpec = "{scheme}://{address}:{port}";
 
     /**
-     * 服务端版本, 客户端版本需要与服务端版本相匹配才可连接
+     * Server version, the client version needs to match the server version before you can connect
      */
     private String zkServerVersion = "3.4.x";
 
     /**
-     * zookeeper保存数据的根路径, 注意不要与zk原生路径一致(/services), 否则可能存在兼容性问题 ===============Zookeeper注册中心专属配置结束================
+     * zookeeper saves the root path of the data, be careful not to match the zk native path (/services), otherwise
+     * there may be compatibility issues =============== the end of the Zookeeper registry configuration
+     * ================
      */
     private String zkBasePath = "/sermant/services";
 
     /**
-     * 注册中心地址
+     * Address of the registry
      */
     private String registryAddress = "127.0.0.1:2181";
 
     /**
-     * 注册中心类型, 当前仅支持ZK
+     * Registry type, currently only ZK is supported
      */
     private String registryCenterType = "Zookeeper";
 
     /**
-     * 是否仅仅查询本插件注册的实例, 开启时, 如果其他注册中心与本插件注册中心一致, 同时注册到注册中心, 查询时会自动排除非本插件注册的注册中心
+     * When it is enabled, if other registries are the same as the registries of this plugin and are registered to the
+     * registry at the same time, the registries that are not registered by the plugin will be automatically excluded
+     * from the query
      */
     private boolean onlyCurRegisterInstances = true;
 
     /**
-     * 若注册中心失联，是否使用旧的实例而不会刷新, 注意, 开启此选项内存中将会增加旧实例的缓存
+     * If the registry loses contact and the old instance is used instead of refreshing, note that enabling this option
+     * will increase the cache of the old instance in memory
      */
     private boolean keepOldInstancesWhenErr = true;
 
     /**
-     * 是否开启缓存代理, 针对{@link java.net.HttpURLConnection} 拦截该类, 针对每个host将生成一个代理缓存到map中, 见{@link
-     * com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor} getProxy方法 开启此开关,
-     * 增加内存消耗, 但可避免频繁创建Proxy
+     * Whether to enable caching proxy, intercept the class for {@link java.net.HttpURLConnection}, and generate a proxy
+     * cache to the map for each host. See the
+     * {@link com.huawei.discovery.interceptors.httpconnection.HttpUrlConnectionConnectInterceptor}, turn on this switch
+     * to increase memory consumption, but it can avoid frequent creation of proxies
      */
     private boolean enableCacheProxy = false;
 
     /**
-     * 注册失败时, 最大重试次数, 每次会等待1秒(registryRetryInterval)重新发起注册
+     * When registration fails, the maximum number of retries will be 1 second (registryRetryInterval) to restart the
+     * registration each time
      */
     private int registryMaxRetry = LbConstants.DEFAULT_REGISTRY_MAX_RETRY_NUM;
 
     /**
-     * 注册重试等待时间
+     * Registration retry wait time
      */
     private long registryRetryInterval = LbConstants.DEFAULT_WAIT_REGISTRY_INTERVAL_MS;
 
     /**
-     * 最大的重试配置缓存数
+     * The maximum number of retry configuration caches
      */
     private int maxRetryConfigCache = LbConstants.DEFAULT_MAX_RETRY_CONFIG_CACHE;
 
     /**
-     * 服务超时后最大重试次数
+     * The maximum number of retries after the service times out
      */
     private int maxRetry = LbConstants.DEFAULT_MAX_RETRY;
 
     /**
-     * 最大相同实例的重试次数
+     * The maximum number of retries for the same instance
      */
     private int maxSameRetry = LbConstants.DEFAULT_MAX_SAME_RETRY;
 
     /**
-     * 重试等待时间, 默认一秒
+     * Retry wait time, default of one second
      */
     private long retryWaitMs = LbConstants.DEFAULT_RETRY_WAIT_MS;
 
     /**
-     * 重试策略, 当前支持两种"轮询(RoundRobin)"与"先重试上一次失败的实例(SameInstance){@link LbConfig#maxSameRetry}"
+     * There are two types of retry policies: "RoundRobin" and "Retry the last failed instance
+     * (SameInstance){@link LbConfig#maxSameRetry}"
      */
     private String retryPolicy = "RoundRobin";
 
     /**
-     * 重试场景, 针对{@link java.net.SocketTimeoutException}: connect timed out是否需要重试, 默认开启
+     * Retrying scenarios for{@link java.net.SocketTimeoutException}: connect timed out, Do you need to retry? It will
+     * be enabled by default
      */
     private boolean enableSocketConnectTimeoutRetry = true;
 
     /**
-     * 重试场景, 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
+     * Retry scenario, against{@link java.net.SocketTimeoutException}: read timed out，Whether you need to try again, it
+     * is enabled by default
      */
     private boolean enableSocketReadTimeoutRetry = true;
 
     /**
-     * 重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future,
-     * MinimalHttpAsyncClient
+     * Retry scenario, against{@link java.util.concurrent.TimeoutException}, Whether you need to retry, it is enabled by
+     * default, and this timeout is mostly used in asynchronous scenarios, for example Future, MinimalHttpAsyncClient
      */
     private boolean enableTimeoutExRetry = true;
 
     /**
-     * 针对额外指定异常进行重试, 请填写类的全限定名, 目前仅支持jdk异常, 且是否触发该异常由拦截点而定, 若类加载器无法加载则无法生效
+     * For additional specified exceptions to retry, please fill in the fully qualified name of the class, currently
+     * only JDK exceptions are supported, and whether to trigger the exception depends on the interception point, if the
+     * classloader cannot be loaded, it will not take effect
      */
     private List<String> specificExceptionsForRetry = Collections.emptyList();
 
     /**
-     * 实例缓存过期时间, 若该值小于0, 则永远不会过期
+     * Instance cache expiration time, if the value is less than 0, it will never expire
      */
     private long instanceCacheExpireTime = LbConstants.DEFAULT_CACHE_EXPIRE_SEC;
 
     /**
-     * 实例全量刷新间隔, 单位秒, 若为0, 且过期时间不为0, 则会取缓存过期的4/5作为刷新间隔；例如instanceCacheExpireTime=30S, 则instanceRefreshInterval=25S
+     * If the instance is 0 and the expiration time is not 0, 4/5 of the cache expiration is used as the refresh
+     * interval, for example, instanceCacheExpireTime=30S, instanceRefreshInterval=25S
      */
     private long instanceRefreshInterval = 0L;
 
     /**
-     * 定时器执行间隔, 单位秒, 一定要小于instanceCacheExpireTime
+     * The timer execution interval in seconds must be less than the instanceCacheExpireTime
      */
     private long refreshTimerInterval = LbConstants.DEFAULT_REFRESH_TIMER_INTERVAL_SEC;
 
     /**
-     * 缓存并发度, 影响从缓存获取实例的效率
+     * Cache concurrency, which affects the efficiency of getting instances from the cache
      */
     private int cacheConcurrencyLevel = LbConstants.DEFAULT_CACHE_CONCURRENCY_LEVEL;
 
     /**
-     * 服务指标数据缓存, 默认60分钟
+     * Service metric data cache, 60 minutes by default
      */
     private long statsCacheExpireTime = LbConstants.DEFAULT_STATS_CACHE_EXPIRE_TIME;
 
     /**
-     * 统计数据定时聚合统计刷新时间, 若设置<=0, 则不会开启聚合统计, 关联聚合统计的负载均衡将会失效
+     * If the refresh time of statistics is set to <=0, the aggregation statistics will not be enabled, and the load
+     * balancer associated with the aggregation statistics will become invalid
      */
     private long lbStatsRefreshIntervalMs = LbConstants.DEFAULT_LB_STATS_REFRESH_INTERVAL_MS;
 
     /**
-     * 负载均衡类型
+     * The type of load balancer
      */
     private String lbType = "RoundRobin";
 
     /**
-     * 倾向IP, 若为true, 则所有关联的地址均有ip替换host
+     * Preference IP, if true, all associated addresses have IP replies host
      */
     private boolean preferIpAddress = false;
 
     /**
-     * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
+     * The default time window for instance status statistics is 10 minutes, and the statistics will be cleared to 0 at
+     * the beginning of each time window
      */
     private long instanceStatTimeWindowMs = LbConstants.DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS;
 

@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
- * 基于响应时间的负载均衡
+ * Load balancing based on response time
  *
  * @author zhouss
  * @since 2022-09-29
@@ -43,7 +43,7 @@ public class WeightedResponseTimeLoadbalancer extends AbstractLoadbalancer {
         List<Double> responseTimeWeights = calculateResponseTimeWeight(serviceStats, instances);
         double maxWeights = responseTimeWeights.get(responseTimeWeights.size() - 1);
         if (maxWeights <= DOUBLE_GAP) {
-            // 此时还未开始统计响应时间, 采用轮询调用
+            // At this time, the response time has not yet been counted, and a round-robin call is used
             return defaultLb.doChoose(serviceName, instances);
         }
         final double seed = ThreadLocalRandom.current().nextDouble(maxWeights);
@@ -61,11 +61,11 @@ public class WeightedResponseTimeLoadbalancer extends AbstractLoadbalancer {
     }
 
     /**
-     * 计算响应时间权重
+     * Respond time weights are calculated
      *
-     * @param serviceInstances 服务实例
-     * @param serviceStats 服务指标信息
-     * @return 权重列表
+     * @param serviceInstances Service instances
+     * @param serviceStats Service Metrics Information
+     * @return List of weights
      */
     private List<Double> calculateResponseTimeWeight(ServiceStats serviceStats,
             List<ServiceInstance> serviceInstances) {

@@ -31,14 +31,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 插件生效策略缓存
+ * The plugin takes effect and the policy caches are cached
  *
  * @author chengyouling
  * @since 2022-10-08
  */
 public enum PlugEffectStrategyCache {
     /**
-     * 实例
+     * Instance
      */
     INSTANCE;
 
@@ -47,15 +47,15 @@ public enum PlugEffectStrategyCache {
     private final YamlConverter yamlConverter = OperationManager.getOperation(YamlConverter.class);
 
     /**
-     * 当前value对应的服务名集合
+     * The set of service names corresponding to the current value
      */
     private Set<String> curServices = new HashSet<>();
 
     /**
-     * 将动态配置放入缓存中
+     * Put the dynamic configuration into the cache
      *
-     * @param eventType 事件类型
-     * @param content 事件内容
+     * @param eventType The type of event
+     * @param content Event content
      */
     public void resolve(DynamicConfigEventType eventType, String content) {
         final Optional<Map<String, String>> dataMap = yamlConverter.convert(content, Map.class);
@@ -81,7 +81,7 @@ public enum PlugEffectStrategyCache {
     }
 
     /**
-     * 解析服务名
+     * Resolve the name of the service
      */
     private void resolveServices() {
         final String value = caches.get(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE);
@@ -111,10 +111,10 @@ public enum PlugEffectStrategyCache {
     }
 
     /**
-     * 获取对应key的配置
+     * Obtain the configuration of the key
      *
-     * @param key 键
-     * @return 动态配置值
+     * @param key Key
+     * @return Dynamically configure values
      */
     public String getConfigContent(String key) {
         return caches.get(key);

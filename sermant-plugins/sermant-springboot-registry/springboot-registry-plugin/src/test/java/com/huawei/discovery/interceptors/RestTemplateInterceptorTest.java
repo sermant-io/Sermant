@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * RestTemplate调用测试
+ * RestTemplate call test
  *
  * @author chengyouling
  * @since 2022-10-10
@@ -61,7 +61,7 @@ public class RestTemplateInterceptorTest extends BaseTest {
     private final static String convertUrl = "http://127.0.0.1:8010/sayHello?name=123";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RestTemplateInterceptorTest() {
         arguments = new Object[2];
@@ -95,14 +95,14 @@ public class RestTemplateInterceptorTest extends BaseTest {
         arguments[0] = uri;
         arguments[1] = HttpMethod.GET;
 
-        //含域名，设置多个域名，未设置黑白名单
+        //Contains domain names, sets multiple domain names, and does not set blacklist or whitelist
         discoveryPluginConfig.setRealmName(realmNames);
         interceptor.doBefore(context);
         URI uriNew = (URI) context.getArguments()[0];
         Assert.assertEquals(url, uriNew.toString());
 
         discoveryPluginConfig.setRealmName(realmName);
-        //含域名，设置全部通过策略
+        //Contains domain names, and sets all through policies
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_ALL, "zookeeper-provider-demo");
         Mockito.when(invokerService.invoke(null, null, "zookeeper-provider-demo"))
             .thenReturn(Optional.ofNullable(new Object()));

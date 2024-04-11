@@ -21,7 +21,7 @@ import org.apache.http.client.methods.HttpGet;
 import java.net.URI;
 
 /**
- * 定义Http请求
+ * Define an HTTP request
  *
  * @author zhouss
  * @since 2022-10-11
@@ -30,10 +30,10 @@ public class HttpCommonRequest extends HttpGet {
     private final String methodType;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param methodType 方法类型
-     * @param uri 请求路径
+     * @param methodType Method type
+     * @param uri The path of the request
      */
     public HttpCommonRequest(String methodType, String uri) {
         this.methodType = methodType;

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * SpringBoot服务调用增强类
+ * SpringBoot service call enhancement class
  *
  * @author zhp
  * @since 2023-02-17
@@ -49,9 +49,9 @@ public class SpringBootApplyInterceptor extends AbstractCallInterceptor<Object> 
     }
 
     /**
-     * 获取实例信息的参数下标
+     * Obtain the parameter subscript of instance information
      *
-     * @return 例信息的参数下标
+     * @return Parameter subscript for example information
      */
     @Override
     protected int getIndex() {
@@ -59,11 +59,11 @@ public class SpringBootApplyInterceptor extends AbstractCallInterceptor<Object> 
     }
 
     /**
-     * 获取字段值
+     * Get the field value
      *
-     * @param fieldName 字段名称
-     * @param object 服务实例信息
-     * @return 字段的值
+     * @param fieldName The name of the field
+     * @param object Service instance information
+     * @return The value of the field
      */
     private String getFiledValue(String fieldName, Object object) {
         Optional<Object> instanceOptional = ReflectUtils.getFieldValue(object, INSTANCE_NAME);
@@ -78,10 +78,10 @@ public class SpringBootApplyInterceptor extends AbstractCallInterceptor<Object> 
     }
 
     /**
-     * 判断调用结果
+     * Determine the result of the call
      *
-     * @param context 上下文信息
-     * @return 调用结果成功或者失败
+     * @param context Contextual information
+     * @return The result of the call is successful or failed
      */
     protected boolean isSuccess(ExecuteContext context) {
         if (REMOVAL_CONFIG.getExceptions() == null || REMOVAL_CONFIG.getExceptions().isEmpty()) {

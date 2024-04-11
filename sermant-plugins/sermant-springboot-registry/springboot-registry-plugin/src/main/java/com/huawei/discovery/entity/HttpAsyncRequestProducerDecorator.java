@@ -28,22 +28,24 @@ import java.io.IOException;
 import java.util.function.Function;
 
 /**
- * HttpAsyncRequestProducer修饰器, 处理http request
+ * HttpAsyncRequestProducer modifier, handling http request
  *
  * @author zhouss
  * @since 2022-10-11
  */
 public class HttpAsyncRequestProducerDecorator implements HttpAsyncRequestProducer {
     private final HttpAsyncRequestProducer httpAsyncRequestProducer;
+
     private final Function<HttpRequest, HttpRequest> requestDecorateFunc;
+
     private final Function<HttpHost, HttpHost> hostDecorateFunc;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param httpAsyncRequestProducer 原始producer
-     * @param requestDecorateFunc   请求修饰器
-     * @param hostDecorateFunc      地址修饰器
+     * @param httpAsyncRequestProducer Original Producer
+     * @param requestDecorateFunc Request a decorator
+     * @param hostDecorateFunc Address decorator
      */
     public HttpAsyncRequestProducerDecorator(
             HttpAsyncRequestProducer httpAsyncRequestProducer,

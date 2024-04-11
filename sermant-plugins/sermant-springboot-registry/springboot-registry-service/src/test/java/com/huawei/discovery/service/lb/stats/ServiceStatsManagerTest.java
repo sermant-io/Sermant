@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 状态管理器测试
+ * State Manager Test
  *
  * @author zhouss
  * @since 2022-10-09

@@ -17,39 +17,39 @@
 package com.huaweicloud.sermant.common;
 
 /**
- * 常量类
+ * Constant class
  *
  * @author zhp
  * @since 2023-04-04
  */
 public class RemovalConstants {
     /**
-     * Dubbo服务名称KEY
+     * Dubbo service name KEY
      */
     public static final String APPLICATION_KEY = "application";
 
     /**
-     * 连接符
+     * connectors
      */
     public static final String CONNECTOR = ":";
 
     /**
-     * 时间窗口大小
+     * The size of the time window
      */
     public static final int WINDOWS_TIME = 1000;
 
     /**
-     * 窗口个数
+     * Number of windows
      */
     public static final int WINDOWS_NUM = 10;
 
     /**
-     * 插件名称
+     * The name of the plugin
      */
     public static final String PLUGIN_NAME = "serment-service-removal";
 
     /**
-     * 动态配置KEY
+     * DYNAMIC_CONFIG_KEY
      */
     public static final String DYNAMIC_CONFIG_KEY = "sermant.removal.config";
 

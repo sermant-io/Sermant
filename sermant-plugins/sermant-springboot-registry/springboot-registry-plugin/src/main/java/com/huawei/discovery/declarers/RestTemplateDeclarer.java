@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对restTemplete请求方式，从注册中心获取实例列表拦截
+ * For the RestTemplate request mode, obtain the instance list from the registry to intercept it
  *
  * @author chengyouling
  * @since 2022-09-27
  */
 public class RestTemplateDeclarer extends BaseDeclarer {
     /**
-     * 增强类的全限定名
+     * The fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.springframework.web.client.RestTemplate";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = RestTemplateInterceptor.class.getCanonicalName();
 

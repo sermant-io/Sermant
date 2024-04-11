@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 服务实例缓存测试类
+ * Test class of service instance cache
  *
  * @author zhp
  * @since 2023-02-17

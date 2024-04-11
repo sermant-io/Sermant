@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.interceptor.SpringApplicationInterceptor;
 
 /**
- * 增强run方法
+ * Enhancement of the run method
  *
  * @author lilai
  * @since 2023-04-10

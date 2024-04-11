@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 服务指标数据, 管理所有实例数据
+ * Service metrics data, manage all instance data
  *
  * @author zhouss
  * @since 2022-09-29
@@ -39,9 +39,9 @@ public class ServiceStats {
     private final String serviceName;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      */
     public ServiceStats(String serviceName) {
         this.serviceName = serviceName;
@@ -57,9 +57,9 @@ public class ServiceStats {
     }
 
     /**
-     * 获取状态统计器
+     * Get the status statist
      *
-     * @param serviceInstance 实例
+     * @param serviceInstance Instance
      * @return InstanceStats
      */
     public InstanceStats getStats(ServiceInstance serviceInstance) {
@@ -73,7 +73,7 @@ public class ServiceStats {
     }
 
     /**
-     * 清理所有数据
+     * Clean up all data
      */
     public void cleanUp() {
         instanceStatsCache.cleanUp();

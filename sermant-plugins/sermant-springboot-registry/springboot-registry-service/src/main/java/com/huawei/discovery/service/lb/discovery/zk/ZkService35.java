@@ -19,7 +19,7 @@ package com.huawei.discovery.service.lb.discovery.zk;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * Zk 3.5.x 支持
+ * Support Zk 3.5.x
  *
  * @author zhouss
  * @since 2022-10-08

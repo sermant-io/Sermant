@@ -20,50 +20,50 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * 重试配置
+ * Retry the configuration
  *
  * @author zhouss
  * @since 2022-10-18
  */
 public interface RetryConfig {
     /**
-     * 重试配置名称
+     * Retry the configuration name
      *
      * @return name
      */
     String getName();
 
     /**
-     * 获取重试等待时间
+     * Get the retry wait time
      *
-     * @return 重试等待时间
+     * @return Retry wait time
      */
     long getRetryRetryWaitMs();
 
     /**
-     * 根据重试次数获取重试时间
+     * Obtain the retry time based on the number of retries
      *
-     * @param retryCount 重试第几次
+     * @param retryCount Number of retries
      * @return Predicate
      */
     Function<Integer, Long> getRetryWaitMs(int retryCount);
 
     /**
-     * 返回最大重试次数
+     * Returns the maximum number of retries
      *
-     * @return 最大重试次数
+     * @return Maximum number of retries
      */
     int getMaxRetry();
 
     /**
-     * 重试异常判断
+     * Retry exception judgment
      *
      * @return Predicate
      */
     Predicate<Throwable> getThrowablePredicate();
 
     /**
-     * 结果重试check
+     * The result retries check
      *
      * @return Predicate
      */

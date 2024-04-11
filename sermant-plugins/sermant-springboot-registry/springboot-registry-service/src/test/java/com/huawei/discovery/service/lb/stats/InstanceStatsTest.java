@@ -22,7 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 实例状态统计测试
+ * Instance status statistics test
  *
  * @author zhouss
  * @since 2022-10-09

@@ -23,9 +23,9 @@ import com.huaweicloud.sermant.entity.RequestInfo;
 import java.util.List;
 
 /**
- * 服务实例摘除抽象类
+ * Abstract class of service instance removal
  *
- * @param <T> 被调用的实例信息
+ * @param <T> Information about the instance that was called
  * @author zhp
  * @since 2023-02-21
  */
@@ -42,9 +42,9 @@ public abstract class AbstractCallInterceptor<T> extends AbstractSwitchIntercept
     }
 
     /**
-     * 保存调用信息
+     * Save the call information
      *
-     * @param context 上下文信息
+     * @param context Contextual information
      */
     public void saveCallInfo(ExecuteContext context) {
         int index = getIndex();
@@ -61,33 +61,33 @@ public abstract class AbstractCallInterceptor<T> extends AbstractSwitchIntercept
     }
 
     /**
-     * 获取实例信息的参数下标
+     * Obtain the parameter subscript of instance information
      *
-     * @return 例信息的参数下标
+     * @return Parameter subscript for example information
      */
     protected abstract int getIndex();
 
     /**
-     * 获取实例IP
+     * Obtain the IP address of the instance
      *
-     * @param object 实例信息
-     * @return 实例IP
+     * @param object Instance information
+     * @return IP address of the instance
      */
     protected abstract String getHost(T object);
 
     /**
-     * 获取实例端口
+     * Obtain the instance port
      *
-     * @param object 实例信息
-     * @return 实例端口
+     * @param object Instance information
+     * @return Instance port
      */
     protected abstract String getPort(T object);
 
     /**
-     * 判断调用结果
+     * Determine the result of the call
      *
-     * @param context 上下文信息
-     * @return 调用结果成功或者失败
+     * @param context Contextual information
+     * @return The result of the call is successful or failed
      */
     protected boolean isSuccess(ExecuteContext context) {
         if (REMOVAL_CONFIG.getExceptions() == null || REMOVAL_CONFIG.getExceptions().isEmpty()) {
@@ -99,7 +99,7 @@ public abstract class AbstractCallInterceptor<T> extends AbstractSwitchIntercept
         List<String> exceptions = REMOVAL_CONFIG.getExceptions();
         Throwable cause = context.getThrowable().getCause();
 
-        // Dubbo或者SpringCloud存在异常封装
+        // Dubbo or SpringCloud has abnormal encapsulation
         if (cause == null) {
             return !exceptions.contains(context.getThrowable().getClass().getName());
         }

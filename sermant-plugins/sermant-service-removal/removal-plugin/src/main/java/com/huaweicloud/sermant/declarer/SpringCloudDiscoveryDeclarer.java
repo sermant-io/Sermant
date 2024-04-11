@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.interceptor.SpringCloudDiscoveryInterceptor;
 
 /**
- * SpringCloud 实例列表查询增强定义
+ * SpringCloud instance list query enhanced definitions
  *
  * @author zhp
  * @since 2023-02-20

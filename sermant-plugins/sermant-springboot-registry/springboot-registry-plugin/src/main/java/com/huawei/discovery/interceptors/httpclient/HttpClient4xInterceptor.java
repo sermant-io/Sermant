@@ -59,7 +59,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 仅针对4.x版本得http拦截
+ * http interception only for version 4. x
  *
  * @author zhouss
  * @since 2022-10-10

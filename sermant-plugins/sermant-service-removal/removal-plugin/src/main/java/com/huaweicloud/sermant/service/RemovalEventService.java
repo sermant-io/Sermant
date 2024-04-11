@@ -20,23 +20,23 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.sermant.entity.InstanceInfo;
 
 /**
- * 离群事件采集服务
+ * Outlier event collection service
  *
  * @author zhp
  * @since 2023-02-27
  */
 public interface RemovalEventService extends PluginService {
     /**
-     * 实例摘除事件上报
+     * The instance removal event is reported
      *
-     * @param info 实例信息
+     * @param info Instance information
      */
     void reportRemovalEvent(InstanceInfo info);
 
     /**
-     * 实例恢复事件上报
+     * Instance recovery events are reported
      *
-     * @param info 实例信息
+     * @param info Instance information
      */
     void reportRecoveryEvent(InstanceInfo info);
 }

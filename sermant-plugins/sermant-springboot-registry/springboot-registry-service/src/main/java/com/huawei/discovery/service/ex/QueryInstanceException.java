@@ -17,16 +17,16 @@
 package com.huawei.discovery.service.ex;
 
 /**
- * 查询实例异常报错
+ * An error is reported when querying an instance
  *
  * @author zhouss
  * @since 2022-10-13
  */
 public class QueryInstanceException extends Exception {
     /**
-     * 构造器
+     * Constructor
      *
-     * @param message 提示信息
+     * @param message Prompt information
      */
     public QueryInstanceException(String message) {
         super(message);

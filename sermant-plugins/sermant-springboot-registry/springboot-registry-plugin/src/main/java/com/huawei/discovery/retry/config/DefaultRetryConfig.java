@@ -31,7 +31,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * 重试默认配置, 会基于配置文件或者环境变量进行自定义
+ * Retry the default configuration, which will be customized based on the configuration file or environment variables
  *
  * @author zhouss
  * @since 2022-09-28
@@ -54,32 +54,32 @@ public class DefaultRetryConfig implements RetryConfig {
             "org.springframework.web.reactive.function.client.WebClientRequestException");
 
     /**
-     * 最大重试次数
+     * Maximum number of retries
      */
     private int maxRetry;
 
     /**
-     * 配置名称
+     * Configuration name
      */
     private String name;
 
     /**
-     * 异常判断
+     * Abnormal judgment
      */
     private Predicate<Throwable> throwablePredicate;
 
     /**
-     * 结果判断
+     * Result judgment
      */
     private Predicate<Object> resultPredicate;
 
     /**
-     * 重试等待func
+     * Retry waiting for func
      */
     private Function<Integer, Long> retryWaitFunc;
 
     /**
-     * 重试等待时间
+     * Retry wait time
      */
     private long retryRetryWaitMs;
 
@@ -90,7 +90,7 @@ public class DefaultRetryConfig implements RetryConfig {
     }
 
     /**
-     * 创建配置
+     * Create a configuration
      *
      * @return RetryConfig
      */
@@ -106,7 +106,7 @@ public class DefaultRetryConfig implements RetryConfig {
     }
 
     /**
-     * 构建异常判断器
+     * Build an exception judge
      *
      * @return Predicate
      */
@@ -116,7 +116,7 @@ public class DefaultRetryConfig implements RetryConfig {
                 return false;
             }
             if (isConfigDisable(ex) || isConfigDisable(ex.getCause())) {
-                // 配置禁用场景不要重试
+                // Do not try again if the scenario is disabled
                 return false;
             }
             for (Class<? extends Throwable> cur : retryEx) {
@@ -152,20 +152,20 @@ public class DefaultRetryConfig implements RetryConfig {
     }
 
     /**
-     * 是否为配置禁用重试场景
+     * Whether to disable the retry scenario for the configuration
      *
-     * @param ex 宿主异常
-     * @return true: 已禁用 false: 可重试
+     * @param ex Host anomaly
+     * @return true: Disabled false: Retryable
      */
     private boolean isConfigDisable(Throwable ex) {
         if (ex instanceof SocketTimeoutException) {
             if (SOCKET_CONNECT_TIMEOUT.equalsIgnoreCase(ex.getMessage())
                     && !lbConfig.isEnableSocketConnectTimeoutRetry()) {
-                // 连接超时
+                // The connection timed out
                 return true;
             }
             if (SOCKET_READ_TIMEOUT.equalsIgnoreCase(ex.getMessage()) && !lbConfig.isEnableSocketReadTimeoutRetry()) {
-                // 响应超时
+                // Response timed out
                 return true;
             }
         }

@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * webclient jetty拦截点，springboot 2.1.0.RELEASE+
+ * webclient Jetty interception point，springboot 2.1.0.RELEASE+
  *
  * @author provenceee
  * @since 2023-04-25

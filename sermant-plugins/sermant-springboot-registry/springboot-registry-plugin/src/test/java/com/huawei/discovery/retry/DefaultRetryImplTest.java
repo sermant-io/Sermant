@@ -37,7 +37,7 @@ import java.net.ConnectException;
 import java.util.function.Predicate;
 
 /**
- * 默认重试测试
+ * The test is retried by default
  *
  * @author zhouss
  * @since 2022-10-12

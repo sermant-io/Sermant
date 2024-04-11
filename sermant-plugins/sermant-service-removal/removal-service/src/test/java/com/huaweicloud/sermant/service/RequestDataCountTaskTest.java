@@ -35,7 +35,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 服务调用任务测试类
+ * Service invocation task test class
  *
  * @author zhp
  * @since 2023-02-21

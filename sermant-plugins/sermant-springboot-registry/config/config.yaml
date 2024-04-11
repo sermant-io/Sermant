@@ -1,16 +1,30 @@
-# consul发现配置
+# consul discovery configuration
 sermant.springboot.registry:
-  enableRegistry: false             # 是否开启boot注册能力
-  realmName: www.domain.com        # 匹配域名, 当前版本仅针对url为http://${realmName}/serviceName/api/xx场景生效
-  enableRequestCount: false        # 是否开启流量统计, 开启后每次进入插件的流量将都会打印
+  # Whether to enable the boot registration feature
+  enableRegistry: false
+  # Matching domains, The current version takes effect only for scenarios where the URL is
+  # http://${realmName}/serviceName/api/xx
+  realmName: www.domain.com
+  # Whether to enable traffic statistics, after it is enabled, the traffic entering the plug-in will be printed every time
+  enableRequestCount: false
 
 sermant.springboot.registry.lb:
-  lbType: RoundRobin               # 负载均衡类型, 当前支持轮询(RoundRobin)、随机(Random)、响应时间权重(WeightedResponseTime)、最低并发数(BestAvailable)
-  registryAddress: 127.0.0.1:2181  # 注册中心地址
-  instanceCacheExpireTime: 0       # 实例过期时间, 单位秒, 若<=0则永不过期
-  instanceRefreshInterval: 0       # 实例刷新时间, 单位秒, 必须小于instanceCacheExpireTime
-  refreshTimerInterval: 5          # 实例定时检查间隔, 判断实例是否过期, 若其大于instanceRefreshInterval, 则值设置为instanceRefreshInterval
-  enableSocketReadTimeoutRetry: true # 针对{@link java.net.SocketTimeoutException}: read timed out是否需要重试, 默认开启
-  enableSocketConnectTimeoutRetry: true # 同上, 主要针对connect timed out, 通常在连接不上下游抛出
-  enableTimeoutExRetry: true       #重试场景, 针对{@link java.util.concurrent.TimeoutException}, 是否需要重试, 默认开启, 该超时多用于异步场景, 例如Future, MinimalHttpAsyncClient
-
+  # The load balancer type currently supports RoundRobin、Random、WeightedResponseTime、
+  # BestAvailable(Minimum number of concurrent transactions)
+  lbType: RoundRobin
+  # Address of the registry
+  registryAddress: 127.0.0.1:2181
+  # The expiration time of the instance, in seconds, will never expire if <=0
+  instanceCacheExpireTime: 0
+  # The instance refresh time, in seconds, must be less than that instanceCacheExpireTime
+  instanceRefreshInterval: 0
+  # Check the interval of the instance regularly to determine whether the instance has expired. If it is greater than
+  # instanceRefreshInterval, the value is set to instanceRefreshInterval
+  refreshTimerInterval: 5
+  # Against {@link java.net.SocketTimeoutException}： Do I need to retry read timed out? It is enabled by default
+  enableSocketReadTimeoutRetry: true
+  # Same as above, mainly for connect timed out, usually thrown upstream and downstream when the connection is not upstream
+  enableSocketConnectTimeoutRetry: true
+  # For retry scenarios, for {@link java.util.concurrent.TimeoutException}, whether you need to retry, which is enabled
+  # by default, and this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
+  enableTimeoutExRetry: true

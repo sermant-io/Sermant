@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * 测试JettyClientWrapper
+ * Test JettyClientWrapper
  *
  * @author provenceee
  * @since 2023-05-17
@@ -76,7 +76,9 @@ public class JettyClientWrapperTest {
         conversation = new HttpConversation();
         wrapper = new JettyClientWrapper(client, conversation, URI.create("http://www.domain.com/foo/hello"));
 
-        // 由于new JettyClientWrapper时的host与HttpClient有关,且HttpClient为mock对象,所以需要手动设置一下host
+        // Since the host in the new JettyClientWrapper is related to the HttpClient
+        // and the HttpClient is a mock object,
+        // you need to manually set the host
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_HOST, "www.domain.com");
         ReflectUtils.setFieldValue(wrapper, "originHost", "www.domain.com");
     }
@@ -84,11 +86,11 @@ public class JettyClientWrapperTest {
     @Test
     public void test() throws URISyntaxException {
         CompleteListener listener = new TestCompleteListener();
-        // 测试send方法
+        // Test the send method
         wrapper.send(listener);
         Assert.assertEquals(listener, ReflectUtils.getFieldValue(wrapper, "originCompleteListener").orElse(null));
 
-        // 模拟send方法之后的数据更新
+        // Data updates after simulating the send method
         conversation.getExchanges().add(initHttpExchangeInstance());
         conversation.updateResponseListeners(new TestCompleteListener());
         conversation.updateResponseListeners(listener);
@@ -96,7 +98,7 @@ public class JettyClientWrapperTest {
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_PORT, 8080);
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_PATH, "hello");
 
-        // 测试abort方法
+        // Test the ABOR method
         wrapper.abort(new ConnectException());
         Assert.assertTrue(conversation.getExchanges().isEmpty());
         Assert.assertTrue(conversation.getResponseListeners().isEmpty());
@@ -107,9 +109,9 @@ public class JettyClientWrapperTest {
     }
 
     /**
-     * 获取一个HttpExchange实例对象，以适配Jetty 9.4.53.v20231009支持
+     * Obtain an HttpExchange instance object to be supported by Jetty 9.4.53.v20231009
      *
-     * @return HttpExchange实例对象
+     * @return Http Exchange instance object
      * @throws URISyntaxException
      */
     private HttpExchange initHttpExchangeInstance() throws URISyntaxException {

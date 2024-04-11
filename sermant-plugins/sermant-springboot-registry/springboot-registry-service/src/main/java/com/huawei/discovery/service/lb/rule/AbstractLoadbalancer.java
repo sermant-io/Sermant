@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 抽象层
+ * Abstraction layer
  *
  * @author zhouss
  * @since 2022-09-26
@@ -40,16 +40,16 @@ public abstract class AbstractLoadbalancer implements Loadbalancer {
     }
 
     /**
-     * 选择实例
+     * Select an instance
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @return 选择后的实例
+     * @param serviceName Service name
+     * @param instances List of instances
+     * @return Selected instance
      */
     protected abstract ServiceInstance doChoose(String serviceName, List<ServiceInstance> instances);
 
     /**
-     * 负载均衡类型
+     * The type of load balancer
      *
      * @return lbType
      */

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 
 /**
- * 仅针对4.x版本得http拦截
+ * http interception only for version 4. x
  *
  * @author zhouss
  * @since 2022-10-10

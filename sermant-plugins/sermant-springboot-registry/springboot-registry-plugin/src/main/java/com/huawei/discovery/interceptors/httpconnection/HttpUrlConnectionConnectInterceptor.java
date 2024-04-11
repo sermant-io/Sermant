@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截HttpUrlConnection#connect方法, 检查SocketTimeoutException: connect timed out
+ * Intercept the HttpUrlConnection#connect method and check for SocketTimeoutException: connect timed out
  *
  * @author zhouss
  * @since 2022-10-20
@@ -53,16 +53,14 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 代理缓存, 针对用户使用代理的情况
-     * key: host
-     * value: Proxy
+     * Proxy caching, for cases where a user is using a proxy key: host value: Proxy
      */
     private final Map<String, Proxy> proxyCache;
 
     private final LbConfig lbConfig;
 
     /**
-     * 构造器
+     * Constructor
      */
     public HttpUrlConnectionConnectInterceptor() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
@@ -92,17 +90,17 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         HttpConnectionUtils.save(new HttpConnectionContext(urlInfo, url));
         RequestInterceptorUtils.printRequestLog("HttpURLConnection", urlInfo);
         invokerService.invoke(
-                buildInvokerFunc(context, url, urlInfo),
-                ex -> ex,
-                urlInfo.get(HttpConstants.HTTP_URI_SERVICE))
-                    .ifPresent(obj -> {
-                        if (obj instanceof Exception) {
-                            LOGGER.log(Level.SEVERE, "request is error, uri is " + fullUrl, (Exception) obj);
-                            context.setThrowableOut((Exception) obj);
-                            return;
-                        }
-                        context.skip(obj);
-                    });
+                        buildInvokerFunc(context, url, urlInfo),
+                        ex -> ex,
+                        urlInfo.get(HttpConstants.HTTP_URI_SERVICE))
+                .ifPresent(obj -> {
+                    if (obj instanceof Exception) {
+                        LOGGER.log(Level.SEVERE, "request is error, uri is " + fullUrl, (Exception) obj);
+                        context.setThrowableOut((Exception) obj);
+                        return;
+                    }
+                    context.skip(obj);
+                });
         return context;
     }
 
@@ -134,10 +132,11 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 针对指定代理的场景下, 需将代理的地址替换为实际下游地址, 否则将出现404
+     * In the scenario of specifying a proxy, you need to replace the address of the proxy with the actual downstream
+     * address; otherwise 404 will appear
      *
-     * @param newUrl 实际下游地址
-     * @param context 拦截器上下文
+     * @param newUrl Actual downstream address
+     * @param context Interceptor context
      */
     private void tryResetProxy(URL newUrl, ExecuteContext context) {
         final Optional<Object> instProxy = ReflectUtils.getFieldValue(context.getObject(), "instProxy");
@@ -149,7 +148,7 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
             return;
         }
 
-        // 用户使用了自己的Proxy, 替换解析后的下游地址
+        // The user uses its own proxy to replace the resolved downstream address
         ReflectUtils.setFieldValue(context.getObject(), "instProxy", getProxy(newUrl));
     }
 
@@ -171,7 +170,7 @@ public class HttpUrlConnectionConnectInterceptor extends MarkInterceptor {
         }
         final boolean isConnected = (boolean) connected.get();
         if (isConnected) {
-            // 释放连接
+            // Release the connection
             LOGGER.fine("Release Http url connection when read timed out for retry!");
             ReflectUtils.invokeMethod(target, "disconnect", null, null);
         }
