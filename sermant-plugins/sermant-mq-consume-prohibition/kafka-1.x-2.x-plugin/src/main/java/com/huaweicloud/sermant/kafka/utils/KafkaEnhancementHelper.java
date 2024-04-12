@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
- * Kafka拦截点辅助类
+ * Kafka interception point auxiliary class
  *
  * @author lilai
  * @since 2023-12-05
@@ -53,18 +53,18 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取Kafka拦截点的ClassMatcher
+     * Obtain ClassMatcher for Kafka interception point
      *
-     * @return 返回ClassMatcher
+     * @return Return to ClassMatcher
      */
     public static ClassMatcher getClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_CLASS);
     }
 
     /**
-     * 获取Kafka properties构造方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka properties construction method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getPropertiesConstructorInterceptDeclarers() {
         return InterceptDeclarer.build(getPropertiesConstructorMethodMatcher(),
@@ -72,10 +72,10 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka properties构造方法拦截声明器
+     * Obtain the interception declarer for the Kafka properties construction method with KafkaConsumerHandler
      *
-     * @param handler Kafka消费者处理器
-     * @return 返回拦截声明器
+     * @param handler Kafka Consumer handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getPropertiesConstructorInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getPropertiesConstructorMethodMatcher(),
@@ -83,9 +83,9 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取Kafka map构造方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka map construction method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getMapConstructorInterceptDeclarers() {
         return InterceptDeclarer.build(getMapConstructorMethodMatcher(),
@@ -93,10 +93,10 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka map构造方法拦截声明器
+     * Obtain the interception declarer for the Kafka map construction method with KafkaConsumerHandler
      *
-     * @param handler Kafka消费者处理器
-     * @return 返回拦截声明器
+     * @param handler Kafka Consumer handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getMapConstructorInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getMapConstructorMethodMatcher(),
@@ -104,105 +104,105 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取Kafka subscribe方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka subscribe method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getSubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getSubScribeMethodMatcher(), new KafkaConsumerSubscribeInterceptor());
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka subscribe方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka subscribe method interception point with KafkaConsumerHandler
      *
-     * @param handler 处理器
-     * @return 返回拦截声明器
+     * @param handler handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getSubscribeInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getSubScribeMethodMatcher(), new KafkaConsumerSubscribeInterceptor(handler));
     }
 
     /**
-     * 获取Kafka assign方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka assign method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getAssignInterceptDeclarers() {
         return InterceptDeclarer.build(getAssignMethodMatcher(), new KafkaConsumerAssignInterceptor());
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka assign方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka assign method interception point with KafkaConsumerHandler
      *
-     * @param handler 处理器
-     * @return 返回拦截声明器
+     * @param handler handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getAssignInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getAssignMethodMatcher(), new KafkaConsumerAssignInterceptor(handler));
     }
 
     /**
-     * 获取Kafka unsubscribe方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka unsubscribe method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getUnsubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getUnSubscribeMethodMatcher(), new KafkaConsumerUnSubscribeInterceptor());
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka unsubscribe方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka unsubscribe method interception point with KafkaConsumerHandler
      *
-     * @param handler 处理器
-     * @return 返回拦截声明器
+     * @param handler handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getUnsubscribeInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getUnSubscribeMethodMatcher(), new KafkaConsumerUnSubscribeInterceptor(handler));
     }
 
     /**
-     * 获取Kafka close方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka close method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getCloseInterceptDeclarers() {
         return InterceptDeclarer.build(getCloseMethodMatcher(), new KafkaConsumerCloseInterceptor());
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka close方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka close method interception point with KafkaConsumerHandler
      *
-     * @param handler 处理器
-     * @return 返回拦截声明器
+     * @param handler handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getCloseInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getCloseMethodMatcher(), new KafkaConsumerCloseInterceptor(handler));
     }
 
     /**
-     * 获取Kafka poll方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka poll method interception point
      *
-     * @return 返回拦截声明器
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getPollInterceptDeclarers() {
         return InterceptDeclarer.build(getPollMethodMatcher(), new KafkaConsumerPollInterceptor());
     }
 
     /**
-     * 获取带有KafkaConsumerHandler的Kafka poll方法拦截点的拦截声明器
+     * Obtain the interception declarer for the Kafka poll method interception point with KafkaConsumerHandler
      *
-     * @param handler 处理器
-     * @return 返回拦截声明器
+     * @param handler handler
+     * @return Return interception declarer
      */
     public static InterceptDeclarer getPollInterceptDeclarers(KafkaConsumerHandler handler) {
         return InterceptDeclarer.build(getPollMethodMatcher(), new KafkaConsumerPollInterceptor(handler));
     }
 
     /**
-     * 获取Properties构造方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting properties construction methods
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Properties, Deserializer, Deserializer)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getPropertiesConstructorMethodMatcher() {
         return MethodMatcher.isConstructor().and(MethodMatcher.paramTypesEqual(Properties.class,
@@ -210,10 +210,10 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取Map构造方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting Map construction methods
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getMapConstructorMethodMatcher() {
         return MethodMatcher.isConstructor()
@@ -221,52 +221,52 @@ public class KafkaEnhancementHelper {
     }
 
     /**
-     * 获取subscribe方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting subscribe method
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#subscribe(Pattern, ConsumerRebalanceListener)}
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#subscribe(Collection, ConsumerRebalanceListener)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getSubScribeMethodMatcher() {
         return MethodMatcher.nameEquals("subscribe").and(MethodMatcher.paramCountEquals(SUBSCRIBE_PARAM_COUNT));
     }
 
     /**
-     * 获取assign方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting assign method
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#assign(Collection)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getAssignMethodMatcher() {
         return MethodMatcher.nameEquals("assign");
     }
 
     /**
-     * 获取unsubscribe方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting unsubscribe method
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#unsubscribe()}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getUnSubscribeMethodMatcher() {
         return MethodMatcher.nameEquals("unsubscribe");
     }
 
     /**
-     * 获取Poll方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting Poll method
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#poll(long)}
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#poll(Duration)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getPollMethodMatcher() {
         return MethodMatcher.nameEquals("poll");
     }
 
     /**
-     * 获取Close方法拦截的方法匹配器
+     * Obtain the method matcher for intercepting Close method
      * {@link org.apache.kafka.clients.consumer.KafkaConsumer#close(long, TimeUnit)}
      *
-     * @return 方法匹配器
+     * @return Method matcher
      */
     private static MethodMatcher getCloseMethodMatcher() {
         return MethodMatcher.nameEquals("close").and(MethodMatcher.paramTypesEqual(Long.TYPE, TimeUnit.class));

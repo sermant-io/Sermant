@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * pullConsumer unsubscribe方法拦截器UT
+ * PullConsumer unsubscribe method interceptor UT
  *
  * @author daizhenyu
  * @since 2023-12-25

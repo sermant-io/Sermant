@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 服务可见性配置信息
+ * Service visibility configuration information
  *
  * @since 2022-12-05
  * @author zhp

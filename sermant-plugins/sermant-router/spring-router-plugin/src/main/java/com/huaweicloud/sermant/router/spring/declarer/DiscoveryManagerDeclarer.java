@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * Register plug-in intercept point
+ * Register plugin intercept point
  *
  * @author provenceee
  * @since 2022-10-13

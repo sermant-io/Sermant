@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.handler;
 
 /**
- * Route Processor Chain
+ * Route handler Chain
  *
  * @author lilai
  * @since 2023-02-21
@@ -26,9 +26,9 @@ public class HandlerChain extends AbstractRouteHandler {
     private AbstractRouteHandler tail;
 
     /**
-     * Add a route processor
+     * Add a route handler
      *
-     * @param handler Route Processor
+     * @param handler Route handler
      */
     public void addLastHandler(AbstractRouteHandler handler) {
         if (tail == null) {

@@ -27,7 +27,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * Component装配bean拦截定义
+ * Component assembly bean interception definition
  *
  * @author chengyouling
  * @since 2023-03-27

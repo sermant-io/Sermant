@@ -22,14 +22,14 @@ import com.huaweicloud.sermant.router.common.request.RequestData;
 import java.util.List;
 
 /**
- * Route Processor Interface
+ * Route handler Interface
  *
  * @author lilai
  * @since 2023-02-21
  */
 public interface RouteHandler extends Handler {
     /**
-     * Invoke the route processor chain
+     * Invoke the route handler chain
      *
      * @param targetName Target service name
      * @param instances List of filtered service strengths

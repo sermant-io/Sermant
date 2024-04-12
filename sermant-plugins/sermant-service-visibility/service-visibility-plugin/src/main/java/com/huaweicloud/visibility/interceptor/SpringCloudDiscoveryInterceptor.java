@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SpringCloud注册增强器
+ * SpringCloud registration enhancer
  *
  * @author zhp
  * @since 2022-12-05
@@ -57,10 +57,10 @@ public class SpringCloudDiscoveryInterceptor extends AbstractCollectorIntercepto
     }
 
     /**
-     * 获取服务提供者信息
+     * Get service provider information
      *
-     * @param context 上下文信息
-     * @return 服务提供者信息
+     * @param context Contextual information
+     * @return Service Provider Information
      */
     private static Consanguinity getConsanguinity(ExecuteContext context) {
         Consanguinity consanguinity = new Consanguinity();

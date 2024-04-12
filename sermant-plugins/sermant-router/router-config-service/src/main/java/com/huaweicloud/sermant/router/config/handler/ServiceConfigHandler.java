@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Routing configuration processor (service dimension)
+ * Routing configuration handler (service dimension)
  *
  * @author provenceee
  * @since 2022-08-09

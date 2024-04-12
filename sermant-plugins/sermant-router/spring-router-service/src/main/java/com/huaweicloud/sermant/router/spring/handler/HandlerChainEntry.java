@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * Route Processor Chain Entry
+ * Route handler Chain Entry
  *
  * @author lilai
  * @since 2023-02-21
@@ -50,7 +50,7 @@ public enum HandlerChainEntry {
     }
 
     /**
-     * Invoke the route processor chain
+     * Invoke the route handler chain
      *
      * @param targetName Target service name
      * @param instances List of filtered service strengths

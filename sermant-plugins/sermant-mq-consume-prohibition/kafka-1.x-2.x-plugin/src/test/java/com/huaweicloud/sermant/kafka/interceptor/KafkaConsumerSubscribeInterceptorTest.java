@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 import java.util.HashSet;
 
 /**
- * KafkaConsumerSubscribeInterceptor单元测试
+ * KafkaConsumerSubscribeInterceptor Unit Test
  *
  * @author lilai
  * @since 2023-12-23
@@ -73,7 +73,7 @@ public class KafkaConsumerSubscribeInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test after method
      */
     @Test
     public void testAfter() {

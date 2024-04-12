@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Abstract processor chain
+ * Abstract handler chain
  *
  * @author lilai
  * @since 2023-02-24

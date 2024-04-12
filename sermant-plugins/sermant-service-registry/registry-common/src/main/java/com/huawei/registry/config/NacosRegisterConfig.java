@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * Nacos registration plug-in configuration
+ * Nacos registration plugin configuration
  *
  * @author chengyouling
  * @since 2022-10-20

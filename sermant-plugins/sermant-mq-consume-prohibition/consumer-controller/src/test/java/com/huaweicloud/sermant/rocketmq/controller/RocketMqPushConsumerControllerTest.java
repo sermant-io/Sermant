@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * RocketMqPushConsumerController单元测试
+ * RocketMqPushConsumerController unit test
  *
  * @author daizhenyu
  * @since 2023-12-27
@@ -76,7 +76,7 @@ public class RocketMqPushConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic为空
+     * Consumer subscription topic is empty
      */
     @Test
     public void testDisablePushConsumptionNoTopic() {
@@ -86,7 +86,7 @@ public class RocketMqPushConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic和禁消费的topic存在交集
+     * Consumer subscription topics intersect with prohibited consumption topics
      */
     @Test
     public void testDisablePullConsumptionWithSubTractTopics() {
@@ -107,7 +107,7 @@ public class RocketMqPushConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic和禁消费的topic不存在交集
+     * There is no intersection between consumer subscription topics and prohibited consumption topics
      */
     @Test
     public void testDisablePullConsumptionWithNoSubTractTopics() {

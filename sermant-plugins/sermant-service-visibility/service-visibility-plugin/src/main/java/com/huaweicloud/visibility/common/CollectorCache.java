@@ -26,24 +26,24 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 采集信息缓存类
+ * Collect information caching
  *
  * @author zhp
  * @since 2022-12-02
  */
 public class CollectorCache {
     /**
-     * 契约信息
+     * Contract Information
      */
     public static final Map<String, Contract> CONTRACT_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 血缘关系
+     * Blood relationship
      */
     public static final Map<String, Consanguinity> CONSANGUINITY_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 注册信息
+     * Registration Information
      */
     public static final Map<String, BaseInfo> REGISTRY_MAP = new ConcurrentHashMap<>();
 
@@ -51,9 +51,9 @@ public class CollectorCache {
     }
 
     /**
-     * 保存契约信息
+     * Save contract information
      *
-     * @param contract 契约信息
+     * @param contract Contract Information
      */
     public static void saveContractInfo(Contract contract) {
         if (!CONTRACT_MAP.containsKey(contract.getServiceKey())) {
@@ -68,9 +68,9 @@ public class CollectorCache {
     }
 
     /**
-     * 保存血缘关系信息
+     * Preservation of kinship information
      *
-     * @param consanguinity 血缘关系信息
+     * @param consanguinity Consanguinity information
      */
     public static void saveConsanguinity(Consanguinity consanguinity) {
         if (CONSANGUINITY_MAP.containsKey(consanguinity.getServiceKey())) {

@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.router.spring.service.LoadBalancerService;
 import java.util.List;
 
 /**
- * Register plug-in intercept point
+ * Register plugin intercept point
  *
  * @author provenceee
  * @since 2022-10-08

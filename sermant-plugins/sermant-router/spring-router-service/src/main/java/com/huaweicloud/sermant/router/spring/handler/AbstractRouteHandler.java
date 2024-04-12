@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.common.request.RequestData;
 import java.util.List;
 
 /**
- * Abstract processor chain
+ * Abstract handler chain
  *
  * @author lilai
  * @since 2023-02-21

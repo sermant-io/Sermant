@@ -17,22 +17,22 @@
 package com.huaweicloud.sermant.rocketmq.constant;
 
 /**
- * rocketmq pull消费者订阅方式枚举类
+ * rocketmq pulls the consumer subscription method enumeration class
  *
  * @author daizhenyu
  * @since 2023-12-05
  **/
 public enum SubscriptionType {
     /**
-     * 订阅方式为NONE
+     * The subscription type is NONE
      */
     NONE("NONE"),
     /**
-     * 通过订阅topic进行消费
+     * consume data by subscribing to topics
      */
     SUBSCRIBE("SUBSCRIBE"),
     /**
-     * 通过指定队列进行消费
+     * Consumption through designated queues
      */
     ASSIGN("ASSIGN");
 

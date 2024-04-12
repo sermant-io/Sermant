@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Traffic Configuration Processor (Compatible with 1.0.x Edition)
+ * Traffic Configuration handler (Compatible with 1.0.x Edition)
  *
  * @author provenceee
  * @since 2024-01-11

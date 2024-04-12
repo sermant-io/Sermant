@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * pullconsumer assign方法拦截器UT
+ * PullConsumer assign method interceptor UT
  *
  * @author daizhenyu
  * @since 2023-12-25
@@ -72,14 +72,14 @@ public class RocketMqPullConsumerAssignInterceptorTest extends BasePullConsumerI
         PullConsumerLocalInfoUtils.removeSubscriptionType();
         PullConsumerLocalInfoUtils.removeMessageQueue();
 
-        // wrapper为null messagequeue为null
+        // Wrapper is null, message queue is null
         context = ExecuteContext.forMemberMethod(pullConsumer, null, new Object[]{null},
                 null, null);
         interceptor.after(context);
         Assert.assertEquals(PullConsumerLocalInfoUtils.getSubscriptionType().name(), "NONE");
         PullConsumerLocalInfoUtils.removeSubscriptionType();
 
-        // wrapper不为null
+        // Wrapper is not null
         context = ExecuteContext.forMemberMethod(pullConsumer, null, new Object[]{messageQueues},
                 null, null);
         RocketMqPullConsumerController.cachePullConsumer(pullConsumer);

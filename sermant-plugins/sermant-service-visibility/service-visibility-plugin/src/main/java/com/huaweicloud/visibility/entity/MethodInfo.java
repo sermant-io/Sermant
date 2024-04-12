@@ -20,24 +20,24 @@ package com.huaweicloud.visibility.entity;
 import java.util.List;
 
 /**
- * 方法信息
+ * Methodological information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class MethodInfo {
     /**
-     * 方法名称
+     * The name of the method
      */
     private String name;
 
     /**
-     * 参数集合
+     * Participation set
      */
     private List<ParamInfo> paramInfoList;
 
     /**
-     * 返回值信息
+     * Return value information
      */
     private ParamInfo returnInfo;
 

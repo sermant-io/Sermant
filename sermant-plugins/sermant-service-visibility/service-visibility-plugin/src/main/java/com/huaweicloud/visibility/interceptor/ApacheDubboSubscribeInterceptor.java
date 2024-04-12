@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Dubbo服务发现增强器
+ * Dubbo Service Discovery Enhancer
  *
  * @author zhp
  * @since 2022-12-05
@@ -84,10 +84,10 @@ public class ApacheDubboSubscribeInterceptor extends AbstractCollectorIntercepto
     }
 
     /**
-     * 获取血缘关系信息
+     * Get kinship information
      *
-     * @param urlInvokerMap 服务提供者信息
-     * @param serverinfo 服务信息
+     * @param urlInvokerMap Service Provider Information
+     * @param serverinfo Service Information
      */
     private static void extracted(Map<String, Invoker<?>> urlInvokerMap, ServerInfo serverinfo) {
         Map<String, Consanguinity> consanguinityMap = new HashMap<>();
@@ -118,10 +118,10 @@ public class ApacheDubboSubscribeInterceptor extends AbstractCollectorIntercepto
     }
 
     /**
-     * 血缘关系填充方法
+     * Kinship filling method
      *
-     * @param invokerUrl URL信息
-     * @return 填充之后的血缘关系信息
+     * @param invokerUrl URL information
+     * @return Populated with kinship information
      */
     private static Consanguinity fillConsanguinity(URL invokerUrl) {
         Consanguinity consanguinity = new Consanguinity();

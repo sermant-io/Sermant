@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Tag Configuration Processor (Compatible with 1.0.x Edition)
+ * Tag Configuration handler (Compatible with 1.0.x Edition)
  *
  * @author provenceee
  * @since 2024-01-11

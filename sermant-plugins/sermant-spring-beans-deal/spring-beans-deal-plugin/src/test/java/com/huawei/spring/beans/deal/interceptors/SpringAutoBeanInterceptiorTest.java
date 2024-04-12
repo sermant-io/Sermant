@@ -28,7 +28,7 @@ import org.junit.Test;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 自动装配bean拦截具体实现内容测试
+ * Automatic assembly bean interception to implement content test
  *
  * @author chengyouling
  * @since 2023-03-27

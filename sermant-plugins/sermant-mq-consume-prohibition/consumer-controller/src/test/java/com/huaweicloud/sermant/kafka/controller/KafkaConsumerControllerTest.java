@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * KafkaConsumerController单元测试
+ * KafkaConsumerController unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -55,7 +55,7 @@ public class KafkaConsumerControllerTest {
     }
 
     /**
-     * 测试originalTopics为空的情况
+     * Test the situation where originalTopics is empty
      */
     @Test
     public void testDisableConsumptionWithNoTopic() {
@@ -71,7 +71,7 @@ public class KafkaConsumerControllerTest {
     }
 
     /**
-     * 测试subscribe方式prohibitionTopics为空的情况
+     * Test the situation where the subscribe method and promotionTopics are empty
      */
     @Test
     public void testDisableConsumptionWithNoProhibitionTopics() {
@@ -88,7 +88,7 @@ public class KafkaConsumerControllerTest {
     }
 
     /**
-     * 测试subscribe方式originalTopics减去prohibitionTopics的情况
+     * Test the subtraction of productionTopics from originalTopics in the subscribe method
      */
     @Test
     public void testDisableConsumptionWithSubtractTopics() {
@@ -107,7 +107,7 @@ public class KafkaConsumerControllerTest {
     }
 
     /**
-     * 测试originalTopics和prohibitionTopics的没有交集的情况
+     * Test the absence of intersection between originalTopics and promotionTopics
      */
     @Test
     public void testDisableConsumptionWithoutSameTopics() {
@@ -125,7 +125,7 @@ public class KafkaConsumerControllerTest {
     }
 
     /**
-     * 测试assign方式originalTopics减去prohibitionTopics的情况
+     * Test the assignment method by subtracting promotionTopics from originalTopics
      */
     @Test
     public void testDisableConsumptionByAssign() {

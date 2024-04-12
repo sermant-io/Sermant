@@ -21,21 +21,21 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import com.huaweicloud.visibility.entity.ServerInfo;
 
 /**
- * 信息采集处理服务
+ * Information collection and processing services
  *
  * @author zhp
  * @since 2022-12-05
  */
 public interface CollectorService extends PluginService {
     /**
-     * 采集信息发送
+     * Collect information and send it
      *
-     * @param serverInfo 采集信息
+     * @param serverInfo Collect information
      */
     void sendServerInfo(ServerInfo serverInfo);
 
     /**
-     * 服务重连处理
+     * Service reconnection processing
      */
     void reconnectHandler();
 }

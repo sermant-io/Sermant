@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.config.EventConfig;
 
 /**
- * Routing plug-in event collector
+ * Routing plugin event collector
  *
  * @author lilai
  * @since 2023-03-28
@@ -38,9 +38,9 @@ public class RouterEventCollector extends EventCollector {
     }
 
     /**
-     * Obtain the singleton of the event collector of the routing plug-in
+     * Obtain the singleton of the event collector of the routing plugin
      *
-     * @return Routing plug-in event collector singleton
+     * @return Routing plugin event collector singleton
      */
     public static RouterEventCollector getInstance() {
         if (routerEventCollector == null) {
@@ -57,7 +57,7 @@ public class RouterEventCollector extends EventCollector {
     /**
      * Collect the events when the service granularity rule takes effect
      *
-     * @param rule Rules for routing plug-ins
+     * @param rule Rules for routing plugin
      */
     public void collectServiceRouteRuleEvent(String rule) {
         if (!eventConfig.isEnable()) {
@@ -73,7 +73,7 @@ public class RouterEventCollector extends EventCollector {
     /**
      * Collect events for global granularity rules to take effect
      *
-     * @param rule Rules for routing plug-ins
+     * @param rule Rules for routing plugin
      */
     public void collectGlobalRouteRuleEvent(String rule) {
         if (!eventConfig.isEnable()) {

@@ -1,4 +1,9 @@
 spring.beans.plugin:
-  enabled: false # 是否开启适配
-  excludeAutoConfigurations: "" # 需要从spring容器中剔除的自动装配的bean全路径名称，如com.xxx.xxx，多个用","隔开
-  excludeBeans: "" # 需要从spring容器中剔除的@Component注解装配的bean全路径名称,如com.xxx.xxx，多个用","隔开
+  # Whether to enable adaptation
+  enabled: false
+  # The full-path name of the auto-assembled bean that needs to be culled from the spring container,
+  # such as com.xxx.xxx, multiple separated by ","
+  excludeAutoConfigurations: ""
+  # The full path names of beans assembled with @Component annotations that need to be removed from the spring
+  # container, such as com.xxxx.xxx, multiple separated by ","
+  excludeBeans: ""

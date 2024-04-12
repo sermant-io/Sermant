@@ -117,22 +117,22 @@ public class RouterConstant {
     public static final List<String> MATCH_KIND_LIST = Arrays.asList(FLOW_MATCH_KIND, TAG_MATCH_KIND, LANE_MATCH_KIND);
 
     /**
-     * The order in which traffic is matched in the processor's chain of responsibility
+     * The order in which traffic is matched in the handler's chain of responsibility
      */
     public static final int FLOW_HANDLER_ORDER = 1;
 
     /**
-     * The order in which the tag matches in the processor's chain of responsibility
+     * The order in which the tag matches in the handler's chain of responsibility
      */
     public static final int TAG_HANDLER_ORDER = 2;
 
     /**
-     * swimlane processor order
+     * swimlane handler order
      */
     public static final int LANE_HANDLER_ORDER = 100;
 
     /**
-     * route processor order
+     * route handler order
      */
     public static final int ROUTER_HANDLER_ORDER = 200;
 

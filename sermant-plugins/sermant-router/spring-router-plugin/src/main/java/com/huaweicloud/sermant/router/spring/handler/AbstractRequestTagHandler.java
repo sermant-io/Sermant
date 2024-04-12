@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Web Blocker Processor
+ * Web Blocker handler
  *
  * @author provenceee
  * @since 2023-02-21

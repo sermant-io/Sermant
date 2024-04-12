@@ -30,22 +30,22 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import java.util.Collection;
 
 /**
- * RocketMq pullConsumer指定队列拦截器
+ * RocketMq pullConsumer specifies the queue interceptor
  *
  * @author daizhenyu
  * @since 2023-12-15
  **/
 public class RocketMqPullConsumerAssignInterceptor extends AbstractPullConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPullConsumerAssignInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 处理器
+     * @param handler handler
      */
     public RocketMqPullConsumerAssignInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
@@ -87,7 +87,8 @@ public class RocketMqPullConsumerAssignInterceptor extends AbstractPullConsumerI
             return context;
         }
 
-        // 指定消费的队列后，需根据禁消费的topic配置对消费者开启或禁止消费
+        // After specifying the consumption queue, it is necessary to enable or prohibition of consumption for
+        // consumers, according to the prohibited topic configuration
         disablePullConsumption(wrapper);
         return context;
     }

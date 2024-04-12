@@ -35,7 +35,7 @@ import org.apache.rocketmq.client.impl.factory.MQClientInstance;
 import java.util.Optional;
 
 /**
- * 消费者包装工具类
+ * Consumer packaging tools
  *
  * @author daizhenyu
  * @since 2023-12-14
@@ -45,10 +45,10 @@ public class RocketMqWrapperUtils {
     }
 
     /**
-     * 包装PullConsumer
+     * packaging PullConsumer
      *
      * @param pullConsumer
-     * @return PullConsumer包装类实例
+     * @return PullConsumer packaging class instance
      */
     public static Optional<DefaultLitePullConsumerWrapper> wrapPullConsumer(
             DefaultLitePullConsumer pullConsumer) {
@@ -78,16 +78,17 @@ public class RocketMqWrapperUtils {
     }
 
     /**
-     * 包装PushConsumer
+     * packaging PushConsumer
      *
-     * @param pushConsumer
-     * @return PushConsumer包装类实例
+     * @param pushConsumer pushConsumer instance
+     * @return PushConsumer packaging class instance
      */
     public static Optional<DefaultMqPushConsumerWrapper> wrapPushConsumer(DefaultMQPushConsumer pushConsumer) {
         DefaultMQPushConsumerImpl pushConsumerImpl = pushConsumer.getDefaultMQPushConsumerImpl();
         MQClientInstance mqClientFactory = pushConsumerImpl.getmQClientFactory();
 
-        // 获取消费者相关的defaultMQPushConsumerImpl和mQClientFactory属性值，若属性值为null，不缓存该消费者;
+        // Obtain the defaultMQPushConsumerImpl and mQClientFactory attribute values related to the consumer. If the
+        // attribute value is null, do not cache the consumer
         if (pushConsumerImpl != null && mqClientFactory != null) {
             DefaultMqPushConsumerWrapper wrapper = new DefaultMqPushConsumerWrapper(pushConsumer, pushConsumerImpl,
                     mqClientFactory);
@@ -98,13 +99,13 @@ public class RocketMqWrapperUtils {
     }
 
     /**
-     * 获取pull消费者的assignedMessageQueue属性值
+     * Get the assigned Message Queue attribute value of the pull consumer
      *
-     * @param pullConsumerImpl
-     * @return assignedMessageQueue属性值
+     * @param pullConsumerImpl Implementation class for pulling Consumer
+     * @return assignedMessageQueue property value
      */
     public static Optional<AssignedMessageQueue> getAssignedMessageQueue(DefaultLitePullConsumerImpl pullConsumerImpl) {
-        // 设置插件类加载器的局部类加载器为宿主类加载器
+        // Set the local class loader of the plugin class loader as the host class loader
         ((PluginClassLoader) RocketMqWrapperUtils.class.getClassLoader()).setLocalLoader(
                 pullConsumerImpl.getClass().getClassLoader());
 
@@ -115,7 +116,7 @@ public class RocketMqWrapperUtils {
             return Optional.of((AssignedMessageQueue) assignedMessageQueueOptional.get());
         }
 
-        // 移除插件类加载器的局部类加载器
+        // Remove the local class loader from the plugin class loader
         ((PluginClassLoader) RocketMqWrapperUtils.class.getClassLoader()).removeLocalLoader();
         return Optional.empty();
     }

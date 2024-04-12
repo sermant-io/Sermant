@@ -27,7 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer close方法的拦截器 {@link org.apache.kafka.clients.consumer.KafkaConsumer#close(long, TimeUnit)}
+ * Interceptor for KafkaConsumerClose method
+ * {@link org.apache.kafka.clients.consumer.KafkaConsumer#close(long, TimeUnit)}
  *
  * @author lilai
  * @since 2023-12-14
@@ -38,16 +39,16 @@ public class KafkaConsumerCloseInterceptor extends AbstractInterceptor {
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler subscribe方法拦截点处理器
+     * @param handler The subscribe method intercepts point handler
      */
     public KafkaConsumerCloseInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参构造方法
+     * Non parametric construction method
      */
     public KafkaConsumerCloseInterceptor() {
     }
