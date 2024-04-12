@@ -20,19 +20,19 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
- * 测试监听器子类
+ * Test listener
  *
  * @author tangle
  * @since 2023-09-12
  */
 public class TestListener implements DynamicConfigListener {
     /**
-     * 监听成功标识
+     * Listening success flag
      */
     private boolean isChange = false;
 
     /**
-     * 监听到的配置内容
+     * Listened configuration content
      */
     private String content;
 

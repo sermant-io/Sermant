@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Agent参数解析器
+ * Agent arguments resolver
  *
  * @author luanwenfei
  * @since 2023-09-23
@@ -30,11 +30,11 @@ public class AgentArgsResolver {
     }
 
     /**
-     * 解析Agent参数，以","分割参数，以"="分割KEY和VALUE
+     * Parse Agent arguments, split arguments with ",", and KEY and VALUE with "="
      *
-     * @param agentArgs Agent参数字符串
-     * @return 参数解析结果
-     * @throws IllegalArgumentException Agent参数不可用
+     * @param agentArgs Agent arguments string
+     * @return Resolve result
+     * @throws IllegalArgumentException Agent arguments are unavailable
      */
     public static Map<String, Object> resolveAgentArgs(String agentArgs) {
         final Map<String, Object> argsMap = new HashMap<>();

@@ -58,25 +58,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 动态配置服务，nacos实现
+ * Dynamic configuration service, Nacos implementation
  *
  * @author tangle
  * @since 2023-08-17
  */
 public class NacosDynamicConfigService extends DynamicConfigService {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * http的协议头
+     * HTTP protocol
      */
     private static final String HTTP_PROTOCOL = "http://";
 
-    /**
-     * http请求获取所有配置项相关参数名
-     */
     private static final String KEY_ACCESS_TOKEN = "accessToken";
 
     private static final String KEY_TOKEN_TTL = "tokenTtl";
@@ -90,24 +87,24 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     private static final String KEY_SERVER = "server";
 
     /**
-     * NacosListener的类型名称
+     * NacosListener type
      */
     private static final String TYPE_GROUP = "GROUP";
 
     private static final String TYPE_KEY = "KEY";
 
     /**
-     * 定时更新监听器的间隔时间
+     * Update interval for listener
      */
     private static final long UPDATE_TIME_INTERVAL = 3000L;
 
     /**
-     * nacos的http请求安全认证token的刷新窗口
+     * Nacos refresh window for http request security authentication token
      */
     private static final long TOKEN_REFRESH_WINDOW = 3000L;
 
     /**
-     * 定时更新监听器的线程池
+     * The thread pool for updating listeners periodically
      */
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
@@ -118,22 +115,22 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     private final List<NacosListener> listeners;
 
     /**
-     * nacos的http请求安全认证token上次获取时间
+     * Last refresh time of http request security authentication token of Nacos
      */
     private long lastRefreshTime;
 
     /**
-     * nacos的http请求安全认证token的ttl
+     * Ttl of http request security authentication token of Nacos
      */
     private long tokenTtl;
 
     /**
-     * nacos的http请求安全认证token
+     * Http request security authentication token of Nacos
      */
     private String lastToken;
 
     /**
-     * 构造函数：编译正则表达式、初始化List
+     * Constructor: Compile the regular expression and initialize the List
      */
     public NacosDynamicConfigService() {
         listeners = new ArrayList<>();
@@ -308,12 +305,12 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 获取监听器
+     * Get listener
      *
-     * @param key 配置名称
-     * @param validGroup 配置所在组（已合法化名称）
-     * @param type 监听器类型
-     * @return 监听器列表
+     * @param key configuration key
+     * @param validGroup valid configuration group
+     * @param type listener type
+     * @return listener list
      */
     private List<NacosListener> getListener(String key, String validGroup, String type) {
         List<NacosListener> list = new ArrayList<>();
@@ -328,12 +325,12 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 实例化监听器
+     * Instantiate listener
      *
-     * @param key 配置名称
-     * @param validGroup 配置所在组（已合法化名称）
-     * @param listener 动态配置监听器
-     * @return nacos监听器
+     * @param key configuration key
+     * @param validGroup valid configuration group
+     * @param listener dynamic configuration listener
+     * @return Nacos listener
      */
     private Listener instantiateListener(String key, String validGroup, DynamicConfigListener listener) {
         return new Listener() {
@@ -352,23 +349,23 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             }
 
             /**
-             * 获取监听事件
+             * Get listener event
              *
-             * @param key 配置名称
-             * @param validGroup 配置所在组（已合法化名称）
-             * @param content 配置内容
-             * @return 监听事件
+             * @param key configuration key
+             * @param validGroup valid configuration group
+             * @param content configuration content
+             * @return DynamicConfigEvent
              */
             private DynamicConfigEvent listenerEvent(String key, String validGroup, String content) {
                 if (content == null) {
-                    // 移除
+                    // remove
                     isCreateOrModify = false;
                     return DynamicConfigEvent.deleteEvent(key, validGroup, null);
                 } else if (isCreateOrModify) {
-                    // 修改
+                    // modify
                     return DynamicConfigEvent.modifyEvent(key, validGroup, content);
                 } else {
-                    // 增加
+                    // create
                     isCreateOrModify = true;
                     return DynamicConfigEvent.createEvent(key, validGroup, content);
                 }
@@ -377,10 +374,10 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 获取组内所有监听器
+     * Get all listeners in the group
      *
-     * @param validGroup 配置所在组（已合法化名称）
-     * @return nacos监听器列表
+     * @param validGroup valid configuration group
+     * @return Nacos listener list
      */
     private List<NacosListener> getGroupListener(String validGroup) {
         List<NacosListener> list = new ArrayList<>();
@@ -394,7 +391,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 定时更新组监听器
+     * Update group listeners periodically
      */
     private void updateConfigListener() {
         Map<String, List<String>> groupKeys = getGroupKeys();
@@ -427,9 +424,9 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 获取nacos所有group的所有key
+     * Get all keys for all Macos groups
      *
-     * @return group和其所有的keys组成的Map
+     * @return A Map of the groups and all its keys
      */
     private Map<String, List<String>> getGroupKeys() {
         final String httpResult = doRequest(buildUrl());
@@ -452,7 +449,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 构建nacos查询所有group和key的http请求的url
+     * Build urls for Nacos http request to query all groups and keys
      *
      * @return url
      */
@@ -476,7 +473,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 获取token
+     * Get token
      *
      * @return token
      */
@@ -494,18 +491,18 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * http的get请求
+     * HTTP get request
      *
-     * @param url http请求url
-     * @return 响应体body
+     * @param url HTTP request url
+     * @return response body
      */
     private String doRequest(String url) {
         String result = "";
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectTimeout(CONFIG.getTimeoutValue()) // 连接主机服务超时时间
-                    .setConnectionRequestTimeout(CONFIG.getTimeoutValue()) // 请求超时时间
-                    .setSocketTimeout(CONFIG.getTimeoutValue()) // 数据读取超时时间
+                    .setConnectTimeout(CONFIG.getTimeoutValue()) // Timeout for connecting to the host
+                    .setConnectionRequestTimeout(CONFIG.getTimeoutValue()) // Request timeout
+                    .setSocketTimeout(CONFIG.getTimeoutValue()) // Read timeout
                     .build();
             HttpGet httpGet = new HttpGet(url);
             httpGet.setConfig(requestConfig);
@@ -520,9 +517,9 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 构建token时需要的Properties
+     * Properties required when building a token
      *
-     * @return 获取token请求的配置项
+     * @return Properties
      */
     private Properties getProperties() {
         Properties properties = new Properties();

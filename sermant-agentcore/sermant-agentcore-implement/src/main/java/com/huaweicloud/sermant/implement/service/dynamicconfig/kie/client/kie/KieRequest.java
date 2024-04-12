@@ -19,45 +19,41 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.client.kie;
 import org.apache.http.client.config.RequestConfig;
 
 /**
- * kie请求体
+ * Kie request
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class KieRequest {
     /**
-     * 标签条件
-     * 例如label=version:1.0  查询含标签版本为1.0的kv
+     * Label condition label=version:1.0 -> Queries kv with label version 1.0
      */
     private String labelCondition;
 
     /**
-     * 与kie建立连接等待时间，单位S
-     * 在这段时间会一直等待，如果相关kie有变更则会返回
-     * 官方说明：
-     * "wait until any kv changed. for example wait=5s, server will not response until 5 seconds,
-     * during that time window, if any kv changed, server will return 200 and kv list,
-     * otherwise return 304 and empty body",
+     * Wait time for establishing connection with kie (unit: S) During this time it waits and returns if the relevant
+     * kie changes. OFFICIAL-STATEMENT： "wait until any kv changed. for example wait=5s, server will not response until
+     * 5 seconds, during that time window, if any kv changed, server will return 200 and kv list, otherwise return 304
+     * and empty body".
      *
-     * 建议时间不超过50s,超过50s的将以50s计算
+     * It is recommended that the time not exceed 50 seconds. If the time exceeds 50 seconds, it will be calculated as
+     * 50 seconds
      */
     private String wait;
 
     /**
-     * 请求版本
-     * 若配置中心版本高于当前版本，则会返回新数据
+     * revision If the version of the configuration center is later than the current version, new data is returned
      */
     private String revision;
 
     /**
-     * http请求配置
+     * http request configuration
      */
     private RequestConfig requestConfig;
 
     /**
-     * 匹配标签
-     * true : 精确匹配标签的kv
-     * false : 匹配包含labelCondition的所有kv
+     * accurateMatchLabel true : Precisely match the kv of the label false : Match all kv that contain the label
+     * condition
      */
     private boolean accurateMatchLabel = true;
 
@@ -73,6 +69,12 @@ public class KieRequest {
         return labelCondition;
     }
 
+    /**
+     * set label condition
+     *
+     * @param labelCondition label condition
+     * @return KieRequest
+     */
     public KieRequest setLabelCondition(String labelCondition) {
         this.labelCondition = labelCondition;
         return this;
@@ -90,6 +92,12 @@ public class KieRequest {
         return wait;
     }
 
+    /**
+     * set wait
+     *
+     * @param wait wait time
+     * @return KieRequest
+     */
     public KieRequest setWait(String wait) {
         this.wait = wait;
         return this;
@@ -99,6 +107,12 @@ public class KieRequest {
         return revision;
     }
 
+    /**
+     * set revision
+     *
+     * @param revision revision
+     * @return KieRequest
+     */
     public KieRequest setRevision(String revision) {
         this.revision = revision;
         return this;

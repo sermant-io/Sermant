@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Kie响应单个配置实体
+ * KieConfigEntity for response
  *
  * @author zhouss
  * @since 2021-11-17

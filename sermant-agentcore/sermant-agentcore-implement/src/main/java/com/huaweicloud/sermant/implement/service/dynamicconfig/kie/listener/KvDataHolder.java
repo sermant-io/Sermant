@@ -23,22 +23,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 监听键响应数据 用于对比新旧数据并保留旧数据
+ * Listen to response data of key，used to compare old and new data and retain old data
  *
  * @author zhouss
  * @since 2021-11-18
  */
 public class KvDataHolder {
     /**
-     * 当前数据
+     * Current data
      */
     private Map<String, String> currentData;
 
     /**
-     * 分析最新的数据
+     * Analyze the latest data
      *
-     * @param isFirst 是否为首次通知
-     * @param response 最新数据
+     * @param isFirst Whether it is the first notification
+     * @param response Latest data
      * @return EventDataHolder
      */
     public EventDataHolder analyzeLatestData(KieResponse response, boolean isFirst) {
@@ -55,19 +55,19 @@ public class KvDataHolder {
                 for (Map.Entry<String, String> entry : latestData.entrySet()) {
                     final String value = currentData.get(entry.getKey());
                     if (value == null) {
-                        // 增加的键
+                        // Added key
                         eventDataHolder.added.put(entry.getKey(), entry.getValue());
                     } else {
-                        // 如果存在该键，则比对值是否相等
+                        // If the key exists, then compare the value
                         if (!value.equals(entry.getValue())) {
-                            // 修改
+                            // modify
                             eventDataHolder.modified.put(entry.getKey(), entry.getValue());
                         }
                     }
                     temp.remove(entry.getKey());
                 }
 
-                // temp留下的键即为删除的
+                // The keys left by temp are deleted
                 eventDataHolder.deleted.putAll(temp);
             }
         } else {
@@ -107,33 +107,33 @@ public class KvDataHolder {
     }
 
     /**
-     * 数据变更
+     * Changed data
      *
      * @since 2021-11-18
      */
     public static class EventDataHolder {
         /**
-         * 版本号
+         * version
          */
         private final long version;
 
         /**
-         * 最新的全量数据
+         * The latest full data
          */
         private final Map<String, String> latestData;
 
         /**
-         * 修改的key
+         * modified key
          */
         private Map<String, String> modified;
 
         /**
-         * 删除的key
+         * deleted key
          */
         private Map<String, String> deleted;
 
         /**
-         * 新增key
+         * added key
          */
         private Map<String, String> added;
 
@@ -141,7 +141,7 @@ public class KvDataHolder {
          * Constructor.
          *
          * @param version version
-         * @param latestData 最新全量数据
+         * @param latestData Latest full data
          */
         public EventDataHolder(long version, Map<String, String> latestData) {
             modified = new HashMap<String, String>();
@@ -180,7 +180,7 @@ public class KvDataHolder {
         }
 
         /**
-         * 通过操作不为空判断是否有行为变化
+         * whether the behavior changes
          *
          * @return boolean
          */

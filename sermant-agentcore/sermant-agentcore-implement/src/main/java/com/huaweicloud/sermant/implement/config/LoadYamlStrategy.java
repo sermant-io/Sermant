@@ -26,7 +26,6 @@ import com.huaweicloud.sermant.core.config.utils.ConfigValueUtil;
 
 import com.alibaba.fastjson.util.IOUtils;
 
-
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.ConstructorException;
@@ -47,10 +46,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * yaml格式文件的加载策略
- * <p>yaml格式转换对于数组、List和Map中涉及的复杂对象，不支持{@link ConfigFieldKey}修正字段名
- * <p>yaml格式转换对于数组、List和Map中的字符串，不支持{@code ${}}转换，字符串和复杂类型支持
- * <p>yaml格式转换仅在字符串做{@code ${}}转换时使用入参，不支持使用入参直接设置字段值
+ * Loading strategy for yaml files
+ * <p>yaml format transformations do not support {@link ConfigFieldKey} modifying field names for complex objects
+ * involved in arrays, lists, and maps
+ * <p>yaml format transformations do not support {@code ${}} conversion for strings in arrays, lists, and maps
+ * <p>yaml format conversion uses input parameters only when the string is converted to {@code ${}}. It does not
+ * support the use of input parameters to set field values directly
  *
  * @author HapThorin
  * @version 1.0.0
@@ -58,7 +59,7 @@ import java.util.logging.Logger;
  */
 public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -76,17 +77,17 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     };
 
     /**
-     * Yaml对象
+     * Yaml object
      */
     private final Yaml yaml;
 
     /**
-     * 启动参数
+     * argsMap
      */
     private Map<String, Object> argsMap;
 
     /**
-     * 构造函数
+     * Constructor
      */
     public LoadYamlStrategy() {
         Representer representer = new Representer(new DumperOptions());
@@ -134,10 +135,10 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     /**
-     * 读取文件内容
+     * Read file contents
      *
-     * @param config 配置文件
-     * @return 配置信息
+     * @param config Configuration file
+     * @return Configuration information
      */
     private Map<?, ?> readConfig(File config) {
         BufferedReader reader = null;
@@ -155,11 +156,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     /**
-     * 修正键，如果属性被{@link ConfigFieldKey}修饰，则将{@link ConfigFieldKey#value()}转化为属性值
+     * Modify key, if the filed is modified by {@link ConfigFieldKey}, converts {@link ConfigFieldKey#value()} to the
+     * filed value
      *
-     * @param typeMap 类对应的配置信息
-     * @param cls 类Class
-     * @return 类的字段map
+     * @param typeMap Class configuration information
+     * @param cls Class
+     * @return Field map of the class
      */
     private Map fixEntry(Map typeMap, Class<?> cls) {
         if (cls == Object.class || Map.class.isAssignableFrom(cls)) {
@@ -201,13 +203,13 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     /**
-     * 修正值中形如"${}"的部分
+     * Fix values in the form of "${}"
      *
-     * @param field 类的字段名
-     * @param configKey 配置键
-     * @param typeMap 父Map
-     * @param subTypeVal 当前值
-     * @return 修正后的值
+     * @param field field
+     * @param configKey config key
+     * @param typeMap parent map
+     * @param subTypeVal current value
+     * @return fixed value
      */
     private Object fixValStr(Field field, String configKey, Map typeMap, Object subTypeVal) {
         final ConfigValueUtil.FixedValueProvider provider = new ConfigValueUtil.FixedValueProvider() {

@@ -23,8 +23,8 @@ import com.huaweicloud.sermant.core.service.tracing.api.InjectService;
 import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
 import com.huaweicloud.sermant.core.service.tracing.common.TracingRequest;
 import com.huaweicloud.sermant.core.utils.TracingUtils;
-
 import com.huaweicloud.sermant.implement.service.send.netty.NettyGatewayClient;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,7 +69,7 @@ public class TracingServiceImplTest {
     InjectService<Map<String, String>> injectService;
 
     /**
-     * 初始化
+     * Initialization
      */
     @Before
     public void setUp() {
@@ -77,24 +77,23 @@ public class TracingServiceImplTest {
         header.put(PARENT_SPAN_ID, "");
         header.put(SPAN_ID_PREFIX, "");
 
-        // 实现提取接口
+        // implement extraction interface
         extractService = (tracingRequest, carrier) -> {
             tracingRequest.setTraceId(carrier.get(TRACE_ID));
             tracingRequest.setParentSpanId(carrier.get(PARENT_SPAN_ID));
             tracingRequest.setSpanIdPrefix(carrier.get(SPAN_ID_PREFIX));
         };
 
-        // 实现注入接口
+        // implement injection interface
         injectService = (spanEvent, carrier) -> {
             carrier.put(TRACE_ID, spanEvent.getTraceId());
             carrier.put(PARENT_SPAN_ID, spanEvent.getSpanId());
             carrier.put(SPAN_ID_PREFIX, spanEvent.getNextSpanIdPrefix());
         };
-
     }
 
     /**
-     * 普通span场景测试
+     * Normal span scene test
      */
     @Test
     public void onNormalSpanStart() {
@@ -138,7 +137,7 @@ public class TracingServiceImplTest {
     }
 
     /**
-     * Provider场景span测试
+     * Provider scenario span test
      */
     @Test
     public void onProviderSpanStart() {
@@ -186,7 +185,7 @@ public class TracingServiceImplTest {
     }
 
     /**
-     * consumer场景span测试
+     * Consumer scenario span test
      */
     @Test
     public void onConsumerSpanStart() {
@@ -224,7 +223,7 @@ public class TracingServiceImplTest {
     }
 
     /**
-     * span中出现错误场景测试
+     * Error scenario test occurred in span
      */
     @Test
     public void onSpanError() {

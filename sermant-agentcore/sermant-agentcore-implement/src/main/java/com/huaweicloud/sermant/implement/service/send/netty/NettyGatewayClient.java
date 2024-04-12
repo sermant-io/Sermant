@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 基于Netty Client的网关发送服务
+ * Gateway sending service based on netty client
  *
  * @since 2022-03-26
  */

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper;
 
 /**
- * zookeeper连接异常
+ * ZooKeeper connection exception
  *
  * @author zhp
  * @since 2023-09-12
@@ -26,9 +26,9 @@ public class ZooKeeperConnectionException extends RuntimeException {
     private static final long serialVersionUID = 5111014183835362572L;
 
     /**
-     * zookeeper连接异常
+     * ZooKeeper connection exception
      *
-     * @param exceptionMessage 异常信息
+     * @param exceptionMessage connection message
      */
     public ZooKeeperConnectionException(String exceptionMessage) {
         super(exceptionMessage);

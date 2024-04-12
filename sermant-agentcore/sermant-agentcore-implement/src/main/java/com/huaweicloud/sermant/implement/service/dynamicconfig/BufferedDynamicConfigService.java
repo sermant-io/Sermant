@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 动态配置服务包装类，根据静态配置判断应该使用何种实现
+ * DynamicConfigService wrapper. Determine which implementation should be used based on the static configuration
  *
  * @author HapThorin
  * @version 1.0.0
@@ -34,15 +34,15 @@ import java.util.Optional;
  */
 public class BufferedDynamicConfigService extends DynamicConfigService {
     /**
-     * 动态配置服务实际实现对象
+     * DynamicConfigService object
      */
     private final DynamicConfigService service;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public BufferedDynamicConfigService() {
-        // 根据统一配置设定的类型，初始化不同的实现
+        // Different implementations are initialized depending on the configuration
         switch (CONFIG.getServiceType()) {
             case KIE:
                 service = new KieDynamicConfigService();

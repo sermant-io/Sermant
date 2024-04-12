@@ -23,7 +23,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * 日志工具类
+ * Log tool class
  *
  * @author luanwenfei
  * @since 2023-07-20
@@ -51,7 +51,7 @@ public class LoggerUtils {
     }
 
     /**
-     * 获取基础日志
+     * Get logger
      *
      * @return Logger
      */

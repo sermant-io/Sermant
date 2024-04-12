@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 动态配置服务，zookeeper实现
+ * Dynamic configuration service, ZooKeeper implementation
  *
  * @author HapThorin
  * @version 1.0.0
@@ -39,17 +39,17 @@ import java.util.logging.Logger;
  */
 public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * zk路径分隔符
+     * ZK path separator
      */
     private static final char ZK_PATH_SEPARATOR = ZooKeeperBufferedClient.ZK_PATH_SEPARATOR;
 
     /**
-     * zookeeper的包装客户端
+     * ZooKeeper buffered client
      */
     private ZooKeeperBufferedClient zkClient;
 
@@ -69,33 +69,33 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     }
 
     /**
-     * 获取zk路径，补充缺少的斜杠
+     * Get the ZK path and fills in the missing "/"
      *
-     * @param keyOrGroup key或group
-     * @return zk路径
+     * @param keyOrGroup key or group
+     * @return ZK path
      */
     private String toPath(String keyOrGroup) {
         return keyOrGroup.charAt(0) == ZK_PATH_SEPARATOR ? keyOrGroup : ZK_PATH_SEPARATOR + keyOrGroup;
     }
 
     /**
-     * 获取zk路径，补充缺少的斜杠
+     * Get the ZK path and fills in the missing "/"
      *
-     * @param key   键
-     * @param group 组
-     * @return zk路径
+     * @param key key
+     * @param group group
+     * @return ZK path
      */
     private String toPath(String key, String group) {
         return toPath(group) + toPath(key);
     }
 
     /**
-     * 将zk事件转换为动态配置事件
+     * Convert ZK events to dynamic configuration events
      *
-     * @param key          配置键
-     * @param group        分组
-     * @param watchedEvent zk事件
-     * @return 动态配置事件
+     * @param key configuration key
+     * @param group configuration group
+     * @param watchedEvent ZK event
+     * @return Dynamic configuration event
      */
     private DynamicConfigEvent transEvent(String key, String group, WatchedEvent watchedEvent) {
         switch (watchedEvent.getType()) {

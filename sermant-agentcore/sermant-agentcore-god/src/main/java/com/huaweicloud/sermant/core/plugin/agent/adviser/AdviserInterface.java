@@ -19,28 +19,28 @@ package com.huaweicloud.sermant.core.plugin.agent.adviser;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 转换器接口
+ * Adviser interface
  *
  * @author luanwenfei
  * @since 2023-04-11
  */
 public interface AdviserInterface {
     /**
-     * 调用方法的前置触发点
+     * The preceding trigger point of method
      *
-     * @param context 执行上下文
-     * @param adviceKey 被增强类名
-     * @return 执行上下文
+     * @param context execute Context
+     * @param adviceKey enhanced class name
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     ExecuteContext onMethodEnter(ExecuteContext context, String adviceKey) throws Throwable;
 
     /**
-     * 调用方法的后置触发点
+     * The post trigger point of method
      *
-     * @param context 执行上下文
-     * @param adviceKey 被增强类名
-     * @return 执行上下文
+     * @param context execute Context
+     * @param adviceKey enhanced class name
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     ExecuteContext onMethodExit(ExecuteContext context, String adviceKey) throws Throwable;

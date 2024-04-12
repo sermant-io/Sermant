@@ -23,36 +23,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * httpclient响应结果
+ * Httpclient response result
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class HttpResult {
     /**
-     * 错误请求响应码
+     * Error request response code
      */
     public static final int ERROR_CODE = -1;
 
     /**
-     * 可接受编号
-     * SC_OK : 正常返回
-     * SC_NOT_MODIFIED : 未做任何修改
+     * Acceptable number SC_OK : Normal return, SC_NOT_MODIFIED : No changes were made
      */
     private static final int[] OK_CODES = {HttpStatus.SC_OK, HttpStatus.SC_NOT_MODIFIED};
 
     /**
-     * 响应码
+     * Response code
      */
     private int code;
 
     /**
-     * 响应结果
+     * Response result
      */
     private String result;
 
     private Map<String, Object> responseHeaders;
 
+    /**
+     * Constructor
+     *
+     * @param code Response code
+     * @param result Response result
+     * @param headers Response result
+     */
     public HttpResult(int code, String result, Header[] headers) {
         this.code = code;
         this.result = result;
@@ -65,7 +70,7 @@ public class HttpResult {
     }
 
     /**
-     * 错误响应结果
+     * Error response result
      *
      * @return HttpResult
      */
@@ -74,9 +79,9 @@ public class HttpResult {
     }
 
     /**
-     * 响应是否出错
+     * Response error or not
      *
-     * @return 是否错误响应
+     * @return response result
      */
     public boolean isError() {
         for (int okCode : OK_CODES) {

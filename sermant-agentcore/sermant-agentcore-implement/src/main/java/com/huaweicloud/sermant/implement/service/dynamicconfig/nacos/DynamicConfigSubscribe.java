@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * nacos动态配置订阅类
+ * Nacos dynamic configuration subscription
  *
  * @author tangle
  * @since 2023-08-22
@@ -55,11 +55,11 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
     private NacosDynamicConfigService nacosDynamicConfigService;
 
     /**
-     * 构造函数，初始化信息及编译正则表达式
+     * Constructor, initialize information and compile regular expressions
      *
-     * @param serviceName 服务名称
-     * @param listener 动态配置监听器
-     * @param key 配置名称
+     * @param serviceName service name
+     * @param listener dynamic configuration listener
+     * @param key configuration key
      */
     public DynamicConfigSubscribe(String serviceName, DynamicConfigListener listener, String key) {
         this.serviceName = serviceName;
@@ -73,9 +73,9 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
     }
 
     /**
-     * 订阅多个group的监听
+     * Subscribe to multiple group
      *
-     * @return 是否订阅成功
+     * @return subscribe result
      */
     @Override
     public boolean subscribe() {
@@ -88,9 +88,9 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
     }
 
     /**
-     * 取消订阅多个group的监听
+     * Unsubscribe to multiple group
      *
-     * @return 是否取消订阅成功
+     * @return unsubscribe result
      */
     public boolean unSubscribe() {
         buildGroupSubscribers();
@@ -136,10 +136,10 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
     }
 
     /**
-     * 创建标签组
+     * Create label group
      *
-     * @param labels 标签组
-     * @return labelGroup 例如: app:sc_service:helloService
+     * @param labels label group
+     * @return labelGroup, for example: app:sc_service:helloService
      */
     public static String createLabelGroup(Map<String, String> labels) {
         if (MapUtils.isEmpty(labels)) {
@@ -148,7 +148,7 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
         final StringBuilder group = new StringBuilder();
         final List<String> keys = new ArrayList<>(labels.keySet());
 
-        // 防止相同map因排序不同而导致最后的label不一致
+        // Prevent the same map from having different labels
         Collections.sort(keys);
         for (String key : keys) {
             String value = labels.get(key);

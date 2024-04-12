@@ -28,7 +28,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 /**
- * 插件的执行上下文，封装拦截器运作所需的所有参数
+ * The execution context of the Interceptor, encapsulates all the parameters needed for the interceptor operation
  *
  * @author HapThorin
  * @version 1.0.0
@@ -36,81 +36,81 @@ import java.util.Map;
  */
 public class ExecuteContext {
     /**
-     * 被增强的类
+     * enhanced class
      */
     private final Class<?> rawCls;
 
     /**
-     * 被增强的构造函数，注意：增强方法时为空
+     * Enhanced constructor, null if enhance method
      */
     private final Constructor<?> constructor;
 
     /**
-     * 被增强的方法，注意：增强构造函数时为空
+     * Enhanced method, null if enhance constructor
      */
     private final Method method;
 
     /**
-     * 被增强的对象，注意：
+     * Enhanced object, note:
      * <pre>
-     *     1.增强静态方法时为空
-     *     2.增强构造函数时，前置方法的执行上下文中，该值为空
+     *     1.Null when enhance static methods
+     *     2.In the execution context of the preceding trigger point method, object is null when enhance constructors
      * </pre>
      */
     private Object object;
 
     /**
-     * 被增强的方法入参
+     * arguments of enhanced method
      */
     private Object[] arguments;
 
     /**
-     * 是否跳过被增强方法的主要流程
+     * Whether to skip the main flow of the enhanced method
      */
     private boolean isSkip;
 
     /**
-     * 是否屏蔽方法抛出异常
+     * Whether to change exception thrown by method
      */
     private boolean isChangeThrowable;
 
     /**
-     * 被增强方法调用的结果
+     * The return result of the enhanced method
      */
     private Object result;
 
     /**
-     * 被增强方法调用过程中抛出的异常
+     * The exception thrown during invocation to the enhanced method
      */
     private Throwable throwable;
 
     /**
-     * 抛出给宿主的异常
+     * The exception thrown to the host instance
      */
     private Throwable throwableOut;
 
     /**
-     * 额外的静态属性，贯穿执行上下文过程
+     * Additional static fields throughout the execution context procedure
      */
     private Map<String, Object> extStaticFields;
 
     /**
-     * 额外的成员属性，贯穿执行上下文过程
+     * Additional member fields throughout the execution context procedure
      */
     private Map<String, Object> extMemberFields;
 
     /**
-     * 贯穿调用流程的本地局部属性集
+     * Map of local fields throughout the execution context procedure
      */
     private Map<String, Object> localFields;
 
     /**
-     * 拦截器双向迭代器
+     * Interceptor bidirectional iterator
      */
     private ListIterator<Interceptor> interceptorIterator;
 
     /**
-     * 原生字段集，每次获取的字段都会暂时保存在此
+     * Map of raw fields, where each fetched field is temporarily stored
      */
     private Map<String, Field> rawFields;
 
@@ -124,13 +124,13 @@ public class ExecuteContext {
     }
 
     /**
-     * 创建构造函数的执行上下文
+     * Create execution context for constructor
      *
-     * @param cls 被增强的类
-     * @param constructor 被增强的构造函数
-     * @param arguments 构造函数入参
-     * @param extStaticFields 额外的静态属性集
-     * @return 执行上下文
+     * @param cls The enhanced class
+     * @param constructor The enhanced constructor
+     * @param arguments Constructor input arguments
+     * @param extStaticFields Additional static fields
+     * @return ExecuteContext
      */
     public static ExecuteContext forConstructor(Class<?> cls, Constructor<?> constructor, Object[] arguments,
             Map<String, Object> extStaticFields) {
@@ -138,14 +138,14 @@ public class ExecuteContext {
     }
 
     /**
-     * 创建成员方法的执行上下文
+     * Creates execution context for member method
      *
-     * @param object 被增强的对象
-     * @param method 被增强的方法
-     * @param arguments 方法的入参
-     * @param extStaticFields 额外的静态属性集
-     * @param extMemberFields 额外的成员属性集
-     * @return 执行上下文
+     * @param object Enhanced object
+     * @param method Enhanced method
+     * @param arguments method arguments
+     * @param extStaticFields Additional static fields
+     * @param extMemberFields Additional member fields
+     * @return ExecuteContext
      */
     public static ExecuteContext forMemberMethod(Object object, Method method, Object[] arguments,
             Map<String, Object> extStaticFields, Map<String, Object> extMemberFields) {
@@ -153,13 +153,13 @@ public class ExecuteContext {
     }
 
     /**
-     * 构建静态方法的执行上下文
+     * Creates execution context for static method
      *
-     * @param cls 被增强的类
-     * @param method 被增强的方法
-     * @param arguments 方法的入参
-     * @param extStaticFields 额外的静态属性集
-     * @return 执行上下文
+     * @param cls Enhanced class
+     * @param method Enhanced method
+     * @param arguments method arguments
+     * @param extStaticFields Additional static fields
+     * @return ExecuteContext
      */
     public static ExecuteContext forStaticMethod(Class<?> cls, Method method, Object[] arguments,
             Map<String, Object> extStaticFields) {
@@ -167,11 +167,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 适配增强构造函数时的后置触发点
+     * The post-trigger point when adapting enhanced constructor
      *
-     * @param thisObj 构造的对象
-     * @param thisExtMemberFields 成员属性集
-     * @return 执行上下文
+     * @param thisObj constructed object
+     * @param thisExtMemberFields Member fields
+     * @return ExecuteContext
      */
     public ExecuteContext afterConstructor(Object thisObj, Map<String, Object> thisExtMemberFields) {
         this.object = thisObj;
@@ -180,11 +180,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 适配增强静态方法和成员方法时的后置触发点
+     * The post-trigger point when adapting the enhanced static method and member method
      *
-     * @param methodResult 方法主要流程结果
-     * @param methodThrowable 方法主要流程异常
-     * @return 执行上下文
+     * @param methodResult method result
+     * @param methodThrowable method throwable
+     * @return ExecuteContext
      */
     public ExecuteContext afterMethod(Object methodResult, Throwable methodThrowable) {
         this.result = methodResult;
@@ -250,11 +250,12 @@ public class ExecuteContext {
     }
 
     /**
-     * 检索属性，静态和成员属性都在此检索，仅检索被增强类定义的属性及其公有的属性，超类protected的属性将不会被获取
+     * Both static and member field are retrieved here. Only fields defined by the enhanced class and their public
+     * fields are retrieved. Protected fields of the superclass will not be retrieved
      *
-     * @param fieldName 属性名称
-     * @return 获取的属性
-     * @throws NoSuchFieldException 获取属性异常
+     * @param fieldName field name
+     * @return Field
+     * @throws NoSuchFieldException Get field exception
      */
     private Field searchField(String fieldName) throws NoSuchFieldException {
         Field field;
@@ -270,12 +271,13 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取属性，从{@link #searchField}中检索的属性将被临时存放到{@link #rawFields}中，以供下次获取
-     * <p>仅在一个被增强方法的调用过程中生效
+     * Get field. Fields retrieved from {@link #searchField} are temporarily stored in {@link #rawFields} for next
+     * retrieval
+     * <p>Takes effect only during a call to an enhanced method
      *
-     * @param fieldName 属性名
-     * @return 获取的属性
-     * @throws NoSuchFieldException 获取属性异常
+     * @param fieldName field name
+     * @return Field
+     * @throws NoSuchFieldException Get field exception
      */
     private Field getField(String fieldName) throws NoSuchFieldException {
         Field field;
@@ -294,11 +296,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取静态属性，见{@link #getField}
+     * Get static field，see {@link #getField}
      *
-     * @param fieldName 属性名
-     * @return 获取的属性
-     * @throws NoSuchFieldException 获取属性异常
+     * @param fieldName field name
+     * @return Field
+     * @throws NoSuchFieldException Get field exception
      */
     private Field getStaticField(String fieldName) throws NoSuchFieldException {
         final Field field = getField(fieldName);
@@ -309,11 +311,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取成员属性，见{@link #getField}
+     * Get member field，see {@link #getField}
      *
-     * @param fieldName 属性名
-     * @return 获取的属性
-     * @throws NoSuchFieldException 获取属性异常
+     * @param fieldName field name
+     * @return Field
+     * @throws NoSuchFieldException Get field exception
      */
     private Field getMemberField(String fieldName) throws NoSuchFieldException {
         final Field field = getField(fieldName);
@@ -324,12 +326,12 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置原生静态属性值
+     * Set the rew static field value
      *
-     * @param fieldName 属性名
-     * @param value 属性值
-     * @throws NoSuchFieldException 找不到该属性
-     * @throws IllegalAccessException 属性访问失败
+     * @param fieldName field name
+     * @param value value
+     * @throws NoSuchFieldException The field could not be found
+     * @throws IllegalAccessException Field access failure
      */
     public void setRawStaticFieldValue(String fieldName, Object value)
             throws NoSuchFieldException, IllegalAccessException {
@@ -337,11 +339,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置额外静态属性值
+     * Set additional static field value
      *
-     * @param fieldName 属性名
-     * @param value 属性值
-     * @deprecated 已经过时
+     * @param fieldName field name
+     * @param value field value
+     * @deprecated Deprecated
      */
     @Deprecated
     public void setExtStaticFieldValue(String fieldName, Object value) {
@@ -352,11 +354,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取额外静态属性值
+     * Get additional static field value
      *
-     * @param fieldName 属性名
-     * @return 属性值
-     * @deprecated 已经过时
+     * @param fieldName field name
+     * @return field value
+     * @deprecated Deprecated
      */
     @Deprecated
     public Object getExtStaticFieldValue(String fieldName) {
@@ -364,11 +366,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置额外成员属性值
+     * Set additional member field value
      *
-     * @param fieldName 属性名
-     * @param value 属性值
-     * @deprecated 已经过时
+     * @param fieldName field name
+     * @param value field value
+     * @deprecated Deprecated
      */
     @Deprecated
     public void setExtMemberFieldValue(String fieldName, Object value) {
@@ -379,11 +381,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取额外成员属性值
+     * Get additional member field value
      *
-     * @param fieldName 属性名
-     * @return 属性值
-     * @deprecated 已经过时
+     * @param fieldName field name
+     * @return field value
+     * @deprecated Deprecated
      */
     @Deprecated
     public Object getExtMemberFieldValue(String fieldName) {
@@ -391,10 +393,10 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置静态属性值，原生静态属性不存在时，写入额外静态属性集中
+     * Set static field value. Write additional static field sets if the raw static field does not exist
      *
-     * @param fieldName 属性名
-     * @param value 属性值
+     * @param fieldName field name
+     * @param value value
      */
     public void setStaticFieldValue(String fieldName, Object value) {
         try {
@@ -405,12 +407,12 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取原生静态属性值
+     * Get raw static field value
      *
-     * @param fieldName 属性名
-     * @return 属性值
-     * @throws NoSuchFieldException 找不到该属性
-     * @throws IllegalAccessException 属性访问失败
+     * @param fieldName field name
+     * @return field value
+     * @throws NoSuchFieldException The field could not be found
+     * @throws IllegalAccessException field access failure
      */
     public Object getRawStaticFieldValue(String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
@@ -418,10 +420,10 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取静态属性值，原生静态属性不存在时，从额外静态属性中获取
+     * Get the static field value. If raw static field does not exist, it is obtained from the additional static field
      *
-     * @param fieldName 属性名
-     * @return 属性值
+     * @param fieldName field name
+     * @return field value
      */
     public Object getStaticFieldValue(String fieldName) {
         try {
@@ -432,12 +434,12 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置原生成员属性值
+     * Set the raw member field value
      *
-     * @param fieldName 属性名
-     * @param value 属性值
-     * @throws NoSuchFieldException 找不到该属性
-     * @throws IllegalAccessException 属性访问失败
+     * @param fieldName field name
+     * @param value field value
+     * @throws NoSuchFieldException The field could not be found
+     * @throws IllegalAccessException field access failure
      */
     public void setRawMemberFieldValue(String fieldName, Object value)
             throws NoSuchFieldException, IllegalAccessException {
@@ -445,10 +447,10 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置成员属性值，原生成员属性不存在时，写入额外成员属性集中
+     * Set member field value. Write additional member field sets if the raw member field does not exist
      *
-     * @param fieldName 属性名
-     * @param value 属性值
+     * @param fieldName field name
+     * @param value field value
      * @throws UnsupportedOperationException operation(null) is not supported
      */
     public void setMemberFieldValue(String fieldName, Object value) {
@@ -464,12 +466,12 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取原生成员属性值
+     * Get raw member field value
      *
-     * @param fieldName 属性名
-     * @return 属性值
-     * @throws NoSuchFieldException 找不到该属性
-     * @throws IllegalAccessException 属性访问失败
+     * @param fieldName field name
+     * @return field value
+     * @throws NoSuchFieldException The field could not be found
+     * @throws IllegalAccessException field access failure
      */
     public Object getRawMemberFieldValue(String fieldName)
             throws NoSuchFieldException, IllegalAccessException {
@@ -477,10 +479,10 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取成员属性值，原生成员属性不存在时，从额外成员属性中获取
+     * Get the member field value. If raw member field does not exist, it is obtained from the additional member field
      *
-     * @param fieldName 属性名
-     * @return 属性值
+     * @param fieldName field name
+     * @return field value
      * @throws UnsupportedOperationException operation(null) is not supported
      */
     public Object getMemberFieldValue(String fieldName) {
@@ -496,7 +498,7 @@ public class ExecuteContext {
     }
 
     /**
-     * 设置局部属性值
+     * Set local field value
      *
      * @param fieldName 属性名
      * @param value 属性值
@@ -509,20 +511,21 @@ public class ExecuteContext {
     }
 
     /**
-     * 获取局部属性值
+     * Get local field value
      *
-     * @param fieldName 属性名
-     * @return 属性值
+     * @param fieldName field name
+     * @return field value
      */
     public Object getLocalFieldValue(String fieldName) {
         return localFields == null ? null : localFields.get(fieldName);
     }
 
     /**
-     * 修改入参，注意：该方法不做入参检查，需要使用者确保入参数量和类型是否正确
+     * Change arguments. Note: This method does not do an entry check and requires the user to ensure that the number
+     * and type of input parameters are correct
      *
-     * @param fixedArguments 入参集
-     * @return 执行上下文
+     * @param fixedArguments input arguments
+     * @return ExecuteContext
      */
     public ExecuteContext changeArgs(Object[] fixedArguments) {
         this.arguments = fixedArguments;
@@ -530,10 +533,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 跳过主要流程，并设置最终方法结果，注意，增强构造函数时，不能跳过主要流程
+     * Skip the main execution of method and set the final method result. Note that you cannot skip when enhancing
+     * constructors
      *
-     * @param fixedResult 修正的方法结果
-     * @return 执行上下文
+     * @param fixedResult fixed result
+     * @return ExecuteContext
      * @throws UnsupportedOperationException operation(null) is not supported
      */
     public ExecuteContext skip(Object fixedResult) {
@@ -546,10 +550,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 修改结果，注意，该方法不会校验结果的类型，需要使用者自行判断
+     * Modify the result. Note that this method does not verify the type of the result and requires the user's own
+     * judgment
      *
-     * @param fixedResult 修正的结果
-     * @return 执行上下文
+     * @param fixedResult fixed result
+     * @return ExecuteContext
      * @throws UnsupportedOperationException operation(null) is not supported
      */
     public ExecuteContext changeResult(Object fixedResult) {
@@ -561,10 +566,11 @@ public class ExecuteContext {
     }
 
     /**
-     * 修改方法异常抛出，注意，该方法不会校验结果的类型，需要使用者自行判断
+     * Modify the exception thrown by the method. Note that the method does not verify the type of the result and needs
+     * to be judged by the user
      *
-     * @param fixedThrowable 修正的结果, 修改为null时则方法不抛出异常
-     * @return 执行上下文
+     * @param fixedThrowable fixed throwable. When modified to null, the method does not throw a throwable
+     * @return ExecuteContext
      * @throws UnsupportedOperationException operation(null) is not supported
      */
     public ExecuteContext changeThrowable(Throwable fixedThrowable) {
@@ -578,10 +584,10 @@ public class ExecuteContext {
     }
 
     /**
-     * 给宿主抛出异常
+     * Throw an exception to the host instance
      *
-     * @param throwableOut 抛出给宿主的异常
-     * @return 执行上下文
+     * @param throwableOut An exception thrown to the host instance
+     * @return ExecuteContext
      */
     public ExecuteContext setThrowableOut(Throwable throwableOut) {
         this.throwableOut = throwableOut;

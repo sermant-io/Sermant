@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 转换器调度器
+ * Adviser scheduler
  *
  * @author luanwenfei
  * @since 2023-04-11
@@ -37,7 +37,7 @@ public class AdviserScheduler {
     }
 
     /**
-     * 注册一个 Adviser
+     * register Adviser
      *
      * @param adviser adviser
      */
@@ -46,7 +46,7 @@ public class AdviserScheduler {
     }
 
     /**
-     * 取消注册一个 Adviser
+     * Unregister Adviser
      *
      * @param adviser adviser
      */
@@ -55,17 +55,19 @@ public class AdviserScheduler {
     }
 
     /**
-     * 调度方法入口的Adviser逻辑
+     * The Adviser logic of the method entry
      *
-     * @param context 执行上下文
-     * @param adviceKey advice的关键字，由类和方法描述、advice模板、被增强类的类加载器组成
-     * @return 执行上下文
+     * @param context execute context
+     * @param adviceKey The advice keyword consists of the class and method description, the advice template, and the
+     * classloader for the enhanced class
+     *
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     public static ExecuteContext onMethodEnter(Object context, String adviceKey) throws Throwable {
         ExecuteContext executeContext = (ExecuteContext) context;
 
-        // 多Sermant场景下，method enter 顺序执行
+        // In multi-sermant scenario, method enter is executed in sequence
         for (AdviserInterface currentAdviser : ADVISERS) {
             if (currentAdviser != null) {
                 executeContext = currentAdviser.onMethodEnter(executeContext, adviceKey);
@@ -75,17 +77,19 @@ public class AdviserScheduler {
     }
 
     /**
-     * 调度方法出口的Adviser逻辑
+     * The Adviser logic of the method exit
      *
-     * @param context 执行上下文
-     * @param adviceKey advice的关键字，由类和方法描述、advice模板、被增强类的类加载器组成
-     * @return 执行上下文
+     * @param context execute context
+     * @param adviceKey The advice keyword consists of the class and method description, the advice template, and the
+     * classloader for the enhanced class
+     *
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     public static ExecuteContext onMethodExit(Object context, String adviceKey) throws Throwable {
         ExecuteContext executeContext = (ExecuteContext) context;
 
-        // / 多Sermant场景下，method enter 倒叙执行
+        // In multi-sermant scenario, method exit is executed in reverse order
         for (int i = ADVISERS.size() - 1; i >= 0; i--) {
             AdviserInterface currentAdviser = ADVISERS.get(i);
             if (currentAdviser != null) {
@@ -96,10 +100,10 @@ public class AdviserScheduler {
     }
 
     /**
-     * 对adviceKey加advice锁
+     * Add an advice lock to the adviceKey
      *
-     * @param adviceKey 指明被增强的位置
-     * @return 是否能够获取锁
+     * @param adviceKey Indicate the enhancement location
+     * @return Whether the lock can be acquired
      */
     public static boolean lock(String adviceKey) {
         Boolean adviceLock = ADVICE_LOCKS.get(adviceKey);
@@ -111,9 +115,9 @@ public class AdviserScheduler {
     }
 
     /**
-     * 释放对adviceKey的advice锁
+     * Release the advice lock on the adviceKey
      *
-     * @param adviceKey 指明被增强的位置
+     * @param adviceKey Indicate the enhancement location
      */
     public static void unLock(String adviceKey) {
         ADVICE_LOCKS.put(adviceKey, Boolean.FALSE);

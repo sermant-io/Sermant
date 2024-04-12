@@ -18,6 +18,7 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.zookeeper;
 
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,26 +30,33 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * zookeeper测试类
+ * ZooKeeper Unit Test
  *
  * @author xzc
  * @since 2022-10-08
  */
 public class ZooKeeperBufferedClientTest {
     private static final String ZOOKEEPER_ADDRESS = "127.0.0.1:2181";
+
     private static final int SESSION_TIMEOUT = 30000;
+
     private static final String PARENT_PATH = "/path";
+
     private static final String CHILD_ONE_PATH = "/path/1";
+
     private static final String CHILE_TWO_PATh = "/path/2";
+
     private static final String NODE_CONTENT = "data";
+
     private MockedStatic<ConfigManager> configManagerMockedStatic;
+
     ZooKeeperBufferedClient zooKeeperBufferedClient;
 
     @Before
     public void setUp() {
         configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
         configManagerMockedStatic.when(() -> ConfigManager.getConfig(DynamicConfig.class))
-            .thenReturn(new DynamicConfig());
+                .thenReturn(new DynamicConfig());
         zooKeeperBufferedClient = new ZooKeeperBufferedClient(ZOOKEEPER_ADDRESS, SESSION_TIMEOUT);
     }
 
@@ -99,7 +107,6 @@ public class ZooKeeperBufferedClientTest {
         List<String> result = zooKeeperBufferedClient.listAllNodes(PARENT_PATH);
         Assert.assertEquals(Arrays.<String>asList(CHILD_ONE_PATH, CHILE_TWO_PATh), result);
     }
-
 
     @Test
     public void testRemoveNode() {

@@ -22,19 +22,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 客户端请求地址管理器
+ * Client url manager
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class ClientUrlManager {
     /**
-     * kie的协议头
+     * kie http protocol
      */
     private static final String KIE_PROTOCOL = "http://";
 
     /**
-     * kie的协议头 加密
+     * kie https protocol
      */
     private static final String KIE_PROTOCOL_SSL = "https://";
 
@@ -52,7 +52,7 @@ public class ClientUrlManager {
     }
 
     /**
-     * 客户端请求地址
+     * Client request address
      *
      * @return url
      */
@@ -61,9 +61,9 @@ public class ClientUrlManager {
     }
 
     /**
-     * 解析url 默认多个url使用逗号隔开
+     * Parse url, multiple urls are separated by commas by default
      *
-     * @param serverAddress 服务器地址字符串
+     * @param serverAddress server address
      */
     private void resolveUrls(String serverAddress) {
         if (serverAddress == null || serverAddress.trim().length() == 0) {

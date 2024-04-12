@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.premain.common;
 import java.io.File;
 
 /**
- * 路径声明器，其中定义agent core中各个组成部分的位置
+ * PathDeclarator, which defines the location of the individual components in the agentCore
  *
  * @author HapThorin
  * @version 1.0.0
@@ -30,109 +30,109 @@ public class PathDeclarer {
     }
 
     /**
-     * 获取agent包所在目录
+     * Get the directory where the agent package resides
      *
-     * @return agent包所在目录
+     * @return agent package directory
      */
     public static String getAgentPath() {
         return new File(PathDeclarer.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
     }
 
     /**
-     * 获取核心功能包目录
+     * Get the core package directory
      *
-     * @param agentPath agent路径
-     * @return 核心功能包目录
+     * @param agentPath agent path
+     * @return core package directory
      */
     public static String getCorePath(String agentPath) {
         return agentPath + File.separatorChar + "core";
     }
 
     /**
-     * 获取引导包目录
+     * Get the god package directory
      *
-     * @param agentPath agent路径
-     * @return 引导包目录
+     * @param agentPath agent path
+     * @return god package directory
      */
     public static String getGodLibPath(String agentPath) {
         return agentPath + File.separatorChar + "god";
     }
 
     /**
-     * 获取核心功能实现包目录
+     * Get the core service implementation package directory
      *
-     * @param agentPath agent路径
-     * @return 核心功能实现包目录
+     * @param agentPath agent path
+     * @return core service implementation package directory
      */
     public static String getImplementPath(String agentPath) {
         return agentPath + File.separatorChar + "implement";
     }
 
     /**
-     * 获取公共第三方依赖目录
+     * Get the common third-party dependency directory
      *
-     * @param agentPath agent路径
-     * @return 核心功能实现包目录
+     * @param agentPath agent path
+     * @return common third-party dependency directory
      */
     public static String getCommonLibPath(String agentPath) {
         return agentPath + File.separatorChar + "common";
     }
 
     /**
-     * 获取配置存储目录
+     * Get the plugin package directory
      *
-     * @param agentPath agent路径
-     * @return 配置存储目录
+     * @param agentPath agent path
+     * @return plugin package directory
      */
     public static String getPluginPackagePath(String agentPath) {
         return agentPath + File.separatorChar + "pluginPackage";
     }
 
     /**
-     * 配置文件夹
+     * Get configuration file directory
      *
-     * @param agentPath agent路径
-     * @return 配置文件夹
+     * @param agentPath agent path
+     * @return Configuration file directory
      */
     private static String getConfigDirPath(String agentPath) {
         return agentPath + File.separatorChar + "config";
     }
 
     /**
-     * 获取启动配置路径
+     * Get bootstrap configuration file path
      *
-     * @param agentPath agent路径
-     * @return 启动配置路径
+     * @param agentPath agent path
+     * @return bootstrap configuration file path
      */
     public static String getBootConfigPath(String agentPath) {
         return getConfigDirPath(agentPath) + File.separatorChar + BootConstant.BOOTSTRAP_CONFIG_FILE_NAME;
     }
 
     /**
-     * 获取agent core的统一配置
+     * Get the path of unified configuration of agent core
      *
-     * @param agentPath agent路径
-     * @return agent core的统一配置
+     * @param agentPath agent path
+     * @return the path of unified configuration of agent core
      */
     public static String getConfigPath(String agentPath) {
         return getConfigDirPath(agentPath) + File.separatorChar + BootConstant.CORE_CONFIG_FILE_NAME;
     }
 
     /**
-     * 获取插件设置配置
+     * Get the path of plugin settings configuration
      *
-     * @param agentPath agent路径
-     * @return 插件设置配置
+     * @param agentPath agent path
+     * @return the path of plugin settings configuration
      */
     public static String getPluginSettingPath(String agentPath) {
         return getConfigDirPath(agentPath) + File.separatorChar + BootConstant.PLUGIN_SETTING_FILE_NAME;
     }
 
     /**
-     * 获取logback日志配置
+     * Get the path of logback Log configuration
      *
-     * @param agentPath agent路径
-     * @return logback日志配置
+     * @param agentPath agent path
+     * @return the path of logback Log configuration
      */
     public static String getLogbackSettingPath(String agentPath) {
         return getConfigDirPath(agentPath) + File.separatorChar + BootConstant.LOG_SETTING_FILE_NAME;

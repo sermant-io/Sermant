@@ -53,42 +53,42 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * 网关客户端
+ * NettyClient
  *
  * @author lilai
  * @version 0.0.1
  * @since 2022-03-26
  */
 public class NettyClient {
-    // 运行日志
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 指数退避因子
+     * Backoff factor foe reconnection
      */
     private static final int BACKOFF_FACTOR = 2;
 
     /**
-     * 消息发送间隔
+     * Message sending interval
      */
     private final int sendInternalTime;
 
     /**
-     * 初始重连时间
+     * Initial reconnection time
      */
     private final int initReconnectInternalTime;
 
     /**
-     * 最大重连时间
+     * Maximum reconnection time
      */
     private final int maxReconnectInternalTime;
 
     /**
-     * 比较数
+     * Compare time
      */
     private final int compareTime;
 
-    // 阻塞队列，用于缓存消息，对于非即时消息，减少消息发送的频率，设置值为100条消息
+    // Block queue, used to cache messages, for non-instant messages, reduce the frequency of message sending, set
+    // the capacity to 100 messages
     private final BlockingQueue<Message.ServiceData> queue = new ArrayBlockingQueue<>(100);
 
     private final String ip;
@@ -108,12 +108,12 @@ public class NettyClient {
     private int reconnectInternalTime;
 
     /**
-     * 状态标识：false链接失败 true链接成功。null 未建立链接
+     * Status. False: connection failed, true: connection succeeded, null: no connection
      */
     private Boolean isConnected = null;
 
     /**
-     * 构造函数
+     * Constructor
      *
      * @param serverIp serverIp
      * @param serverPort serverPort
@@ -132,7 +132,7 @@ public class NettyClient {
     }
 
     /**
-     * 优雅关闭Netty
+     * Gracefully close Netty
      */
     public void stop() {
         eventLoopGroup.shutdownGracefully();
@@ -162,7 +162,7 @@ public class NettyClient {
     }
 
     /**
-     * 连接服务器
+     * Connect to server
      */
     public synchronized void doConnect() {
         LOGGER.info("Netty do connect.");
@@ -174,11 +174,12 @@ public class NettyClient {
         }
         ChannelFuture connect = bootstrap.connect(ip, port);
 
-        // 添加连接监听
+        // Add connection listener
         connect.addListener((ChannelFutureListener) channelFuture -> {
             this.connectionAvailable = channelFuture.isSuccess();
 
-            // 如果连接成功，启动发送线程，循环发送消息队列中的内容
+            // If the connection is successful, the sending thread is started and the contents of the message queue
+            // are sent over and over again
             if (this.connectionAvailable) {
                 reconnectInternalTime = initReconnectInternalTime;
                 channel = channelFuture.channel();
@@ -193,13 +194,16 @@ public class NettyClient {
                     }
                 }
             } else {
-                // 判断之前是否已链接 防止链接失败一直发通知，只有链接断开或者首次链接失败才发通知。
+                // Check whether the connection has been connected before, prevent the connection failure to send a
+                // notification, only the connection is disconnected or the first connection fails to send a
+                // notification
                 if ((isConnected == null || isConnected) && NotificationManager.isEnable()) {
                     NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.DISCONNECTED, null));
                     isConnected = false;
                 }
 
-                // 若失败则指数退避重连，初始时间为5秒，最大重连时间为180秒
+                // If the system fails, the system reconnects by backoff way. The initial reconnection time is 5
+                // seconds and the maximum reconnection time is 180 seconds
                 LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
                         reconnectInternalTime));
                 channelFuture.channel().eventLoop()
@@ -214,10 +218,10 @@ public class NettyClient {
     }
 
     /**
-     * 发送数据至服务端
+     * Send data to the server
      *
-     * @param msg 传输数据
-     * @param dataType 数据类型
+     * @param msg message
+     * @param dataType data type
      */
     public void sendData(byte[] msg, Message.ServiceData.DataType dataType) {
         if (msg == null) {
@@ -234,11 +238,11 @@ public class NettyClient {
     }
 
     /**
-     * 发送即时数据到服务端
+     * Send instant time data to the server
      *
-     * @param msg 传输数据
-     * @param dataType 数据类型
-     * @return boolean 发送成功 ｜ 失败
+     * @param msg message
+     * @param dataType data type
+     * @return send result
      */
     public boolean sendInstantData(byte[] msg, Message.ServiceData.DataType dataType) {
         if (!this.connectionAvailable) {

@@ -19,14 +19,14 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.nacos;
 import java.util.regex.Pattern;
 
 /**
- * Nacos配置工具类
+ * Nacos tool class
  *
  * @author tangle
  * @since 2023-08-30
  */
 public class NacosUtils {
     /**
-     * 正则表达式，用于group名称合法化
+     * The regular expression is used to legalize the group name
      */
     public static final String ALLOWED_CHARS = "[a-zA-Z.=&:\\-_/]+";
 
@@ -36,20 +36,22 @@ public class NacosUtils {
     }
 
     /**
-     * 检查group名称是否有效
+     * Check whether the group name is valid
      *
-     * @param group 组名
-     * @return 是：有效；否：无效
+     * @param group group name
+     * @return true: valid; false: invalid
      */
     public static boolean isValidGroupName(String group) {
         return PATTERN.matcher(group).matches();
     }
 
     /**
-     * 重新构建合法的group名称，Nacos的group只支持英文字符和四种特殊符号('.',':','-','_')。此处'.'替换'/'代表父子节点层级；':'替换'='；'&'替换'_'。
+     * Rebuild the valid group name. Nacos's group supports only English characters and four special symbols ('.',
+     * ':','-','_'). Here '.' replaces '/' to represent the parent-child node hierarchy; ':' Replace '='; '&' replaces
+     * '_'.
      *
-     * @param group 组名
-     * @return 合法化的group名称
+     * @param group group name
+     * @return valid group
      */
     public static String reBuildGroup(String group) {
         return group.replace('=', ':').replace('&', '_').replace('/', '.');

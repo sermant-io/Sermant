@@ -19,8 +19,6 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.nacos;
 import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.plugin.config.ServiceMeta;
 import com.huaweicloud.sermant.core.service.ServiceManager;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
-import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import com.huaweicloud.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import com.huaweicloud.sermant.core.utils.AesUtil;
 
@@ -33,24 +31,24 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * Nacos动态配置基础测试
+ * Nacos dynamic configuration basic test
  *
  * @author tangle
  * @since 2023-09-08
  */
 public class NacosBaseTest {
     /**
-     * 请求间隔线程睡眠时间
+     * Request sleep time
      */
     public static final long SLEEP_TIME_MILLIS = 1000L;
 
     /**
-     * Nacos动态配置服务
+     * Nacos dynamic configuration service
      */
     public NacosDynamicConfigService nacosDynamicConfigService;
 
     /**
-     * 配置类
+     * Configuration class
      */
     public final DynamicConfig dynamicConfig = new DynamicConfig();
 
@@ -61,7 +59,7 @@ public class NacosBaseTest {
     public MockedStatic<ServiceManager> serviceManagerMockedStatic;
 
     /**
-     * 初始配置设置
+     * Initial configuration
      */
     @Before
     public void initConfig() {
@@ -102,10 +100,10 @@ public class NacosBaseTest {
     }
 
     /**
-     * 核查监听标识是否置true
+     * Verify that the listener identifier is set to true
      *
-     * @param testListener 测试监听器
-     * @param predictContent 预测监听到的配置内容
+     * @param testListener test listener
+     * @param predictContent predict listened content
      * @throws InterruptedException
      */
     public void checkChangeTrue(TestListener testListener, String predictContent) throws InterruptedException {
@@ -116,10 +114,10 @@ public class NacosBaseTest {
     }
 
     /**
-     * 核查监听标识是否置false
+     * Verify that the listening identifier is set to false
      *
-     * @param testListener 测试监听器
-     * @throws InterruptedException
+     * @param testListener test listener
+     * @throws InterruptedException Interrupt exception
      */
     public void checkChangeFalse(TestListener testListener) throws InterruptedException {
         Thread.sleep(SLEEP_TIME_MILLIS);

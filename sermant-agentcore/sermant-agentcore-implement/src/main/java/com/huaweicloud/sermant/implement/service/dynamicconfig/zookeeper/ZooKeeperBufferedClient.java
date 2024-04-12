@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * {@link ZooKeeper}的包装，封装原生api，提供更易用的api
+ * {@link ZooKeeper} wrapper, which wraps the ZooKeeper native apis and provides easier apis to use
  *
  * @author HapThorin
  * @version 1.0.0
@@ -49,38 +49,39 @@ import java.util.logging.Logger;
  */
 public class ZooKeeperBufferedClient implements Closeable {
     /**
-     * zk路径分隔符
+     * ZK path separator
      */
     public static final char ZK_PATH_SEPARATOR = '/';
 
     /**
-     * zk授权分隔符
+     * ZK authorization separator
      */
     public static final char ZK_AUTH_SEPARATOR = ':';
 
     /**
-     * 动态配置信息
+     * Dynamic configuration information
      */
     private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
 
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String SCHEME = "digest";
 
     /**
-     * zk客户端对象
+     * ZK client
      */
     private ZooKeeper zkClient;
 
     /**
-     * 新建ZooKeeperBufferedClient，初始化zk客户端，并提供过期重连机制
+     * Create a ZooKeeperBufferedClient, initialize the ZK client, and provide an expired reconnection mechanism
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @throws ZooKeeperInitException 依赖动态配置情况下，zookeeper初始化失败，需要中断Sermant
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @throws ZooKeeperInitException In the case of dependent dynamic configuration, if ZK initialization fails then
+     * Sermant needs to be interrupted
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout) {
         zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
@@ -97,13 +98,13 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 新建ZooKeeperBufferedClient，初始化zk客户端，并提供过期重连机制
+     * Create a ZooKeeperBufferedClient, initialize the ZK client, and provide an expired reconnection mechanism
      *
-     * @param connectString 链接地址
-     * @param sessionTimeout 超市时间
-     * @param userName 用户名
-     * @param password 用户密码
-     * @param key 用户密钥
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param userName username
+     * @param password encrypted password
+     * @param key key for encryption
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout, String userName,
             String password, String key) {
@@ -111,7 +112,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
-                // 连接过期重连
+                // The connection expires and reconnects
                 if (event.getState() == Event.KeeperState.Expired) {
                     zkClient = newZkClient(connectString, sessionTimeout, this);
                     waitConnect();
@@ -125,9 +126,9 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 发送zookeeper链接通知
+     * Send zookeeper connection notifications
      *
-     * @param event zookeeper事件信息
+     * @param event zookeeper WatchedEvent
      */
     private static void postZookeeperConnectNotification(WatchedEvent event) {
         if (NotificationManager.isEnable()) {
@@ -140,9 +141,9 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 检验链接情况
+     * Check connection
      *
-     * @throws ZooKeeperInitException zk初始化异常
+     * @throws ZooKeeperInitException zk initialization exception
      */
     private void checkConnect() {
         waitConnect();
@@ -153,12 +154,13 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 链接等待
+     * Wait connection
      */
     private void waitConnect() {
         int tryNum = 0;
 
-        // 阻塞zookeeper连接过程，防止连接状态中导致依赖该服务的插件服务初始化失败
+        // Block the zookeeper connection process to prevent the connection state from causing the plugin service
+        // initialization failure that depends on the service
         while (zkClient.getState() == ZooKeeper.States.CONNECTING && tryNum++ <= CONFIG.getConnectRetryTimes()) {
             try {
                 Thread.sleep(CONFIG.getConnectTimeout());
@@ -169,13 +171,13 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 创建zk客户端
+     * Create ZK client
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @param watcher 默认观察器
-     * @return zk客户端
-     * @throws ZooKeeperInitException zk初始化异常
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param watcher default watcher
+     * @return ZK client
+     * @throws ZooKeeperInitException zk initialization exception
      */
     private ZooKeeper newZkClient(String connectString, int sessionTimeout, Watcher watcher) {
         try {
@@ -186,10 +188,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 获取zk客户端，若客户端断开，则抛出异常
+     * Gets the ZK client and throws an exception if the client is disconnected
      *
-     * @return zk客户端
-     * @throws ZooKeeperConnectionException zk连接异常
+     * @return ZK client
+     * @throws ZooKeeperConnectionException zk initialization exception
      */
     private ZooKeeper getZkClient() {
         final ZooKeeper.States state = zkClient.getState();
@@ -200,10 +202,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 判断节点是否存在
+     * Check whether the node exists
      *
-     * @param path 节点路径
-     * @return 节点是否存在
+     * @param path node path
+     * @return whether the node exists
      */
     public boolean ifNodeExist(String path) {
         try {
@@ -214,10 +216,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 查询节点内容
+     * Query node content
      *
-     * @param path 节点路径
-     * @return 节点内容
+     * @param path node path
+     * @return node content
      */
     public String getNode(String path) {
         if (!ifNodeExist(path)) {
@@ -236,10 +238,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 创建节点的前置节点
+     * Create the parent node of a node
      *
-     * @param path 路径
-     * @return 是否全部创建成功
+     * @param path node path
+     * @return create result
      */
     public boolean createParent(String path) {
         final int separatorIndex = path.lastIndexOf(ZK_PATH_SEPARATOR);
@@ -262,11 +264,11 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 更新节点内容，不存在时自动创建
+     * Update content of node, which is automatically created when it does not exist
      *
-     * @param path 节点路径
-     * @param data 数据信息
-     * @return 是否更新成功
+     * @param path node path
+     * @param data data
+     * @return update result
      */
     public boolean updateNode(String path, String data) {
         try {
@@ -286,10 +288,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 移除节点
+     * Remove node
      *
-     * @param path 节点路径
-     * @return 是否成功移除节点
+     * @param path node path
+     * @return remove result
      */
     public boolean removeNode(String path) {
         if (!ifNodeExist(path)) {
@@ -304,10 +306,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 查询节点下所有子孙节点的路径集合
+     * Query the path list of all descendant nodes under a node
      *
-     * @param path 节点
-     * @return 子孙节点路径集合
+     * @param path node path
+     * @return path list
      */
     public List<String> listAllNodes(String path) {
         if (!ifNodeExist(path)) {
@@ -329,14 +331,16 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 添加循环的临时数据监听器，该监听器将在触发后重新注册，直到接收到移除监听器事件
+     * Adds a loop watch for temporary data that will re-register after triggering until the listener removal event is
+     * received
      * <p>
-     * 注意，当同一节点的其他监听器被精准移除时，由于该监听器无法鉴别到底是不是移除自身，因此会选择放弃循环注册
+     * Note that when other listeners on the same node are precisely removed, the watcher will choose to abandon the
+     * loop registration because it cannot identify whether to remove itself
      *
-     * @param path 节点路径
-     * @param watcher 实际执行的监听器
-     * @param handler 监听器循环注册失败后的异常处理器
-     * @return 是否成功添加循环的临时数据监听器
+     * @param path node path
+     * @param watcher The actual executing watcher
+     * @param handler Exception handler after loop registration failure of watcher
+     * @return add result
      */
     public boolean addDataLoopWatch(String path, Watcher watcher, BreakHandler handler) {
         final Watcher bufferedWatcher = new Watcher() {
@@ -363,11 +367,11 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 添加持久递归的监听器，对子孙节点有效
+     * Adds persistent recursive listeners, effective for descendant nodes
      *
-     * @param path 节点路径
-     * @param watcher 监听器
-     * @return 是否成功添加持久递归的监听器
+     * @param path node path
+     * @param watcher node watcher
+     * @return add result
      */
     public boolean addPersistentRecursiveWatches(String path, Watcher watcher) {
         try {
@@ -379,10 +383,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 移除数据监听器
+     * Remove data watchers
      *
-     * @param path 节点路径
-     * @return 是否成功移除数据监听器
+     * @param path node path
+     * @return remove result
      */
     public boolean removeDataWatches(String path) {
         try {
@@ -394,10 +398,10 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 移除节点下所有的监听器，含子孙节点
+     * Remove all watchers from nodes, including children nodes
      *
-     * @param path 节点路径
-     * @return 是否成功添加
+     * @param path node path
+     * @return remove result
      */
     public boolean removeAllWatches(String path) {
         try {
@@ -418,13 +422,13 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * 循环跳出处理器，目前用于处理循环注册被意外终止的情况
+     * The loop out processor is currently used to handle cases where loop registration is accidentally terminated
      *
      * @since 2021-12-15
      */
     public interface BreakHandler {
         /**
-         * 处理循环注册被意外终止的情况
+         * Handles cases where circular registration is accidentally terminated
          *
          * @param throwable throwable
          */
