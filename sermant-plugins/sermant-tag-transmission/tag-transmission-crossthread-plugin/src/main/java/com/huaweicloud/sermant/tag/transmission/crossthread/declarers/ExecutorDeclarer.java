@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.tag.transmission.config.CrossThreadConfig;
 import com.huaweicloud.sermant.tag.transmission.crossthread.interceptors.ExecutorInterceptor;
 
 /**
- * 拦截Executor
+ * ExecutorDeclarer
  *
  * @author provenceee
  * @since 2023-04-20

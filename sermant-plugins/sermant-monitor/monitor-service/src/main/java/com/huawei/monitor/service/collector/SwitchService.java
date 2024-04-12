@@ -21,7 +21,7 @@ import com.huawei.monitor.util.MonitorUtil;
 import io.prometheus.client.Collector;
 
 /**
- * 服务开关
+ * service switch
  *
  * @author zhp
  * @version 1.0.0
@@ -29,7 +29,7 @@ import io.prometheus.client.Collector;
  */
 public abstract class SwitchService extends Collector {
     /**
-     * 默认启动服务方法
+     * default method of starting the service
      */
     public void start() {
         if (MonitorUtil.startMonitor()) {

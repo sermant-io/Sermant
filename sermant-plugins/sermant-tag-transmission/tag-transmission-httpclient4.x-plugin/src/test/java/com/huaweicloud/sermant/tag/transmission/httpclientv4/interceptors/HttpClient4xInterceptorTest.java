@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试HttpClient4xInterceptor
+ * HttpClient4xInterceptorTest
  *
  * @author tangle
  * @since 2023-07-27
@@ -54,14 +54,14 @@ public class HttpClient4xInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 无Headers无Tags
+        // no headers no tags
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
         Assert.assertEquals(0, ((HttpRequest) resContext.getArguments()[1]).getAllHeaders().length);
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers无Tags
+        // there are headers but no tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
@@ -70,7 +70,7 @@ public class HttpClient4xInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals("defaultValue", ((HttpRequest) resContext.getArguments()[1]).getAllHeaders()[0].getValue());
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers有Tags
+        // there are headers and tags
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
@@ -82,7 +82,7 @@ public class HttpClient4xInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals("testId001", ((HttpRequest) resContext.getArguments()[1]).getHeaders("id")[0].getValue());
         TrafficUtils.removeTrafficTag();
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);

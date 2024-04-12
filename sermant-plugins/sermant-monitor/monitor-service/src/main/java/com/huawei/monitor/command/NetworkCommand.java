@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * 网络命令处理接口
+ * network command processing interface
  *
  * @author zhp
  * @version 1.0.0
@@ -45,10 +45,10 @@ public class NetworkCommand extends CommonMonitorCommand<NetworkCommand.NetDev> 
     }
 
     /**
-     * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.NetWorkParser parse方法
+     * Refactor the pan-PaaS class: com.huawei.sermant.plugin.collection.util.NetWorkParser parse method
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after analysis
      */
     @Override
     public NetDev parseResult(InputStream inputStream) {
@@ -77,39 +77,39 @@ public class NetworkCommand extends CommonMonitorCommand<NetworkCommand.NetDev> 
     }
 
     /**
-     * 网络信息
+     * network information
      *
      * @since 2022-08-02
      */
     public static class NetDev {
 
         /**
-         * 读速度
+         * read rate
          */
         private final long receiveBytes;
 
         /**
-         * 读包速度
+         * read packet speed
          */
         private final long receivePackets;
 
         /**
-         * 写速度
+         * writing speed
          */
         private final long transmitBytes;
 
         /**
-         * 写包速度
+         * write packet speed
          */
         private final long transmitPackets;
 
         /**
-         * 构造方法
+         * constructor
          *
-         * @param receiveBytes 读速度
-         * @param receivePackets 写速度
-         * @param transmitBytes 读包速度
-         * @param transmitPackets 写包速度
+         * @param receiveBytes read rate
+         * @param receivePackets writing speed
+         * @param transmitBytes packet reading speed
+         * @param transmitPackets packet write speed
          */
         public NetDev(long receiveBytes, long receivePackets, long transmitBytes, long transmitPackets) {
             this.receiveBytes = receiveBytes;

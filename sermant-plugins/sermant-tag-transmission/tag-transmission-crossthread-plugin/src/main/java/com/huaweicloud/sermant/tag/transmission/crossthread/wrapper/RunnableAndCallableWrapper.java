@@ -21,21 +21,21 @@ import com.huaweicloud.sermant.tag.transmission.crossthread.pojo.TrafficMessage;
 import java.util.concurrent.Callable;
 
 /**
- * Runnable&Callable包装类，例如reactor.core.scheduler.WorkerTask
+ * Runnable&Callable Wrapper，such as reactor.core.scheduler.WorkerTask
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2023-04-21
  */
 public class RunnableAndCallableWrapper<T> extends AbstractThreadWrapper<T> implements Runnable, Callable<T> {
     /**
-     * 构造方法
+     * constructor
      *
      * @param runnable runnable
      * @param callable callable
-     * @param trafficMessage 流量信息
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
-     * @param executorName 线程池名称
+     * @param trafficMessage traffic message
+     * @param cannotTransmit Whether thread variables need to be deleted before executing the method
+     * @param executorName thread pool name
      */
     public RunnableAndCallableWrapper(Runnable runnable, Callable<T> callable, TrafficMessage trafficMessage,
             boolean cannotTransmit, String executorName) {

@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.httpclientv4.interceptors.HttpClient4xInterceptor;
 
 /**
- * HttpClient 流量标签透传的增强声明, 仅针对4.x版本
+ * HttpClient enhanced declarer of traffic label transparent transmission, for 4.x version only
  *
  * @author lilai
  * @since 2023-07-17
  */
 public class HttpClient4xDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名 http请求
+     * the fully qualified name of the enhanced class
      */
     private static final String[] ENHANCE_CLASSES = {
             "org.apache.http.impl.client.AbstractHttpClient",

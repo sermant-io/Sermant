@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.Optional;
 
 /**
- * 监控上报类型
+ * monitoring report type
  *
  * @author zhp
  * @since 2022-10-08
@@ -37,12 +37,12 @@ public enum MetricReportType {
     PROMETHEUS("PROMETHEUS", new PrometheusMetricServiceImpl());
 
     /**
-     * 类型
+     * type
      */
     private final String type;
 
     /**
-     * 服务
+     * service
      */
     private final MetricReportService metricReportService;
 
@@ -60,10 +60,10 @@ public enum MetricReportType {
     }
 
     /**
-     * 根据上报类型获取上报实例
+     * Obtain the report instance based on the report type
      *
-     * @param type 上报类型
-     * @return 上报类型枚举
+     * @param type report type
+     * @return report type enumeration
      */
     public static Optional<MetricReportType> getMetricReportType(String type) {
         if (StringUtils.isEmpty(type)) {

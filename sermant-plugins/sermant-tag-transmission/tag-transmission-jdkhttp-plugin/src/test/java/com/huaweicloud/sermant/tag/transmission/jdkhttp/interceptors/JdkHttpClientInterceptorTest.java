@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JdkHttpClientInterceptor 单元测试
+ * JdkHttpClientInterceptorTest
  *
  * @author lilai
  * @since 2023-08-17
@@ -54,14 +54,14 @@ public class JdkHttpClientInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 无Headers无Tags
+        // no headers no tags
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
         Assert.assertEquals(0, ((MessageHeader) resContext.getArguments()[0]).getHeaders().size());
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers无Tags
+        // there are headers but no tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
@@ -71,7 +71,7 @@ public class JdkHttpClientInterceptorTest extends BaseInterceptorTest {
                 ((MessageHeader) resContext.getArguments()[0]).getHeaders().get("defaultKey").get(0));
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers有Tags
+        // there are headers and tags
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
@@ -84,7 +84,7 @@ public class JdkHttpClientInterceptorTest extends BaseInterceptorTest {
                 ((MessageHeader) resContext.getArguments()[0]).getHeaders().get("id").get(0));
         TrafficUtils.removeTrafficTag();
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         tagTransmissionConfig.setEnabled(false);
         addHeaders.clear();
         context = buildContext(addHeaders);

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * ServiceCombRpcConsumerInterceptor类的单元测试
+ * ServiceCombRpcConsumerInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-30
@@ -46,17 +46,17 @@ public class ServiceCombRpcConsumerInterceptorTest extends AbstractRpcIntercepto
 
     @Test
     public void testServiceCombRpcConsumer() {
-        // 定义参数
+        // defineParameter
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, String> expectContext;
 
-        // Invocation为null
+        // Invocation is null
         context = buildContext(null);
         returnContext = interceptor.before(context);
         Assert.assertNull(returnContext.getArguments()[0]);
 
-        // 流量标签透传开关关闭
+        // The traffic tag transmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new Invocation());
         returnContext = interceptor.before(context);
@@ -64,20 +64,20 @@ public class ServiceCombRpcConsumerInterceptorTest extends AbstractRpcIntercepto
         Assert.assertEquals(((Invocation) returnContext.getArguments()[0]).getContext(), expectContext);
         tagTransmissionConfig.setEnabled(true);
 
-        // TrafficTag包含完整的tag信息
+        // the TrafficTag contains complete tag information
         context = buildContext(new Invocation());
         returnContext = interceptor.before(context);
         expectContext = buildExpectContext("id", "name");
         Assert.assertEquals(((Invocation) returnContext.getArguments()[0]).getContext(), expectContext);
 
-        // TrafficTag只有部分tag信息
+        // TrafficTag indicates only partial tag information
         context = buildContext(new Invocation());
         TrafficUtils.getTrafficTag().getTag().remove("id");
         returnContext = interceptor.before(context);
         expectContext = buildExpectContext("name");
         Assert.assertEquals(((Invocation) returnContext.getArguments()[0]).getContext(), expectContext);
 
-        // TrafficTa没有tag信息
+        // there is no tag information in TrafficTag
         TrafficUtils.removeTrafficTag();
         context = buildContext(new Invocation());
         returnContext = interceptor.before(context);

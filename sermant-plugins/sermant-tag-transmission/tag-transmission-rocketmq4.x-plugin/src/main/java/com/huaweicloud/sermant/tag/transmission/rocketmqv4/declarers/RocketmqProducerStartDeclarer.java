@@ -23,15 +23,12 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.rocketmqv4.interceptors.RocketmqProducerStartInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者启动时增强声明，支持RocketMQ4.x
+ * RocketMQ enhanced declarer of producer startup for traffic tag transparent transmission, supports RocketMQ4.x
  *
  * @author lilai
  * @since 2023-09-16
  */
 public class RocketmqProducerStartDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.producer.MQProducer";
 
     private static final String METHOD_NAME = "start";

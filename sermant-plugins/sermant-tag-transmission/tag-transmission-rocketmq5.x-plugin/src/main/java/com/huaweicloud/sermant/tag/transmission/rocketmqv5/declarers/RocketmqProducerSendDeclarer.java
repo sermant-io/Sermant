@@ -23,15 +23,12 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.rocketmqv5.interceptor.RocketmqProducerSendInterceptor;
 
 /**
- * RocketMQ流量标签透传的生产者增强声明，支持RocketMQ5.0+
+ * RocketMQ enhanced producer declarer for Traffic Label Transmission，supports RocketMQ5.x
  *
  * @author tangle
  * @since 2023-07-20
  */
 public class RocketmqProducerSendDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS = "org.apache.rocketmq.client.impl.MQClientAPIImpl";
 
     private static final String METHOD_NAME = "sendMessage";

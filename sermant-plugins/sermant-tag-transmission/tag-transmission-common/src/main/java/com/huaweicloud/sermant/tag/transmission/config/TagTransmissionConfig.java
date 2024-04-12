@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量标签透传配置
+ * Traffic tag transparent transmission configuration
  *
  * @author lilai
  * @since 2023-07-17
@@ -33,12 +33,12 @@ import java.util.Map;
 @ConfigTypeKey("tag.transmission.config")
 public class TagTransmissionConfig implements PluginConfig {
     /**
-     * 是否开启适配
+     * whether to enable
      */
     private boolean enabled;
 
     /**
-     * 需要透传的标签的key的规则
+     * Rules for the key of the tag that needs to be transmitted
      */
     private Map<String, List<String>> matchRule = new HashMap<>();
 
@@ -51,7 +51,7 @@ public class TagTransmissionConfig implements PluginConfig {
     }
 
     /**
-     * 流量标签透传规则是否有效开启
+     * Whether the traffic tag transparent transmission rule is effect
      *
      * @return boolean
      */

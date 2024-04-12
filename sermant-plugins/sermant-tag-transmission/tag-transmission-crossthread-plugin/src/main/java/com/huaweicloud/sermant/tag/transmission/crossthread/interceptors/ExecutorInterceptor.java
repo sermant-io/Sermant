@@ -20,14 +20,14 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.tag.transmission.config.CrossThreadConfig;
 
 /**
- * 拦截Executor
+ * ExecutorInterceptor
  *
  * @author provenceee
  * @since 2023-04-21
  */
 public class ExecutorInterceptor extends AbstractExecutorInterceptor {
     /**
-     * 构造方法
+     * construction method
      */
     public ExecutorInterceptor() {
         super(!PluginConfigManager.getPluginConfig(CrossThreadConfig.class).isEnabledThreadPool());

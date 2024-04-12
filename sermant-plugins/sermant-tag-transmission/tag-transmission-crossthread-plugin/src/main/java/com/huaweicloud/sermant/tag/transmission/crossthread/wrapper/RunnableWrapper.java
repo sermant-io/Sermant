@@ -20,20 +20,20 @@ import com.huaweicloud.sermant.tag.transmission.crossthread.enumeration.SpecialE
 import com.huaweicloud.sermant.tag.transmission.crossthread.pojo.TrafficMessage;
 
 /**
- * Runnable包装类
+ * Runnable Wrapper
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2023-04-21
  */
 public class RunnableWrapper<T> extends AbstractThreadWrapper<T> implements Runnable {
     /**
-     * 构造方法
+     * constructor
      *
      * @param runnable runnable
-     * @param trafficMessage 流量信息
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
-     * @param executorName 线程池名称
+     * @param trafficMessage traffic message
+     * @param cannotTransmit Whether thread variables need to be deleted before executing the method
+     * @param executorName thread pool name
      */
     public RunnableWrapper(Runnable runnable, TrafficMessage trafficMessage, boolean cannotTransmit,
             String executorName) {
@@ -42,7 +42,9 @@ public class RunnableWrapper<T> extends AbstractThreadWrapper<T> implements Runn
 
     @Override
     protected void before(Object obj) {
-        // 处理特殊线程池，以下两类线程池会在调用对应线程池执行方法的线程中依次执行线程池队列中的任务，不需要重新设置流量标签
+        // To handle special thread pools, the following two types of thread pools will sequentially execute tasks in
+        // the thread pool queue in the thread that calls the corresponding thread pool execution method, without
+        // resetting the traffic tag.
         switch (SpecialExecutor.getSpecialExecutorByName(this.executorName)) {
             case THREAD_LESS_EXECUTOR:
             case SYNCHRONIZATION_CONTEXT:
@@ -54,7 +56,9 @@ public class RunnableWrapper<T> extends AbstractThreadWrapper<T> implements Runn
 
     @Override
     protected void after() {
-        // 处理特殊线程池，以下两类线程池会在调用对应线程池执行方法的线程中依次执行线程池队列中的任务，防止误删流量标签
+        // To handle special thread pools, the following two types of thread pools will sequentially execute tasks in
+        // the thread pool queue in the thread that calls the corresponding thread pool execution method to prevent
+        // accidental deletion of traffic tags.
         switch (SpecialExecutor.getSpecialExecutorByName(this.executorName)) {
             case THREAD_LESS_EXECUTOR:
             case SYNCHRONIZATION_CONTEXT:

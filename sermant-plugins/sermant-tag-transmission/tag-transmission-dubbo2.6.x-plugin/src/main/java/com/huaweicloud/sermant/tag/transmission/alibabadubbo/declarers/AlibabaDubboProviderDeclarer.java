@@ -23,15 +23,13 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.alibabadubbo.interceptors.AlibabaDubboProviderInterceptor;
 
 /**
- * dubbo流量标签透传的provider端增强声明，支持alibaba dubbo2.6.x版本
+ * Enhanced Declarer on the provider side of dubbo traffic tag transparent transmission,
+ * supporting alibaba dubbo version 2.6.x
  *
  * @author daizhenyu
  * @since 2023-08-02
  **/
 public class AlibabaDubboProviderDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS = "com.alibaba.dubbo.monitor.support.MonitorFilter";
 
     private static final String METHOD_NAME = "invoke";

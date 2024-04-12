@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * AlibabaDubboConsumerInterceptor类的单元测试
+ * AlibabaDubboConsumerInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-09
@@ -47,37 +47,37 @@ public class AlibabaDubboConsumerInterceptorTest extends AbstractRpcInterceptorT
 
     @Test
     public void testAlibabaDubboConsumer() {
-        // 定义参数
+        // defineParameter
         ExecuteContext context;
         ExecuteContext returnContext;
         Map<String, String> expectAttachments;
 
-        // RpcInvocation为null
+        // RpcInvocation is null
         context = buildContext(null);
         returnContext = interceptor.before(context);
         Assert.assertNull(returnContext.getArguments()[1]);
 
-        // 流量标签透传开关关闭
+        // The traffic tag transmission switch is turned off
         tagTransmissionConfig.setEnabled(false);
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
         Assert.assertNull(((RpcInvocation) returnContext.getArguments()[1]).getAttachments());
         tagTransmissionConfig.setEnabled(true);
 
-        // TrafficTag包含完整的流量标签
+        // TrafficTag includes full traffic labels
         expectAttachments = buildExpectAttachments("id", "name");
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
         Assert.assertEquals(expectAttachments, ((RpcInvocation) returnContext.getArguments()[1]).getAttachments());
 
-        // TrafficTag包含部分的流量标签
+        // TrafficTag contains partial traffic labels
         TrafficUtils.getTrafficTag().getTag().remove("id");
         expectAttachments = buildExpectAttachments("name");
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
         Assert.assertEquals(expectAttachments, ((RpcInvocation) returnContext.getArguments()[1]).getAttachments());
 
-        // TrafficTag没有流量标签
+        // TrafficTag no traffic label
         TrafficUtils.removeTrafficTag();
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);

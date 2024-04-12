@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * dubbo流量标签透传consumer端的拦截器，支持dubbo3.x版本
+ * Dubbo traffic tag transparent transmission consumer side interceptor, supports dubbo3.x
  *
  * @author daizhenyu
  * @since 2023-08-12
@@ -40,7 +40,7 @@ public class ApacheDubboConsumerInterceptor extends AbstractClientInterceptor<Rp
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * rpcInvocation参数在invoke方法的参数下标
+     * rpcInvocation parameter subscript
      */
     private static final int ARGUMENT_INDEX = 1;
 
@@ -55,9 +55,9 @@ public class ApacheDubboConsumerInterceptor extends AbstractClientInterceptor<Rp
     }
 
     /**
-     * 向RpcInvocation中添加流量标签
+     * Add traffic tag to RpcInvocation
      *
-     * @param invocation Apache Dubbo 标签传递载体
+     * @param invocation Apache Dubbo traffic tag carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(RpcInvocation invocation) {
@@ -68,7 +68,9 @@ public class ApacheDubboConsumerInterceptor extends AbstractClientInterceptor<Rp
             }
             List<String> values = entry.getValue();
 
-            // provider端在标签值不为null的情况下转为list存储，为null时直接put null，因此在consumer端values为空必定是null
+            // If the tag value is not null on the provider side, it will be converted to list storage. If it is null,
+            // it will be put directly to null. Therefore, if the values on the consumer side are empty,
+            // they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 invocation.setAttachment(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to dubbo.", entry);

@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.okhttpv2.interceptors.OkHttp2xInterceptor;
 
 /**
- * OkHttp 流量标签透传的增强声明, 仅针对2.x版本
+ * OkHttp enhanced declarer of traffic label transparent transmission, for 2.x only
  *
  * @author lilai
  * @since 2023-08-08
  */
 public class OkHttp2xDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASSES = "com.squareup.okhttp.Request$Builder";
 

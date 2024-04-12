@@ -23,15 +23,12 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.rocketmqv4.interceptors.RocketmqConsumerInterceptor;
 
 /**
- * RocketMQ流量标签透传的消费者增强声明，支持RocketMQ4.x
+ * RocketMQ enhanced Consumer declarer for Traffic Label Transmission，supports RocketMQ4.x
  *
  * @author tangle
  * @since 2023-07-19
  */
 public class RocketmqConsumerDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS = "org.apache.rocketmq.common.message.Message";
 
     private static final String METHOD_NAME = "getBody";

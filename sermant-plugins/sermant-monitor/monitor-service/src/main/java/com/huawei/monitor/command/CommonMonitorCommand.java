@@ -29,12 +29,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * 结果解析抽象类
+ * result parsing abstract class
  *
  * @author zhp
  * @version 1.0.0
  * @since 2022-08-02
- * @param <T> 解析结果
+ * @param <T> analysis result
  */
 public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
 
@@ -45,10 +45,10 @@ public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
     private static final String ELLIPSIS = "...";
 
     /**
-     * 对命令执行结果
+     * result of executing the command
      *
-     * @param inputStream 读数据流
-     * @return 命令结果
+     * @param inputStream input stream
+     * @return commandResult
      */
     protected List<String> readLines(InputStream inputStream) {
         try {
@@ -61,9 +61,9 @@ public abstract class CommonMonitorCommand<T> implements MonitorCommand<T> {
     }
 
     /**
-     * 错误前置处理
+     * error preprocessing
      *
-     * @param errorStream 外部进程错误流
+     * @param errorStream external process error stream
      */
     @Override
     public void handleError(InputStream errorStream) {

@@ -27,9 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 执行线程的包装抽象类
+ * the wrapper abstract class of the execution thread
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2023-06-08
  */
@@ -37,7 +37,7 @@ public abstract class AbstractThreadWrapper<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 执行该线程对象的线程池名称
+     * The name of the thread pool that executes the thread object
      */
     protected final String executorName;
 
@@ -52,13 +52,13 @@ public abstract class AbstractThreadWrapper<T> {
     private final boolean cannotTransmit;
 
     /**
-     * 构造方法
+     * constructor
      *
      * @param runnable runnable
      * @param callable callable
-     * @param trafficMessage 流量信息
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
-     * @param executorName 线程名称
+     * @param trafficMessage traffic message
+     * @param cannotTransmit Whether thread variables need to be deleted before executing the method
+     * @param executorName thread name
      */
     public AbstractThreadWrapper(Runnable runnable, Callable<T> callable, TrafficMessage trafficMessage,
             boolean cannotTransmit, String executorName) {
@@ -76,7 +76,7 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     /**
-     * run方法, Runnable的实现类继承该方法
+     * run method, The Runnable implementation class inherits this method
      */
     public void run() {
         try {
@@ -88,10 +88,10 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     /**
-     * call方法，Callable的实现类继承该方法
+     * call method，Callable's implementation class inherits this method
      *
-     * @return callable调用结果
-     * @throws Exception 异常
+     * @return callable call result
+     * @throws Exception exception
      */
     public T call() throws Exception {
         try {
@@ -103,13 +103,15 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     /**
-     * 线程对象执行的前置方法
+     * Pre-method executed by thread object
      *
-     * @param obj 线程对象
+     * @param obj thread object
      */
     protected void before(Object obj) {
         if (cannotTransmit) {
-            // 当开启普通线程透传，不开启线程池透传时，需要在执行方法之前，删除由InheritableThreadLocal透传的数据
+            // When ordinary thread transparent transmission is enabled and thread pool transparent transmission is not
+            // enabled, the data transparently transmitted by InheritableThreadLocal needs to be deleted before
+            // executing the method.
             TrafficUtils.removeTrafficTag();
             TrafficUtils.removeTrafficData();
         }
@@ -128,7 +130,7 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     /**
-     * 线程对象执行的后置方法
+     * Post method executed by thread object
      */
     protected void after() {
         TrafficUtils.removeTrafficTag();

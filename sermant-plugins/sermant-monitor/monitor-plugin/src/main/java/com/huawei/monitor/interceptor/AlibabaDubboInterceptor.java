@@ -30,7 +30,7 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.support.RpcUtils;
 
 /**
- * DUBBO拦截定义
+ * Alibaba DUBBO Interceptor
  *
  * @author zhp
  * @since 2022-11-01
@@ -95,10 +95,10 @@ public class AlibabaDubboInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 判断是否为服务提供者
+     * determine whether it is a service provider
      *
-     * @param invoker 远程调用模型
-     * @return 是否为服务提供者
+     * @param invoker remote call model
+     * @return whether to be a service provider
      */
     private boolean isProvider(Invoker<?> invoker) {
         return !CommonConstant.DUBBO_CONSUMER.equals(invoker.getUrl().getParameter(CommonConstant.DUBBO_SIDE,

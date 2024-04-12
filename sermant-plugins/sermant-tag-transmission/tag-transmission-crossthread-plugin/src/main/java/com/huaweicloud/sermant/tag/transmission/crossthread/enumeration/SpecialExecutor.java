@@ -17,27 +17,30 @@
 package com.huaweicloud.sermant.tag.transmission.crossthread.enumeration;
 
 /**
- * 特殊的线程池枚举类，该类线程池不会使用新线程执行方法
+ * A special thread pool enumeration class that does not use new thread to execute task
  *
  * @author daizhenyu
  * @since 2023-09-04
  **/
 public enum SpecialExecutor {
     /**
-     * grpc的ThreadlessExecutor线程池。
-     * 对于该线程池，主线程会创建子线程提交线程任务，然后主线程执行。
-     * ThreadlessExecutor协调两个线程的任务,形成生产消费的模式
+     * ThreadlessExecutor threadPool of grpc。
+     * For this thread pool, the main thread creates child threads to submit thread tasks,
+     * which are then executed by the main thread.
+     * ThreadlessExecutor coordinates the tasks of two threads to form a production and consumption model
      */
     THREAD_LESS_EXECUTOR("ThreadlessExecutor"),
 
     /**
-     * grpc的SynchronizationContext线程池。
-     * 对于该线程池，并不会使用新的线程执行线程任务，而是在调用该线程池的线程中依次执行线程池队列的任务。
+     * SynchronizationContext threadPool of grpc。
+     * For this thread pool, new threads will not be used to execute thread tasks, but tasks in the thread pool queue
+     * will be executed sequentially in the thread that calls the thread pool.
      */
     SYNCHRONIZATION_CONTEXT("SynchronizationContext"),
 
     /**
-     * 用于getSpecialExecutorByName方法寻找不到合适的线程池枚举对象时返回返回值
+     * Used to return a return value when the getSpecialExecutorByName method cannot find a suitable
+     * thread pool enumeration object.
      */
     OTHER_EXECUTORS("otherExecutors");
 
@@ -52,10 +55,10 @@ public enum SpecialExecutor {
     }
 
     /**
-     * 用于根据线程池名称获取线程池枚举对象
+     * Used to get a thread pool enumeration object based on the thread pool name
      *
-     * @param name 线程池名称
-     * @return SpecialExecutor对象
+     * @param name thread Pool name
+     * @return SpecialExecutor
      */
     public static SpecialExecutor getSpecialExecutorByName(String name) {
         for (SpecialExecutor value : values()) {

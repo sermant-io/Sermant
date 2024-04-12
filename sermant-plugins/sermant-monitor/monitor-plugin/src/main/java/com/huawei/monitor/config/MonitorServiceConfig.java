@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 配置类
+ * configuration class
  *
  * @author zhp
  * @version 1.0.0
@@ -29,37 +29,37 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey(value = "monitor.config")
 public class MonitorServiceConfig implements PluginConfig {
     /**
-     * 服务开关
+     * service switch
      */
     private boolean enableStartService;
 
     /**
-     * 性能监控地址
+     * performance monitoring address
      */
     private String address;
 
     /**
-     * 性能监控端口
+     * performance monitoring port
      */
     private int port;
 
     /**
-     * 上报类型
+     * report type
      */
     private String reportType;
 
     /**
-     * 用户名
+     * user name
      */
     private String userName;
 
     /**
-     * 密码
+     * password
      */
     private String password;
 
     /**
-     * 密钥
+     * secretKey
      */
     private String key;
 

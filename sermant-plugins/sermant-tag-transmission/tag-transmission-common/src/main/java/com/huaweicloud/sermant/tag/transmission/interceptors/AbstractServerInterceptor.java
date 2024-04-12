@@ -25,20 +25,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 服务端拦截器抽象类，获取跨进程的流量标签并在本进程传递，适用于http服务端/rpc服务端/消息队列消费者
+ * The server-side interceptor abstracts class, gets the cross-process traffic tag and transmits it to the local
+ * process，applicable to http client/rpc client/message queue consumer.
  *
- * @param <C> 流量标签载体
+ * @param <C> tag carrier
  * @author lilai
  * @since 2023-07-18
  */
 public abstract class AbstractServerInterceptor<C> extends AbstractInterceptor {
     /**
-     * 流量标签透传配置类
+     * Traffic tag transparent transmission configuration class
      */
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**
-     * 构造器
+     * constructor
      */
     public AbstractServerInterceptor() {
         this.tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
@@ -58,23 +59,23 @@ public abstract class AbstractServerInterceptor<C> extends AbstractInterceptor {
     }
 
     /**
-     * 前置触发点
+     * preTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execute context
+     * @return ExecuteContext
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
 
     /**
-     * 后置触发点
+     * postTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execute context
+     * @return ExecuteContext
      */
     protected abstract ExecuteContext doAfter(ExecuteContext context);
 
     /**
-     * 从载体中解析流量标签
+     * parse the traffic tag from the carrier
      *
      * @param carrier 载体
      * @return 流量标签

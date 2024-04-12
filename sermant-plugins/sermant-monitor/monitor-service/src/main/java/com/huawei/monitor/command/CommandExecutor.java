@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Linux命令执行器
+ * linux command executor
  *
  * @author zhp
  * @version 1.0.0
@@ -51,11 +51,11 @@ public class CommandExecutor {
     }
 
     /**
-     * 命令执行
+     * commandExecution
      *
-     * @param command 命令
-     * @param <T> 结果信息
-     * @return 执行结果
+     * @param command command
+     * @param <T> result information
+     * @return executionResult
      */
     public static <T> Optional<T> execute(final MonitorCommand<T> command) {
         final Process process;
@@ -85,9 +85,9 @@ public class CommandExecutor {
     }
 
     /**
-     * 关闭流
+     * closeStream
      *
-     * @param inputStream 读入流
+     * @param inputStream input stream
      */
     private static void closeStream(InputStream inputStream) {
         try {
@@ -98,24 +98,24 @@ public class CommandExecutor {
     }
 
     /**
-     * 结果解析
+     * result analysis
      *
-     * @param command 命令
-     * @param inputStream 读流
-     * @param <T> 结果信息
-     * @return 执行结果
+     * @param command command
+     * @param inputStream input stream
+     * @param <T> result information
+     * @return executionResult
      */
     private static <T> Future<T> parseResult(final MonitorCommand<T> command, final InputStream inputStream) {
         return POOL.submit(new InputHandleTask<>(command::parseResult, inputStream));
     }
 
     /**
-     * 错误解析
+     * error resolution
      *
-     * @param command 命令
-     * @param errorStream 错误流
-     * @param latch 定时任务
-     * @param <T> 结果
+     * @param command command
+     * @param errorStream error stream
+     * @param latch timed task
+     * @param <T> result
      */
     private static <T> void handleErrorStream(final MonitorCommand<T> command, final InputStream errorStream,
             final CountDownLatch latch) {
@@ -126,9 +126,9 @@ public class CommandExecutor {
     }
 
     /**
-     * 对任务
+     * InputHandleTask
      *
-     * @param <T> 命令解析结果
+     * @param <T> command parsing result
      * @since 2022-08-02
      */
     private static class InputHandleTask<T> implements Callable<T> {
@@ -137,10 +137,10 @@ public class CommandExecutor {
         private final InputStream inputStream;
 
         /**
-         * 构造
+         * construction
          *
-         * @param handler 前置处理
-         * @param inputStream 读入
+         * @param handler preprocessing
+         * @param inputStream input stream
          */
         InputHandleTask(StreamHandler<T> handler, InputStream inputStream) {
             this.handler = handler;
@@ -154,7 +154,7 @@ public class CommandExecutor {
     }
 
     /**
-     * 错误前置任务
+     * error PreTask
      *
      * @since 2022-08-02
      */
@@ -164,10 +164,10 @@ public class CommandExecutor {
         private final InputStream inputStream;
 
         /**
-         * 构造方法
+         * construction
          *
-         * @param handler 前置处理
-         * @param inputStream 流
+         * @param handler preprocessing
+         * @param inputStream input stream
          */
         ErrorHandleTask(VoidStreamHandler handler, InputStream inputStream) {
             this.handler = handler;
@@ -181,9 +181,9 @@ public class CommandExecutor {
     }
 
     /**
-     * Stream 前置处理
+     * Stream preprocessing
      *
-     * @param <R> 解析结果
+     * @param <R> analysis result
      * @since 2022-08-02
      */
     private interface StreamHandler<R> {
@@ -191,15 +191,15 @@ public class CommandExecutor {
     }
 
     /**
-     * 前置处理
+     * preprocessing
      *
      * @since 2022-08-02
      */
     private interface VoidStreamHandler {
         /**
-         * 前置处理
+         * preprocessing
          *
-         * @param inputStream 流
+         * @param inputStream inputStream
          */
         void handle(InputStream inputStream);
     }

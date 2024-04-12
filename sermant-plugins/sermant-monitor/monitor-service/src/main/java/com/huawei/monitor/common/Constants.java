@@ -17,7 +17,7 @@
 package com.huawei.monitor.common;
 
 /**
- * 常量类
+ * constant class
  *
  * @author zhp
  * @version 1.0.0
@@ -26,12 +26,12 @@ package com.huawei.monitor.common;
 public class Constants {
 
     /**
-     * 分隔符
+     * separator
      */
     public static final String REGEX_MULTI_SPACES = "\\s+";
 
     /**
-     * 构造方法
+     * construction method
      */
     private Constants() {
     }

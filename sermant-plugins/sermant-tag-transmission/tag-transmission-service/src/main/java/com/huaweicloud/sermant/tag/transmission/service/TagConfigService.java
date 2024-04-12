@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 流量透传动态配置监听服务
+ * Traffic transparent dynamic configuration of the listening service
  *
  * @author lilai
  * @since 2023-07-20

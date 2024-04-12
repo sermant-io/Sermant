@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.grpc.interceptors.GrpcServerInterceptor;
 
 /**
- * grpc server端declare，支持grpc 1.13+版本
+ * grpc server declare, supporting grpc 1.13+
  *
  * @author daizhenyu
  * @since 2023-08-15

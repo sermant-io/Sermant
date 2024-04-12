@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 /**
- * 监控工具类
+ * monitoring tools
  *
  * @author zhp
  * @version 1.0.0
@@ -35,9 +35,9 @@ public class MonitorUtil {
     }
 
     /**
-     * 获取监控开关
+     * get monitor switch
      *
-     * @return 监控开关
+     * @return monitor switch
      */
     public static boolean startMonitor() {
         return CONFIG.isEnableStartService() && StringUtils.isNoneBlank(CONFIG.getReportType());

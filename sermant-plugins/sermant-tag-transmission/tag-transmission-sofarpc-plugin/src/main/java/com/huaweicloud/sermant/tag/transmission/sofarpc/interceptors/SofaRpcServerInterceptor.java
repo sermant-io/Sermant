@@ -28,12 +28,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * sofarpc server端interceptor，支持5.0+版本
+ * sofarpc server interceptor, supports 5.0+
  *
  * @author daizhenyu
  * @since 2023-08-22
@@ -67,9 +66,9 @@ public class SofaRpcServerInterceptor extends AbstractServerInterceptor<SofaRequ
     }
 
     /**
-     * 从SofaRequest中解析流量标签
+     * Parse traffic tags from SofaRequest
      *
-     * @param sofaRequest sofarpc服务端的流量标签载体
+     * @param sofaRequest sofarpc server-side traffic tag carrier
      * @return 流量标签
      */
     @Override
@@ -78,7 +77,6 @@ public class SofaRpcServerInterceptor extends AbstractServerInterceptor<SofaRequ
         if (sofaRequest.getRequestProps() == null) {
             return tag;
         }
-        Set<String> keySet = sofaRequest.getRequestProps().keySet();
         for (Map.Entry<String, Object> entry : sofaRequest.getRequestProps().entrySet()) {
             String key = entry.getKey();
             if (!TagKeyMatcher.isMatch(key)) {
@@ -91,7 +89,8 @@ public class SofaRpcServerInterceptor extends AbstractServerInterceptor<SofaRequ
                 continue;
             }
 
-            // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
+            // If the value of the traffic label is null, you need to store the local variable to override the
+            // original value to prevent misuse of the old traffic label
             tag.put(key, null);
             LOGGER.log(Level.FINE, "Traffic tag {0} have been extracted from sofarpc.", entry);
         }

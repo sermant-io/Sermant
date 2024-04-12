@@ -23,15 +23,12 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.server.interceptors.HttpServletInterceptor;
 
 /**
- * HttpServlet 流量标签透传的增强声明,支持sevlet3.0+
+ * HttpServlet enhanced declarer of traffic label transparent transmission, supporting sevlet3.0+
  *
  * @author tangle
  * @since 2023-07-18
  */
 public class HttpServletDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS = "javax.servlet.http.HttpServlet";
 
     private static final String METHOD_NAME = "service";

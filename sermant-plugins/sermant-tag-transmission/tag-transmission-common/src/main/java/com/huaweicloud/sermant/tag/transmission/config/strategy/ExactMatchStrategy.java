@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.tag.transmission.config.strategy;
 import java.util.List;
 
 /**
- * 精确匹配策略
+ * exact matching strategy
  *
  * @author lilai
  * @since 2023-09-07

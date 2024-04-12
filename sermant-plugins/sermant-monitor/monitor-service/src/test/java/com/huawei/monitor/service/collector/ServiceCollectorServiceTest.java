@@ -27,7 +27,7 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- * 测试微服务性能指标收集
+ * test microservice performance metric collection
  *
  * @author zhp
  * @since 2022-11-02
