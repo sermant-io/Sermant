@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强SpringApplication类的run方法
+ * Enhance the run method of the SpringApplication class
  *
  * @author chengyouling
  * @since 2022-10-10

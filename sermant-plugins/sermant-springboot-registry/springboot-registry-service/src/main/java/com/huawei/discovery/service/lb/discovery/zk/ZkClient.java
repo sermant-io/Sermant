@@ -31,7 +31,7 @@ import org.apache.curator.retry.RetryForever;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * zookeeper连接客户端
+ * ZooKeeper connects to the client
  *
  * @author zhouss
  * @since 2022-10-25
@@ -44,7 +44,7 @@ public class ZkClient implements PluginService {
     private CuratorFramework client;
 
     /**
-     * 构造
+     * Structure
      */
     public ZkClient() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
@@ -77,7 +77,7 @@ public class ZkClient implements PluginService {
     }
 
     /**
-     * zk连接状态是否ok
+     * Whether the zk connection status is OK
      *
      * @return true: ok
      */
@@ -87,7 +87,7 @@ public class ZkClient implements PluginService {
     }
 
     /**
-     * zookeeper状态监听器
+     * Zookeeper Status Listener
      *
      * @since 2022-10-13
      */

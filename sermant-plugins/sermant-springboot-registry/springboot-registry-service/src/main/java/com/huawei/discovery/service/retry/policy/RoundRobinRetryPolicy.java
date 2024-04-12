@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 默认的重试策略-轮询
+ * The default retry policy is polling
  *
  * @author zhouss
  * @since 2022-09-30

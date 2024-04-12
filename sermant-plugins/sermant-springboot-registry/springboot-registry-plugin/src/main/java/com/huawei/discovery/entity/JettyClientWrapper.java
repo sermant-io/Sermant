@@ -37,7 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * jetty client包装类
+ * jetty client wrapper class
  *
  * @author provenceee
  * @since 2023-05-12
@@ -62,7 +62,7 @@ public class JettyClientWrapper extends HttpRequest {
     private int retryTimes;
 
     /**
-     * 构造方法
+     * Constructor
      *
      * @param client client
      * @param conversation conversation
@@ -103,7 +103,7 @@ public class JettyClientWrapper extends HttpRequest {
                 // ignored
             }
 
-            // 移除原监听器，阻止错误回调
+            // Remove the original listener to prevent error callbacks
             HttpConversation httpConversation = getConversation();
             httpConversation.getResponseListeners().removeIf(listener -> listener == originCompleteListener);
         }
@@ -115,19 +115,19 @@ public class JettyClientWrapper extends HttpRequest {
             return;
         }
 
-        // 清除原请求
+        // Clear the original request
         HttpConversation httpConversation = getConversation();
         httpConversation.getExchanges().clear();
         httpConversation.getResponseListeners().clear();
 
-        // 还原域名等请求信息
+        // Request information such as restoring a domain name
         ReflectUtils.setFieldValue(this, HttpConstants.HTTP_URI_HOST, originHost);
         ReflectUtils.setFieldValue(this, HttpConstants.HTTP_URI_PORT, originPort);
         ReflectUtils.setFieldValue(this, HttpConstants.HTTP_URI_PATH, originPath);
         Optional<Object> aborted = ReflectUtils.getFieldValue(this, ABORTED_FIELD_NAME);
         aborted.ifPresent(obj -> ((AtomicReference<?>) obj).set(null));
 
-        // 重新请求
+        // Re-request
         send(null);
         retryTimes++;
     }

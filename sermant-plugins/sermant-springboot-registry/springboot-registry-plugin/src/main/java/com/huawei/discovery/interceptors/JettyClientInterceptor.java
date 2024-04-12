@@ -32,7 +32,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * webclient jetty拦截点
+ * webclient Jetty interception point
  *
  * @author provenceee
  * @since 2023-04-25

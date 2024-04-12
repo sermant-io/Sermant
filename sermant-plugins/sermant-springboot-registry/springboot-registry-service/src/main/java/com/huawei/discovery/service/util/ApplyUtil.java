@@ -37,7 +37,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
- * 增加异常信息采集
+ * Added exception information collection
  *
  * @author zhp
  * @since 2023-03-08
@@ -49,26 +49,26 @@ public class ApplyUtil {
     }
 
     /**
-     * 服务调用
+     * Service calls
      *
-     * @param invokeFunc 调用方法
-     * @param invokerContext 上下文
-     * @return 调用结果
+     * @param invokeFunc Call the method
+     * @param invokerContext Context
+     * @return Invoke the result
      */
     public static Object apply(Function<InvokerContext, Object> invokeFunc, InvokerContext invokerContext) {
         return invokeFunc.apply(invokerContext);
     }
 
     /**
-     * 服务调用
+     * Service calls
      *
-     * @param invokeFunc 具体调用实现
-     * @param serviceName 服务名称
-     * @param retry 重试信息
-     * @param invokerContext 服务调用上下文
-     * @param retryPolicy 重试策略
-     * @return 调用结果
-     * @throws Exception 调用异常信息
+     * @param invokeFunc The specific call is implemented
+     * @param serviceName The name of the service
+     * @param retry Retry information
+     * @param invokerContext The context in which the service is called
+     * @param retryPolicy Retry policy
+     * @return Invoke the result
+     * @throws Exception Invoke the exception message
      */
     public static Optional<Object> invokeWithEx(Function<InvokerContext, Object> invokeFunc, String serviceName,
             Retry retry, InvokerContext invokerContext, RetryPolicy retryPolicy) throws Exception {
@@ -92,7 +92,7 @@ public class ApplyUtil {
                 consumeTimeMs = System.currentTimeMillis() - start;
                 isInRetry = true;
                 if (invokerContext.getEx() != null) {
-                    // 此处调用器, 若调用出现异常, 则以异常结果返回
+                    // If there is an exception in the call, it will be returned as an exception
                     context.onError(stats, invokerContext.getEx(), consumeTimeMs);
                     invokerContext.setEx(null);
                     continue;
@@ -109,13 +109,13 @@ public class ApplyUtil {
     }
 
     /**
-     * 异常处理
+     * Exception handling
      *
-     * @param ex 异常信息
-     * @param context 上下文信息
-     * @param stats 实例指标数据
-     * @param consumeTimeMs 调用事件
-     * @throws RetryException 服务调用异常信息
+     * @param ex Exception information
+     * @param context Contextual information
+     * @param stats Instance metric data
+     * @param consumeTimeMs Time consumed
+     * @throws RetryException Service call exception information
      */
     private static void handleEx(Exception ex, Retry.RetryContext<Recorder> context, InstanceStats stats,
             long consumeTimeMs) throws RetryException {
@@ -126,13 +126,13 @@ public class ApplyUtil {
     }
 
     /**
-     * 服务选择
+     * Service Selection
      *
-     * @param serviceName 服务名称
-     * @param isInRetry 是否重试
-     * @param policyContext 重试策略的上下文
-     * @param retryPolicy 重试策略
-     * @return 服务选择结果
+     * @param serviceName The name of the service
+     * @param isInRetry Whether to try again
+     * @param policyContext The context of the retry policy
+     * @param retryPolicy Retry policy
+     * @return Service selection results
      */
     private static Optional<ServiceInstance> choose(String serviceName, boolean isInRetry, PolicyContext policyContext,
                                                     RetryPolicy retryPolicy) {

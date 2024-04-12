@@ -35,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 注册
+ * Register
  *
  * @author zhouss
  * @since 2022-09-27

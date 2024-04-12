@@ -19,7 +19,7 @@ package com.huawei.discovery.utils;
 import com.huawei.discovery.entity.HttpAsyncContext;
 
 /**
- * 异步httpclient工具类
+ * Asynchronous httpclient utility class
  *
  * @author zhouss
  * @since 2022-10-11
@@ -31,7 +31,7 @@ public class HttpAsyncUtils {
     }
 
     /**
-     * 创建上下文
+     * Create a context
      *
      * @return HttpAsyncContext
      */
@@ -46,9 +46,9 @@ public class HttpAsyncUtils {
     }
 
     /**
-     * 保存处理器
+     * Save the processor
      *
-     * @param handler 请求处理器
+     * @param handler Request Processor
      */
     public static void saveHandler(Object handler) {
         final HttpAsyncContext httpAsyncContext = getOrCreateContext();
@@ -56,16 +56,16 @@ public class HttpAsyncUtils {
     }
 
     /**
-     * 获取上下文
+     * Get context
      *
-     * @return 上下文
+     * @return Context
      */
     public static HttpAsyncContext getContext() {
         return LOCAL.get();
     }
 
     /**
-     * 清理数据
+     * Clean your data
      */
     public static void remove() {
         LOCAL.remove();

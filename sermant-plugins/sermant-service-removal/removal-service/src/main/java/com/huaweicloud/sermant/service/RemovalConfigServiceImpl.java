@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import com.huaweicloud.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 
 /**
- * 配置监听服务
+ * Configure the listening service
  *
  * @author zhp
  * @since 2023-04-04

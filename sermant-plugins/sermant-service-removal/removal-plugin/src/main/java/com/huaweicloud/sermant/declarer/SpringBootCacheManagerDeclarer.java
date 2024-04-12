@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.interceptor.SpringBootCacheManagerInterceptor;
 
 /**
- * SpringBoot服务调用拦截定义
+ * SpringBoot service call interception definition
  *
  * @author zhp
  * @since 2023-02-17

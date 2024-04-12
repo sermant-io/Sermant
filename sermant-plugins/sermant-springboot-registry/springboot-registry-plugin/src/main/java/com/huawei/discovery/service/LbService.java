@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Optional;
 
 /**
- * 负载均衡
+ * Load balancing
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public interface LbService extends PluginService {
     /**
-     * 选择实例
+     * Select an instance
      *
      * @param serviceName 服务名
      * @return ServiceInstance

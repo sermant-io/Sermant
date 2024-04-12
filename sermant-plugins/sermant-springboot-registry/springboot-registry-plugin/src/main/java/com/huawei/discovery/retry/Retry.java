@@ -20,16 +20,16 @@ import com.huawei.discovery.entity.Recorder;
 import com.huawei.discovery.retry.config.RetryConfig;
 
 /**
- * 重试器
+ * Retryer
  *
  * @author zhouss
  * @since 2022-09-28
  */
 public interface Retry {
     /**
-     * 创建重试器
+     * Create a retryer
      *
-     * @param retryConfig 重试配置
+     * @param retryConfig Retry the configuration
      * @return Retry
      */
     static Retry create(RetryConfig retryConfig) {
@@ -37,65 +37,66 @@ public interface Retry {
     }
 
     /**
-     * 获取重试配置
+     * Get the retry configuration
      *
-     * @return 重试
+     * @return Retry
      */
     RetryConfig config();
 
     /**
-     * 配置名
+     * Configuration Name
      *
-     * @return 重试器名称
+     * @return The name of the retryer
      */
     String name();
 
     /**
-     * 创建上下文
+     * Create a context
      *
-     * @param <T> 记录的类型
-     * @return 重试上下文
+     * @param <T> The type of record
+     * @return Retry the context
      */
     <T extends Recorder> RetryContext<T> context();
 
     /**
-     * 重试上下文
+     * Retry the context
      *
-     * @param <T> 记录器类型
+     * @param <T> Logger type
      * @since 2022-09-28
      */
     interface RetryContext<T extends Recorder> {
         /**
-         * 调用前置
+         * Call preferential
          *
-         * @param serviceInstanceStats 选择调用的实例
+         * @param serviceInstanceStats Select the instance for which you want to call
          */
         void onBefore(T serviceInstanceStats);
 
         /**
-         * 调用结果验证
+         * Invoke result validation
          *
-         * @param serviceInstanceStats 选择调用的实例
-         * @param result 调用结果
-         * @param consumeTimeMs 调用的消耗时间
-         * @return true则表示重试通过或者达到最大重试次数, false则需要进行下一次重试
+         * @param serviceInstanceStats Select the instance for which you want to call
+         * @param result Invoke the result
+         * @param consumeTimeMs The time consumed by the call
+         * @return true indicates that the retry is passed or the maximum number of retries is reached, and false
+         * indicates that the next retry is required
          */
         boolean onResult(T serviceInstanceStats, Object result, long consumeTimeMs);
 
         /**
-         * 调用异常验证
+         * Invoke exception validation
          *
-         * @param serviceInstanceStats 选择调用的实例
-         * @param ex 调用异常时调用
-         * @param consumeTimeMs 调用的消耗时间
-         * @throws RetryException 不满足异常重试条件时抛出异常
+         * @param serviceInstanceStats Select the instance for which you want to call
+         * @param ex Called when an exception is called
+         * @param consumeTimeMs The time consumed by the call
+         * @throws RetryException An exception is thrown when the exception retry condition is not met
          */
         void onError(T serviceInstanceStats, Throwable ex, long consumeTimeMs) throws RetryException;
 
         /**
-         * 最终结束, 在重试彻底结束后调用该方法
+         * Finally, the method is called after the retry is completely over
          *
-         * @param serviceInstanceStats 选择实例
+         * @param serviceInstanceStats Select an instance
          */
         void onComplete(T serviceInstanceStats);
     }

@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 负载均衡
+ * Load balancing
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public interface Loadbalancer {
     /**
-     * 选择实例
+     * Select an instance
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
+     * @param serviceName Service name
+     * @param instances List of instances
      * @return ServiceInstance
      */
     Optional<ServiceInstance> choose(String serviceName, List<ServiceInstance> instances);

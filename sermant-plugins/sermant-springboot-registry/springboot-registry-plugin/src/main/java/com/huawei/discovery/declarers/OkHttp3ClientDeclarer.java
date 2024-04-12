@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对okhttp请求方式，从注册中心获取实例列表拦截
+ * For okhttp requests, obtain the instance list from the registry to block them
  *
  * @author chengyouling
  * @since 2022-09-17
  */
 public class OkHttp3ClientDeclarer extends BaseDeclarer {
     /**
-     * 增强类的全限定名 okhttp请求
+     * The fully qualified name of the enhanced okhttp request
      */
     private static final String[] ENHANCE_CLASSES = {
         "okhttp3.RealCall",
@@ -38,7 +38,7 @@ public class OkHttp3ClientDeclarer extends BaseDeclarer {
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = OkHttp3ClientInterceptor.class.getCanonicalName();
 

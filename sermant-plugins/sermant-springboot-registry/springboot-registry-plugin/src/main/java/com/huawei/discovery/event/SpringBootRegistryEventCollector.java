@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.event.EventManager;
 import com.huaweicloud.sermant.core.event.config.EventConfig;
 
 /**
- * springboot注册插件事件采集器
+ * Springboot registers the plugin event collector
  *
  * @author lilai
  * @since 2023-04-14
@@ -40,9 +40,9 @@ public class SpringBootRegistryEventCollector extends EventCollector {
     }
 
     /**
-     * 获取springboot注册插件事件采集器单例
+     * Obtain the SpringBoot Registered plugin Event Collector singleton
      *
-     * @return springboot注册插件事件采集器单例
+     * @return Springboot registers the plugin event collector singleton
      */
     public static SpringBootRegistryEventCollector getInstance() {
         if (collector == null) {
@@ -57,9 +57,9 @@ public class SpringBootRegistryEventCollector extends EventCollector {
     }
 
     /**
-     * 采集服务注册事件
+     * Collect service registration events
      *
-     * @param instance 微服务实例
+     * @param instance Microservice instances
      */
     public void collectRegistryEvent(DefaultServiceInstance instance) {
         if (!eventConfig.isEnable()) {
@@ -73,9 +73,9 @@ public class SpringBootRegistryEventCollector extends EventCollector {
     }
 
     /**
-     * 采集服务移除注册事件
+     * Capture service removes registration events
      *
-     * @param instance 微服务实例
+     * @param instance Microservice instances
      */
     public void collectUnRegistryEvent(DefaultServiceInstance instance) {
         if (!eventConfig.isEnable()) {
@@ -89,9 +89,9 @@ public class SpringBootRegistryEventCollector extends EventCollector {
     }
 
     /**
-     * 采集灰度配置刷新事件
+     * Collect grayscale configuration refresh events
      *
-     * @param config 灰度配置
+     * @param config Grayscale configuration
      */
     public void collectGrayConfigRefreshEvent(String config) {
         if (!eventConfig.isEnable()) {

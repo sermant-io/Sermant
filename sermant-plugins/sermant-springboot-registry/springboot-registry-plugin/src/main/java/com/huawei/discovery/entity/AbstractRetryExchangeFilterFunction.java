@@ -31,7 +31,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * webclient 重试
+ * webclient Retry
  *
  * @author provenceee
  * @since 2023-05-06
@@ -52,10 +52,10 @@ public abstract class AbstractRetryExchangeFilterFunction implements ExchangeFil
     }
 
     /**
-     * 重试
+     * Retry
      *
      * @param mono mono
-     * @return 重试mono
+     * @return Retrying Mono
      */
     public abstract Mono<ClientResponse> retry(Mono<ClientResponse> mono);
 }

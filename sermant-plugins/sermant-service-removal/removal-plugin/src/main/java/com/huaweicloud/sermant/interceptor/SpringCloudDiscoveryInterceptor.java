@@ -17,10 +17,11 @@
 package com.huaweicloud.sermant.interceptor;
 
 import com.huaweicloud.sermant.common.RemovalConstants;
+
 import org.springframework.cloud.client.ServiceInstance;
 
 /**
- * SpringCloud 服务调用增强类
+ * SpringCloud service invoking enhancement class
  *
  * @author zhp
  * @since 2023-02-17

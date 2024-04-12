@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 重试测试
+ * Retry test
  *
  * @author zhouss
  * @since 2022-10-14
@@ -66,7 +66,7 @@ public class DefaultRetryConfigTest {
                 Collections.singletonList("com.huawei.discovery.retry.DefaultRetryConfigTest$Ex"));
         final RetryConfig retryConfig = DefaultRetryConfig.create();
         Assert.assertTrue(retryConfig.getThrowablePredicate().test(new ConnectTimeoutException()));
-        // 子类
+        // Subclasses
         Assert.assertTrue(retryConfig.getThrowablePredicate().test(new MyEx()));
         Assert.assertTrue(retryConfig.getThrowablePredicate().test(new MyInter()));
     }

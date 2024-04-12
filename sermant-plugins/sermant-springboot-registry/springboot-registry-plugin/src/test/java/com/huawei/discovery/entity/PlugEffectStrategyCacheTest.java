@@ -24,7 +24,7 @@ import com.huawei.discovery.interceptors.BaseTest;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 
 /**
- * PlugEffectStategyCache动态配置缓存测试
+ * PlugEffectStategyCache dynamic configuration cache test
  *
  * @author chengyouling
  * @since 2022-10-12

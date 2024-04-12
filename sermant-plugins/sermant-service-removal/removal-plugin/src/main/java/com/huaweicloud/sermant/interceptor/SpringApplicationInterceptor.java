@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.service.RemovalConfigService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 增强run方法
+ * Enhancement of the run method
  *
  * @author lilai
  * @since 2023-04-10
@@ -35,7 +35,7 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
     private final RemovalConfigService removalConfigService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringApplicationInterceptor() {
         removalConfigService = PluginServiceManager.getPluginService(RemovalConfigService.class);

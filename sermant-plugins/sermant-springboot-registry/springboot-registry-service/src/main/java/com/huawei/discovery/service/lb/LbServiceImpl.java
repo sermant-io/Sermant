@@ -22,7 +22,7 @@ import com.huawei.discovery.service.LbService;
 import java.util.Optional;
 
 /**
- * 负载均衡服务
+ * Server Load Balancer service
  *
  * @author zhouss
  * @since 2022-09-26

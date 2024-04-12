@@ -49,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * zk客户端测试
+ * zk client testing
  *
  * @author zhouss
  * @since 2022-10-09
@@ -126,7 +126,7 @@ public class ZkDiscoveryClientTest {
         Mockito.when(serviceDiscovery.queryForInstances(serviceName)).thenReturn(Collections.singletonList(instance));
         Assert.assertEquals(zkDiscoveryClient.getInstances(serviceName).size(), 1);
 
-        // 模拟抛出异常
+        // The simulation throws an exception
         Mockito.when(serviceDiscovery.queryForInstances(serviceName)).thenThrow(new IllegalStateException("wrong"));
         Assert.assertEquals(Collections.emptyList(), zkDiscoveryClient.getInstances(serviceName));
     }
@@ -137,7 +137,7 @@ public class ZkDiscoveryClientTest {
         Mockito.when(serviceDiscovery.queryForNames()).thenReturn(serviceNames);
         Assert.assertEquals(zkDiscoveryClient.getServices(), serviceNames);
 
-        // 模拟抛出异常
+        // The simulation throws an exception
         Mockito.when(serviceDiscovery.queryForNames()).thenThrow(new IllegalStateException("wrong"));
         Assert.assertEquals(Collections.emptyList(), zkDiscoveryClient.getServices());
     }
@@ -147,7 +147,7 @@ public class ZkDiscoveryClientTest {
         zkDiscoveryClient.unRegistry();
         Mockito.verify(serviceDiscovery, Mockito.times(1)).unregisterService(Mockito.any());
 
-        // 模拟抛出异常
+        // The simulation throws an exception
         Mockito.doThrow(new IllegalStateException("wrong")).when(serviceDiscovery).unregisterService(Mockito.any());
         zkDiscoveryClient.unRegistry();
     }
@@ -160,7 +160,7 @@ public class ZkDiscoveryClientTest {
     }
 
     /**
-     * 获取客户端
+     * Get the client
      *
      * @return ZkDiscoveryClient
      */

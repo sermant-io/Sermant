@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * webclient拦截点，springboot 2.1.0.RELEASE+
+ * Webclient interception point，springboot 2.1.0.RELEASE+
  *
  * @author provenceee
  * @since 2023-04-25

@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 简单记录器测试
+ * Simple logger test
  *
  * @author zhouss
  * @since 2022-10-12
@@ -64,12 +64,12 @@ public class SimpleRequestRecorderTest {
         Assert.assertTrue(allRequestCount.isPresent() && allRequestCount.get() instanceof AtomicLong);
         Assert.assertTrue(((AtomicLong) allRequestCount.get()).get() > 0);
 
-        // 设置最大, 使之溢出设置为0
+        // Set the maximum so that the overflow is set to 0
         ((AtomicLong) allRequestCount.get()).set(Long.MAX_VALUE);
         simpleRequestRecorder.beforeRequest();
         Assert.assertEquals(((AtomicLong) allRequestCount.get()).get(), 0);
 
-        // 打印日志
+        // Print the logs
         discoveryPluginConfig.setEnableRequestCount(true);
         final SimpleRequestRecorder simpleRequestRecorder1 = new SimpleRequestRecorder();
         simpleRequestRecorder1.beforeRequest();

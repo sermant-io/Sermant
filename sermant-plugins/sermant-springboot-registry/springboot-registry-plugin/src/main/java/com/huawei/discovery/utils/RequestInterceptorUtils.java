@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 解析url参数、构建公共方法相关工具类
+ * Parse URL parameters and build utility classes related to public methods
  *
  * @author chengyouling
  * @since 2022-10-09
@@ -57,12 +57,14 @@ public class RequestInterceptorUtils {
     private static final int URL_INFO_INIT_SIZE = 8;
 
     /**
-     * 解析url时，分隔的最小长度, 其path必须为/serviceName/api/xxx, 否则将不是目标请求 {@link RequestInterceptorUtils#recoverUrl(URL)}
+     * When parsing a URL, the minimum length of the delimitation, whose path must be /serviceName/api/xxx, otherwise it
+     * will not be the target request {@link RequestInterceptorUtils#recoverUrl(URL)}
      */
     private static final int MIN_LEN_FOR_VALID_PATH = 2;
 
     /**
-     * 解析url时，分隔的最小长度, 其url必须为http:/www.domain.com/serviceName/api/xxx, 否则将不是目标请求
+     * When parsing URLs, the minimum length of the delimitation, its URL must be
+     * http:/www.domain.com/serviceName/api/xxx, otherwise it will not be the target request
      * {@link RequestInterceptorUtils#recoverUrl(String)}
      */
     private static final int MIN_LEN_FOR_VALID_URL = 4;
@@ -80,10 +82,10 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 解析url参数信息 http://www.domain.com/serviceName/sayHello?name=1
+     * Parsing URL parameter information http://www.domain.com/serviceName/sayHello?name=1
      *
-     * @param url url地址
-     * @return url解析后的主机名、路径
+     * @param url URL address
+     * @return The hostname and path of the URL resolution
      */
     public static Map<String, String> recoverUrl(URL url) {
         if (url == null) {
@@ -91,7 +93,7 @@ public class RequestInterceptorUtils {
         }
         final String protocol = url.getProtocol();
 
-        // /serviceName/sayHello?name=1, 已切分为serviceName, sayHello?name=1
+        // /serviceName/sayHello?name=1, Split into serviceName, sayHello?name=1
         String delim = String.valueOf(HttpConstants.HTTP_URL_SINGLE_SLASH);
         final StringTokenizer tokenizer = new StringTokenizer(url.getPath(), delim);
         if (tokenizer.countTokens() < MIN_LEN_FOR_VALID_PATH) {
@@ -106,10 +108,10 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 解析url参数信息 http://www.domain.com/serviceName/sayHello?name=1
+     * Parsing URL parameter information http://www.domain.com/serviceName/sayHello?name=1
      *
-     * @param url url地址
-     * @return url解析后的主机名、路径
+     * @param url URL address
+     * @return The hostname and path of the URL resolution
      */
     public static Map<String, String> recoverUrl(String url) {
         if (StringUtils.isEmpty(url) || !isValidUrl(url)) {
@@ -125,7 +127,7 @@ public class RequestInterceptorUtils {
         final String rawScheme = urlTokens.nextToken(baseSlash);
         String scheme = rawScheme.substring(0, rawScheme.length() - 1);
 
-        // domain 域名
+        // domain name
         Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
         result.put(HttpConstants.HTTP_URI_HOST, urlTokens.nextToken(baseSlash));
         final String serviceName = urlTokens.nextToken(baseSlash);
@@ -137,11 +139,11 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 针对HttpUrlConnection进行地址重构
+     * Address reconstruction for HttpUrlConnection
      *
-     * @param originUrl 原地址
-     * @param instance 选择的实例
-     * @param path 路径
+     * @param originUrl Original address
+     * @param instance Selected instances
+     * @param path Path
      * @return URL
      */
     public static Optional<URL> rebuildUrlForHttpConnection(URL originUrl, ServiceInstance instance, String path) {
@@ -169,25 +171,25 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 打印请求路径
+     * Print the request path
      *
-     * @param hostAndPath 请求路径与服务名
-     * @param source 请求原， 例如httpclient/http async client
+     * @param hostAndPath The request path and service name
+     * @param source Request original, For example httpclient/http async client
      */
     public static void printRequestLog(String source, Map<String, String> hostAndPath) {
         if (!RECORDER.isEnable()) {
             return;
         }
         String path = String.format(Locale.ENGLISH, "/%s%s", hostAndPath.get(HttpConstants.HTTP_URI_SERVICE),
-            hostAndPath.get(HttpConstants.HTTP_URI_PATH));
+                hostAndPath.get(HttpConstants.HTTP_URI_PATH));
         LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[%s] request [%s] has been intercepted!", source, path));
         RECORDER.beforeRequest();
     }
 
     /**
-     * 格式化uri
+     * Format the URI
      *
-     * @param uri 目标uri
+     * @param uri Destination URI
      * @return URI
      */
     public static Optional<URI> formatUri(String uri) {
@@ -208,24 +210,24 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 构建invoke回调方法函数
+     * Build an invoke callback method function
      *
-     * @param context 上下文
-     * @param invokerContext 调用上下文
-     * @return 调用器
+     * @param context Context
+     * @param invokerContext call context
+     * @return Invoker
      */
     public static Supplier<Object> buildFunc(ExecuteContext context, InvokerContext invokerContext) {
         return buildFunc(context.getObject(), context.getMethod(), context.getArguments(), invokerContext);
     }
 
     /**
-     * 构建invoke回调方法函数
+     * Build an invoke callback method function
      *
-     * @param target 目标
-     * @param arguments 参数
-     * @param method 方法
-     * @param invokerContext 调用上下文
-     * @return 调用器
+     * @param target Target
+     * @param arguments Parameter
+     * @param method method
+     * @param invokerContext call context
+     * @return Invoker
      */
     public static Supplier<Object> buildFunc(Object target, Method method, Object[] arguments,
             InvokerContext invokerContext) {
@@ -251,28 +253,28 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 构建ip+端口url
+     * Build an IP+ port URL
      *
-     * @param urlIfo url信息, 包含host, path
-     * @param serviceInstance 选择的实例
+     * @param urlIfo URL information, including host, path
+     * @param serviceInstance Selected instances
      * @return url
      */
     public static String buildUrl(Map<String, String> urlIfo, ServiceInstance serviceInstance) {
         StringBuilder urlBuild = new StringBuilder();
         urlBuild.append(urlIfo.get(HttpConstants.HTTP_URL_SCHEME))
-            .append(HttpConstants.HTTP_URL_DOUBLE_SLASH)
-            .append(serviceInstance.getIp())
-            .append(HttpConstants.HTTP_URL_COLON)
-            .append(serviceInstance.getPort())
-            .append(urlIfo.get(HttpConstants.HTTP_URI_PATH));
+                .append(HttpConstants.HTTP_URL_DOUBLE_SLASH)
+                .append(serviceInstance.getIp())
+                .append(HttpConstants.HTTP_URL_COLON)
+                .append(serviceInstance.getPort())
+                .append(urlIfo.get(HttpConstants.HTTP_URI_PATH));
         return urlBuild.toString();
     }
 
     /**
-     * 解析host、path信息
+     * Parse host and path information
      *
-     * @param path 请求路径
-     * @return host、path信息集合
+     * @param path The path of the request
+     * @return host、path information collection
      */
     public static Map<String, String> recoverHostAndPath(String path) {
         Map<String, String> result = new HashMap<>(URL_INFO_INIT_SIZE);
@@ -294,22 +296,22 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 构建包含ip、端口url
+     * The build contains the IP address and port URL
      *
-     * @param uri uri信息
-     * @param serviceInstance 选择的实例
-     * @param path 路径
-     * @param method 反复类型
-     * @return ip:port构建的url
+     * @param uri URI information
+     * @param serviceInstance Selected instances
+     * @param path Path
+     * @param method Repeated type
+     * @return The URL constructed by ip: port
      */
     public static String buildUrlWithIp(URI uri, ServiceInstance serviceInstance, String path, String method) {
         StringBuilder urlBuild = new StringBuilder();
         urlBuild.append(uri.getScheme())
-            .append(HttpConstants.HTTP_URL_DOUBLE_SLASH)
-            .append(serviceInstance.getIp())
-            .append(HttpConstants.HTTP_URL_COLON)
-            .append(serviceInstance.getPort())
-            .append(path);
+                .append(HttpConstants.HTTP_URL_DOUBLE_SLASH)
+                .append(serviceInstance.getIp())
+                .append(HttpConstants.HTTP_URL_COLON)
+                .append(serviceInstance.getPort())
+                .append(path);
         if (uri.getRawQuery() != null) {
             urlBuild.append(HttpConstants.HTTP_URL_UNKNOWN).append(uri.getRawQuery());
         }
@@ -317,12 +319,12 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 构建包含ip、端口url
+     * The build contains the IP address and port URL
      *
-     * @param hostAndPath 请求信息
-     * @param ip ip地址
-     * @param port 端口
-     * @return ip:port构建的url
+     * @param hostAndPath Request Information
+     * @param ip IP address
+     * @param port Port
+     * @return The URL constructed by ip: port
      */
     public static String buildUrlWithIp(Map<String, String> hostAndPath, String ip, int port) {
         return hostAndPath.get(HttpConstants.HTTP_URL_SCHEME)

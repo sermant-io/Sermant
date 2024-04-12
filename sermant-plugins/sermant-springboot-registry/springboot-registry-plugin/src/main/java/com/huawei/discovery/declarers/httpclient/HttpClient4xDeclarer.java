@@ -24,14 +24,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对http请求方式，从注册中心获取实例列表拦截, <h1>仅针对4.x版本</h1>
+ * For HTTP requests, obtain the instance list from the registry to intercept the <h1>4.x version only</h1>
  *
  * @author chengyouling
  * @since 2022-09-14
  */
 public class HttpClient4xDeclarer extends BaseDeclarer {
     /**
-     * 增强类的全限定名 http请求
+     * Fully qualified HTTP requests for enhanced classes
      */
     private static final String[] ENHANCE_CLASSES = {
         "org.apache.http.impl.client.AbstractHttpClient",
@@ -41,7 +41,7 @@ public class HttpClient4xDeclarer extends BaseDeclarer {
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = HttpClient4xInterceptor.class.getCanonicalName();
 

@@ -33,9 +33,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 服务实例摘除抽象类
+ * Abstract class of service instance removal
  *
- * @param <T> 实例信息
+ * @param <T> Instance information
  * @author zhp
  * @since 2023-02-21
  */
@@ -64,9 +64,9 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractSwitchInterc
     }
 
     /**
-     * 摘除已经处于摘除状态的实例
+     * Remove instances that are already in the removal state
      *
-     * @param servers 服务实例信息
+     * @param servers Service instance information
      */
     protected void removeInstanceByStatus(List<T> servers) {
         if (servers == null || servers.size() == 0) {
@@ -93,10 +93,10 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractSwitchInterc
     }
 
     /**
-     * 摘除实例
+     * Remove the instance
      *
-     * @param instances 实例列表
-     * @return 剩余的实例信息
+     * @param instances List of instances
+     * @return Remaining instance information
      */
     protected List<T> removeInstance(List<T> instances) {
         List<T> instanceList = new ArrayList<>(instances);
@@ -106,10 +106,10 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractSwitchInterc
     }
 
     /**
-     * 摘除符合规则的实例信息
+     * Removes the information about instances that match the rules
      *
-     * @param instances 实例信息
-     * @param instanceList 未处于摘除状态的实例
+     * @param instances Instance information
+     * @param instanceList Instances that are not in the plucked state
      */
     private void removeInstanceByRule(List<T> instances, List<T> instanceList) {
         Optional<RemovalRule> ruleOptional = RuleCache.getRule(getServiceKey(instances.get(0)));
@@ -142,18 +142,18 @@ public abstract class AbstractRemovalInterceptor<T> extends AbstractSwitchInterc
     }
 
     /**
-     * 创建实例保存的key
+     * Create a key that is saved by the instance
      *
-     * @param instance 服务实例信息
-     * @return 实例key
+     * @param instance Service instance information
+     * @return The key of the instance
      */
     protected abstract String createKey(T instance);
 
     /**
-     * 获取实例key
+     * Obtain the instance key
      *
-     * @param instance 服务实例信息
-     * @return 实例key
+     * @param instance Service instance information
+     * @return The key of the instance
      */
     protected abstract String getServiceKey(T instance);
 }

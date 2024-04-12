@@ -19,7 +19,7 @@ package com.huawei.discovery.factory;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * 创建线程工厂类
+ * Create a thread factory class
  *
  * @author chengyouling
  * @since 2022-09-27
@@ -29,9 +29,9 @@ public class RealmServiceThreadFactory implements ThreadFactory {
     private final String threadName;
 
     /**
-     * 流控线程工厂
+     * Flow-throttling thread factory
      *
-     * @param threadName 线程名称
+     * @param threadName The name of the thread
      */
     public RealmServiceThreadFactory(String threadName) {
         this.threadName = threadName;

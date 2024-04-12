@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * zk客户端代理
+ * ZK client proxy
  *
  * @author zhouss
  * @since 2022-10-08

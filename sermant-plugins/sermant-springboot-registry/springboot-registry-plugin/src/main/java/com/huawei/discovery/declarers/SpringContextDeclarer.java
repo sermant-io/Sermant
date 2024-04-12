@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强org.springframework.context.support.AbstractApplicationContext, 监听事件发布
+ * Enhanced org.springframework.context.support.AbstractApplicationContext, listening for event publishing
  *
  * @author zhouss
  * @since 2022-11-16
@@ -43,9 +43,10 @@ public class SpringContextDeclarer extends BaseDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
-                    .and(MethodMatcher.paramTypesEqual("java.lang.Object", "org.springframework.core.ResolvableType")),
-                    INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals(METHOD_NAME)
+                                .and(MethodMatcher.paramTypesEqual("java.lang.Object",
+                                        "org.springframework.core.ResolvableType")),
+                        INTERCEPT_CLASS)
         };
     }
 }

@@ -20,46 +20,46 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * 离群摘除事件枚举
+ * Outlier event enumeration
  *
  * @author zhp
  * @since 2023-02-27
  */
 public enum RemovalEventDefinitions {
     /**
-     * 离群实例摘除事件
+     * Outlier instance removal event
      */
     INSTANCE_REMOVAL("INSTANCE_REMOVAL", EventType.GOVERNANCE, EventLevel.IMPORTANT, "removal",
             "The outlier instance is removed and the instance information is: "),
 
     /**
-     * 离群实例恢复事件
+     * Outlier instance recovery event
      */
     INSTANCE_RECOVERY("INSTANCE_RECOVERY", EventType.GOVERNANCE, EventLevel.IMPORTANT, "removal",
             "The outlier instance is recovery and the instance information is: "),;
 
     /**
-     * 事件名称
+     * The name of the event
      */
     private final String name;
 
     /**
-     * 事件类型
+     * The type of event
      */
     private final EventType eventType;
 
     /**
-     * 事件等级
+     * Event level
      */
     private final EventLevel eventLevel;
 
     /**
-     * 事件区域
+     * Event area
      */
     private final String scope;
 
     /**
-     * 事件描述
+     * Description of the event
      */
     private final String description;
 

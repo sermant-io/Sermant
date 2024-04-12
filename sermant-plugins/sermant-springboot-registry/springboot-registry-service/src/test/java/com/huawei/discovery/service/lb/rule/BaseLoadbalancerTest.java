@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 基础负载均衡测试
+ * Basic load balancing test
  *
  * @author zhouss
  * @since 2022-10-09

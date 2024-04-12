@@ -20,24 +20,24 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * Springboot注册插件事件定义
+ * Springboot registration plugin event definition
  *
  * @author lilai
  * @since 2023-04-14
  */
 public enum SpringBootRegistryEventDefinition {
     /**
-     * SpringBoot服务注册事件
+     * SpringBoot service registration event
      */
     SPRINGBOOT_REGISTRY("SPRINGBOOT_REGISTRY", EventType.GOVERNANCE, EventLevel.IMPORTANT),
 
     /**
-     * SpringBoot注册插件灰度配置刷新事件
+     * SpringBoot registration plugin grayscale configuration refresh event
      */
     SPRINGBOOT_GRAY_CONFIG_REFRESH("SPRINGBOOT_GRAY_CONFIG_REFRESH", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * SpringBoot服务移除注册事件
+     * The SpringBoot service removes the registration event
      */
     SPRINGBOOT_UNREGISTRY("SPRINGBOOT_UNREGISTRY", EventType.GOVERNANCE,
             EventLevel.IMPORTANT);
@@ -67,9 +67,9 @@ public enum SpringBootRegistryEventDefinition {
     }
 
     /**
-     * 获取scope
+     * Obtain the scope
      *
-     * @return string 插件主模块名称
+     * @return string The name of the main module of the plugin
      */
     public String getScope() {
         return "springboot-registry-plugin";

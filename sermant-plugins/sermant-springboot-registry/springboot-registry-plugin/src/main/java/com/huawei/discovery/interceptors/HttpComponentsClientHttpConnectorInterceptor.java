@@ -40,7 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * webclient拦截点
+ * Webclient interception point
  *
  * @author provenceee
  * @since 2023-04-25
@@ -51,7 +51,7 @@ public class HttpComponentsClientHttpConnectorInterceptor extends MarkIntercepto
     private final InvokerService invokerService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public HttpComponentsClientHttpConnectorInterceptor() {
         invokerService = PluginServiceManager.getPluginService(InvokerService.class);

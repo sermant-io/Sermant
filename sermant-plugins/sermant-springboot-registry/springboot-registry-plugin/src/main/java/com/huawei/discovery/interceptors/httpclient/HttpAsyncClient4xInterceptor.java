@@ -64,7 +64,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * 仅针对4.x版本得http拦截
+ * http interception only for version 4. x
  *
  * @author zhouss
  * @since 2022-10-10
@@ -88,12 +88,13 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
         }
         acquireHostPath(httpAsyncRequestProducer);
         if (!isConfigEnable()) {
-            // 配置不允许则直接返回
+            // If the configuration does not allow it, it will be returned
             return context;
         }
         final ServiceInstance selectedInstance = HttpAsyncUtils.getOrCreateContext().getSelectedInstance();
         if (selectedInstance == null) {
-            // 置空回调, 阻止第一次因url问题导致回调给与用户错误结果
+            // Empty callbacks to prevent callbacks from giving users an incorrect result the first time due to a URL
+            // issue
             context.skip(null);
             HttpAsyncUtils.getOrCreateContext().setCallback(context.getArguments()[HttpAsyncContext.CALL_BACK_INDEX]);
             context.getArguments()[HttpAsyncContext.CALL_BACK_INDEX] = null;
@@ -125,7 +126,7 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
             final HttpAsyncContext asyncContext = HttpAsyncUtils.getOrCreateContext();
             Thread.currentThread().setContextClassLoader(HttpClient.class.getClassLoader());
 
-            // 对future进行修饰, 增加异常重试逻辑
+            // Decorate the future and add exception retry logic
             context.changeResult(new FutureDecorator(buildInvokerBiFunc(asyncContext, invokerService, serviceName,
                     context)));
             return context;
@@ -193,7 +194,8 @@ public class HttpAsyncClient4xInterceptor implements Interceptor {
                     return result;
                 }
 
-                // 该场景仅当无实例才会触发, 此处模拟未拦截触发的异常, 即404
+                // This scenario will only be triggered when there is no instance,
+                // and the unintercepted triggered exception is simulated here, that is, 404
                 final HttpAsyncInvokerResult result = mockErrorResult();
                 notify(asyncContext, result.getResult());
                 return result;

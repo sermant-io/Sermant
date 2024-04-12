@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 默认重试器
+ * Default retryer
  *
  * @author zhouss
  * @since 2022-09-28
@@ -41,11 +41,11 @@ public class DefaultRetryImpl implements Retry {
     private final String name;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param name 重拾器名称
-     * @param retryConfig 重试配置
-     * @throws IllegalArgumentException 参数异常抛出
+     * @param name The name of the retryer
+     * @param retryConfig Retry the configuration
+     * @throws IllegalArgumentException The parameter is thrown abnormally
      */
     public DefaultRetryImpl(RetryConfig retryConfig, String name) {
         if (retryConfig == null || name == null) {
@@ -71,14 +71,14 @@ public class DefaultRetryImpl implements Retry {
     }
 
     /**
-     * 上下文实现
+     * Contextual implementation
      *
-     * @param <T> 记录类型
+     * @param <T> Record type
      * @since 2022-09-28
      */
     class RetryContextImpl<T extends Recorder> implements RetryContext<T> {
         /**
-         * 调用次数
+         * The number of calls
          */
         private final AtomicInteger invokeCount = new AtomicInteger();
 
@@ -115,7 +115,7 @@ public class DefaultRetryImpl implements Retry {
                 }
             }
 
-            // 抛出异常
+            // Throws an exception
             if (invokeCount.get() > 0) {
                 LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Retry failed with %s times",
                         invokeCount.get()), ex);
@@ -132,7 +132,7 @@ public class DefaultRetryImpl implements Retry {
             try {
                 Thread.sleep(config().getRetryRetryWaitMs());
             } catch (InterruptedException ignored) {
-                // 一般情况不会触发
+                // In general, it will not be triggered
             }
         }
     }

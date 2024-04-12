@@ -27,6 +27,7 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import feign.Request;
 import feign.Request.HttpMethod;
 import feign.Response;
+
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,13 +43,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * feign调用测试
+ * feign calls the test
  *
  * @author chengyouling
  * @since 2022-10-10
  */
 public class FeignInvokeInterceptorTest extends BaseTest {
-
     private FeignInvokeInterceptor interceptor;
 
     private final Object[] arguments;
@@ -63,7 +63,7 @@ public class FeignInvokeInterceptorTest extends BaseTest {
     private final static String url = "http://www.domain.com/zookeeper-provider-demo/sayHello?name=123";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public FeignInvokeInterceptorTest() {
         arguments = new Object[2];
@@ -87,7 +87,6 @@ public class FeignInvokeInterceptorTest extends BaseTest {
         Assert.assertTrue(dynamicConfig.isPresent() && dynamicConfig.get() instanceof Map);
         ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_STRATEGY, strategy);
         ((Map) dynamicConfig.get()).put(PlugEffectWhiteBlackConstants.DYNAMIC_CONFIG_VALUE, serviceName);
-
     }
 
     @Test
@@ -96,76 +95,76 @@ public class FeignInvokeInterceptorTest extends BaseTest {
         Request request = createRequest(HttpMethod.GET, url);
         arguments[0] = request;
 
-        //环境中未配置域名
+        // No domain name is configured in the environment
         interceptor.doBefore(context);
-        Request temp = (Request)context.getArguments()[0];
+        Request temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置单个域名，未设置黑白名单
+        // Contains domain names, sets a single domain name, and does not set a blacklist or whitelist
         discoveryPluginConfig.setRealmName(realmName);
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置多个域名，未设置黑白名单
+        // Contains domain names, sets multiple domain names, and does not set blacklist or whitelist
         discoveryPluginConfig.setRealmName(realmNames);
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置全部不通过策略
+        // Contains domain names, and sets all do not pass the policy
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_NONE, "");
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置黑名单包含对应服务名
+        // Contains domain names, and sets the blacklist to include the corresponding service name
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_BLACK, "zookeeper-provider-demo");
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置黑名单不包含对应服务名
+        // Contains domain names, and the blacklist does not contain the corresponding service name
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_BLACK, "service1");
         Mockito.when(invokerService.invoke(null, null, "zookeeper-provider-demo"))
                 .thenReturn(Optional.ofNullable(new Object()));
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置白名单包含对应服务名
+        // Contains the domain name, and sets the whitelist to include the corresponding service name
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_WHITE, "zookeeper-provider-demo");
         Mockito.when(invokerService.invoke(null, null, "zookeeper-provider-demo"))
                 .thenReturn(Optional.ofNullable(new Object()));
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置白名单不包含对应服务名
+        // If the domain name is included, the whitelist does not contain the corresponding service name
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_WHITE, "service1");
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
 
-        //含域名，设置全部通过策略
+        // Contains domain names, and sets all through policies
         initStrategy(PlugEffectWhiteBlackConstants.STRATEGY_ALL, "service1");
         Mockito.when(invokerService.invoke(null, null, "zookeeper-provider-demo"))
                 .thenReturn(Optional.ofNullable(new Object()));
         interceptor.doBefore(context);
-        temp = (Request)context.getArguments()[0];
+        temp = (Request) context.getArguments()[0];
         Assert.assertEquals(url, temp.url());
     }
 
     @Test
     public void buildErrorResponseTest() throws IOException {
         Optional<Method> method = ReflectUtils.findMethod(FeignInvokeInterceptor.class, "buildErrorResponse",
-                new Class[] {Exception.class, Request.class});
+                new Class[]{Exception.class, Request.class});
         Exception ex = new Exception();
         Request request = createRequest(HttpMethod.GET, url);
         if (method.isPresent()) {
             Optional<Object> exception = ReflectUtils
-                    .invokeMethod(interceptor, method.get(), new Object[] {ex, request});
-            Assert.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, ((Response)exception.get()).status());
+                    .invokeMethod(interceptor, method.get(), new Object[]{ex, request});
+            Assert.assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, ((Response) exception.get()).status());
         }
     }
 }

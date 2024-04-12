@@ -21,15 +21,15 @@
         <cloud.zk.version>3.1.0</cloud.zk.version>
         <jackson.version>2.13.4.2</jackson.version>
         <guava.version>31.1-jre</guava.version>
-        <!--Curator 2.x.x兼容Zookeeper的3.4.x和3.5.x
-            Curator 3.x.x只兼容Zookeeper 3.5.x-->
-        <!--zk  3.4.x, 可向上兼容-->
+        <!--Curator 2.x.x is compatible with Zookeeper's 3.4.x and 3.5.x
+            Curator 3.x.x only compatible with Zookeeper 3.5.x -->
+        <!--zk  3.4.x, Upward compatible-->
         <curator.x.version>2.13.0</curator.x.version>
         <zk.version>3.8.3</zk.version>
     </properties>
 
     <dependencies>
-        <!--provider 依赖-->
+        <!--provider dependency-->
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
@@ -42,7 +42,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--compile 依赖-->
+        <!--compile dependency -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-zookeeper-discovery</artifactId>
@@ -189,7 +189,7 @@
             <artifactId>netty-all</artifactId>
         </dependency>
 
-        <!--测试依赖-->
+        <!--Test dependencies-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

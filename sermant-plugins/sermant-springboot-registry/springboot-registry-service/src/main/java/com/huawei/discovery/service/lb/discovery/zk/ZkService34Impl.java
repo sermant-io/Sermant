@@ -17,7 +17,7 @@
 package com.huawei.discovery.service.lb.discovery.zk;
 
 /**
- * zookeeper 3.4.x支持
+ * zookeeper 3.4.x support
  *
  * @author zhouss
  * @since 2022-10-08

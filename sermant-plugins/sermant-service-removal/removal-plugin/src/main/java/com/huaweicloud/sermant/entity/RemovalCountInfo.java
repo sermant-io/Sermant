@@ -17,19 +17,19 @@
 package com.huaweicloud.sermant.entity;
 
 /**
- * 移除的离群实例统计信息
+ * Outlier statistics for removal
  *
  * @author zhp
  * @since 2023-02-28
  */
 public class RemovalCountInfo {
     /**
-     * 被摘除数量
+     * Number of removed
      */
     private int removalCount;
 
     /**
-     * 剩余数量
+     * Remaining quantity
      */
     private int remainderCount;
 

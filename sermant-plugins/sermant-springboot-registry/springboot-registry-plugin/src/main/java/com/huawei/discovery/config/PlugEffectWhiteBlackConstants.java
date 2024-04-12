@@ -17,7 +17,7 @@
 package com.huawei.discovery.config;
 
 /**
- * 插件生效、日志打印动态配置相关常量
+ * Constants related to the dynamic configuration of plugin effect and log printing
  *
  * @author chengyouling
  * @since 2022-10-10
@@ -25,37 +25,37 @@ package com.huawei.discovery.config;
 public class PlugEffectWhiteBlackConstants {
 
     /**
-     * 监听配置key
+     * Listen for the configuration key
      */
     public static final String DYNAMIC_CONFIG_LISTENER_KEY = "sermant.plugin.registry";
 
     /**
-     * 插件生效--策略
+     * Plugin Takes Effect - Strategy
      */
     public static final String DYNAMIC_CONFIG_STRATEGY = "strategy";
 
     /**
-     * 插件生效--服务名白名单value
+     * Plugin Validity--Service Name Whitelist Value
      */
     public static final String DYNAMIC_CONFIG_VALUE = "value";
 
     /**
-     * 策略-所有服务生效
+     * Policy - All services take effect
      */
     public static final String STRATEGY_ALL = "all";
 
     /**
-     * 策略-所有服务不生效
+     * Policy - All services are not in effect
      */
     public static final String STRATEGY_NONE = "none";
 
     /**
-     * 策略-白名单服务生效
+     * Policy-Whitelist takes effect
      */
     public static final String STRATEGY_WHITE = "white";
 
     /**
-     * 策略-黑名单服务不生效
+     * The policy - blacklist service does not take effect
      */
     public static final String STRATEGY_BLACK = "black";
 

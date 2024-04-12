@@ -43,28 +43,27 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 负载均衡管理器
+ * Load Balancer Manager
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public enum DiscoveryManager {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * lb类型缓存
-     * key: lb类型
-     * value: class类型
+     * Lb type cache key: LB type value: class type
      */
     private final Map<String, Class<? extends AbstractLoadbalancer>> lbCache = new HashMap<>();
 
     /**
-     * 各个服务自身的负载均衡缓存, 分开管理, 防止有状态负载均衡实例相互影响
+     * Each service's own load balancing cache is managed separately to prevent stateful load balancing instances from
+     * affecting each other
      */
     private final Map<String, AbstractLoadbalancer> serviceLbCache = new ConcurrentHashMap<>();
 
@@ -120,7 +119,7 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 启动方法
+     * Startup method
      */
     public void start() {
         initServiceDiscoveryClient();
@@ -131,9 +130,9 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 注册
+     * register
      *
-     * @param serviceInstance 注册实例
+     * @param serviceInstance Register an instance
      */
     public void registry(ServiceInstance serviceInstance) {
         checkStats();
@@ -150,9 +149,9 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 停止相关服务
+     * Stop related services
      *
-     * @throws IOException 停止失败抛出
+     * @throws IOException Stop failed throw
      */
     public void stop() throws IOException {
         lbCache.clear();
@@ -170,9 +169,9 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 基于缓存以及负载均衡规则选择实例
+     * Select an instance based on the cache and load balancing rules
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      * @return ServiceInstance
      */
     public Optional<ServiceInstance> choose(String serviceName) {
@@ -180,10 +179,10 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 选择实例, 支持自定义lb
+     * Select an instance and support custom LB
      *
-     * @param serviceName 服务名
-     * @param customLb 负载均衡
+     * @param serviceName Service name
+     * @param customLb Load balancing
      * @return ServiceInstance
      */
     public Optional<ServiceInstance> choose(String serviceName, Loadbalancer customLb) {
@@ -191,11 +190,11 @@ public enum DiscoveryManager {
     }
 
     /**
-     * 选择实例, 支持自定义过滤器
+     * Select an instance to support custom filters
      *
-     * @param serviceName 服务名
-     * @param customLb 负载均衡
-     * @param customFilter 自定义过滤器
+     * @param serviceName Service name
+     * @param customLb Load balancing
+     * @param customFilter Custom filters
      * @return ServiceInstance
      */
     public Optional<ServiceInstance> choose(String serviceName, Loadbalancer customLb, InstanceFilter customFilter) {
@@ -233,7 +232,7 @@ public enum DiscoveryManager {
             return Optional.of(clazz.newInstance());
         } catch (InstantiationException e) {
             LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,
-                    "Can not create instance for clazz [%s] with no params constructor!", clazz.getName()),
+                            "Can not create instance for clazz [%s] with no params constructor!", clazz.getName()),
                     e);
         } catch (IllegalAccessException e) {
             LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH,

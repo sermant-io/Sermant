@@ -26,7 +26,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.event.ContextClosedEvent;
 
 /**
- * Spring关闭事件监听{@link org.springframework.context.event.ContextClosedEvent}
+ * Spring disables event listeners{@link org.springframework.context.event.ContextClosedEvent}
  *
  * @author zhouss
  * @since 2022-11-16
@@ -35,7 +35,7 @@ public class SpringCloseEventInterceptor extends AbstractInterceptor {
     private final RegistryService registryService;
 
     /**
-     * 构造器
+     * Constructor
      */
     public SpringCloseEventInterceptor() {
         registryService = PluginServiceManager.getPluginService(RegistryService.class);
@@ -52,7 +52,7 @@ public class SpringCloseEventInterceptor extends AbstractInterceptor {
 
     private void tryShutdown(ContextClosedEvent event) {
         if (event.getSource() instanceof AnnotationConfigApplicationContext) {
-            // 该类型属于刷新事件, 不予以处理
+            // This type is a refresh event and is not handled
             return;
         }
         registryService.shutdown();

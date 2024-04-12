@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 公共测试工具类
+ * Public testing tool class
  *
  * @author zhouss
  * @since 2022-10-09
@@ -37,10 +37,10 @@ public class CommonUtils {
     }
 
     /**
-     * 构建实例
+     * Build an instance
      *
-     * @param service 服务名
-     * @param port 端口
+     * @param service Service name
+     * @param port Port
      * @return ServiceInstance
      */
     public static ServiceInstance buildInstance(String service, int port) {
@@ -48,7 +48,7 @@ public class CommonUtils {
     }
 
     /**
-     * 清理服务统计数据
+     * Clean up service statistics
      */
     public static void cleanServiceStats() {
         final Optional<Object> serverStatsCache = ReflectUtils

@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * 重试调用测试
+ * Retry the call test
  *
  * @author zhouss
  * @since 2022-10-10
@@ -79,7 +79,7 @@ public class RetryServiceImplTest extends BaseTest {
     @Override
     public void tearDown() {
         super.tearDown();
-        // 重置状态
+        // Reset the state
         final Optional<Object> isStarted = ReflectUtils.getFieldValue(DiscoveryManager.INSTANCE, "isStarted");
         Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
         ((AtomicBoolean) isStarted.get()).set(false);
@@ -166,9 +166,9 @@ public class RetryServiceImplTest extends BaseTest {
     @Test
     public void invoke() {
         mockInstances();
-        // 正常调用
+        // Normal call
         testNormalInvoke(null);
-        // 异常调用
+        // Exception calls
         testErrorInvoke(null);
     }
 
@@ -223,9 +223,9 @@ public class RetryServiceImplTest extends BaseTest {
     @Test
     public void testInvoke() {
         mockInstances();
-        // 正常调用
+        // Normal call
         testNormalInvoke(buildRetryConfig("normal"));
-        // 异常调用
+        // Exception calls
         testErrorInvoke(buildRetryConfig("error"));
     }
 }

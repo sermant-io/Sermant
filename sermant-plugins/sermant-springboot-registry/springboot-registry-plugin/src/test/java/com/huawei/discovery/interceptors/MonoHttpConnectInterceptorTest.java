@@ -42,7 +42,7 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 /**
- * ExchangeFunctionInterceptor测试
+ * ExchangeFunctionInterceptor Test
  *
  * @author provenceee
  * @since 2023-04-27
@@ -65,7 +65,7 @@ public class MonoHttpConnectInterceptorTest {
     private final ExecuteContext context;
 
     /**
-     * UT执行前进行mock
+     * Perform the mock before the UT is executed
      */
     @BeforeClass
     public static void before() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -91,7 +91,7 @@ public class MonoHttpConnectInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -131,7 +131,7 @@ public class MonoHttpConnectInterceptorTest {
 
     @Test
     public void test() {
-        // 测试正常情况
+        // Test for normal conditions
         Mockito.doNothing().when(monoHttpConnect).subscribe(Mockito.isA(CoreSubscriber.class));
         interceptor.doBefore(context);
         Assert.assertEquals(configuration, context.getLocalFieldValue("originConfig"));
@@ -144,7 +144,7 @@ public class MonoHttpConnectInterceptorTest {
 
     @Test
     public void testException() {
-        // 测试异常情况
+        // Test for anomalies
         Mockito.doThrow(new RuntimeException()).when(monoHttpConnect).subscribe(Mockito.isA(CoreSubscriber.class));
         interceptor.doBefore(context);
         Assert.assertEquals(RuntimeException.class, context.getThrowableOut().getClass());

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 负载均衡测试
+ * Load balancing test
  *
  * @author zhouss
  * @since 2022-10-09
@@ -41,7 +41,7 @@ public class RoundRobinLoadbalancerTest extends BaseLoadbalancerTest {
         final List<ServiceInstance> serviceInstances = Arrays
                 .asList(CommonUtils.buildInstance(serviceName, port1), CommonUtils.buildInstance(serviceName, port2));
         final RoundRobinLoadbalancer roundRobinLoadbalancer = new RoundRobinLoadbalancer();
-        // 模拟调用两次, 每个实例选择一次
+        // The simulation is invoked twice, once selected for each instance
         int count = 2;
         for (int i = 0; i < count; i++) {
             final Optional<ServiceInstance> choose = roundRobinLoadbalancer.choose(serviceName, serviceInstances);

@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 基础拦截点声明, 主要用于declarer加载开关
+ * The basic intercept point declaration is mainly used for the declarer loading switch
  *
  * @author zhouss
  * @since 2022-11-03

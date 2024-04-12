@@ -17,16 +17,16 @@
 package com.huawei.discovery.service.ex;
 
 /**
- * 无法找到下游异常
+ * Unable to find downstream anomalies
  *
  * @author zhouss
  * @since 2022-09-28
  */
 public class ProviderException extends RuntimeException {
     /**
-     * 构造器
+     * Constructor
      *
-     * @param msg 提示信息
+     * @param msg Prompt information
      */
     public ProviderException(String msg) {
         super(msg);

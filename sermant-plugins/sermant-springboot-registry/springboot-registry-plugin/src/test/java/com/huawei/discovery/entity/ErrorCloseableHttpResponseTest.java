@@ -23,7 +23,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 错误响应测试
+ * Error response test
  *
  * @author zhouss
  * @since 2022-10-12

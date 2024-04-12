@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * webclient拦截点
+ * webclient Interception points
  *
  * @author provenceee
  * @since 2023-04-25
@@ -59,15 +59,16 @@ public class WebClientBuilderInterceptor extends AbstractInterceptor {
             Builder builder = (Builder) context.getObject();
             Optional<Object> connector = ReflectUtils.getFieldValue(builder, "connector");
             if (connector.isPresent() && connector.get() instanceof JettyClientHttpConnector) {
-                // JettyClientHttpConnector存在bug，不能注入重试过滤器，否则重试时会报
+                // There is a bug in the Jetty Client Http Connector, and the retry filter cannot be injected,
+                // otherwise it will be reported when it is retried
                 // IllegalStateException: multiple subscribers not supported
                 return context;
             }
 
-            // 初始化
+            // Initialize
             init();
 
-            // 已经注入重试的不再注入
+            // Injected retries will no longer be injected
             Optional<Object> filters = ReflectUtils.getFieldValue(builder, "filters");
             if (filters.isPresent()) {
                 List<ExchangeFilterFunction> list = (List<ExchangeFilterFunction>) filters.get();
@@ -102,7 +103,8 @@ public class WebClientBuilderInterceptor extends AbstractInterceptor {
     }
 
     private WebClient getRetryWebClient(Builder builder) {
-        // clone是为了防止业务应用重复使用一个builder时，会错误地注入RetryExchangeFilterFunction
+        // clone is to prevent business applications from incorrectly injecting the RetryExchangeFilter function when
+        // reusing a builder
         Builder retryBuilder = builder.clone();
         if (isHigherVersion == null) {
             try {

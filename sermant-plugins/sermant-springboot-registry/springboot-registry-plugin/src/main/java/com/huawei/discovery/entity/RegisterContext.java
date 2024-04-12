@@ -17,7 +17,7 @@
 package com.huawei.discovery.entity;
 
 /**
- * 注册信息类
+ * Registration Information Class
  *
  * @author chengyouling
  * @since 2022-10-09
@@ -25,16 +25,16 @@ package com.huawei.discovery.entity;
 public enum RegisterContext {
 
     /**
-     * 实例
+     * Instance
      */
     INSTANCE;
 
     private final DefaultServiceInstance serviceInstance = new DefaultServiceInstance();
 
     /**
-     * 获取服务实例
+     * Get a service instance
      *
-     * @return 服务实例
+     * @return Service instances
      */
     public DefaultServiceInstance getServiceInstance() {
         return this.serviceInstance;

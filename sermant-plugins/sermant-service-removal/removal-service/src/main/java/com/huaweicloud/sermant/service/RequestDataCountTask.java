@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 实例调用信息统计任务
+ * The instance invokes the information statistics task
  *
  * @author zhp
  * @since 2023-02-28
@@ -53,7 +53,7 @@ public class RequestDataCountTask implements PluginService {
     private RemovalEventService removalEventService;
 
     /**
-     * 数据处理
+     * data processing
      */
     private void processData() {
         Map<String, InstanceInfo> instanceInfoMap = InstanceCache.INSTANCE_MAP;
@@ -78,9 +78,9 @@ public class RequestDataCountTask implements PluginService {
     }
 
     /**
-     * 统计请求信息并缓存
+     * Collect and cache request information
      *
-     * @param info 实例信息
+     * @param info Instance information
      */
     private void saveRequestCountData(InstanceInfo info) {
         RequestCountData countData = new RequestCountData();
@@ -100,10 +100,10 @@ public class RequestDataCountTask implements PluginService {
     }
 
     /**
-     * 计算错误率
+     * Calculate the error rate
      *
-     * @param info 实例信息
-     * @return 错误率
+     * @param info Instance information
+     * @return Error rate
      */
     private float calErrorRate(InstanceInfo info) {
         int requestCount = 0;

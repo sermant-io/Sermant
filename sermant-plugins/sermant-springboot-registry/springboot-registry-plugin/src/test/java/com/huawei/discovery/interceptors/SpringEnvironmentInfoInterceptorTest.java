@@ -32,7 +32,7 @@ public class SpringEnvironmentInfoInterceptorTest extends BaseTest {
     private final Object[] arguments;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringEnvironmentInfoInterceptorTest() {
         arguments = new Object[1];

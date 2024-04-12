@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * 规则缓存类
+ * Rule caching class
  *
  * @author zhp
  * @since 2023-02-17

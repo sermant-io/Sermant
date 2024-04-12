@@ -17,29 +17,29 @@
 package com.huaweicloud.sermant.entity;
 
 /**
- * 服务调用信息
+ * Service call information
  *
  * @author zhp
  * @since 2023-02-17
  */
 public class RequestInfo {
     /**
-     * 请求时间
+     * Request time
      */
     private long requestTime;
 
     /**
-     * 是否请求成功
+     * Whether the request is successful
      */
     private boolean success;
 
     /**
-     * 实例IP或者域名
+     * The IP address or domain name of the instance
      */
     private String host;
 
     /**
-     * 实例端口
+     * Instance port
      */
     private String port;
 

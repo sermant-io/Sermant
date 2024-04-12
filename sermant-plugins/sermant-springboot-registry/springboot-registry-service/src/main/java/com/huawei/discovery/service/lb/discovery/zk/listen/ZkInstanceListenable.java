@@ -44,7 +44,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * zk监听实现
+ * ZK snooping implementation
  *
  * @author zhouss
  * @since 2022-10-12
@@ -53,7 +53,8 @@ public class ZkInstanceListenable implements InstanceListenable {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 当服务更新时, 去除{@link LbConfig#getZkBasePath()},随后路径由"/"切割, 仅当分为4部分才是正确的服务实例信息节点路径
+     * When the service is updated, remove {@link LbConfig#getZkBasePath()}, and then the path is cut by "/", and only
+     * when it is divided into 4 parts is the correct service instance information node path
      */
     private static final int VALID_LEN = 2;
 
@@ -75,7 +76,7 @@ public class ZkInstanceListenable implements InstanceListenable {
     private volatile TreeCache childrenCache;
 
     /**
-     * 构造器
+     * Constructor
      */
     public ZkInstanceListenable() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);

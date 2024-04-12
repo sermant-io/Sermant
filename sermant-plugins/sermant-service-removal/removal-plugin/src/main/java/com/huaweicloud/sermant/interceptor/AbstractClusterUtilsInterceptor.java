@@ -20,9 +20,9 @@ import com.huaweicloud.sermant.cache.DubboCache;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法
+ * Enhance the mergeUrl method of the ClusterUtils class
  *
- * @param <T> 参数类型
+ * @param <T> Parameter type
  * @author zhp
  * @since 2023-02-17
  */
@@ -45,18 +45,18 @@ public abstract class AbstractClusterUtilsInterceptor<T> extends AbstractSwitchI
     }
 
     /**
-     * 获取接口名称
+     * Obtain the name of the interface
      *
-     * @param url 链接信息
-     * @return 接口名称
+     * @param url Linked Information
+     * @return The name of the interface
      */
     protected abstract String getInterfaceName(T url);
 
     /**
-     * 获取服务名称
+     * Get the service name
      *
-     * @param url 链接信息
-     * @return 服务名称
+     * @param url Linked Information
+     * @return The name of the service
      */
     protected abstract String getServiceName(T url);
 }

@@ -48,7 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 针对okHttp3.1以下版本拦截
+ * Blocks versions earlier than okhttp 3.1
  *
  * @author chengyouling
  * @since 2022-09-14
@@ -151,11 +151,11 @@ public class OkHttpClientInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 构建okHttp响应
+     * Build okhttp responses
      *
-     * @param request 请求对象
-     * @param ex 指定异常
-     * @return 响应
+     * @param request Request object
+     * @param ex Specify an exception
+     * @return Response
      */
     private Object buildErrorResponse(Throwable ex, Request request) {
         if (ex instanceof IOException) {

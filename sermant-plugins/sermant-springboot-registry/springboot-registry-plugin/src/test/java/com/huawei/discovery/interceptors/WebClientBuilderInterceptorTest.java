@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 测试WebClientBuilderInterceptor
+ * Test WebClientBuilderInterceptor
  *
  * @author provenceee
  * @since 2023-05-17
@@ -80,7 +80,7 @@ public class WebClientBuilderInterceptorTest {
 
     @Test
     public void testReactorClientHttpConnector() {
-        // 正常情况
+        // Normal
         Builder builder = WebClient.builder();
         builder.clientConnector(new ReactorClientHttpConnector());
         ExecuteContext context = ExecuteContext.forMemberMethod(builder, method, null, null, null);
@@ -93,7 +93,7 @@ public class WebClientBuilderInterceptorTest {
         Assert.assertTrue(((List<?>) filters.get()).get(0) instanceof AbstractRetryExchangeFilterFunction);
         Assert.assertNull(ReflectUtils.getFieldValue(builder, "filters").orElse(null));
 
-        // 已经注入过
+        // It has already been injected
         builder = WebClient.builder();
         context = ExecuteContext.forMemberMethod(builder, method, null, null, null);
         builder.filter(new RetryExchangeFilterFunction());

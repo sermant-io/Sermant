@@ -29,7 +29,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
 /**
- * 离群实例规则
+ * Outlier instance rules
  *
  * @author zhp
  * @since 2023-04-04
@@ -40,7 +40,7 @@ public class RemovalDynamicConfigListener implements DynamicConfigListener {
     private final Yaml yaml;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RemovalDynamicConfigListener() {
         Representer representer = new Representer(new DumperOptions());

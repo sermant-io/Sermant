@@ -39,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 结束阶段设置服务相关信息
+ * Set up service-related information at the end stage
  *
  * @author chengyouling
  * @since 2022-10-09
@@ -64,7 +64,8 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
             if (argument instanceof ConfigurableApplicationContext) {
                 ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) argument;
 
-                // 这里有可能会进入多次，多次进入时，后面的优先级高于前面，所以直接覆盖更新就行
+                // There may be multiple entries here, and when entering multiple times, the latter will take precedence
+                // over the front, so just override the update
                 this.setClientInfo(applicationContext.getEnvironment(), HostIpAddressUtils.getHostAddress());
             }
         }
@@ -102,7 +103,7 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
 
     private <T> T getProperty(T currentProperty, Function<T, Boolean> judgmentMapper, String env,
             Function<String, T> envMapper, T defaultValue) {
-        // environment.getProperty不为空，覆盖
+        // environment.getProperty not empty and overwritten
         if (!StringUtils.isBlank(env)) {
             T property = envMapper.apply(env);
             LOGGER.log(Level.INFO, "Env is not null, current property is {0}, will return {1}.",
@@ -110,13 +111,13 @@ public class SpringEnvironmentInfoInterceptor implements Interceptor {
             return property;
         }
 
-        // environment.getProperty为空且当前值为null，存入默认值
+        // environment.getPropertyis is empty, and the current value is null, the default value is stored
         if (judgmentMapper.apply(currentProperty)) {
             LOGGER.log(Level.INFO, "Env is null, current property is invalid, will return {0}.", defaultValue);
             return defaultValue;
         }
 
-        // environment.getProperty为空且当前存在值，返回当前值
+        // environment.getPropertyis is empty and the current value exists, returns the current value
         LOGGER.log(Level.INFO, "Env is null, current property is valid, will return {0}.", currentProperty);
         return currentProperty;
     }

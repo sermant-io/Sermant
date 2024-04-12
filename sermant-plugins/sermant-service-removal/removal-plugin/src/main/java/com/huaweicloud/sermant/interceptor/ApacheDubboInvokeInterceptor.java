@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.apache.dubbo.rpc.Invocation;
 
 /**
- * Apache Dubbo 服务调用增强类
+ * Apache Dubbo service calls the enhanced class
  *
  * @author zhp
  * @since 2023-02-17
@@ -44,9 +44,9 @@ public class ApacheDubboInvokeInterceptor extends AbstractCallInterceptor<Invoca
     }
 
     /**
-     * 获取实例信息的参数下标
+     * Obtain the parameter subscript of instance information
      *
-     * @return 例信息的参数下标
+     * @return Parameter subscript for example information
      */
     @Override
     protected int getIndex() {

@@ -21,7 +21,7 @@ import com.huawei.discovery.entity.ServiceInstance;
 import java.util.List;
 
 /**
- * 实例过滤器
+ * Instance filters
  *
  * @author zhouss
  * @since 2022-09-28
@@ -29,11 +29,11 @@ import java.util.List;
 @FunctionalInterface
 public interface InstanceFilter {
     /**
-     * 过滤
+     * Filtration
      *
-     * @param serviceName 服务名
-     * @param serviceInstances 过滤前的实例
-     * @return 过滤后的实例
+     * @param serviceName Service name
+     * @param serviceInstances Instance before filtering
+     * @return Filtered instances
      */
     List<ServiceInstance> filter(String serviceName, List<ServiceInstance> serviceInstances);
 }

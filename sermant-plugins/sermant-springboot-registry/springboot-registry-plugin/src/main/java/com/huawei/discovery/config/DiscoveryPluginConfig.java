@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 域名、日志打印等配置
+ * Configure configurations such as domain names and log printing
  *
  * @author chengyouling
  * @since 2022-10-10
@@ -28,17 +28,17 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("sermant.springboot.registry")
 public class DiscoveryPluginConfig implements PluginConfig {
     /**
-     * 拦截的域名
+     * Blocked domains
      */
     private String realmName;
 
     /**
-     * 是否打印统计日志
+     * Whether to print statistics logs
      */
     private boolean enableRequestCount = false;
 
     /**
-     * 是否开启boot注册
+     * Specifies whether to enable boot registration
      */
     private boolean enableRegistry = true;
 

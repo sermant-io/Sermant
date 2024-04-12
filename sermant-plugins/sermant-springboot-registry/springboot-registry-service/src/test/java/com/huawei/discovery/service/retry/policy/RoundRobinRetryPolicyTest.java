@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 轮询重试策略测试
+ * Poll to retry strategy testing
  *
  * @author zhouss
  * @since 2022-10-10
@@ -62,7 +62,7 @@ public class RoundRobinRetryPolicyTest extends BaseTest {
     @Override
     public void tearDown() {
         super.tearDown();
-        // 重置状态
+        // Reset the state
         final Optional<Object> isStarted = ReflectUtils.getFieldValue(DiscoveryManager.INSTANCE, "isStarted");
         Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
         ((AtomicBoolean) isStarted.get()).set(false);

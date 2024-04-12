@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import com.netflix.client.ClientRequest;
 
 /**
- * SpringCloud 服务调用增强类
+ * SpringCloud service invoking enhancement class
  *
  * @author zhp
  * @since 2023-02-17

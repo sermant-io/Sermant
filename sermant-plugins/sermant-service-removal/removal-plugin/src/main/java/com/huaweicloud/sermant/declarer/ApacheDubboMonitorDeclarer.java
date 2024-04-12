@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.interceptor.ApacheDubboInvokeInterceptor;
 
 /**
- * Apache Dubbo服务调用拦截定义
+ * Apache Dubbo service call interception definition
  *
  * @author zhp
  * @since 2023-02-17

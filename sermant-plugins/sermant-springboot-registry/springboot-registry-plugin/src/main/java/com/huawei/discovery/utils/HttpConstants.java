@@ -20,64 +20,64 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 参数标签类
+ * Parameter label class
  *
  * @author chengyouling
  * @since 2022-09-14
  */
 public class HttpConstants {
     /**
-     * 域名
+     * domain name
      */
     public static final String HTTP_URI_HOST = "host";
 
     /**
-     * 从url解析的服务名
+     * The name of the service resolved from the URL
      */
     public static final String HTTP_URI_SERVICE = "serviceName";
 
     /**
-     * 端口
+     * Port
      */
     public static final String HTTP_URI_PORT = "port";
 
     /**
-     * 路径
+     * Path
      */
     public static final String HTTP_URI_PATH = "path";
 
     /**
-     * 双斜杠
+     * Double slashes
      */
     public static final String HTTP_URL_DOUBLE_SLASH = "://";
 
     /**
-     * 冒号
+     * Profanity
      */
     public static final String HTTP_URL_COLON = ":";
 
     /**
-     * 问号
+     * question mark
      */
     public static final String HTTP_URL_UNKNOWN = "?";
 
     /**
-     * 单斜杠
+     * Single slash
      */
     public static final char HTTP_URL_SINGLE_SLASH = '/';
 
     /**
-     * 协议
+     * Empty strings
      */
     public static final String EMPTY_STR = "";
 
     /**
-     * 协议
+     * protocol
      */
     public static final String HTTP_URL_SCHEME = "scheme";
 
     /**
-     * 时间格式
+     * Time format
      */
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -85,7 +85,7 @@ public class HttpConstants {
     }
 
     /**
-     * 获取当前时间
+     * Get the current time
      *
      * @return 时间
      */

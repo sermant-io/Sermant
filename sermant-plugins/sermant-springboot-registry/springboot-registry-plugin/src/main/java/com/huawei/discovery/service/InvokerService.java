@@ -25,31 +25,31 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * 方法调用, 该服务用于接管调用拦截点, 由该方法决定调用逻辑
+ * Method invocation, which is used by the service to take over the call interception point, determines the call logic
  *
  * @author zhouss
  * @since 2022-09-28
  */
 public interface InvokerService extends PluginService {
     /**
-     * 方法调用
+     * Method calls
      *
-     * @param invokeFunc 方法调用器, 需返回实际调用的结果
-     * @param exFunc 异常封装器
-     * @param serviceName 目标服务名
-     * @return 最终响应结果
+     * @param invokeFunc Method caller, which needs to return the result of the actual call
+     * @param exFunc Exception wrapper
+     * @param serviceName Target service name
+     * @return Final response results
      */
     Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc,
             Function<Throwable, Object> exFunc, String serviceName);
 
     /**
-     * 基于自定义重试器进行调用
+     * Make calls based on custom retrievers
      *
-     * @param invokeFunc 方法调用器, 需返回实际调用的结果
-     * @param exFunc 异常封装器
-     * @param serviceName 目标服务名
-     * @param retryConfig 自定义重试配置
-     * @return 最终响应结果
+     * @param invokeFunc Method caller, which needs to return the result of the actual call
+     * @param exFunc Exception wrapper
+     * @param serviceName Target service name
+     * @param retryConfig Custom retry configurations
+     * @return Final response results
      */
     Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc,
             Function<Throwable, Object> exFunc, String serviceName, RetryConfig retryConfig);
