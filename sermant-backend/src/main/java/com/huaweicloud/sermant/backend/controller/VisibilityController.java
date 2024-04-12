@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 服务可见性API
+ * Service visibility API
  *
  * @author zhp
  * @since 2022-12-10
@@ -36,11 +36,10 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("visibility")
 public class VisibilityController {
-
     /**
-     * 查询服务采集信息
+     * Query service information
      *
-     * @return 服务采集信息
+     * @return service information
      */
     @GetMapping("/getCollectorInfo")
     public List<ServerInfo> getCollectorInfo() {

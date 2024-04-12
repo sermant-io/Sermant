@@ -22,7 +22,7 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * 心跳请求数据
+ * Heartbeat Message Entity
  *
  * @author xuezechao
  * @since 2022-02-28

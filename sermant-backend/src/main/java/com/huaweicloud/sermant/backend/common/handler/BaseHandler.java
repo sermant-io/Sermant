@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * handler的基类 不同数据类型选择处理方式，心跳触发等功能
+ * BaseHandler, handles different data type
  *
  * @author lilai
  * @version 0.0.1
@@ -38,20 +38,18 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Message.NettyMessage msg) {
-        // 获取收到的消息类型
         int type = msg.getMessageTypeValue();
 
-        // 如果为业务数据进行各自的处理
         if (type == MessageType.SERVICE_DATA_VALUE) {
             handlerData(ctx, msg);
         }
     }
 
     /**
-     * 业务数据处理方法
+     * Data process
      *
-     * @param ctx 上下文对象
-     * @param msg 收到的数据
+     * @param ctx Context object
+     * @param msg Data received
      */
     protected abstract void handlerData(ChannelHandlerContext ctx, Message.NettyMessage msg);
 
@@ -74,27 +72,27 @@ public abstract class BaseHandler extends SimpleChannelInboundHandler<Message.Ne
     }
 
     /**
-     * 超过时间未读到数据触发方法
+     * Handler method for read overtime
      *
-     * @param ctx 上下文对象
+     * @param ctx Context object
      */
     protected void handlerReaderIdle(ChannelHandlerContext ctx) {
         LOGGER.debug("Read idle...");
     }
 
     /**
-     * 超过时间未写出数据触发方法
+     * Handler method for write overtime
      *
-     * @param ctx 上下文对象
+     * @param ctx Context object
      */
     protected void handlerWriterIdle(ChannelHandlerContext ctx) {
         LOGGER.debug("Read idle...");
     }
 
     /**
-     * 超过时间未读写数据触发方法
+     * Handler method for read or write overtime
      *
-     * @param ctx 上下文对象
+     * @param ctx Context object
      */
     protected void handlerAllIdle(ChannelHandlerContext ctx) {
         LOGGER.debug("Read and write idle...");

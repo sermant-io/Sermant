@@ -18,34 +18,34 @@
 package com.huaweicloud.sermant.backend.entity.visibility;
 
 /**
- * 操作类型
+ * Operation type
  *
  * @author zhp
  * @since 2022-12-07
  */
 public enum OperateType {
     /**
-     * 新增
+     * Add
      */
     ADD("ADD"),
 
     /**
-     * 全量更新血缘关系
+     * Full update consanguinity
      */
     UPDATE_CONSANGUINITY("UPDATE_CONSANGUINITY"),
 
     /**
-     * 全量更新契约信息
+     * Full update contract
      */
     UPDATE_CONTRACT("UPDATE_CONTRACT"),
 
     /**
-     * 删除
+     * Delete
      */
     DELETE("DELETE"),
 
     /**
-     * 服务下线
+     * Service offline
      */
     OFFLINE("OFFLINE");
 

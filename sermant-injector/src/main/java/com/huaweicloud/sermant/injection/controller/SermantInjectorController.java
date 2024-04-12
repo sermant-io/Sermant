@@ -214,10 +214,10 @@ public class SermantInjectorController {
     private String action;
 
     /**
-     * 准入控制器接口
+     * Admission controller
      *
-     * @param request 请求
-     * @return 响应
+     * @param request request
+     * @return response
      */
     @PostMapping(path = "/admission")
     public WebhookResponse handleAdmissionReviewRequest(@RequestBody ObjectNode request) {
@@ -240,48 +240,48 @@ public class SermantInjectorController {
     private Optional<String> inject(ObjectNode body) {
         JsonNode specNode = body.path(REQUEST_PATH).path(OBJECT_PATH).path(SPEC_PATH);
 
-        // 获取容器的节点，便于遍历取值
+        // Get the node of the container for traversing the value
         JsonNode containersNode = specNode.path(CONTAINERS_PATH);
 
-        // 缓存每个容器的环境变量
+        // Cache environment variables for each container
         Map<Integer, Map<String, String>> containerEnv = new HashMap<>();
 
-        // 缓存容器的env
+        // Cache env of container
         setEnv(containersNode, containerEnv);
 
-        // 根据labels计算需要新增env
+        // Calculate env to be added based on labels
         Map<String, String> annotationEnv = new HashMap<>();
         JsonNode annotationNode = body.path(REQUEST_PATH).path(OBJECT_PATH).path(METADATA_PATH).path(ANNOTATION_PATH);
         setEnvByMap(annotationNode, annotationEnv);
 
-        // 建一个json节点
+        // Create a json node
         ArrayNode arrayNode = om.createArrayNode();
 
-        // 新增initContainers节点
+        // Added initContainers node
         injectInitContainer(arrayNode, specNode);
 
-        // 新增volumes节点
+        // Add volume nodes
         injectVolumes(arrayNode, specNode);
 
-        // 遍历所有容器进行织入
+        // Traverse all containers for weaving
         containerEnv.forEach((index, env) -> {
             String containerPath = Stream.of(SPEC_PATH, CONTAINERS_PATH, index.toString())
                     .collect(Collectors.joining(PATH_SEPARATOR, PATH_SEPARATOR, PATH_SEPARATOR));
             JsonNode containerNode = containersNode.path(index);
 
-            // 向容器新增lifecycle节点
+            // Add a lifecycle node to the container
             injectLifecycle(arrayNode, env, containerNode, containerPath);
 
-            // 向容器新增readinessProbe节点
+            // Add a readinessProbe node to the container
             injectReadinessProbe(arrayNode, env, containerNode, containerPath);
 
-            // 向容器新增configMapRef节点
+            // Add a configMapRef node to the container
             injectEnvFrom(arrayNode, env, containerNode, containerPath);
 
-            // 向容器新增env节点
+            // Add an env node to the container
             injectEnv(arrayNode, env, containerNode, containerPath, annotationEnv);
 
-            // 向容器新增volumeMounts节点
+            // Add a volumeMounts node to the container
             injectVolumeMounts(arrayNode, env, containerNode, containerPath);
         });
         LOGGER.info("arrayNode is: {}.", arrayNode.toString());
@@ -289,15 +289,15 @@ public class SermantInjectorController {
     }
 
     /**
-     *    根据labels/annotations计算需要增加的环境变量,如下以labels为例：
-     *     labels:
-     *       env.sermant.io/[key1]：[value1]
-     *       env.sermant.io/[key2]：[value2]
-     *    则在环境变量map中添加 key1:value1 和 key2:value2，共两个环境变量
-     *    本函数本真不强制是否使用labels还是annotations，只需要srcMap代表label/annotations下的map即可。
+     * Calculate environment variables that need to be added based on labels/annotations, taking labels as an example:
+     * labels:
+     *   env.sermant.io/[key1]: [value1]
+     *   env.sermant.io/[key2]: [value2]
+     * key1:value1 and key2:value2 are added to environment variable map. The function itself doesn't force whether
+     * labels or annotations are used, just that srcMap represents the map under label/annotations.
      *
-     * @param srcMap 源环境变量kv
-     * @param tgtEnv 处理后的环境变量kv
+     * @param srcMap Source environment variable kv
+     * @param tgtEnv The processed environment variable kv
      */
     private void setEnvByMap(JsonNode srcMap, Map<String, String> tgtEnv) {
         Iterator<String> labelIter = srcMap.fieldNames();
@@ -328,40 +328,40 @@ public class SermantInjectorController {
     }
 
     private void injectInitContainer(ArrayNode arrayNode, JsonNode specPath) {
-        // 建一个initContainer
+        // Create an initContainer
         ObjectNode initContainerNode = putOrAddObject(arrayNode, specPath, INIT_CONTAINERS_PATH,
                 INIT_CONTAINERS_INJECT_PATH);
 
-        // 镜像名
+        // Image name
         initContainerNode.put(NAME_KEY, IMAGE_NAME);
 
-        // 镜像地址
+        // Image address
         initContainerNode.put(IMAGE_KEY, imageAddr);
 
-        // 镜像拉取策略
+        // Image pulling policy
         initContainerNode.put(IMAGE_PULL_POLICY_KEY, pullPolicy);
 
-        // 初始化命令
+        // Initialization command
         initContainerNode.putArray(COMMAND_KEY).addAll(INIT_COMMAND);
 
-        // 建一个volumeMount
+        // Create a volumeMount
         ObjectNode initContainerVolumeMountNode = initContainerNode.putArray(VOLUME_MOUNTS_PATH).addObject();
 
-        // 磁盘名
+        // Disk name
         initContainerVolumeMountNode.put(NAME_KEY, VOLUME_NAME);
 
-        // 磁盘路径
+        // Disk path
         initContainerVolumeMountNode.put(MOUNT_PATH, INIT_SERMANT_PATH);
     }
 
     private void injectVolumes(ArrayNode arrayNode, JsonNode specPath) {
-        // 建一个volume
+        // Create a volume
         ObjectNode volumeNode = putOrAddObject(arrayNode, specPath, VOLUMES_PATH, VOLUMES_INJECT_PATH);
 
-        // 磁盘名
+        // Disk name
         volumeNode.put(NAME_KEY, VOLUME_NAME);
 
-        // 磁盘
+        // Disk
         volumeNode.putObject(VOLUME_DIR);
     }
 
@@ -373,32 +373,33 @@ public class SermantInjectorController {
         boolean enableOfflineNotify = getNotEmptyValue(env, ENABLE_OFFLINE_NOTIFY_KEY, true,
                 Boolean::parseBoolean);
 
-        // 未开启spring优雅上下线/未开启优雅下线/未开启下线通知，则不注入
+        // If spring Graceful Online/Offline notification is not enabled or Graceful offline/offline notification is not
+        // enabled, no injection is performed
         if (!enableSpring || !enableGraceShutDown || !enableOfflineNotify) {
             return;
         }
 
-        // 向新容器新增Lifecycle>preStop>exec>command节点
+        // Add a Lifecycle>preStop>exec>command node to the new container
         ObjectNode objectNode = arrayNode.addObject();
         objectNode.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
         int port = getNotEmptyValue(env, HTTP_SERVER_PORT_KEY, healthCheckPort, Integer::parseInt);
         if (!containerNode.hasNonNull(LIFECYCLE_PATH)) {
-            // lifecycle为null，建一个lifecycle
+            // lifecycle is null. Create a lifecycle
             objectNode.put(PATH_KEY, containerPath + LIFECYCLE_PATH);
 
-            // 建一个preStop
+            // Create a preStop
             ObjectNode preStopNode = objectNode.putObject(VALUE_KEY).putObject(PRE_STOP_PATH);
 
-            // 建一个exec和command
+            // Create an exec and command
             addExecAndCommand(preStopNode, port);
             return;
         }
         if (!containerNode.path(LIFECYCLE_PATH).hasNonNull(PRE_STOP_PATH)) {
-            // lifecycle不为null, preStop为null, 建一个preStop
+            // lifecycle is not null and preStop is null. Create a preStop
             objectNode.put(PATH_KEY, containerPath + LIFECYCLE_PATH + PATH_SEPARATOR + PRE_STOP_PATH);
             ObjectNode preStopNode = objectNode.putObject(VALUE_KEY);
 
-            // 建一个exec和command
+            // Create an exec and command
             addExecAndCommand(preStopNode, port);
         }
     }
@@ -409,18 +410,19 @@ public class SermantInjectorController {
         boolean enableSpring = getNotEmptyValue(env, ENABLE_SPRING_KEY, true, Boolean::parseBoolean);
         boolean enableHealthCheck = getNotEmptyValue(env, ENABLE_HEALTH_CHECK_KEY, false, Boolean::parseBoolean);
 
-        // 原来已经有readinessProbe节点/periodSeconds<=0/未开启健康检查/未开启spring优雅上下线，则不注入
+        // If there is already a readinessProbe node / period Seconds<=0 / If health check is not enabled/spring
+        // graceful online/offline is not enabled, no injection is performed
         if (containerNode.hasNonNull(READINESS_PROBE_PATH) || periodSeconds <= 0 || !enableHealthCheck
                 || !enableSpring) {
             return;
         }
 
-        // 向容器新增readinessProbe节点
+        // Add a readinessProbe node to the container
         ObjectNode readinessProbeNode = arrayNode.addObject();
         readinessProbeNode.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
         readinessProbeNode.put(PATH_KEY, containerPath + READINESS_PROBE_PATH);
 
-        // 建一个readinessProbe
+        // Create a readinessProbe
         ObjectNode readinessProbeObjectNode = readinessProbeNode.putObject(VALUE_KEY);
         readinessProbeObjectNode.put(INITIAL_DELAY_SECONDS_PATH, 1);
         readinessProbeObjectNode.put(PERIOD_SECONDS_PATH, periodSeconds);
@@ -437,44 +439,44 @@ public class SermantInjectorController {
             return;
         }
 
-        // 向容器新增envFrom节点
+        // Add an envFrom node to the container
         ObjectNode envFromNode = putOrAddObject(arrayNode, containerNode, ENV_FROM_PATH,
                 containerPath + ENV_FROM_PATH);
 
-        // 新建一个configMapRef
+        // Create a configMapRef
         ObjectNode configMapRefNode = envFromNode.putObject(CONFIG_MAP_REF_PATH);
         configMapRefNode.put(NAME_KEY, configMap);
     }
 
     private void injectEnv(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode, String containerPath,
             Map<String, String> annotationEnv) {
-        // 覆盖容器的env节点
+        // Override the env node of the container
         ObjectNode envNode = arrayNode.addObject();
         envNode.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
         envNode.put(PATH_KEY, containerPath + ENV_PATH);
         ArrayNode envArray = envNode.putArray(VALUE_KEY);
 
-        // 如果原来有env，则先存入原来的env
+        // If there is an env, store into the original env first
         if (containerNode.hasNonNull(ENV_PATH)) {
             Iterator<JsonNode> elements = containerNode.path(ENV_PATH).elements();
             while (elements.hasNext()) {
                 JsonNode next = elements.next();
 
-                // JAVA_TOOL_OPTIONS以injector注入为准
+                // The JAVA_TOOL_OPTIONS depend on injector injection
                 if (!JVM_OPTIONS_KEY.equals(next.get(NAME_KEY).asText())) {
                     envArray.add(next);
                 }
             }
         }
 
-        // agent磁盘路径
+        // agent disk path
         String realMountPath = getNotEmptyValue(env, ENV_MOUNT_PATH_KEY, mountPath, value -> value);
 
-        // jvm启动命令
+        // jvm startup command
         String jvmOptions = getJavaToolOptions(JVM_OPTIONS_VALUE_PREFIX + realMountPath + JVM_OPTIONS_VALUE_SUFFIX,
                 env.get(JVM_OPTIONS_KEY));
 
-        // 注入jvm启动命令
+        // inject the jvm startup command
         addEnv(envArray, JVM_OPTIONS_KEY, jvmOptions);
 
         if (!StringUtils.hasText(env.get(SERMANT_CONFIG_TYPE_KEY))) {
@@ -490,8 +492,8 @@ public class SermantInjectorController {
             addEnv(envArray, SERMANT_SERVICE_CENTER_TYPE_KEY, serviceType);
         }
 
-        // 增加通过在 /metadata/annotations 上指定的env
-        // 这里默认，如果annotations中有新的设置，则覆盖原有的env设置。
+        // add env by specifying it on /metadata/annotations
+        // By default, if there is a new setting in annotations, the existing env setting will be overwritten.
         for (Map.Entry<String, String> entry : annotationEnv.entrySet()) {
             addEnv(envArray, entry.getKey(), entry.getValue());
         }
@@ -512,14 +514,14 @@ public class SermantInjectorController {
 
     private void injectVolumeMounts(ArrayNode arrayNode, Map<String, String> env, JsonNode containerNode,
             String containerPath) {
-        // 向容器新增volumeMounts节点
+        // Add a volumeMounts node to the container
         ObjectNode containerVolumeNode = putOrAddObject(arrayNode, containerNode, VOLUME_MOUNTS_PATH,
                 containerPath + VOLUME_MOUNTS_PATH);
 
-        // 磁盘名
+        // Disk name
         containerVolumeNode.put(NAME_KEY, VOLUME_NAME);
 
-        // 磁盘路径
+        // Disk path
         String realMountPath = getNotEmptyValue(env, ENV_MOUNT_PATH_KEY, mountPath, value -> value);
         containerVolumeNode.put(MOUNT_PATH, realMountPath);
     }
@@ -530,10 +532,10 @@ public class SermantInjectorController {
     }
 
     private void addEnv(ArrayNode envArray, String key, String value) {
-        // 建一个env对象
+        // Create an env object
         ObjectNode envNode = envArray.addObject();
 
-        // 注入env
+        // Inject env
         envNode.put(NAME_KEY, key);
         envNode.put(VALUE_KEY, value);
     }
@@ -546,16 +548,16 @@ public class SermantInjectorController {
     }
 
     private ObjectNode putOrAddObject(ArrayNode arrayNode, JsonNode jsonNode, String path, String injectPath) {
-        // 新增一个节点
+        // Add a node
         ObjectNode node = arrayNode.addObject();
         node.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
         ObjectNode objectNode;
         if (jsonNode.hasNonNull(path)) {
-            // 如果之前有，则放到最后面
+            // If exists before, put it at the end
             node.put(PATH_KEY, injectPath + END_PATH);
             objectNode = node.putObject(VALUE_KEY);
         } else {
-            // 没有则建一个
+            // If no one exists, create new one
             node.put(PATH_KEY, injectPath);
             objectNode = node.putArray(VALUE_KEY).addObject();
         }

@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
 import com.huaweicloud.sermant.backend.webhook.WebhookConfigImpl;
 
 /**
- * 飞书webhook配置
+ * FeiShu webhook configuration
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -33,9 +33,9 @@ public class FeiShuHookConfig extends WebhookConfigImpl {
     }
 
     /**
-     * 获取飞书的webhook配置
+     * Get FeiShu webhook configuration
      *
-     * @return 飞书的webhook配置
+     * @return FeiShu webhook configuration
      */
     public static WebHookConfig getInstance() {
         return CONFIG;

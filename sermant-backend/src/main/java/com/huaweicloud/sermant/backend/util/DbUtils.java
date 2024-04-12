@@ -43,7 +43,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
- * 字符串工具类
+ * String utility class
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -54,38 +54,38 @@ public class DbUtils {
     private static final int EVENT_LEVEL_INDEX = 3;
 
     /**
-     * 构造函数
+     * Constructor
      */
     private DbUtils() {
 
     }
 
     /**
-     * 字符串判空
+     * String empty check
      *
-     * @param val 字符串
-     * @return 是否为空
+     * @param val string
+     * @return is empty
      */
     public static boolean isEmpty(String val) {
         return val == null || "".equals(val.trim());
     }
 
     /**
-     * 字符串转int 空返回0
+     * String to int, empty returns 0
      *
-     * @param val 字符串
-     * @return 字符串转int值
+     * @param val string
+     * @return int value
      */
     public static int filterStr(String val) {
         return val == null ? 0 : Integer.parseInt(val);
     }
 
     /**
-     * 获取事件field
+     * Get event field
      *
-     * @param agentInstanceMeta agent实例
-     * @param event 事件
-     * @return 事件对应field
+     * @param agentInstanceMeta agent instance meta
+     * @param event event
+     * @return event correspondence field
      */
     public static String getEventField(InstanceMeta agentInstanceMeta, Event event) {
         String field = String.join(CommonConst.JOIN_REDIS_KEY,
@@ -104,21 +104,21 @@ public class DbUtils {
     }
 
     /**
-     * 过滤filed拼接的字符串
+     * Filter the string of field concatenations
      *
-     * @param str 字符串
-     * @return 过滤结果
+     * @param str string
+     * @return filter result
      */
     public static String getField(String str) {
         return !DbUtils.isEmpty(str) ? str : "";
     }
 
     /**
-     * 聚合事件
+     * Aggregate event
      *
-     * @param event 事件
-     * @param agentInstanceMeta 事件归属的实例
-     * @return 事件
+     * @param event event
+     * @param agentInstanceMeta the instance to which the event belongs
+     * @return QueryResultEventInfoEntity
      */
     public static QueryResultEventInfoEntity aggregationEvent(Event event, InstanceMeta agentInstanceMeta) {
         QueryResultEventInfoEntity queryResultEventInfoEntity = new QueryResultEventInfoEntity();
@@ -139,10 +139,10 @@ public class DbUtils {
     }
 
     /**
-     * 拼接查询条件
+     * Concatenated query condition
      *
-     * @param event 查询条件
-     * @return 事件查询模版
+     * @param event Query condition
+     * @return Event query pattern
      */
     public static String getPattern(EventsRequestEntity event) {
         List<String> patterns = new ArrayList<>();
@@ -156,22 +156,22 @@ public class DbUtils {
     }
 
     /**
-     * 多条件判断
+     * Multi-condition judgment
      *
-     * @param strings 条件列表
-     * @return 多条件查询条件
+     * @param strings condition list
+     * @return multi-condition query string
      */
     public static String getListPattern(List<String> strings) {
         return strings.size() == 0 ? CommonConst.FULL_MATCH_KEY : "(" + String.join("|", strings) + ")";
     }
 
     /**
-     * 过滤查询结果
+     * Filter query result
      *
-     * @param backendConfig 配置
-     * @param queryResultByTime 按时间查询结果
-     * @param pattern 过滤规则
-     * @return 过滤结果
+     * @param backendConfig backend configuration
+     * @param queryResultByTime query the result by time
+     * @param pattern filter rule
+     * @return filter result
      */
     public static List<Tuple> filterQueryResult(BackendConfig backendConfig,
             List<Tuple> queryResultByTime, String pattern) {
@@ -193,7 +193,7 @@ public class DbUtils {
         List<Tuple> cutList = null;
         for (int i = 0; i < threadNum; i++) {
 
-            // 切割list
+            // cut list
             if (i == threadNum - 1) {
                 cutList = queryResultByTime.subList(i * threadSize, queryResultByTime.size());
             } else {
@@ -229,10 +229,10 @@ public class DbUtils {
     }
 
     /**
-     * 获取查询结果数据量
+     * get the query result data quantity
      *
-     * @param keyList 查询事件key
-     * @return 查询结果数据量
+     * @param keyList key list of query event
+     * @return Query result data quantity
      */
     public static QueryCacheSizeEntity getQueryCacheSize(List<String> keyList) {
         QueryCacheSizeEntity queryCacheSize = new QueryCacheSizeEntity();

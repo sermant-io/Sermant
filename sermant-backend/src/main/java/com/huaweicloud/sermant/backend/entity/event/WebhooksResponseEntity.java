@@ -24,22 +24,21 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * webhook信息查询响应实体
+ * Webhook Information Response Entity
  *
- * @since 2023-03-02
  * @author xuezechao
+ * @since 2023-03-02
  */
 @Getter
 @Setter
 public class WebhooksResponseEntity {
-
     /**
-     * webhook 数量
+     * webhook client count
      */
     Integer total;
 
     /**
-     * webhook 配置
+     * webhook configuration list
      */
     List<WebHookConfig> webhooks;
 }

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.injection.dto;
 
 /**
- * 响应
+ * Webhook Response
  *
  * @author provenceee
  * @since 2022-07-29
@@ -30,11 +30,11 @@ public class WebhookResponse {
     private final Response response;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param apiVersion api版本
-     * @param kind       类型
-     * @param response   数据
+     * @param apiVersion api version
+     * @param kind kind
+     * @param response response
      */
     public WebhookResponse(String apiVersion, String kind, Response response) {
         this.apiVersion = apiVersion;

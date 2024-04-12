@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
 import java.util.List;
 
 /**
- * webhook客户端接口定义
+ * Webhook client interface
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -29,17 +29,17 @@ import java.util.List;
 public interface WebHookClient {
 
     /**
-     * 推送事件
+     * notify event
      *
-     * @param eventList 事件信息
-     * @return 推送成功或失败
+     * @param eventList event information
+     * @return notify result
      */
     boolean doNotify(List<QueryResultEventInfoEntity> eventList);
 
     /**
-     * 获取webhook 配置
+     * Get the webhook configuration
      *
-     * @return 配置
+     * @return webhook configuration
      */
     WebHookConfig getConfig();
 }

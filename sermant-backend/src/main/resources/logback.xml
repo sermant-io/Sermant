@@ -2,15 +2,15 @@
 
 <configuration scan="true">
 
-    <!-- 定义日志文件 输出位置 -->
+    <!-- Define the output location of the log file -->
     <property name="log.home_dir" value="./logs/sermant/backend"/>
     <property name="log.app_name" value="backend"/>
-    <!-- 日志最大的历史 30天 -->
+    <!-- The maximum log history is 30 days by default -->
     <property name="log.maxHistory" value="30"/>
     <property name="log.level" value="info"/>
     <property name="log.maxSize" value="5MB" />
 
-    <!-- ConsoleAppender 控制台输出日志 -->
+    <!-- ConsoleAppender Console output log -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -19,13 +19,13 @@
         </filter>
         <encoder>
             <pattern>
-                <!-- 设置日志输出格式 -->
+                <!-- Set the log output format -->
                 %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] %logger - %msg%n
             </pattern>
         </encoder>
     </appender>
 
-    <!--设置一个向上传递的appender,所有级别的日志都会输出-->
+    <!--Configure an up-pass appender that outputs logs of all levels-->
     <appender name="app" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log.home_dir}/app/%d{yyyy-MM-dd}/${log.app_name}-%i.log</fileNamePattern>
@@ -37,9 +37,9 @@
         </encoder>
     </appender>
 
-    <!-- root级别   DEBUG -->
+    <!-- root level DEBUG -->
     <root>
-        <!-- 打印debug级别日志及以上级别日志 -->
+        <!-- Print logs for debug and higher level -->
         <level value="${log.level}"/>
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="app" />

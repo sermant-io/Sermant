@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 /**
- * 事件配置
+ * Backend event config
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -34,13 +34,13 @@ import java.util.Locale;
 @Configuration
 public class BackendConfig {
     /**
-     * 数据库类型
+     * database type
      */
     @Value("${database.type}")
     private String database;
 
     /**
-     * 数据库地址
+     * database address
      */
     @Value("${database.address}")
     private String url;

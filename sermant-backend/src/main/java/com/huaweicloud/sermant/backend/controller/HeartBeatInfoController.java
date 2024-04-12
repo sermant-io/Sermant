@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 心跳信息Controller
+ * Heartbeat information Controller
  *
  * @author luanwenfei
  * @since 2022-10-27
@@ -43,7 +43,7 @@ public class HeartBeatInfoController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartBeatInfoController.class);
 
     /**
-     * 返回插件信息
+     * Get plugin information
      *
      * @return 插件信息
      */

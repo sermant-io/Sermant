@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 环境实体
+ * Environment Entity
  *
  * @author xuezechao
  * @since 2023-03-02

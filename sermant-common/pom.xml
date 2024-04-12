@@ -19,7 +19,8 @@
         <simpleclient.version>0.16.0</simpleclient.version>
     </properties>
 
-    <!--公共第三方依赖，在插件服务模块或implement模块中以provided方式引入sermant-common-->
+    <!--Common third party dependencies that introduce sermant-common as provided in the plugin service module or
+    implement module-->
     <dependencies>
         <dependency>
             <groupId>com.alibaba</groupId>

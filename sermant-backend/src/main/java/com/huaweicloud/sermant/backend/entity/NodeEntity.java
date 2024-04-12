@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 实例节点数据
+ * Instance Node Information
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -28,9 +28,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NodeEntity {
-
     /**
-     * 实例ip
+     * Instance ip
      */
     private String ip;
 }

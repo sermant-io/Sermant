@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
- * 服务可见性配置
+ * Service visibility configuration
  *
  * @since 2022-12-07
  * @author zhp

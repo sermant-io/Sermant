@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 /**
- * CVE-2016-1000027漏洞解决
+ * CVE-2016-1000027 Vulnerability resolved
  *
  * @author daizhenyu
  * @since 2023-12-27
@@ -32,14 +32,14 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class HttpInvokerServiceAspect {
     /**
-     * 设置AOP切点
+     * Set AOP pointcut
      */
     @Pointcut("execution(* org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter.handleRequest(..))")
     public void handleRequestPointcut() {
     }
 
     /**
-     * 执行方法环绕
+     * Execute method around
      *
      * @param point
      * @return object

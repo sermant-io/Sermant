@@ -17,24 +17,24 @@
 package com.huaweicloud.sermant.backend.entity;
 
 /**
- * 事件类型
+ * Event Type
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public enum EventType {
     /**
-     * 运行事件
+     * OPERATION event
      */
     OPERATION(0, "operation"),
 
     /**
-     * 治理事件
+     * GOVERNANCE event
      */
     GOVERNANCE(1, "governance"),
 
     /**
-     * 日志事件
+     * LOG event
      */
     LOG(2, "log");
 

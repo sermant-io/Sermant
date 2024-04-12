@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 证书处理器
+ * Certificate processor
  *
  * @author provenceee
  * @since 2022-07-29
@@ -58,12 +58,12 @@ public class CertificateEnvironmentPostProcessor implements EnvironmentPostProce
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        // k8s环境中，这个证书是base64编码后的，所以需要解码
+        // In the k8s environment, this certificate is base64 encoded, so it needs to be decoded
         String certificatePath = getNotEmptyText(environment, CERTIFICATE_PATH_KEY, DEFAULT_CERTIFICATE_PATH);
         Optional<String> certificate = read(certificatePath);
         certificate.ifPresent(data -> write(data, certificatePath));
 
-        // k8s环境中，这个私钥是base64编码后的，所以需要解码
+        // In the k8s environment, this private key is base64 encoded, so it needs to be decoded
         String privateKeyPath = getNotEmptyText(environment, PRIVATE_KEY_PATH_KEY, DEFAULT_PRIVATE_KEY_PATH);
         Optional<String> privateKey = read(privateKeyPath);
         privateKey.ifPresent(data -> write(data, privateKeyPath));
@@ -83,7 +83,7 @@ public class CertificateEnvironmentPostProcessor implements EnvironmentPostProce
     }
 
     private void write(String data, String path) {
-        // 已经是非base64编码的数据，不需要解码
+        // Data that is already non-base64 encoded does not need to be decoded
         for (String flag : BASE64_DECODER_FLAG) {
             if (data.contains(flag)) {
                 return;

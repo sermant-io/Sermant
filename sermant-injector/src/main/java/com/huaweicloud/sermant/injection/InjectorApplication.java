@@ -20,7 +20,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * 启动类
+ * Startup Application
  *
  * @author provenceee
  * @since 2022-07-29
@@ -28,9 +28,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class InjectorApplication {
     /**
-     * main方法
+     * main method
      *
-     * @param args 参数
+     * @param args arguments
      */
     public static void main(String[] args) {
         SpringApplication.run(InjectorApplication.class);

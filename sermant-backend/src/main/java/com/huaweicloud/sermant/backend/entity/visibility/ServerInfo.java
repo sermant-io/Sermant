@@ -22,84 +22,84 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 服务基本信息
+ * Basic service information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class ServerInfo extends BaseInfo {
     /**
-     * 区域
+     * Zone
      */
     private String zone;
 
     /**
-     * 命名空间
+     * Namespace
      */
     private String project;
 
     /**
-     * 环境
+     * Environment
      */
     private String environment;
 
     /**
-     * 服务名称
+     * Server name
      */
     private String serverName;
 
     /**
-     * 框架类型
+     * Server type
      */
     private String serverType;
 
     /**
-     * 操作类型
+     * Operate type
      */
     private String operateType;
 
     /**
-     * 应用名称
+     * Application name
      */
     private String applicationName;
 
     /**
-     * 分组名称
+     * Group name
      */
     private String groupName;
 
     /**
-     * 版本号
+     * Version
      */
     private String version;
 
     /**
-     * 血缘关系信息
+     * Consanguinity list
      */
     private List<Consanguinity> consanguinityList;
 
     /**
-     * 契约信息
+     * Contract list
      */
     private List<Contract> contractList;
 
     /**
-     * 注册信息
+     * Registration information
      */
     private Map<String,BaseInfo> registryInfo;
 
     /**
-     * 服务ID
+     * Instance ID
      */
     private String instanceId;
 
     /**
-     * 有效期
+     * Validate date
      */
     private Date validateDate;
 
     /**
-     * 实例ID集合
+     * Instance ID list
      */
     private List<String> instanceIds;
 

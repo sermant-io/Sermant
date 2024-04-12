@@ -24,17 +24,16 @@ import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
 import java.util.List;
 
 /**
- * welink webhook 客户端
+ * Welink webhook client
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public class WelinkHookClient implements WebHookClient {
-
     private WebHookConfig welinkHookConfig = WelinkHookConfig.getInstance();
 
     /**
-     * 构造函数
+     * Constructor
      */
     public WelinkHookClient() {
         welinkHookConfig.setName(CommonConst.WELINK_WEBHOOK_NAME);
@@ -42,10 +41,10 @@ public class WelinkHookClient implements WebHookClient {
     }
 
     /**
-     * webhook 事件推送
+     * Webhook event notify
      *
-     * @param events 事件信息
-     * @return 推送是否成功
+     * @param events event information
+     * @return notify result
      */
     @Override
     public boolean doNotify(List<QueryResultEventInfoEntity> events) {
@@ -53,9 +52,9 @@ public class WelinkHookClient implements WebHookClient {
     }
 
     /**
-     * 获取配置
+     * Get configuration
      *
-     * @return 配置
+     * @return configuration
      */
     @Override
     public WebHookConfig getConfig() {

@@ -1,5 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.huaweicloud.sermant</groupId>
     <artifactId>sermant</artifactId>
@@ -333,25 +333,27 @@
                                 </goals>
 
                                 <configuration>
-                                    <!--定义输出的文件夹-->
+                                    <!--Define the output folder-->
                                     <outputDirectory>target/jacoco-report</outputDirectory>
-                                    <!--执行数据的文件-->
+                                    <!--execution data file-->
                                     <dataFile>${project.build.directory}/jacoco.exec</dataFile>
-                                    <!--要从报告中排除的类文件列表，支持通配符(*和?)。如果未指定则不会排除任何内容-->
+                                    <!--List of class files to exclude from the report, supporting wildcard
+                                    characters (* and?). If not specified, nothing is excluded-->
                                     <excludes>**/test/*.class</excludes>
-                                    <!--包含生成报告的文件列表，支持通配符(*和?)。如果未指定则包含所有内容-->
+                                    <!--List of class files to include from the report, supporting wildcard
+                                    characters (* and?). If not specified, everything is included-->
                                     <includes></includes>
-                                    <!--HTML 报告页面中使用的页脚文本。-->
+                                    <!--Footer text used in HTML report pages-->
                                     <footer></footer>
-                                    <!--生成报告的文件类型，HTML(默认)、XML、CSV-->
+                                    <!--The file type of the report can be HTML(default), XML, or CSV-->
                                     <formats>XML</formats>
-                                    <!--生成报告的编码格式，默认UTF-8-->
+                                    <!--Encoding format for generating reports. The default is UTF-8-->
                                     <outputEncoding>UTF-8</outputEncoding>
-                                    <!--抑制执行的标签-->
+                                    <!--Suppress the execution of labels-->
                                     <skip></skip>
-                                    <!--源文件编码-->
+                                    <!--Source file coding format-->
                                     <sourceEncoding>UTF-8</sourceEncoding>
-                                    <!--HTML报告的标题-->
+                                    <!--HTML report title-->
                                     <title>${project.name}</title>
                                 </configuration>
                             </execution>
@@ -537,8 +539,10 @@
                     </executions>
                     <configuration>
                         <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
                         </transformers>
                     </configuration>
                 </plugin>
@@ -644,7 +648,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--     清理打包内容       -->
+            <!--     Clean up packaged product     -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>

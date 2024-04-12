@@ -43,13 +43,12 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 钉钉webhook 客户端
+ * DingDing webhook client
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public class DingDingHookClient implements WebHookClient {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DingDingHookClient.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -59,7 +58,7 @@ public class DingDingHookClient implements WebHookClient {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
-     * 构造函数
+     * Constructor
      */
     public DingDingHookClient() {
         dingDingHookConfig.setName(CommonConst.DINGDING_WEBHOOK_NAME);
@@ -67,9 +66,9 @@ public class DingDingHookClient implements WebHookClient {
     }
 
     /**
-     * webhook 事件推送
+     * Webhook event notify
      *
-     * @param events 事件信息
+     * @param events event information
      * @return true/false
      */
     @Override
@@ -99,9 +98,9 @@ public class DingDingHookClient implements WebHookClient {
     }
 
     /**
-     * 获取配置
+     * Get configuration
      *
-     * @return 配置
+     * @return configuration
      */
     @Override
     public WebHookConfig getConfig() {
@@ -109,10 +108,10 @@ public class DingDingHookClient implements WebHookClient {
     }
 
     /**
-     * 获取推送内容
+     * Get notify content
      *
-     * @param events 事件
-     * @return 推动信息
+     * @param events events
+     * @return notify content
      */
     public String getNotifyContent(List<QueryResultEventInfoEntity> events) {
         StringBuilder result = new StringBuilder();

@@ -25,59 +25,58 @@ import com.huaweicloud.sermant.backend.entity.event.QueryResultEventInfoEntity;
 import java.util.List;
 
 /**
- * 数据库接口
+ * Database interface
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public interface EventDao {
-
     /**
-     * 增加事件
+     * Add event
      *
-     * @param event 事件
+     * @param event event
      * @return true/false
      */
     boolean addEvent(Event event);
 
     /**
-     * 增加agent实例
+     * Add agent instance
      *
-     * @param agentInstanceMeta agent 实例
+     * @param agentInstanceMeta agent instance
      * @return true/false
      */
     boolean addInstanceMeta(InstanceMeta agentInstanceMeta);
 
     /**
-     * 事件查询
+     * Query event
      *
-     * @param eventsRequestEntity 查询条件
-     * @return 查询结果
+     * @param eventsRequestEntity Query condition
+     * @return Query result
      */
     List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity);
 
     /**
-     * 查询某页数据
+     * Query data with specific page
      *
-     * @param sessionId id
-     * @param page 页码
-     * @return 查询结果
+     * @param sessionId session id
+     * @param page page number
+     * @return query result
      */
     List<QueryResultEventInfoEntity> queryEventPage(String sessionId, int page);
 
     /**
-     * 获取查询结果数据量
+     * Get the cache size in the query result
      *
-     * @param eventsRequestEntity 查询参数
-     * @return 查询结果数据量
+     * @param eventsRequestEntity Event request entity
+     * @return the cache size in query result
      */
     QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity);
 
     /**
-     * 获取 webhook推送消息
+     * Get webhook notify event
      *
-     * @param event 事件
-     * @return 推送消息
+     * @param event event
+     * @return Event information entity
      */
     QueryResultEventInfoEntity getDoNotifyEvent(Event event);
 }
