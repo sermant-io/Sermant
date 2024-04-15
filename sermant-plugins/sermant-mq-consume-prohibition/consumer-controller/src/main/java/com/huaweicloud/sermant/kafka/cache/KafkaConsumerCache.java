@@ -22,19 +22,19 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * KafkaConsumer缓存
+ * Kafka consumer cache
  *
  * @author lilai
  * @since 2023-12-05
  */
 public enum KafkaConsumerCache {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     /**
-     * 消费者缓存
+     * Consumer cache
      */
     private final Map<Integer, KafkaConsumerWrapper> kafkaConsumerCache = new ConcurrentHashMap<>();
 
@@ -42,28 +42,28 @@ public enum KafkaConsumerCache {
     }
 
     /**
-     * 获取消费者缓存
+     * Get the consumer cache
      *
-     * @return 消费者缓存
+     * @return Consumer cache
      */
     public Map<Integer, KafkaConsumerWrapper> getCache() {
         return kafkaConsumerCache;
     }
 
     /**
-     * 更新Kafka消费者缓存列表
+     * Update the list of Kafka consumer caches
      *
-     * @param kafkaConsumer 消费者实例
+     * @param kafkaConsumer consumer instance
      */
     public void addKafkaConsumer(KafkaConsumer<?, ?> kafkaConsumer) {
         kafkaConsumerCache.put(kafkaConsumer.hashCode(), convert(kafkaConsumer));
     }
 
     /**
-     * 消费者实例转换
+     * Consumer instance transformation
      *
-     * @param kafkaConsumer 原始消费者实例
-     * @return 消费者包装实例
+     * @param kafkaConsumer Original consumer instance
+     * @return Examples of consumer packaging
      */
     private KafkaConsumerWrapper convert(KafkaConsumer<?, ?> kafkaConsumer) {
         return new KafkaConsumerWrapper(kafkaConsumer);

@@ -35,7 +35,7 @@ import org.mockito.Mockito;
 import java.util.HashSet;
 
 /**
- * KafkaConsumerMapConstructorInterceptor单元测试
+ * KafkaConsumerMapConstructorInterceptor unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -67,7 +67,7 @@ public class KafkaConsumerMapConstructorInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test after method
      */
     @Test
     public void testAfter() {

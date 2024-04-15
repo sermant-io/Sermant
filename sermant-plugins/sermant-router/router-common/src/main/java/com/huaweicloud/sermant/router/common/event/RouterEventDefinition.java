@@ -20,14 +20,14 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * Route plug-in event definitions
+ * Route plugin event definitions
  *
  * @author lilai
  * @since 2023-03-28
  */
 public enum RouterEventDefinition {
     /**
-     * Route plug-in rule refresh events
+     * Route plugin rule refresh events
      */
 
     ROUTER_RULE_REFRESH("ROUTER_RULE_REFRESH", EventType.OPERATION, EventLevel.NORMAL),

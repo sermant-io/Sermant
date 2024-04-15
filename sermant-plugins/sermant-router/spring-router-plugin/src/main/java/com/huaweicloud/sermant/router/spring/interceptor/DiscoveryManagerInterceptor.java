@@ -31,7 +31,7 @@ import com.huaweicloud.sermant.router.spring.utils.SpringRouterUtils;
 import java.util.logging.Logger;
 
 /**
- * Register plug-in intercept point
+ * Register plugin intercept point
  *
  * @author provenceee
  * @since 2022-10-13

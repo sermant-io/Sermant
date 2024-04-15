@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Swimlane Configuration Processor (Compatible with 1.0.x)
+ * Swimlane Configuration handler (Compatible with 1.0.x)
  *
  * @author provenceee
  * @since 2024-01-11

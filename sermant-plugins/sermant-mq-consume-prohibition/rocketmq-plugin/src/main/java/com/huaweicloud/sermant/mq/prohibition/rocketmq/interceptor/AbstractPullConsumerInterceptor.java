@@ -29,36 +29,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * pullconsumer抽象拦截器
+ * PullConsumer abstract interceptor
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public abstract class AbstractPullConsumerInterceptor extends AbstractInterceptor {
     /**
-     * 外部扩展处理器
+     * External extension handler
      */
     protected RocketMqConsumerHandler handler;
 
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public AbstractPullConsumerInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 外部扩展处理器
+     * @param handler External extension handler
      */
     public AbstractPullConsumerInterceptor(RocketMqConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * pullconsumer 执行禁消费操作
+     * PullConsumer performs prohibited consumption operations
      *
-     * @param pullConsumerWrapper pullconsumer包装类实例
+     * @param pullConsumerWrapper pullConsumer packaging class instance
      */
     protected void disablePullConsumption(DefaultLitePullConsumerWrapper pullConsumerWrapper) {
         if (pullConsumerWrapper != null) {
@@ -68,10 +68,10 @@ public abstract class AbstractPullConsumerInterceptor extends AbstractIntercepto
     }
 
     /**
-     * 获取消息队列的topic
+     * Get the topic of the message queue
      *
-     * @param messageQueues 消息队列
-     * @return 消息队列的topic
+     * @param messageQueues Message queue
+     * @return Topic of message queue
      */
     protected Set<String> getMessageQueueTopics(Collection<MessageQueue> messageQueues) {
         HashSet<String> topics = new HashSet<>();

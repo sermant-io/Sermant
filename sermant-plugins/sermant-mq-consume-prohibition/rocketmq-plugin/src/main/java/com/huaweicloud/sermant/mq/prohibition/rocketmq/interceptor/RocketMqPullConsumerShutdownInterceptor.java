@@ -23,22 +23,22 @@ import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 
 /**
- * RocketMq pullConsumer关闭拦截器
+ * RocketMq pullConsumer shutdown interceptor
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public class RocketMqPullConsumerShutdownInterceptor extends AbstractPullConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPullConsumerShutdownInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 拦截点处理器
+     * @param handler Interception point handler
      */
     public RocketMqPullConsumerShutdownInterceptor(RocketMqConsumerHandler handler) {
         super(handler);

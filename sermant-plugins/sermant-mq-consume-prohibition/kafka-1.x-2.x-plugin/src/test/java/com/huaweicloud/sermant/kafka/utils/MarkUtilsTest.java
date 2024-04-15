@@ -20,14 +20,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * MarkUtils单元测试
+ * MarkUtils unit test
  *
  * @author lilai
  * @since 2023-12-23
  */
 public class MarkUtilsTest {
     /**
-     * 测试getMark以及测试setMark
+     * Test getMark and test setMark
      */
     @Test
     public void testSetAndGetMark() {

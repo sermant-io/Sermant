@@ -27,7 +27,7 @@ import com.huaweicloud.visibility.entity.ServerInfo;
 import org.apache.dubbo.common.URL;
 
 /**
- * Dubbo注册增强方法
+ * Dubbo Registration Enhancement Method
  *
  * @author zhp
  * @since 2022-11-30

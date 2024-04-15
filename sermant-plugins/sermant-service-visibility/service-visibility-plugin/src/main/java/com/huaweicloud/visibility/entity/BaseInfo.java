@@ -18,24 +18,24 @@
 package com.huaweicloud.visibility.entity;
 
 /**
- * 服务可见性基础信息
+ * Basic information about service visibility
  *
  * @author zhp
  * @since 2022-12-09
  */
 public class BaseInfo {
     /**
-     * 当前服务IP
+     * Current service IP
      */
     private String ip;
 
     /**
-     * 当前服务端口
+     * The current service port
      */
     private String port;
 
     /**
-     * 框架类型
+     * Frame type
      */
     private String serviceType;
 

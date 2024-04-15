@@ -31,7 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * KafkaConsumerPollInterceptor单元测试
+ * KafkaConsumerPollInterceptor unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -66,7 +66,7 @@ public class KafkaConsumerPollInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test before method
      */
     @Test
     public void testBefore() {

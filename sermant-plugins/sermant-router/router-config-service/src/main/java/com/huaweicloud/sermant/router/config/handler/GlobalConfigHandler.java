@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Route Configuration Processor (Global Dimension)
+ * Route Configuration handler (Global Dimension)
  *
  * @author lilai
  * @since 2023-02-18

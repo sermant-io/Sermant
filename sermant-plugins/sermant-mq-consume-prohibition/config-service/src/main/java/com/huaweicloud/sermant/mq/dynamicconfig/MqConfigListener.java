@@ -38,19 +38,19 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 消息队列禁止消费插件的动态配置监听器
+ * Dynamic configuration listener for message queue prohibited consumption plugin
  *
  * @author lilai
  * @since 2023-12-08
  */
 public class MqConfigListener implements DynamicConfigListener {
     /**
-     * 全局配置的Key
+     * Global Configuration Key
      */
     public static final String GLOBAL_CONFIG_KEY = "sermant.mq.consume.globalConfig";
 
     /**
-     * 局部配置的key的前缀
+     * Prefix for local configuration key
      */
     public static final String LOCAL_CONFIG_KEY_PREFIX = "sermant.mq.consume.";
 
@@ -59,7 +59,7 @@ public class MqConfigListener implements DynamicConfigListener {
     private final Yaml yaml;
 
     /**
-     * 监听器构造方法
+     * The Construction Method of Listener
      */
     public MqConfigListener() {
         Representer representer = new Representer(new DumperOptions());
@@ -87,9 +87,9 @@ public class MqConfigListener implements DynamicConfigListener {
     }
 
     /**
-     * 处理创建或者更新配置的事件
+     * Handling events for creating or updating configurations
      *
-     * @param event 事件
+     * @param event Dynamic configuration event
      */
     private void processCreateOrUpdateEvent(DynamicConfigEvent event) {
         if (GLOBAL_CONFIG_KEY.equals(event.getKey())) {
@@ -106,9 +106,9 @@ public class MqConfigListener implements DynamicConfigListener {
     }
 
     /**
-     * 处理删除配置的事件
+     * Handling events for deleting configurations
      *
-     * @param event 事件
+     * @param event Dynamic configuration event
      */
     private void processDeleteEvent(DynamicConfigEvent event) {
         if (GLOBAL_CONFIG_KEY.equals(event.getKey())) {
@@ -137,9 +137,9 @@ public class MqConfigListener implements DynamicConfigListener {
     }
 
     /**
-     * 处理启动时初始化配置的事件
+     * Handling events for initializing configuration at startup
      *
-     * @param event 事件
+     * @param event Dynamic configuration event
      */
     private void processInitEvent(DynamicConfigEvent event) {
         if (GLOBAL_CONFIG_KEY.equals(event.getKey())) {

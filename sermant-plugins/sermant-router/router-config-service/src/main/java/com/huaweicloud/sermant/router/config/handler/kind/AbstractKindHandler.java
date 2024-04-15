@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Configuration type processor (compatible with version 1.0. x)
+ * Configuration type handler (compatible with version 1.0. x)
  *
  * @author provenceee
  * @since 2024-01-11

@@ -23,36 +23,36 @@ import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 
 /**
- * 抽象拦截器
+ * Abstract interceptor
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public abstract class AbstractPushConsumerInterceptor extends AbstractInterceptor {
     /**
-     * 外部扩展处理器
+     * external extension handler
      */
     protected RocketMqConsumerHandler handler;
 
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public AbstractPushConsumerInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 外部扩展处理器
+     * @param handler external extension handler
      */
     public AbstractPushConsumerInterceptor(RocketMqConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * pushconsumer 执行禁消费操作
+     * pushConsumer perform the consumption prohibition operation
      *
-     * @param pushConsumerWrapper pushconsumer包装类实例
+     * @param pushConsumerWrapper pushConsumer packaging class instance
      */
     protected void disablePushConsumption(DefaultMqPushConsumerWrapper pushConsumerWrapper) {
         if (pushConsumerWrapper != null) {

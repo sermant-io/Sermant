@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 
 /**
- * KafkaConsumerCache单元测试
+ * KafkaConsumerCache unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -53,7 +53,7 @@ public class KafkaConsumerCacheTest {
     }
 
     /**
-     * 测试addKafkaConsumer方法
+     * Test the addKafkaConsumer method
      */
     @Test
     public void testAddKafkaConsumer() {
@@ -66,7 +66,7 @@ public class KafkaConsumerCacheTest {
     }
 
     /**
-     * 测试convert方法
+     * Test the convert method
      */
     @Test
     public void testConvert() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

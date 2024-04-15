@@ -26,7 +26,8 @@ import com.huaweicloud.sermant.utils.InvokeUtils;
 import java.util.Collections;
 
 /**
- * KafkaConsumer unsubscribe方法的拦截器 {@link org.apache.kafka.clients.consumer.KafkaConsumer#unsubscribe()}
+ * Interceptor for KafkaConsumer unsubscribe method
+ * {@link org.apache.kafka.clients.consumer.KafkaConsumer#unsubscribe()}
  *
  * @author lilai
  * @since 2023-12-05
@@ -35,7 +36,7 @@ public class KafkaConsumerUnSubscribeInterceptor extends AbstractInterceptor {
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
      * @param handler unsubscribe方法拦截点处理器
      */
@@ -44,7 +45,7 @@ public class KafkaConsumerUnSubscribeInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 无参构造方法
+     * Non parametric construction method
      */
     public KafkaConsumerUnSubscribeInterceptor() {
     }

@@ -30,7 +30,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer Properties构造方法的拦截器
+ * Interceptor for the construction method of KafkaConsumer Properties
  * {@link KafkaConsumer#KafkaConsumer(Properties, Deserializer, Deserializer)}
  *
  * @author lilai
@@ -42,24 +42,25 @@ public class KafkaConsumerPropertiesConstructorInterceptor extends AbstractInter
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler 构造方法拦截点处理器
+     * @param handler Construction Method Interception Point handler
      */
     public KafkaConsumerPropertiesConstructorInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参数构造方法
+     * No parameter construction method
      */
     public KafkaConsumerPropertiesConstructorInterceptor() {
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        // 此处为兼容不同版本KafkaConsumer的构造方法
-        // 低版本中Properties和Map方式二者互不影响，高版本Properties会调用Map方式
+        // This is a construction method that is compatible with different versions of KafkaConsumer
+        // In lower versions, Properties and Map methods do not affect each other, while in higher versions,
+        // Properties will call Map methods
         MarkUtils.setMark(Boolean.TRUE);
         if (handler != null) {
             handler.doBefore(context);
@@ -88,9 +89,9 @@ public class KafkaConsumerPropertiesConstructorInterceptor extends AbstractInter
     }
 
     /**
-     * 缓存消费者实例
+     * Caching consumer instances
      *
-     * @param context 拦截点执行上下文
+     * @param context Interception point execution context
      */
     private void cacheKafkaConsumer(ExecuteContext context) {
         Object kafkaConsumerObject = context.getObject();

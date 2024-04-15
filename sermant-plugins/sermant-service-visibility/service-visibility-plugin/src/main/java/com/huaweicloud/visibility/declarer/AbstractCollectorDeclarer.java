@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.visibility.config.VisibilityConfig;
 
 /**
- * 服务采集拦截器
+ * Service Acquisition Interceptor Declarer
  *
  * @author zhp
  * @since 2023-01-09

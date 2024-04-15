@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Routing plug-in utility class
+ * Routing plugin utility class
  *
  * @author provenceee
  * @since 2021-06-21

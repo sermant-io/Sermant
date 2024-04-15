@@ -16,7 +16,7 @@ public class CollectorCacheTest {
     private static final String DEFAULT_PORT = "8080";
 
     /**
-     * 测试契约信息保存以及重复保存情况
+     * Test contract information storage and repeated storage
      */
     @Test
     public void saveContractInfo() {
@@ -38,7 +38,7 @@ public class CollectorCacheTest {
     }
 
     /**
-     * 测试血缘关系信息保存
+     * Test kinship information is saved
      */
     @Test
     public void saveConsanguinity() {

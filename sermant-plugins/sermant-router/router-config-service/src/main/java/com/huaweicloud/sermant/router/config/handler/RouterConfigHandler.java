@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Route Configuration Processor (Complete Set)
+ * Route Configuration handler (Complete Set)
  *
  * @author provenceee
  * @since 2022-08-09

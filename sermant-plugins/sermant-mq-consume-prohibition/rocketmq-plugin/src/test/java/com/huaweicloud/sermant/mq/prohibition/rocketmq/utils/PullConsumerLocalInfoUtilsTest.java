@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * PullConsumerLocalInfoUtils工具类单元测试
+ * PullConsumerLocalInfoUtils tool class unit testing
  *
  * @author daizhenyu
  * @since 2023-12-25

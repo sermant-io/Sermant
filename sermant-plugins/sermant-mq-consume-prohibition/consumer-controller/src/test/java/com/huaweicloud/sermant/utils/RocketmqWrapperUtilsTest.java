@@ -40,6 +40,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 /**
+ * RocketmqWrapperUtil unit test
+ *
  * @author daizhenyu
  * @since 2023-12-26
  **/

@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.visibility.interceptor.AlibabaDubboRegistryInterceptor;
 
 /**
- * dubbo注册拦截器
+ * dubbo registers the intercept declaration
  *
  * @author zhp
  * @since 2022-11-30

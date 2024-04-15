@@ -21,7 +21,7 @@ package com.huaweicloud.sermant.router.config.handler;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * Processor interface
+ * handler interface
  *
  * @author provenceee
  * @since 2024-01-16

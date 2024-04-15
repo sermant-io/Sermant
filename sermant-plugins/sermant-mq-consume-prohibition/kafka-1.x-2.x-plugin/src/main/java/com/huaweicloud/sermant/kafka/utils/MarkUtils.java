@@ -17,7 +17,8 @@
 package com.huaweicloud.sermant.kafka.utils;
 
 /**
- * 线程变量标记类，用于兼容kafka不同版本不重复进入构造函数
+ * Thread variable marker class, used to be compatible with different versions of Kafka and not to repeatedly enter
+ * constructors
  *
  * @author lilai
  * @since 2023-12-09
@@ -29,26 +30,25 @@ public class MarkUtils {
     }
 
     /**
-     * 获取线程变量
+     * Get thread variables
      *
-     * @return 线程变量
+     * @return Thread variables
      */
     public static Boolean getMark() {
         return MARK.get();
     }
 
     /**
-     * 存入线程变量
+     * Store thread variables
      *
-     * @param value 线程变量
+     * @param value Thread variables
      */
     public static void setMark(Boolean value) {
         MARK.set(value);
     }
 
     /**
-     * 移除线程变量
-     *
+     * Remove thread variables
      */
     public static void removeMark() {
         MARK.remove();

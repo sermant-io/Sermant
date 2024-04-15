@@ -29,7 +29,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 /**
- * @Component装配bean拦截具体实现类测试
+ * @Component assembly bean interception-specific implementation class testing
  *
  * @author chengyouling
  * @since 2023-03-27

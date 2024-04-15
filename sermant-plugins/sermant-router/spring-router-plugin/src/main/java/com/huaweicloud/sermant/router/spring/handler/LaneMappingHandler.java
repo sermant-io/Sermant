@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * AbstractHandlerMapping processor
+ * AbstractHandlerMapping handler
  *
  * @author provenceee
  * @since 2023-02-21

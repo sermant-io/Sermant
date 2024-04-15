@@ -24,22 +24,22 @@ import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 
 /**
- * RocketMq pullConsumer订阅拦截器
+ * RocketMq pullConsumer subscription interceptor
  *
  * @author daizhenyu
  * @since 2023-12-15
  **/
 public class RocketMqPullConsumerUnsubscribeInterceptor extends AbstractPullConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPullConsumerUnsubscribeInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 处理器
+     * @param handler handler
      */
     public RocketMqPullConsumerUnsubscribeInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
@@ -61,9 +61,10 @@ public class RocketMqPullConsumerUnsubscribeInterceptor extends AbstractPullCons
         }
 
         DefaultLitePullConsumerWrapper wrapper = RocketMqPullConsumerController
-                .getPullConsumerWrapper((DefaultLitePullConsumer)context.getObject());
+                .getPullConsumerWrapper((DefaultLitePullConsumer) context.getObject());
 
-        // 取消订阅后，消费者订阅信息发生变化，需根据禁消费的topic配置对消费者开启或禁止消费
+        // After canceling the subscription, the consumer's subscription information will change, and they need to be
+        // enabled or prohibited from consuming according to the prohibited topic configuration
         disablePullConsumption(wrapper);
         return context;
     }

@@ -29,22 +29,22 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import java.util.Collection;
 
 /**
- * RocketMq pullConsumer启动拦截器
+ * RocketMq pullConsumer Start Interceptor
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public class RocketMqPullConsumerStartInterceptor extends AbstractPullConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPullConsumerStartInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 拦截点处理器
+     * @param handler Interception point handler
      */
     public RocketMqPullConsumerStartInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
@@ -63,7 +63,7 @@ public class RocketMqPullConsumerStartInterceptor extends AbstractPullConsumerIn
         DefaultLitePullConsumer pullConsumer = (DefaultLitePullConsumer) context.getObject();
         RocketMqPullConsumerController.cachePullConsumer(pullConsumer);
 
-        // 获取存入缓存的消费者包装类实例
+        // Get cached consumer packaging class instances
         DefaultLitePullConsumerWrapper pullConsumerWrapper =
                 RocketMqPullConsumerController.getPullConsumerWrapper(pullConsumer);
         updatePushConsumerWrapperInfo(pullConsumerWrapper);
@@ -73,7 +73,8 @@ public class RocketMqPullConsumerStartInterceptor extends AbstractPullConsumerIn
             return context;
         }
 
-        // 消费者启动会根据缓存的禁消费配置对消费者执行禁消费
+        // Consumer activation will execute consumption prohibition on consumers based on the cached consumption
+        // prohibition configuration
         disablePullConsumption(pullConsumerWrapper);
         return context;
     }
@@ -91,7 +92,8 @@ public class RocketMqPullConsumerStartInterceptor extends AbstractPullConsumerIn
             pullConsumerWrapper.setSubscriptionType(PullConsumerLocalInfoUtils.getSubscriptionType());
             PullConsumerLocalInfoUtils.removeSubscriptionType();
 
-            // 订阅方式为assign时设置wrapper的消息队列和topic，非assign方式设置wrapper的topic
+            // When the subscription method is assign, set the message queue and topic of the wrapper, and set the
+            // topic of the wrapper for non-assign methods
             if (pullConsumerWrapper.getSubscriptionType().equals(SubscriptionType.ASSIGN)) {
                 updateAssignWrapperInfo(pullConsumerWrapper);
             } else {

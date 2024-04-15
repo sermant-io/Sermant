@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 /**
- * KafkaConsumerAssignInterceptor单元测试
+ * KafkaConsumerAssignInterceptor unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -76,7 +76,7 @@ public class KafkaConsumerAssignInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test after method
      */
     @Test
     public void testAfter() {

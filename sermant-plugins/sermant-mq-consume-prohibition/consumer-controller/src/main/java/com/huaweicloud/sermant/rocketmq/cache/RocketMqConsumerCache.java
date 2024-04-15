@@ -23,20 +23,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * rocketmq消费者缓存
+ * RocketMQ consumer cache
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public class RocketMqConsumerCache {
     /**
-     * push消费者wrapper缓存
+     * push consumer wrapper cache
      */
     public static final Map<Integer, DefaultMqPushConsumerWrapper> PUSH_CONSUMERS_CACHE =
             new ConcurrentHashMap<>();
 
     /**
-     * pull消费者wrapper缓存
+     * pull the consumer wrapper cache
      */
     public static final Map<Integer, DefaultLitePullConsumerWrapper> PULL_CONSUMERS_CACHE =
             new ConcurrentHashMap<>();

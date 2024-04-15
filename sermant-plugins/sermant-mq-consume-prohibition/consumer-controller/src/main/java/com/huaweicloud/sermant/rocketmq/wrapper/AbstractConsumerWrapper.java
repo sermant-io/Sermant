@@ -23,76 +23,76 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 消费者包装抽象类
+ * Abstract class of consumer packaging
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public abstract class AbstractConsumerWrapper {
     /**
-     * rocketmq消费者的私有属性，用于加入或退出消费者组
+     * A private property of a RocketMQ consumer that is used to join or leave a consumer group
      */
     protected final MQClientInstance clientFactory;
 
     /**
-     * 消费者是否已经禁止消费
+     * Whether the consumer has banned consumption
      */
     protected AtomicBoolean prohibition = new AtomicBoolean();
 
     /**
-     * nameserver地址
+     * nameserver address
      */
     protected String nameServerAddress;
 
     /**
-     * rocketmq消费者组
+     * RocketMQ Consumer Group
      */
     protected String consumerGroup;
 
     /**
-     * 消费者实例ip
+     * Consumer instance IP
      */
     protected String clientIp;
 
     /**
-     * 消费者实例名称
+     * The name of the consumer instance
      */
     protected String instanceName;
 
     /**
-     * 当前消费者的服务所在可用区
+     * The zone in which the consumer's service is located
      */
     protected String zone;
 
     /**
-     * 当前消费者的服务所在可用区命名空间
+     * The namespace of the AZ where the consumer's service is located
      */
     protected String project;
 
     /**
-     * 当前消费者的服务所在环境
+     * The environment in which the current consumer's service is located
      */
     protected String environment;
 
     /**
-     * 当前消费者的服务所在应用
+     * The application in which the service of the current consumer resides
      */
     protected String application;
 
     /**
-     * 当前消费者所在服务的名称
+     * The name of the service that the current consumer is using
      */
     protected String service;
 
     /**
-     * 消费者已订阅消费主题
+     * The consumer has subscribed to a consumption topic
      */
     protected Set<String> subscribedTopics = new HashSet<>();
 
     /**
-     * 有参构造方法
+     * parameter construction method
      *
-     * @param clientFactory 消费者内部工厂类
+     * @param clientFactory Consumer internal factory class
      */
     protected AbstractConsumerWrapper(MQClientInstance clientFactory) {
         this.clientFactory = clientFactory;
@@ -103,9 +103,9 @@ public abstract class AbstractConsumerWrapper {
     }
 
     /**
-     * 设置是否已经禁止消费
+     * Set whether the consumption has been prohibited
      *
-     * @param prohibition 是否禁止消费
+     * @param prohibition Whether consumption is prohibited
      */
     public void setProhibition(boolean prohibition) {
         this.prohibition.set(prohibition);
@@ -184,18 +184,18 @@ public abstract class AbstractConsumerWrapper {
     }
 
     /**
-     * 添加订阅的topic
+     * Add a topic to which you subscribe
      *
-     * @param topic 订阅的主题
+     * @param topic Subscribed topic
      */
     public void addSubscribedTopics(String topic) {
         this.subscribedTopics.add(topic);
     }
 
     /**
-     * 移除取消订阅的topic
+     * Remove the unsubscribed topic
      *
-     * @param topic 取消订阅的主题
+     * @param topic Unsubscribed topic
      */
     public void removeSubscribedTopics(String topic) {
         this.subscribedTopics.remove(topic);

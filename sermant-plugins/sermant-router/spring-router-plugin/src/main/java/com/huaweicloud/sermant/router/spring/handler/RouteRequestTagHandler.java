@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Routing web interceptor processors
+ * Routing web interceptor handler
  *
  * @author provenceee
  * @since 2023-02-21

@@ -25,7 +25,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试基类
+ * Test base class
  *
  * @author chengyouling
  * @since 2023-03-27

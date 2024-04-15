@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * pull消费者的线程变量
+ * Pull consumer's thread variable
  *
  * @author daizhenyu
  * @since 2023-12-20
@@ -40,9 +40,9 @@ public class PullConsumerLocalInfoUtils {
     }
 
     /**
-     * 获取消费者的订阅类型
+     * Get consumer's subscription type
      *
-     * @return 订阅类型
+     * @return subscription type
      */
     public static SubscriptionType getSubscriptionType() {
         SubscriptionType subscriptionType = subscriptionTypeThreadLocal.get();
@@ -54,25 +54,25 @@ public class PullConsumerLocalInfoUtils {
     }
 
     /**
-     * 设置消费者的订阅类型
+     * Set consumer subscription type
      *
-     * @param subscriptionType 订阅类型
+     * @param subscriptionType subscription type
      */
     public static void setSubscriptionType(SubscriptionType subscriptionType) {
         subscriptionTypeThreadLocal.set(subscriptionType);
     }
 
     /**
-     * 移除消费者的订阅类型
+     * Remove consumer's subscription type
      */
     public static void removeSubscriptionType() {
         subscriptionTypeThreadLocal.remove();
     }
 
     /**
-     * 获取消费者assign的消费队列
+     * Obtain consumer assigned consumption queue
      *
-     * @return 消费者assign的消费队列
+     * @return Consumer assigned consumption queue
      */
     public static Collection<MessageQueue> getMessageQueue() {
         Collection<MessageQueue> messageQueues = messageQueueThreadLocal.get();
@@ -84,16 +84,16 @@ public class PullConsumerLocalInfoUtils {
     }
 
     /**
-     * 设置消费者assign的消费队列
+     * Set up consumption queues for consumer assignment
      *
-     * @param messageQueues 消费者assign的消费队列
+     * @param messageQueues Consumer assigned consumption queue
      */
     public static void setMessageQueue(Collection<MessageQueue> messageQueues) {
         messageQueueThreadLocal.set(messageQueues);
     }
 
     /**
-     * 移除消费者assign的消费队列
+     * Remove consumer assigned consumption queue
      */
     public static void removeMessageQueue() {
         messageQueueThreadLocal.remove();

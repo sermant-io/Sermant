@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 /**
- * Register a plug-in intercept point
+ * Register a plugin intercept point
  *
  * @author provenceee
  * @since 2022-10-08

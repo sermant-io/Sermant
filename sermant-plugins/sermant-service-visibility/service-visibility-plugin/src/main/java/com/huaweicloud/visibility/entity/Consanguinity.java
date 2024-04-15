@@ -20,29 +20,29 @@ package com.huaweicloud.visibility.entity;
 import java.util.List;
 
 /**
- * 血缘关系信息
+ * Consanguinity information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class Consanguinity extends BaseInfo {
     /**
-     * 接口名称
+     * The name of the interface
      */
     private String interfaceName;
 
     /**
-     * URL路径
+     * URL path
      */
     private String url;
 
     /**
-     * 服务注册时的key
+     * The key at the time of service registration
      */
     private String serviceKey;
 
     /**
-     * 服务提供者信息
+     * Service Provider Information
      */
     private List<Contract> providers;
 

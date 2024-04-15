@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer Map构造方法的拦截器
+ * Interceptor for the construction method of KafkaConsumer Map
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
  *
  * @author lilai
@@ -42,23 +42,23 @@ public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor 
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler 构造方法拦截点处理器
+     * @param handler Construction Method Interception Point handler
      */
     public KafkaConsumerMapConstructorInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参数构造方法
+     * No parameter construction method
      */
     public KafkaConsumerMapConstructorInterceptor() {
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        // 高版本Properties会调用Map方式，避免重复进入
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
         if (MarkUtils.getMark() != null) {
             return context;
         }
@@ -70,7 +70,7 @@ public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor 
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        // 高版本Properties会调用Map方式，避免重复进入
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
         if (MarkUtils.getMark() != null) {
             return context;
         }
@@ -84,7 +84,7 @@ public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor 
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
-        // 高版本Properties会调用Map方式，避免重复进入
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
         if (MarkUtils.getMark() != null) {
             return context;
         }
@@ -95,9 +95,9 @@ public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor 
     }
 
     /**
-     * 缓存消费者实例
+     * Caching consumer instances
      *
-     * @param context 拦截点执行上下文
+     * @param context Interception point execution context
      */
     private void cacheKafkaConsumer(ExecuteContext context) {
         Object kafkaConsumerObject = context.getObject();

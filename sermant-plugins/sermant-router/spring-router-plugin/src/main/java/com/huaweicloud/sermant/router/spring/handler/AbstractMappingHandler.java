@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AbstractHandlerMapping processor
+ * AbstractHandlerMapping handler
  *
  * @author provenceee
  * @since 2023-02-21

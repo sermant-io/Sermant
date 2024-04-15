@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.visibility.interceptor.SpringCloudRegistryInterceptor;
 
 /**
- * Spring服务注册拦截器
+ * Spring service Registration interceptor Declarer
  *
  * @author zhp
  * @since 2022-12-05

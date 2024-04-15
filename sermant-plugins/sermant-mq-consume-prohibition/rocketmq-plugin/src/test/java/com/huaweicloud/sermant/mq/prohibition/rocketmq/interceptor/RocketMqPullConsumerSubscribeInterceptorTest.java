@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * pullConsumer subscribe方法拦截器UT
+ * PullConsumer subscribe method interceptor UT
  *
  * @author daizhenyu
  * @since 2023-12-25
@@ -52,12 +52,12 @@ public class RocketMqPullConsumerSubscribeInterceptorTest extends BasePullConsum
 
     @Test
     public void testAfter() {
-        // wrapper为null
+        // Wrapper is null
         interceptor.after(context);
         Assert.assertEquals(PullConsumerLocalInfoUtils.getSubscriptionType().name(), "SUBSCRIBE");
         PullConsumerLocalInfoUtils.removeSubscriptionType();
 
-        // wrapper不为null
+        // Wrapper is not null
         pullConsumerWrapper.setSubscribedTopics(subscription.keySet());
         subscription.put("test-topic", new SubscriptionData());
         RocketMqPullConsumerController.cachePullConsumer(pullConsumer);
