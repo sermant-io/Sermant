@@ -198,21 +198,29 @@ public class ReflectUtils {
             METHOD_CACHE.put(methodKey, method);
             return Optional.of(method);
         } catch (NoSuchMethodException ex) {
-            if (clazz.getSuperclass() != null || clazz.getInterfaces().length > 0) {
-                Optional<Method> method = findMethod(clazz.getSuperclass(), methodName, paramsType);
+            Optional<Method> method = findSuperClass(clazz, methodName, paramsType);
+            if (method.isPresent()) {
+                return method;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<Method> findSuperClass(Class<?> clazz, String methodName, Class<?>[] paramsType) {
+        if (clazz.getSuperclass() != null || clazz.getInterfaces().length > 0) {
+            Optional<Method> method = findMethod(clazz.getSuperclass(), methodName, paramsType);
+            if (method.isPresent()) {
+                return method;
+            }
+            for (Class<?> interfaceClass : clazz.getInterfaces()) {
+                method = findMethod(interfaceClass, methodName, paramsType);
                 if (method.isPresent()) {
                     return method;
                 }
-                for (Class<?> interfaceClass : clazz.getInterfaces()) {
-                    method = findMethod(interfaceClass, methodName, paramsType);
-                    if (method.isPresent()) {
-                        return method;
-                    }
-                }
-            } else {
-                LOGGER.warning(String.format(Locale.ENGLISH, "Can not find method named [%s] from class [%s]",
-                        methodName, clazz.getName()));
             }
+        } else {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Can not find method named [%s] from class [%s]",
+                    methodName, clazz.getName()));
         }
         return Optional.empty();
     }

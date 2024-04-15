@@ -53,6 +53,8 @@ public class ServiceCollectorService extends Collector implements PluginService 
 
     private static final List<String> DEFAULT_LABEL_NAME = Collections.singletonList("name");
 
+    private static final double DOUBLE_COMPARE_VALUE = 1e-8d;
+
     private static Map<String, MetricEntity> lastMetricMap = new ConcurrentHashMap<>();
 
     private static Long lastStartTime;
@@ -119,7 +121,7 @@ public class ServiceCollectorService extends Collector implements PluginService 
         } else {
             long interval = System.currentTimeMillis() - lastStartTime;
             double qps = interval == 0 ? 0 : total * PROPORTION / (double) interval;
-            double tps = avgResponseTime == 0 ? 0 : qps * PROPORTION / avgResponseTime;
+            double tps = (Math.abs(avgResponseTime) < DOUBLE_COMPARE_VALUE) ? 0 : qps * PROPORTION / avgResponseTime;
             addMetric(metricMap, MetricType.QPS, qps, metricLabel);
             addMetric(metricMap, MetricType.TPS, tps, metricLabel);
         }

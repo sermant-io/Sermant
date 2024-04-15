@@ -187,13 +187,17 @@ public class FileUtils {
         return dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                for (String wc : wcs) {
-                    if (StringUtils.isWildcardMatch(name, wc)) {
-                        return true;
-                    }
-                }
-                return false;
+                return matchFileByWildcard(name, wcs);
             }
         });
+    }
+
+    private static boolean matchFileByWildcard(String name, String[] wcs) {
+        for (String wc : wcs) {
+            if (StringUtils.isWildcardMatch(name, wc)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

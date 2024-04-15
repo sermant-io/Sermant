@@ -131,7 +131,7 @@ public class ReflectUtils {
             // This URL is not important, what matters is the protocol, so set it to localhost:30100
             return Optional.of(constructor.newInstance(Constant.SC_REGISTRY_ADDRESS));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException e) {
+            | InvocationTargetException e) {
             LOGGER.log(Level.SEVERE, "Cannot new the registryConfig.", e);
             return Optional.empty();
         }

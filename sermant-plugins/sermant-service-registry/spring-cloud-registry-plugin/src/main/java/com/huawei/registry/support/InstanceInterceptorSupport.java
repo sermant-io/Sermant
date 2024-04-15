@@ -106,7 +106,7 @@ public abstract class InstanceInterceptorSupport extends RegisterSwitchSupport {
                     .getDeclaredConstructor(MicroServiceInstance.class, String.class);
             return Optional.of(declaredConstructor.newInstance(microServiceInstance, serviceName));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                 | InvocationTargetException exception) {
+            | InvocationTargetException exception) {
             return Optional.empty();
         }
     }

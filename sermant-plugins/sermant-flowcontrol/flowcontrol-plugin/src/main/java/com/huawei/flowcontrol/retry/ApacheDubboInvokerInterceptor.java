@@ -138,16 +138,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
 
                 // execute call
                 final Result result = invoke.invoke(invocation);
-                if (result.hasException() && isNeedThrow) {
-                    final Throwable exception = result.getException();
-                    if (exception instanceof GenericException) {
-                        throw (GenericException) exception;
-                    } else if (exception instanceof com.alibaba.dubbo.rpc.service.GenericException) {
-                        throw (com.alibaba.dubbo.rpc.service.GenericException) exception;
-                    } else {
-                        throw new InvokerWrapperException(result.getException());
-                    }
-                }
+                handleException(isNeedThrow, result);
                 return result;
             }
         } catch (IllegalAccessException ex) {
@@ -156,6 +147,19 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             throw new InvokerWrapperException(ex.getTargetException());
         }
         return ret;
+    }
+
+    private void handleException(boolean isNeedThrow, Result result) {
+        if (result.hasException() && isNeedThrow) {
+            final Throwable exception = result.getException();
+            if (exception instanceof GenericException) {
+                throw (GenericException) exception;
+            } else if (exception instanceof com.alibaba.dubbo.rpc.service.GenericException) {
+                throw (com.alibaba.dubbo.rpc.service.GenericException) exception;
+            } else {
+                throw new InvokerWrapperException(result.getException());
+            }
+        }
     }
 
     private Optional<Method> getMethodSelect() {

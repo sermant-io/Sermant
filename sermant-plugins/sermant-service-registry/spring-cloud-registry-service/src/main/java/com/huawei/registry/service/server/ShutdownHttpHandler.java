@@ -57,19 +57,22 @@ public class ShutdownHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (GraceConstants.GRACE_HTTP_METHOD_POST.equalsIgnoreCase(exchange.getRequestMethod())) {
-            OutputStream responseBody = exchange.getResponseBody();
-            if (pluginConfig.isEnableGraceShutdown()) {
-                graceService.shutdown();
-                exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_SUCCESS_CODE,
-                    GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
-                responseBody.write(GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.getBytes(StandardCharsets.UTF_8));
-            } else {
-                exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_FAILURE_CODE,
-                    GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
-                responseBody.write(GraceConstants.GRACE_FAILURE_MSG.getBytes(StandardCharsets.UTF_8));
+        try {
+            if (GraceConstants.GRACE_HTTP_METHOD_POST.equalsIgnoreCase(exchange.getRequestMethod())) {
+                OutputStream responseBody = exchange.getResponseBody();
+                if (pluginConfig.isEnableGraceShutdown()) {
+                    graceService.shutdown();
+                    exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_SUCCESS_CODE,
+                            GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
+                    responseBody.write(GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.getBytes(StandardCharsets.UTF_8));
+                } else {
+                    exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_FAILURE_CODE,
+                            GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
+                    responseBody.write(GraceConstants.GRACE_FAILURE_MSG.getBytes(StandardCharsets.UTF_8));
+                }
+                responseBody.flush();
             }
-            responseBody.flush();
+        } finally {
             exchange.close();
         }
     }

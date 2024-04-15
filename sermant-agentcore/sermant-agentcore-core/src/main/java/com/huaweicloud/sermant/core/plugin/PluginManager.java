@@ -172,19 +172,23 @@ public class PluginManager {
                         pluginName);
                 continue;
             }
-            try {
-                // Remove the copy tag of the plugin name to obtain the actual resource directory
-                final String pluginPath = pluginPackage + File.separatorChar + getRealPluginName(pluginName);
-                if (!new File(pluginPath).exists()) {
-                    LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
-                            new String[]{pluginPath, pluginName});
-                    continue;
-                }
-                doInitPlugin(
-                        new Plugin(pluginName, pluginPath, isDynamic, ClassLoaderManager.createPluginClassLoader()));
-            } catch (Exception ex) {
-                LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
+            executeInit(isDynamic, pluginPackage, pluginName);
+        }
+    }
+
+    private static void executeInit(boolean isDynamic, String pluginPackage, String pluginName) {
+        try {
+            // Remove the copy tag of the plugin name to obtain the actual resource directory
+            final String pluginPath = pluginPackage + File.separatorChar + getRealPluginName(pluginName);
+            if (!new File(pluginPath).exists()) {
+                LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
+                        new String[]{pluginPath, pluginName});
+                return;
             }
+            doInitPlugin(
+                    new Plugin(pluginName, pluginPath, isDynamic, ClassLoaderManager.createPluginClassLoader()));
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
         }
     }
 
@@ -235,17 +239,21 @@ public class PluginManager {
      */
     private static void loadPluginLibs(Plugin plugin) {
         for (File jar : listJars(getPluginDir(plugin.getPath()))) {
-            processByJarFile(plugin.getName(), jar, true, new JarFileConsumer() {
-                @Override
-                public void consume(JarFile jarFile) {
-                    try {
-                        plugin.getPluginClassLoader().appendUrl(new File(jarFile.getName()).toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        LOGGER.log(Level.SEVERE, "Add plugin path to pluginClassLoader fail, exception: ", e);
-                    }
-                }
-            });
+            processByJarFile(plugin.getName(), jar, true, getJarFileConsumer(plugin));
         }
+    }
+
+    private static JarFileConsumer getJarFileConsumer(Plugin plugin) {
+        return new JarFileConsumer() {
+            @Override
+            public void consume(JarFile jarFile) {
+                try {
+                    plugin.getPluginClassLoader().appendUrl(new File(jarFile.getName()).toURI().toURL());
+                } catch (MalformedURLException e) {
+                    LOGGER.log(Level.SEVERE, "Add plugin path to pluginClassLoader fail, exception: ", e);
+                }
+            }
+        };
     }
 
     /**

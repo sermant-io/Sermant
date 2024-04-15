@@ -52,18 +52,22 @@ public class LoggerFactory {
     public static void init(String artifact) {
         if (sermantLogger == null) {
             synchronized (LoggerFactory.class) {
-                if (sermantLogger == null) {
-                    FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
-                    try {
-                        Method initMethod = frameworkClassLoader
-                                .loadClass(LOGGER_FACTORY_IMPL_CLASS)
-                                .getMethod(LOGGER_INIT_METHOD, String.class);
-                        sermantLogger = (Logger) initMethod.invoke(null, artifact);
-                    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
-                             | InvocationTargetException e) {
-                        throw new LoggerInitException(e.getMessage());
-                    }
-                }
+                initLogger(artifact);
+            }
+        }
+    }
+
+    private static void initLogger(String artifact) {
+        if (sermantLogger == null) {
+            FrameworkClassLoader frameworkClassLoader = ClassLoaderManager.getFrameworkClassLoader();
+            try {
+                Method initMethod = frameworkClassLoader
+                        .loadClass(LOGGER_FACTORY_IMPL_CLASS)
+                        .getMethod(LOGGER_INIT_METHOD, String.class);
+                sermantLogger = (Logger) initMethod.invoke(null, artifact);
+            } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                | InvocationTargetException e) {
+                throw new LoggerInitException(e.getMessage());
             }
         }
     }

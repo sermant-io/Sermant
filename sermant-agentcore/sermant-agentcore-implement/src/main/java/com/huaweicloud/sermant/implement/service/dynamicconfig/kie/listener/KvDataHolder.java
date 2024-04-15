@@ -51,30 +51,34 @@ public class KvDataHolder {
             if (latestData.isEmpty()) {
                 eventDataHolder.deleted.putAll(currentData);
             } else {
-                Map<String, String> temp = new HashMap<String, String>(currentData);
-                for (Map.Entry<String, String> entry : latestData.entrySet()) {
-                    final String value = currentData.get(entry.getKey());
-                    if (value == null) {
-                        // Added key
-                        eventDataHolder.added.put(entry.getKey(), entry.getValue());
-                    } else {
-                        // If the key exists, then compare the value
-                        if (!value.equals(entry.getValue())) {
-                            // modify
-                            eventDataHolder.modified.put(entry.getKey(), entry.getValue());
-                        }
-                    }
-                    temp.remove(entry.getKey());
-                }
-
-                // The keys left by temp are deleted
-                eventDataHolder.deleted.putAll(temp);
+                updateData(latestData, eventDataHolder);
             }
         } else {
             eventDataHolder.added.putAll(latestData);
         }
         currentData = latestData;
         return eventDataHolder;
+    }
+
+    private void updateData(Map<String, String> latestData, EventDataHolder eventDataHolder) {
+        Map<String, String> temp = new HashMap<String, String>(currentData);
+        for (Map.Entry<String, String> entry : latestData.entrySet()) {
+            final String value = currentData.get(entry.getKey());
+            if (value == null) {
+                // Added key
+                eventDataHolder.added.put(entry.getKey(), entry.getValue());
+            } else {
+                // If the key exists, then compare the value
+                if (!value.equals(entry.getValue())) {
+                    // modify
+                    eventDataHolder.modified.put(entry.getKey(), entry.getValue());
+                }
+            }
+            temp.remove(entry.getKey());
+        }
+
+        // The keys left by temp are deleted
+        eventDataHolder.deleted.putAll(temp);
     }
 
     private void clear() {

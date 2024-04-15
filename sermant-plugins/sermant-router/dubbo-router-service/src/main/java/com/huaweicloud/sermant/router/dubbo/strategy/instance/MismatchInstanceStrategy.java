@@ -44,21 +44,28 @@ public class MismatchInstanceStrategy extends AbstractInstanceStrategy<Object, L
         // participate in load balancing, otherwise the traffic ratio will be incorrect (it will be high)
         Map<String, String> metaData = getMetadata(invoker, mapper);
         for (Map<String, String> mismatchTag : tags) {
-            for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
-                String value = entry.getValue();
-                String key = entry.getKey();
-                if (value == null) {
-                    if (metaData.containsKey(key)) {
-                        return false;
-                    } else {
-                        continue;
-                    }
-                }
-                if (value.equals(metaData.get(key))) {
-                    return false;
-                }
+            if (handleMatch(metaData, mismatchTag)) {
+                return false;
             }
         }
         return true;
+    }
+
+    private boolean handleMatch(Map<String, String> metaData, Map<String, String> mismatchTag) {
+        for (Map.Entry<String, String> entry : mismatchTag.entrySet()) {
+            String value = entry.getValue();
+            String key = entry.getKey();
+            if (value == null) {
+                if (metaData.containsKey(key)) {
+                    return true;
+                } else {
+                    continue;
+                }
+            }
+            if (value.equals(metaData.get(key))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -98,21 +98,25 @@ public class PlugEffectWhiteBlackUtils {
         }
         synchronized (PlugEffectWhiteBlackUtils.class) {
             if (domainNames == null) {
-                final String realmName = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class)
-                        .getRealmName();
-                if (StringUtils.isEmpty(realmName)) {
-                    domainNames = new String[0];
-                } else {
-                    final String[] parts = realmName.split(COMMA);
-                    String[] arr = new String[parts.length];
-                    for (int i = 0; i < parts.length; i++) {
-                        arr[i] = parts[i].trim();
-                    }
-                    domainNames = arr;
-                }
+                parseName();
             }
         }
         return domainNames;
+    }
+
+    private static void parseName() {
+        final String realmName = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class)
+                .getRealmName();
+        if (StringUtils.isEmpty(realmName)) {
+            domainNames = new String[0];
+        } else {
+            final String[] parts = realmName.split(COMMA);
+            String[] arr = new String[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                arr[i] = parts[i].trim();
+            }
+            domainNames = arr;
+        }
     }
 
     /**

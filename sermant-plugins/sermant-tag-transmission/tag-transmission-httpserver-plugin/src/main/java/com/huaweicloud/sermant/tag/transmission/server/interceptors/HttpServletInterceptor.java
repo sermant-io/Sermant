@@ -100,25 +100,13 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
         String serviceCombHeaderValue = httpServletRequest.getHeader(SERVICECOMB_HEADER_KEY);
         if (!StringUtils.isBlank(serviceCombHeaderValue)) {
             Map<String, String> headers = parseService.parseHeaderFromJson(serviceCombHeaderValue);
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                String key = entry.getKey();
-                if (!TagKeyMatcher.isMatch(key)) {
-                    continue;
-                }
-                String value = headers.get(key);
-                if (value != null) {
-                    tagMap.put(key, Collections.singletonList(value));
-                    LOGGER.log(Level.FINE, "Traffic tag {0}={1} have been extracted from servicecomb.",
-                            new Object[]{key, value});
-                    continue;
-                }
-
-                // 流量标签的value为null时，也需存入本地变量，覆盖原来的value，以防误用旧流量标签
-                tagMap.put(key, null);
-                LOGGER.log(Level.FINE, "Traffic tag {0}=null have been extracted from servicecomb.", key);
-            }
+            extractTrafficTagFromServiceComb(tagMap, headers);
         }
+        extractTrafficTagFromHttp(httpServletRequest, tagMap);
+        return tagMap;
+    }
 
+    private void extractTrafficTagFromHttp(HttpServletRequest httpServletRequest, Map<String, List<String>> tagMap) {
         // general http scenario
         Enumeration<String> keyEnumeration = httpServletRequest.getHeaderNames();
         while (keyEnumeration.hasMoreElements()) {
@@ -140,6 +128,26 @@ public class HttpServletInterceptor extends AbstractServerInterceptor<HttpServle
             tagMap.put(key, null);
             LOGGER.log(Level.FINE, "Traffic tag {0}=null have been extracted from servlet.", key);
         }
-        return tagMap;
+    }
+
+    private void extractTrafficTagFromServiceComb(Map<String, List<String>> tagMap, Map<String, String> headers) {
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            if (!TagKeyMatcher.isMatch(key)) {
+                continue;
+            }
+            String value = headers.get(key);
+            if (value != null) {
+                tagMap.put(key, Collections.singletonList(value));
+                LOGGER.log(Level.FINE, "Traffic tag {0}={1} have been extracted from servicecomb.",
+                        new Object[]{key, value});
+                continue;
+            }
+
+            // If the value of the traffic tag is null, need to store to local variable to override the original
+            // value to prevent misuse of the old traffic tag
+            tagMap.put(key, null);
+            LOGGER.log(Level.FINE, "Traffic tag {0}=null have been extracted from servicecomb.", key);
+        }
     }
 }

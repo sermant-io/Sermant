@@ -121,13 +121,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
 
                 // execute invoke
                 final Result result = invoke.invoke(invocation);
-                if (result.hasException() && isNeedThrow) {
-                    final Throwable exception = result.getException();
-                    if (exception instanceof GenericException) {
-                        throw (GenericException) exception;
-                    }
-                    throw new InvokerWrapperException(result.getException());
-                }
+                handleException(isNeedThrow, result);
                 return result;
             }
         } catch (IllegalAccessException ex) {
@@ -137,6 +131,16 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             throw new InvokerWrapperException(ex.getTargetException());
         }
         return ret;
+    }
+
+    private void handleException(boolean isNeedThrow, Result result) {
+        if (result.hasException() && isNeedThrow) {
+            final Throwable exception = result.getException();
+            if (exception instanceof GenericException) {
+                throw (GenericException) exception;
+            }
+            throw new InvokerWrapperException(result.getException());
+        }
     }
 
     private Optional<Method> getMethodSelect() {

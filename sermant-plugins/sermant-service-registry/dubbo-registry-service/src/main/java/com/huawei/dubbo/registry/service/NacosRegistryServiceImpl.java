@@ -142,37 +142,49 @@ public class NacosRegistryServiceImpl implements NacosRegistryService {
     private void doSubscribe(final Object url, final NacosAggregateListener listener, final Set<String> serviceNames) {
         try {
             if (isServiceNamesWithCompatibleMode(url)) {
-                for (String serviceName : serviceNames) {
-                    List<Instance> instances = namingService.getAllInstances(serviceName,
-                            nacosRegisterConfig.getGroup());
-                    NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, instances);
-                    notifySubscriber(url, serviceName, listener, instances);
-                    subscribeEventListener(serviceName, url, listener);
-                }
+                doSubscribeForCompatibleServiceName(url, listener, serviceNames);
             } else {
-                // When the serviceInterface and group in the URL contain "," and "*", it is necessary to build a new
-                // listening URL
-                // Example of serviceName: providers:com.huawei.dubbo.registry.service.RegistryService:default,A
-                for (String serviceName : serviceNames) {
-                    String serviceInterface = serviceName;
-                    String[] segments = serviceName.split(nacosRegisterConfig.getServiceNameSeparator(), -1);
-                    if (segments.length == SERVICE_NAME_COMPARE_LENGTH) {
-                        serviceInterface = segments[SERVICE_INTERFACE_INDEX];
-                    }
-                    Object subscriberUrl = ReflectUtils.setPath(url, serviceInterface);
-                    Map<String, String> parameters = new HashMap<>();
-                    parameters.put(INTERFACE_KEY, serviceInterface);
-                    parameters.put(CHECK_KEY, String.valueOf(false));
-                    subscriberUrl = ReflectUtils.addParameters(subscriberUrl, parameters);
-                    List<Instance> instances = new LinkedList<>(namingService.getAllInstances(serviceName,
-                            nacosRegisterConfig.getGroup()));
-                    notifySubscriber(subscriberUrl, serviceName, listener, instances);
-                    subscribeEventListener(serviceName, subscriberUrl, listener);
-                }
+                doSubscribeForUnCompatibleServiceName(url, listener, serviceNames);
             }
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "failed to subscribe to nacos, url:{%s},"
                     + "cause:{%s}", url, e.getErrMsg()), e);
+        }
+    }
+
+    private void doSubscribeForUnCompatibleServiceName(Object url, NacosAggregateListener listener,
+            Set<String> serviceNames)
+            throws NacosException {
+        // When the serviceInterface and group in the URL contain "," and "*", it is necessary to build a new
+        // listening URL
+        // Example of serviceName: providers:com.huawei.dubbo.registry.service.RegistryService:default,A
+        for (String serviceName : serviceNames) {
+            String serviceInterface = serviceName;
+            String[] segments = serviceName.split(nacosRegisterConfig.getServiceNameSeparator(), -1);
+            if (segments.length == SERVICE_NAME_COMPARE_LENGTH) {
+                serviceInterface = segments[SERVICE_INTERFACE_INDEX];
+            }
+            Object subscriberUrl = ReflectUtils.setPath(url, serviceInterface);
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put(INTERFACE_KEY, serviceInterface);
+            parameters.put(CHECK_KEY, String.valueOf(false));
+            subscriberUrl = ReflectUtils.addParameters(subscriberUrl, parameters);
+            List<Instance> instances = new LinkedList<>(namingService.getAllInstances(serviceName,
+                    nacosRegisterConfig.getGroup()));
+            notifySubscriber(subscriberUrl, serviceName, listener, instances);
+            subscribeEventListener(serviceName, subscriberUrl, listener);
+        }
+    }
+
+    private void doSubscribeForCompatibleServiceName(Object url, NacosAggregateListener listener,
+            Set<String> serviceNames)
+            throws NacosException {
+        for (String serviceName : serviceNames) {
+            List<Instance> instances = namingService.getAllInstances(serviceName,
+                    nacosRegisterConfig.getGroup());
+            NacosInstanceManageUtil.initOrRefreshServiceInstanceList(serviceName, instances);
+            notifySubscriber(url, serviceName, listener, instances);
+            subscribeEventListener(serviceName, url, listener);
         }
     }
 

@@ -204,13 +204,7 @@ public class DbUtils {
             task = new Callable<List<Tuple>>() {
                 @Override
                 public List<Tuple> call() throws Exception {
-                    List<Tuple> newList = new ArrayList<>();
-                    for (Tuple tuple : finalCutList) {
-                        if (tuple.getElement().matches(pattern)) {
-                            newList.add(tuple);
-                        }
-                    }
-                    return newList;
+                    return getTuples(finalCutList, pattern);
                 }
             };
             tasks.add(task);
@@ -226,6 +220,16 @@ public class DbUtils {
         }
         exc.shutdown();
         return fanList;
+    }
+
+    private static List<Tuple> getTuples(List<Tuple> finalCutList, String pattern) {
+        List<Tuple> newList = new ArrayList<>();
+        for (Tuple tuple : finalCutList) {
+            if (tuple.getElement().matches(pattern)) {
+                newList.add(tuple);
+            }
+        }
+        return newList;
     }
 
     /**

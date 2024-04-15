@@ -185,13 +185,7 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
         return new ClassFuzzyMatcher() {
             @Override
             public boolean matches(TypeDescription typeDescription) {
-                final AnnotationList annotationList = typeDescription.getInheritedAnnotations();
-                for (Class<? extends Annotation> annotation : annotations) {
-                    if (!annotationList.isAnnotationPresent(annotation)) {
-                        return false;
-                    }
-                }
-                return true;
+                return isAnnotatedWithMatch(typeDescription, annotations);
             }
         };
     }
@@ -285,12 +279,7 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
         return new ClassFuzzyMatcher() {
             @Override
             public boolean matches(TypeDescription typeDescription) {
-                for (ClassMatcher matcher : matchers) {
-                    if (matcher.matches(typeDescription)) {
-                        return false;
-                    }
-                }
-                return true;
+                return notMatch(typeDescription, matchers);
             }
         };
     }
@@ -305,12 +294,7 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
         return new ClassFuzzyMatcher() {
             @Override
             public boolean matches(TypeDescription typeDescription) {
-                for (ClassMatcher matcher : matchers) {
-                    if (!matcher.matches(typeDescription)) {
-                        return false;
-                    }
-                }
-                return true;
+                return andMatch(typeDescription, matchers);
             }
         };
     }
@@ -325,13 +309,46 @@ public abstract class ClassMatcher implements ElementMatcher<TypeDescription> {
         return new ClassFuzzyMatcher() {
             @Override
             public boolean matches(TypeDescription typeDescription) {
-                for (ClassMatcher matcher : matchers) {
-                    if (matcher.matches(typeDescription)) {
-                        return true;
-                    }
-                }
-                return false;
+                return orMatch(typeDescription, matchers);
             }
         };
+    }
+
+    private static boolean orMatch(TypeDescription typeDescription, ClassMatcher... matchers) {
+        for (ClassMatcher matcher : matchers) {
+            if (matcher.matches(typeDescription)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isAnnotatedWithMatch(TypeDescription typeDescription,
+            Class<? extends Annotation>... annotations) {
+        final AnnotationList annotationList = typeDescription.getInheritedAnnotations();
+        for (Class<? extends Annotation> annotation : annotations) {
+            if (!annotationList.isAnnotationPresent(annotation)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean notMatch(TypeDescription typeDescription, ClassMatcher... matchers) {
+        for (ClassMatcher matcher : matchers) {
+            if (matcher.matches(typeDescription)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean andMatch(TypeDescription typeDescription, ClassMatcher... matchers) {
+        for (ClassMatcher matcher : matchers) {
+            if (!matcher.matches(typeDescription)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

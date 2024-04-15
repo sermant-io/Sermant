@@ -181,13 +181,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                final AnnotationList annotationList = methodDescription.getDeclaredAnnotations();
-                for (Class<? extends Annotation> annotation : annotations) {
-                    if (!annotationList.isAnnotationPresent(annotation)) {
-                        return false;
-                    }
-                }
-                return true;
+                return isAnnotatedWithMatch(methodDescription, annotations);
             }
         };
     }
@@ -287,16 +281,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                final ParameterList<?> parameters = methodDescription.getParameters();
-                if (paramTypes.length != parameters.size()) {
-                    return false;
-                }
-                for (int i = 0; i < paramTypes.length; i++) {
-                    if (!parameters.get(i).getType().asErasure().getActualName().equals(paramTypes[i])) {
-                        return false;
-                    }
-                }
-                return true;
+                return paramTypesEqualMatch(methodDescription, paramTypes);
             }
         };
     }
@@ -311,16 +296,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                final ParameterList<?> parameters = methodDescription.getParameters();
-                if (paramTypes.length != parameters.size()) {
-                    return false;
-                }
-                for (int i = 0; i < paramTypes.length; i++) {
-                    if (!parameters.get(i).getType().asErasure().getActualName().equals(paramTypes[i].getName())) {
-                        return false;
-                    }
-                }
-                return true;
+                return paramTypesEqualMatch(methodDescription, paramTypes);
             }
         };
     }
@@ -381,12 +357,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                for (ElementMatcher<MethodDescription> matcher : matchers) {
-                    if (matcher.matches(methodDescription)) {
-                        return false;
-                    }
-                }
-                return true;
+                return notMatch(methodDescription, matchers);
             }
         };
     }
@@ -417,12 +388,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                for (ElementMatcher<MethodDescription> matcher : matchers) {
-                    if (!matcher.matches(methodDescription)) {
-                        return false;
-                    }
-                }
-                return true;
+                return andMatch(methodDescription, matchers);
             }
         };
     }
@@ -454,12 +420,7 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
         return new MethodMatcher() {
             @Override
             public boolean matches(MethodDescription methodDescription) {
-                for (ElementMatcher<MethodDescription> matcher : matchers) {
-                    if (matcher.matches(methodDescription)) {
-                        return true;
-                    }
-                }
-                return false;
+                return orMatch(methodDescription, matchers);
             }
         };
     }
@@ -478,5 +439,72 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
                 return thisMatcher.matches(methodDescription) || matcher.matches(methodDescription);
             }
         };
+    }
+
+    private static boolean isAnnotatedWithMatch(MethodDescription methodDescription,
+            Class<? extends Annotation>... annotations) {
+        final AnnotationList annotationList = methodDescription.getDeclaredAnnotations();
+        for (Class<? extends Annotation> annotation : annotations) {
+            if (!annotationList.isAnnotationPresent(annotation)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean paramTypesEqualMatch(MethodDescription methodDescription, String... paramTypes) {
+        final ParameterList<?> parameters = methodDescription.getParameters();
+        if (paramTypes.length != parameters.size()) {
+            return false;
+        }
+        for (int i = 0; i < paramTypes.length; i++) {
+            if (!parameters.get(i).getType().asErasure().getActualName().equals(paramTypes[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean paramTypesEqualMatch(MethodDescription methodDescription, Class<?>... paramTypes) {
+        final ParameterList<?> parameters = methodDescription.getParameters();
+        if (paramTypes.length != parameters.size()) {
+            return false;
+        }
+        for (int i = 0; i < paramTypes.length; i++) {
+            if (!parameters.get(i).getType().asErasure().getActualName().equals(paramTypes[i].getName())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean notMatch(MethodDescription methodDescription,
+            ElementMatcher<MethodDescription>... matchers) {
+        for (ElementMatcher<MethodDescription> matcher : matchers) {
+            if (matcher.matches(methodDescription)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean andMatch(MethodDescription methodDescription,
+            ElementMatcher<MethodDescription>... matchers) {
+        for (ElementMatcher<MethodDescription> matcher : matchers) {
+            if (!matcher.matches(methodDescription)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean orMatch(MethodDescription methodDescription,
+            ElementMatcher<MethodDescription>... matchers) {
+        for (ElementMatcher<MethodDescription> matcher : matchers) {
+            if (matcher.matches(methodDescription)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
