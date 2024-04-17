@@ -44,9 +44,9 @@ public class LoggerFactory {
     }
 
     /**
-     * 初始化logback配置文件路径
+     * Initialize the logback configuration file path
      *
-     * @param artifact 归属产品
+     * @param artifact artifact
      * @throws LoggerInitException LoggerInitException
      */
     public static void init(String artifact) {
@@ -69,26 +69,27 @@ public class LoggerFactory {
     }
 
     /**
-     * 初始化默认日志
+     * Initialize the default log
      *
-     * @param artifact 归属产品
+     * @param artifact artifact
      */
     public static void initDefaultLogger(String artifact) {
-        // 初始化默认日志，默认日志名必须为 sermant.<artifact>，通过这种方式，才能添加上SermantBridgeHandler
+        // Initializes the default log, the default log name must be sermant.<artifact> In this way, the
+        // SermantBridgeHandler can be added
         defaultLogger = java.util.logging.Logger.getLogger("sermant." + artifact);
     }
 
     /**
-     * 获取jul日志
+     * Obtain jul log
      *
-     * @return jul日志
+     * @return jul log
      */
     public static Logger getLogger() {
         if (sermantLogger != null) {
             return sermantLogger;
         }
 
-        // 避免日志重复获取
+        // Avoid obtaining logs repeatedly
         if (defaultLogger == null) {
             synchronized (LoggerFactory.class) {
                 if (defaultLogger == null) {

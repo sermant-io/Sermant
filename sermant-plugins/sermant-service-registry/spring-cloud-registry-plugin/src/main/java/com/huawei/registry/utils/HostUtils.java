@@ -28,7 +28,7 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 
 /**
- * host工具类
+ * host utility class
  *
  * @author zhouss
  * @since 2022-03-08
@@ -50,9 +50,9 @@ public class HostUtils {
     }
 
     /**
-     * 获取Linux下的IP地址
+     * Obtain the IP address of Linux
      *
-     * @return IP地址
+     * @return IP address
      */
     public static String getMachineIp() {
         try {
@@ -84,7 +84,7 @@ public class HostUtils {
             }
             String ipaddress = inetAddress.getHostAddress();
             if (!LOCAL_IP.equals(ipaddress) && !LOCAL_HOST.equals(ipaddress)) {
-                // 取第一个符合要求的IP
+                // Take the first IP address that meets the requirements
                 return ipaddress;
             }
         }
@@ -92,7 +92,7 @@ public class HostUtils {
     }
 
     /**
-     * 获取域名
+     * Get a domain name
      *
      * @return host
      */
@@ -106,13 +106,13 @@ public class HostUtils {
     }
 
     /**
-     * 判断是否为同一个实例
+     * Check whether the instance is the same
      *
-     * @param sourceHost 源域名或者IP
-     * @param sourcePort 源端口
-     * @param targetHost 源域名或者IP
-     * @param targetPort 源端口
-     * @return 是否为同一个实例
+     * @param sourceHost The source domain name or IP address
+     * @param sourcePort Source port
+     * @param targetHost The source domain name or IP address
+     * @param targetPort Source port
+     * @return Whether they are the same instance
      */
     public static boolean isSameInstance(String sourceHost, int sourcePort, String targetHost, int targetPort) {
         if (sourcePort != targetPort) {
@@ -125,11 +125,11 @@ public class HostUtils {
     }
 
     /**
-     * 判断两个host是否为同一个机器
+     * Check whether the two hosts are the same machine
      *
-     * @param host 域名或者IP
-     * @param targetHost 目标域名或者IP
-     * @return 是否属于同一台机器
+     * @param host Domain name or IP
+     * @param targetHost The destination domain name or IP address
+     * @return Whether it belongs to the same machine
      */
     public static boolean isSameMachine(String host, String targetHost) {
         final boolean sourceHostIpFlag = isIp(host);
@@ -152,7 +152,9 @@ public class HostUtils {
                 }
             }
         } catch (UnknownHostException exception) {
-            // 若域名解析失败, 则无需再比较, 说明本身域名（或者网络）存在问题, 无需再做比较
+            // If the domain name resolution fails, there is no need to compare the domain name,
+            // indicating that there is a problem with the domain name
+            // (or network) and there is no need to compare it again
             LOGGER.warning("Domain name resolution failure.");
         }
         return false;
@@ -171,7 +173,7 @@ public class HostUtils {
             final int parseInt = Integer.parseInt(ipPart);
             return parseInt >= 0 && parseInt <= IP_PARTS_MAX_NUM;
         } catch (NumberFormatException ignored) {
-            // ignored 若非数字, 则表明非IP
+            // ignored If it is not a number, it means that it is not an IP
             return false;
         }
     }

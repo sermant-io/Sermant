@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.event;
 import com.huaweicloud.sermant.core.event.EventCollector;
 
 /**
- * 离群事件采集
+ * Outlier event collection
  *
  * @author zhp
  * @since 2023-02-27

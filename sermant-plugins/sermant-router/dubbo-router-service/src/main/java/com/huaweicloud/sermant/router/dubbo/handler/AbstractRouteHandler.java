@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 抽象处理器链
+ * Abstract handler chain
  *
  * @author lilai
  * @since 2023-02-24
@@ -47,7 +47,7 @@ public abstract class AbstractRouteHandler implements RouteHandler, Comparable<A
     }
 
     boolean shouldHandle(List<Object> invokers) {
-        // 实例数大于1才能路由
+        // Routing is only possible if the number of instances is greater than 1
         return invokers != null && invokers.size() > 1;
     }
 }

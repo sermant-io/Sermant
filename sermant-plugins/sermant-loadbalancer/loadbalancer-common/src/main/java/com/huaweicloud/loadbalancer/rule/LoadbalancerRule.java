@@ -18,7 +18,7 @@
 package com.huaweicloud.loadbalancer.rule;
 
 /**
- * 负载均衡
+ * load balancing
  *
  * @author zhouss
  * @since 2022-08-09
@@ -27,21 +27,21 @@ public class LoadbalancerRule {
     private String serviceName;
 
     /**
-     * 负载均衡规则名称
+     * name of the load balancing rule
      */
     private String rule;
 
     /**
-     * 构造器
+     * constructor
      */
     public LoadbalancerRule() {
     }
 
     /**
-     * 负载均衡构造器
+     * load balancing constructor
      *
-     * @param serviceName 服务名
-     * @param rule 负载均衡类型
+     * @param serviceName service name
+     * @param rule loadBalancing type
      */
     public LoadbalancerRule(String serviceName, String rule) {
         this.serviceName = serviceName;

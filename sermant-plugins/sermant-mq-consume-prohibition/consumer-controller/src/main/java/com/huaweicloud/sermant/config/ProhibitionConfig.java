@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 消息队列禁止消费配置
+ * Message queue prohibits consumption configuration
  *
  * @author lilai
  * @since 2023-12-07

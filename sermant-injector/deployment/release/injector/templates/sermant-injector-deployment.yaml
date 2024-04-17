@@ -42,7 +42,7 @@ spec:
                 name: sermant-injector
           volumeMounts:
             - name: sermant-certification
-              # agent在容器内的路径
+              # Path of the agent in the container
               mountPath: /home/config
           livenessProbe:
             httpGet:
@@ -65,7 +65,7 @@ spec:
       volumes:
         - name: sermant-certification
           secret:
-            # 证书
+            # Certificate
             secretName: sermant-injector-secret
       imagePullSecrets:
         - name: {{ .Values.injector.image.pullSecrets }}

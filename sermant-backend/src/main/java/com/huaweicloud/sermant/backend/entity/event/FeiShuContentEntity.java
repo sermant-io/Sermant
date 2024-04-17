@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 飞书推送富文本格式
+ * FeiShu Rich Content Entity
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -33,10 +33,10 @@ public class FeiShuContentEntity {
     private String text;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param tag 类型
-     * @param text 内容
+     * @param tag tag
+     * @param text content
      */
     public FeiShuContentEntity(String tag, String text) {
         this.tag = tag;

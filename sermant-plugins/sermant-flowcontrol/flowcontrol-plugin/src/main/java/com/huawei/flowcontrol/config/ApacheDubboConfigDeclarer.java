@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * apache dubbo 初始化配置拦截
+ * apache dubbo initialize the configuration intercept
  *
  * @author zhouss
  * @since 2022-01-27
  */
 public class ApacheDubboConfigDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.apache.dubbo.config.spring.schema.DubboNamespaceHandler";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = ApacheDubboConfigInterceptor.class.getCanonicalName();
 

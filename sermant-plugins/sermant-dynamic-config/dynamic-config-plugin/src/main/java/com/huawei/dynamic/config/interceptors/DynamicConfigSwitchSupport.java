@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.Interceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 动态配置开关控制
+ * dynamic configuration switch control
  *
  * @author zhouss
  * @since 2022-04-14
@@ -35,16 +35,16 @@ public class DynamicConfigSwitchSupport implements Interceptor {
     private final DynamicConfiguration dynamicConfiguration;
 
     /**
-     * 注册开关构造器
+     * register the switch constructor
      */
     public DynamicConfigSwitchSupport() {
         dynamicConfiguration = PluginConfigManager.getPluginConfig(DynamicConfiguration.class);
     }
 
     /**
-     * 原配置中心是否已下发动态关闭
+     * Whether dynamic shutdown is delivered in the original configuration center
      *
-     * @return 是否关闭
+     * @return close or not
      */
     protected boolean isDynamicClosed() {
         final Object config = ConfigHolder.INSTANCE.getConfig(OriginConfigDisableSource.ZK_CONFIG_CENTER_ENABLED);
@@ -83,30 +83,30 @@ public class DynamicConfigSwitchSupport implements Interceptor {
     }
 
     /**
-     * 前置触发点
+     * preTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execution context
+     * @return executionContext
      */
     protected ExecuteContext doBefore(ExecuteContext context) {
         return context;
     }
 
     /**
-     * 后置触发点
+     * postTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execution context
+     * @return executionContext
      */
     protected ExecuteContext doAfter(ExecuteContext context) {
         return context;
     }
 
     /**
-     * 异常触发点
+     * exceptionTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execution context
+     * @return executionContext
      */
     protected ExecuteContext doThrow(ExecuteContext context) {
         return context;

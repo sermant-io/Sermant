@@ -23,32 +23,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AbstractHandlerMapping处理器
+ * AbstractHandlerMapping handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public abstract class AbstractMappingHandler extends AbstractHandler {
     /**
-     * 配置服务
+     * Configuration service
      */
     protected final SpringConfigService configService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractMappingHandler() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);
     }
 
     /**
-     * 获取透传的标记
+     * Obtain transparent tags
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @return 透传的标记
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @return Marks for transparent transmission
      */
     public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
             Map<String, List<String>> headers, Map<String, List<String>> parameters);

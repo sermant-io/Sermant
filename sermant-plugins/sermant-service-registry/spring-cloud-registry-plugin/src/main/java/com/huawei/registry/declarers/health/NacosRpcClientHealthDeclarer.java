@@ -25,21 +25,22 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
  * nacos 2.x
- * 拦截com.alibaba.nacos.common.remote.client.RpcClient健康检查方法, 判断注册中心是否存活, 并监听注册订阅配置下发
+ * Intercept the com.alibaba.nacos.common.remote.client.RpcClient health check method to determine whether the
+ * registry is alive and listen for the delivery of the registration and subscription configuration
  *
  * @author zhouss
  * @since 2022-12-20
  */
 public class NacosRpcClientHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * nacos心跳发送类
+     * Nacos heartbeat sending class
      */
-    private static final String[] ENHANCE_CLASSES = new String[] {
-        "com.alibaba.nacos.common.remote.client.RpcClient"
+    private static final String[] ENHANCE_CLASSES = new String[]{
+            "com.alibaba.nacos.common.remote.client.RpcClient"
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = NacosRpcClientHealthInterceptor.class.getCanonicalName();
 
@@ -51,7 +52,7 @@ public class NacosRpcClientHealthDeclarer extends AbstractDoubleRegistryDeclarer
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("healthCheck"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("healthCheck"), INTERCEPT_CLASS)
         };
     }
 }

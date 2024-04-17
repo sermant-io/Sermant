@@ -19,18 +19,18 @@ package com.huaweicloud.sermant.tag.transmission.config.strategy;
 import java.util.List;
 
 /**
- * 需要透传的key的匹配策略接口
+ * Matching strategy interface for keys that need to be transparently transmitted
  *
  * @author lilai
  * @since 2023-09-07
  */
 public interface MatchStrategy {
     /**
-     * 请求中或线程变量中的key是否匹配配置中要透传的规则
+     * Whether the key in the request or thread variable matches the rule to be transmitted through in the configuration
      *
-     * @param key 被匹配的键
-     * @param keyConfigs key的匹配配置
-     * @return 匹配结果
+     * @param key the key that was matched
+     * @param keyConfigs key matching configuration
+     * @return matching result
      */
     boolean isMatch(String key, List<String> keyConfigs);
 }

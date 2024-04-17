@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 公共请求测试
+ * Public request testing
  *
  * @author zhouss
  * @since 2022-10-12

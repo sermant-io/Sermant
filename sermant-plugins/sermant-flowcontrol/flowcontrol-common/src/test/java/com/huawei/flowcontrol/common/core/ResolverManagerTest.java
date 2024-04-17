@@ -49,7 +49,7 @@ import org.mockito.Mockito;
 import java.util.Map;
 
 /**
- * 测试规则管理器
+ * test rule manager
  *
  * @author zhouss
  * @since 2022-08-29
@@ -91,7 +91,7 @@ public class ResolverManagerTest {
     }
 
     /**
-     * 测试解析
+     * test Resolve
      */
     @Test
     public void testResolve() {

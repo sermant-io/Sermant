@@ -1,6 +1,6 @@
-# sermant-injector镜像名称
+# image name of sermant-injector
 imageName=xxx.huawei.com/sermant/sermant-injector
-# sermant-injector镜像版本
+# image version of sermant-injector
 imageVersion=1.0.0
 
 name=${imageName}:${imageVersion}

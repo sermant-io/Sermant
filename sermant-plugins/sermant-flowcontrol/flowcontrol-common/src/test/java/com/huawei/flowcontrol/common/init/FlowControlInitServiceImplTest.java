@@ -28,7 +28,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 初始化测试
+ * initialization test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -48,7 +48,7 @@ public class FlowControlInitServiceImplTest {
     }
 
     /**
-     * 测试初始化流程
+     * test the initialization process
      */
     @Test
     public void test() {

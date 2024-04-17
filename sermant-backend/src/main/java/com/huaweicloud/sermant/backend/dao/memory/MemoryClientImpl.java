@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 内存客户端
+ * Memory client
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -61,9 +61,9 @@ public class MemoryClientImpl implements EventDao {
     private ExpiringMap<String, String> normal;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param backendConfig 配置
+     * @param backendConfig configuration
      */
     public MemoryClientImpl(BackendConfig backendConfig) {
         this.eventMap = ExpiringMap.builder().expiration(
@@ -160,12 +160,12 @@ public class MemoryClientImpl implements EventDao {
     }
 
     /**
-     * 获取查询的事件key
+     * Get the key list of the queried event
      *
-     * @param startTime 开始事件
-     * @param endTime 截止事件
-     * @param pattern 匹配规则
-     * @return 事件key
+     * @param startTime start time
+     * @param endTime end time
+     * @param pattern matching pattern
+     * @return event key list
      */
     public List<String> getQueryEventKey(long startTime, long endTime, String pattern) {
         List<Map.Entry<String, Long>> queryResultByTime = eventTimeKeyMap.entrySet().stream().filter(
@@ -178,10 +178,10 @@ public class MemoryClientImpl implements EventDao {
     }
 
     /**
-     * 获取相同field 数量
+     * Get the number of same fields
      *
      * @param field field
-     * @return 相同field 数量
+     * @return number of same fields
      */
     private int getSameFieldNum(String field) {
         int result = 0;

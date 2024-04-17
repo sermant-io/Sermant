@@ -34,16 +34,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 /**
- * Feign请求测试
+ * Feign requests a test
  *
  * @author zhouss
  * @since 2022-07-01
  */
 public class SpringLoadbalancerFeignResponseInterceptorTest extends ResponseTest {
     /**
-     * 测试请求流程
+     * Test the request process
      *
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     @Test
     public void testRequest() throws NoSuchMethodException {

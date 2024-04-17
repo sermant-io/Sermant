@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LoadBalancerClientFilterInterceptor
+ * Test LoadBalancerClientFilterInterceptor
  *
  * @author provenceee
  * @since 2022-09-08
@@ -54,7 +54,7 @@ public class LoadBalancerClientFilterInterceptorTest extends BaseTransmitConfigT
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -63,11 +63,11 @@ public class LoadBalancerClientFilterInterceptorTest extends BaseTransmitConfigT
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
-        // RequestTag为null时
+        // When RequestTag is null
         interceptor.before(context);
         RequestData requestData = ThreadLocalUtils.getRequestData();
         Assert.assertEquals(HttpMethod.GET.name(), requestData.getHttpMethod());
@@ -78,7 +78,7 @@ public class LoadBalancerClientFilterInterceptorTest extends BaseTransmitConfigT
         Assert.assertEquals("bar1", headerData.get("bar").get(0));
         Assert.assertEquals("foo1", headerData.get("foo").get(0));
 
-        // RequestTag不为null时
+        // When RequestTag is not null
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar-foo", Collections.singletonList("foo2")));
         interceptor.before(context);
         requestData = ThreadLocalUtils.getRequestData();
@@ -93,7 +93,7 @@ public class LoadBalancerClientFilterInterceptorTest extends BaseTransmitConfigT
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {
@@ -103,7 +103,7 @@ public class LoadBalancerClientFilterInterceptorTest extends BaseTransmitConfigT
     }
 
     /**
-     * 测试onThrow方法
+     * Test the onThrow method
      */
     @Test
     public void testOnThrow() {

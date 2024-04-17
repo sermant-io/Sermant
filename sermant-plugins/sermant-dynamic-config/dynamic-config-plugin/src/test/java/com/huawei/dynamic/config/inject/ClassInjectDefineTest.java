@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * 注入spi测试
+ * injection spi testing
  *
  * @author zhouss
  * @since 2022-04-21

@@ -21,64 +21,64 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 实例信息
+ * Instance information
  *
  * @author zhp
  * @since 2023-02-17
  */
 public class InstanceInfo {
     /**
-     * 请求数量
+     * Number of requests
      */
     private AtomicInteger requestNum;
 
     /**
-     * 请求失败数量
+     * The number of failed requests
      */
     private AtomicInteger requestFailNum;
 
     /**
-     * 摘除状态
+     * Removal status
      */
     private AtomicBoolean removalStatus;
 
     /**
-     * 摘除时间
+     * Removal time
      */
     private long removalTime;
 
     /**
-     * 恢复时间
+     * Recovery time
      */
     private long recoveryTime;
 
     /**
-     * 实例IP和域名
+     * IP address and domain name of the instance
      */
     private String host;
 
     /**
-     * 实例端口
+     * Instance port
      */
     private String port;
 
     /**
-     * 最后调用时间
+     * Last call time
      */
     private long lastInvokeTime;
 
     /**
-     * 服务调用统计信息
+     * Service call statistics
      */
     private List<RequestCountData> countDataList;
 
     /**
-     * 错误率
+     * Error rate
      */
     private float errorRate;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public InstanceInfo() {
         this.requestNum = new AtomicInteger(0);

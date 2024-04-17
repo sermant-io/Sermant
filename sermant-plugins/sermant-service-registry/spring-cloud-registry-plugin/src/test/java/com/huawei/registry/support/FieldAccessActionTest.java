@@ -26,7 +26,7 @@ import java.security.AccessController;
 import java.util.Optional;
 
 /**
- * 测试设置字段属性
+ * Test settings field properties
  *
  * @author zhouss
  * @since 2022-09-07

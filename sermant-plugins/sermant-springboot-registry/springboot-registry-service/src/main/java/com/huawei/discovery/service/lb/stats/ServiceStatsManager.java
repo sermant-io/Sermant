@@ -30,14 +30,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 服务统计数据管理器, 主要记录对应服务的指标数据
+ * The service statistics manager mainly records the metric data of the corresponding service
  *
  * @author zhouss
  * @since 2022-09-29
  */
 public enum ServiceStatsManager {
     /**
-     * 单例
+     * Singleton
      */
     INSTANCE;
 
@@ -59,9 +59,9 @@ public enum ServiceStatsManager {
     }
 
     /**
-     * 获取服务统计数据
+     * Get service statistics
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      * @return ServiceStats
      */
     public ServiceStats getServiceStats(String serviceName) {
@@ -76,10 +76,10 @@ public enum ServiceStatsManager {
     }
 
     /**
-     * 获取实例的指标统计数据
+     * Obtain the metric statistics of the instance
      *
-     * @param serviceInstance 实例
-     * @return 获取该实例的状态数据
+     * @param serviceInstance Instance
+     * @return Obtain the status data of the instance
      */
     public InstanceStats getInstanceStats(ServiceInstance serviceInstance) {
         final ServiceStats serviceStats = getServiceStats(serviceInstance.getServiceName());

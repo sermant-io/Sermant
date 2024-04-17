@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 注册类
+ * Registration class
  *
  * @author zhouss
  * @since 2022-05-18
@@ -35,9 +35,9 @@ public class ServiceCombRegistration implements Registration {
     private final MicroServiceInstance microServiceInstance;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param microServiceInstance 实例
+     * @param microServiceInstance Instance
      */
     public ServiceCombRegistration(MicroServiceInstance microServiceInstance) {
         this.microServiceInstance = microServiceInstance;
@@ -78,9 +78,9 @@ public class ServiceCombRegistration implements Registration {
     }
 
     /**
-     * 获取当前实例信息
+     * Obtain the information about the current instance
      *
-     * @return 实例信息
+     * @return Instance information
      */
     public MicroServiceInstance getMicroServiceInstance() {
         return microServiceInstance;

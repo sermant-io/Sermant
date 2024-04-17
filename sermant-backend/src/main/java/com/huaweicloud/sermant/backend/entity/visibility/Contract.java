@@ -20,34 +20,34 @@ package com.huaweicloud.sermant.backend.entity.visibility;
 import java.util.List;
 
 /**
- * 契约信息
+ * Contract information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class Contract extends BaseInfo {
     /**
-     * 接口名称
+     * Interface name
      */
     private String interfaceName;
 
     /**
-     * 服务注册的key
+     * Key for service registration
      */
     private String serviceKey;
 
     /**
-     * 请求路径
+     * Request url
      */
     private String url;
 
     /**
-     * 服务ID
+     * Service ID
      */
     private String serviceId;
 
     /**
-     * 方法集合
+     * Method information list
      */
     private List<MethodInfo> methodInfoList;
 

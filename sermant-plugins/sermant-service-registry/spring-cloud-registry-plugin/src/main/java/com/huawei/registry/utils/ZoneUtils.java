@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 塞zone工具类
+ * Plug zone tool class
  *
  * @author zhouss
  * @since 2022-06-10
@@ -38,9 +38,9 @@ public class ZoneUtils {
     }
 
     /**
-     * 设置注册实例的zone
+     * Set the zone where the instance is registered
      *
-     * @param meta 实例元信息
+     * @param meta Instance meta-information
      */
     public static void setZone(Map<String, String> meta) {
         final String originZone = meta.get(SpringRegistryConstants.LOAD_BALANCER_ZONE_META_KEY);

@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * LoadBalancerClientFactory增强类-针对spring loadbalancer
+ * LoadBalancerClientFactory enhancement class for spring loadbalancer
  *
  * @author provenceee
  * @since 2022-01-20
@@ -49,7 +49,7 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
     private final LoadbalancerConfig config;
 
     /**
-     * 构造方法
+     * construction method
      */
     public ClientFactoryInterceptor() {
         config = PluginConfigManager.getPluginConfig(LoadbalancerConfig.class);
@@ -69,7 +69,7 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
 
     private Optional<Object> getLoadBalancer(String serviceId) {
         if (config == null || !RuleManager.INSTANCE.isConfigured()) {
-            // 没有配置的情况下return null, 不影响原方法
+            // If no configuration is performed, return null does not affect the original method
             return Optional.empty();
         }
         final Optional<Object> cacheBalancer = SpringLoadbalancerCache.INSTANCE.getTargetServiceLbType(serviceId,
@@ -92,7 +92,7 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
             return Optional.empty();
         }
         return SpringLoadbalancerCache.INSTANCE.getNewCache().computeIfAbsent(serviceId,
-            value -> createLoadbalancer(springLoadbalancerType.get(), serviceId));
+                value -> createLoadbalancer(springLoadbalancerType.get(), serviceId));
     }
 
     private Optional<Object> createLoadbalancer(SpringLoadbalancerType type, String serviceId) {
@@ -112,7 +112,7 @@ public class ClientFactoryInterceptor extends AbstractInterceptor {
         try {
             return type == SpringLoadbalancerType.RANDOM ? RandomLoadBalancer.class : RoundRobinLoadBalancer.class;
         } catch (NoClassDefFoundError e) {
-            // 低版本没有RandomLoadBalancer，返回RoundRobinLoadBalancer
+            // The earlier version does not have RandomLoadBalancer and returns RoundRobinLoadBalancer
             return RoundRobinLoadBalancer.class;
         }
     }

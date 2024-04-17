@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * attachments解析测试
+ * attachments resolution test
  *
  * @author zhouss
  * @since 2022-09-19

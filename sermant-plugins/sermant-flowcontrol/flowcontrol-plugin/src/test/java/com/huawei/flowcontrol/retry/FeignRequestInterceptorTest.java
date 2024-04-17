@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * feign重试测试
+ * feign retry test
  *
  * @author zhouss
  * @since 2022-03-03
@@ -68,9 +68,9 @@ public class FeignRequestInterceptorTest {
 
 
     /**
-     * 前置初始化
+     * preinitialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {
@@ -95,9 +95,9 @@ public class FeignRequestInterceptorTest {
     }
 
     /**
-     * 测试流程
+     * test_process
      *
-     * @throws Exception 执行失败抛出
+     * @throws Exception execution failure throw
      */
     @Test
     public void test() throws Exception {

@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- * httpclient响应
+ * httpclient response
  *
  * @author zhouss
  * @since 2022-10-10
@@ -47,10 +47,10 @@ public class ErrorCloseableHttpResponse implements CloseableHttpResponse {
     private final ProtocolVersion protocolVersion;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param ex 响应异常
-     * @param protocolVersion 请求协议版本
+     * @param ex Respond to exceptions
+     * @param protocolVersion Request an agreement version
      */
     public ErrorCloseableHttpResponse(Throwable ex, ProtocolVersion protocolVersion) {
         this.ex = ex;

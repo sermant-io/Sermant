@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
 import java.security.PrivilegedAction;
 
 /**
- * 字段访问器设置
+ * Field accessor settings
  *
  * @author zhouss
  * @since 2022-02-24
@@ -30,9 +30,9 @@ public class FieldAccessAction implements PrivilegedAction<Object> {
     private final Field field;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param field 字段
+     * @param field Field
      */
     public FieldAccessAction(Field field) {
         this.field = field;

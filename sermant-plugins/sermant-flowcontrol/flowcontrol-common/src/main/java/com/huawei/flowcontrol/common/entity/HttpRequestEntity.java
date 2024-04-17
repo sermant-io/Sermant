@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Http请求包装类
+ * http request wrapper class
  *
  * @author zhouss
  * @since 2022-01-22
@@ -71,7 +71,7 @@ public class HttpRequestEntity extends AbstractRequestEntity {
     }
 
     /**
-     * 构建器
+     * builder
      *
      * @since 2022-07-20
      */
@@ -86,9 +86,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置服务名
+         * set service name
          *
-         * @param serviceName 服务名
+         * @param serviceName service name
          * @return Builder
          */
         public Builder setServiceName(String serviceName) {
@@ -97,9 +97,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置路径信息
+         * setting path information
          *
-         * @param pathInfo 路径
+         * @param pathInfo path
          * @return Builder
          */
         public Builder setPathInfo(String pathInfo) {
@@ -108,9 +108,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置请求路径
+         * set request path
          *
-         * @param servletPath 请求路径
+         * @param servletPath request path
          * @return Builder
          */
         public Builder setServletPath(String servletPath) {
@@ -119,9 +119,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置请求头
+         * set request header
          *
-         * @param headers 请求头
+         * @param headers request header
          * @return Builder
          */
         public Builder setHeaders(Map<String, String> headers) {
@@ -130,9 +130,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置方法类型
+         * setting method type
          *
-         * @param method 反复
+         * @param method method
          * @return Builder
          */
         public Builder setMethod(String method) {
@@ -141,9 +141,9 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置请求方向
+         * set request direction
          *
-         * @param requestType 请求方向
+         * @param requestType request direction
          * @return Builder
          */
         public Builder setRequestType(RequestType requestType) {
@@ -152,7 +152,7 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 设置api
+         * set api
          *
          * @param apiPath api
          * @return Builder
@@ -163,10 +163,10 @@ public class HttpRequestEntity extends AbstractRequestEntity {
         }
 
         /**
-         * 返回构建的请求
+         * return the request for the build
          *
          * @return HttpRequestEntity
-         * @throws IllegalArgumentException 参数异常抛出
+         * @throws IllegalArgumentException parameter exception throwing
          */
         public HttpRequestEntity build() {
             if (httpRequestEntity.apiPath == null) {

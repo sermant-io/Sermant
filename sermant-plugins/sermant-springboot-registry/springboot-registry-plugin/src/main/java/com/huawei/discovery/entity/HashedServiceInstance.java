@@ -19,7 +19,7 @@ package com.huawei.discovery.entity;
 import java.util.Objects;
 
 /**
- * 重写hashCode, equal
+ * Rewrite hashCode, equal
  *
  * @author zhouss
  * @since 2022-09-29

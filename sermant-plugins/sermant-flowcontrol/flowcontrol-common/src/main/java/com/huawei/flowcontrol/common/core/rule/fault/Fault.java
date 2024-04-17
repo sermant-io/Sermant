@@ -18,14 +18,15 @@
 package com.huawei.flowcontrol.common.core.rule.fault;
 
 /**
- * 错误注入
+ * fault injection
  *
  * @author zhouss
  * @since 2022-08-05
  */
 public interface Fault {
     /**
-     * 获取许可, 判断当前是否需进行错误注入, 满足条件执行错误注入逻辑
+     * Obtain permission, determine whether error injection is required,
+     * and execute the error injection logic if the conditions are met
      */
     void acquirePermission();
 }

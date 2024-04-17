@@ -18,17 +18,18 @@
 package com.huawei.flowcontrol;
 
 /**
- * 拦截 org.apache.dubbo.monitor.support.MonitorFilter 的invoke方法
+ * Intercept the invoke method of org.apache.dubbo.monitor.support.MonitorFilter
  *
  * @author zhouss
  * @since 2022-02-11
  */
 public class ApacheDubboDeclarer extends DubboDeclarer {
     private static final String ENHANCE_CLASS = "org.apache.dubbo.monitor.support.MonitorFilter";
+
     private static final String INTERCEPT_CLASS = ApacheDubboInterceptor.class.getCanonicalName();
 
     /**
-     * apache dubbo拦截声明
+     * apache dubbo Declarer
      */
     public ApacheDubboDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS);

@@ -17,12 +17,12 @@
 package com.huaweicloud.sermant.router.dubbo.handler;
 
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.dubbo.ApacheInvoker;
 import com.huaweicloud.sermant.router.dubbo.RuleInitializationUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.service.AbstractDirectoryServiceTest;
 
 import org.apache.dubbo.rpc.Invocation;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * FlowRouteHandler单元测试
+ * FlowRouteHandler unit testing
  *
  * @author lilai
  * @since 2023-02-28
@@ -55,7 +55,7 @@ public class FlowRouteHandlerTest {
     private static RouterConfig config;
 
     /**
-     * UT执行前进行mock
+     * Mock before UT execution
      */
     @BeforeClass
     public static void before() {
@@ -69,7 +69,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release all mock objects after UT execution
      */
     @AfterClass
     public static void after() {
@@ -87,11 +87,11 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getGetTargetInvokers方法
+     * Test the getGetTargetInvokers method
      */
     @Test
     public void testGetTargetInvokersByFlowRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initFlowMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -115,11 +115,11 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getGetTargetInvokers方法，配置全局维度规则
+     * Test the getGetTargetInvokers method and configure global dimension rules
      */
     @Test
     public void testGetTargetInvokersByGlobalRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initGlobalFlowMatchRules();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -143,11 +143,11 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getGetTargetInvokers方法，同时配置服务维度规则和全局维度规则
+     * Test the getTargetInvokers method and configure both the service dimension rule and the global dimension rule
      */
     @Test
     public void testGetTargetInvokersByFlowRulesWithGlobalRules() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initGlobalAndServiceFlowMatchRules();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -172,7 +172,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInvokersByRequest方法
+     * Test the getTargetInvokersByRequest method
      */
     @Test
     public void testGetTargetInvokersByRequest() {
@@ -195,7 +195,7 @@ public class FlowRouteHandlerTest {
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
 
-        // 匹配foo: bar2实例
+        // Matching instances with foo: bar2
         invocation.setAttachment("foo", "bar2");
         invocation.setAttachment("foo1", "bar2");
         List<Object> targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com" +
@@ -204,7 +204,7 @@ public class FlowRouteHandlerTest {
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker2, targetInvokers.get(0));
 
-        // 匹配1.0.0版本实例
+        // Matching instances with version 1.0.0
         invocation.getObjectAttachments().clear();
         invocation.setAttachment("version", "1.0.0");
         targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud" +
@@ -215,7 +215,7 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试getTargetInvokersByRequest方法不匹配时
+     * When testing getTargetInvokersByRequest method mismatch
      */
     @Test
     public void testGetTargetInvokersByRequestWithMismatch() {
@@ -238,7 +238,7 @@ public class FlowRouteHandlerTest {
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
 
-        // 不匹配bar: bar1实例时，匹配没有bar标签的实例
+        // When not matching the bar: bar1 instance, match instances without bar labels
         invocation.setAttachment("bar", "bar1");
         List<Object> targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com" +
                         ".huaweicloud.foo.FooTest")
@@ -246,7 +246,8 @@ public class FlowRouteHandlerTest {
         Assert.assertEquals(2, targetInvokers.size());
         Assert.assertFalse(targetInvokers.contains(invoker2));
 
-        // 不匹配bar: bar1实例时，优先匹配没有bar标签的实例，如果没有无bar标签的实例，则返回空列表
+        // When not matching instance bar1, prioritize matching instances without bar labels.
+        // If there are no instances without bar labels, return an empty list
         List<Object> sameInvokers = new ArrayList<>();
         ApacheInvoker<Object> sameInvoker1 = new ApacheInvoker<>("1.0.0",
                 Collections.singletonMap(RouterConstant.PARAMETERS_KEY_PREFIX + "bar", "bar3"));
@@ -261,7 +262,7 @@ public class FlowRouteHandlerTest {
                 , sameInvokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
         Assert.assertEquals(0, targetInvokers.size());
 
-        // 不匹配version: 1.0.3实例时，返回所有版本的实例
+        // When the version does not match the 1.0.3 instance, return all instances of the version
         invocation.getObjectAttachments().clear();
         invocation.setAttachment("version", "1.0.3");
         targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud" +
@@ -269,7 +270,7 @@ public class FlowRouteHandlerTest {
                 , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");
         Assert.assertEquals(3, targetInvokers.size());
 
-        // 不传入attachment时，匹配无标签实例
+        // Match unlabeled instances when no attachment is passed in
         invocation.getObjectAttachments().clear();
         targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud" +
                         ".foo.FooTest")
@@ -277,7 +278,8 @@ public class FlowRouteHandlerTest {
         Assert.assertEquals(1, targetInvokers.size());
         Assert.assertEquals(invoker3, targetInvokers.get(0));
 
-        // 不传入attachment时，优先匹配无标签实例，没有无标签实例时，返回全部实例
+        // When no attachment is passed in, priority is given to matching unlabeled instances. When there are no
+        // unlabeled instances, all instances are returned
         invocation.getObjectAttachments().clear();
         targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com.huaweicloud" +
                         ".foo.FooTest")
@@ -286,11 +288,11 @@ public class FlowRouteHandlerTest {
     }
 
     /**
-     * 测试没有命中路由时
+     * test when there are no routes hit
      */
     @Test
     public void testGetMissMatchInvokers() {
-        // 初始化路由规则
+        // initialize the routing rule
         RuleInitializationUtils.initFlowMatchRule();
         List<Object> invokers = new ArrayList<>();
         ApacheInvoker<Object> invoker1 = new ApacheInvoker<>("1.0.0");
@@ -334,7 +336,7 @@ public class FlowRouteHandlerTest {
         queryMap.put("interface", "com.huaweicloud.foo.FooTest");
         DubboCache.INSTANCE.putApplication("com.huaweicloud.foo.FooTest", "foo");
 
-        // 测试无tags时
+        // when the test is not tags
         List<Object> targetInvokers = (List<Object>) flowRouteHandler.handle(DubboCache.INSTANCE.getApplication("com" +
                         ".huaweicloud.foo.FooTest")
                 , invokers, invocation, queryMap, "com.huaweicloud.foo.FooTest");

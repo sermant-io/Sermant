@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 规则获取工具类
+ * rules get tool classes
  *
  * @author zhouss
  * @since 2022-07-25
@@ -37,12 +37,12 @@ public class RuleUtils {
     }
 
     /**
-     * 获取规则
+     * acquisition rule
      *
-     * @param businessName 业务名称
-     * @param resolverKey  解析器键
-     * @param ruleType 规则类型
-     * @param <T> 规则类型
+     * @param businessName business name
+     * @param resolverKey resolver key
+     * @param ruleType rule type
+     * @param <T> rule type
      * @return rule
      */
     public static <T> T getRule(String businessName, String resolverKey, Class<T> ruleType) {
@@ -51,12 +51,12 @@ public class RuleUtils {
     }
 
     /**
-     * 根据请求体匹配获取规则
+     * Match the fetch rules according to the request body
      *
-     * @param requestEntity 请求体
-     * @param resolverKey   解析器键
-     * @param ruleType  规则类型
-     * @param <T> 规则类型
+     * @param requestEntity request entity
+     * @param resolverKey resolver key
+     * @param ruleType rule type
+     * @param <T> rule type
      * @return List-Rule
      */
     public static <T> List<T> getRule(HttpRequestEntity requestEntity, String resolverKey, Class<T> ruleType) {

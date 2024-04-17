@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Http Connection 线程上下文工具类
+ * Http Connection Thread context utility class
  *
  * @author zhouss
  * @since 2022-10-21
@@ -32,51 +32,51 @@ public class HttpConnectionUtils {
     }
 
     /**
-     * 保存上下文信息
+     * Save contextual information
      *
-     * @param context 上下文
+     * @param context Context
      */
     public static void save(HttpConnectionContext context) {
         LOCAL.set(context);
     }
 
     /**
-     * 获取线程变量的上下文
+     * Get the context of a thread variable
      *
-     * @return 上下文
+     * @return Context
      */
     public static HttpConnectionContext getContext() {
         return LOCAL.get();
     }
 
     /**
-     * 清理数据
+     * Clean your data
      */
     public static void remove() {
         LOCAL.remove();
     }
 
     /**
-     * http url connection上下文
+     * http url connection Context
      *
      * @since 2022-10-21
      */
     public static class HttpConnectionContext {
         /**
-         * 已解析的信息, 包含下游服务名和请求路径
+         * Resolved information, including the downstream service name and request path
          */
         private Map<String, String> urlInfo;
 
         /**
-         * 最原始的url
+         * The most original URL
          */
         private URL originUrl;
 
         /**
-         * 构建上下文
+         * Build context
          *
-         * @param urlInfo 解析信息
-         * @param originUrl 原始url
+         * @param urlInfo Parse information
+         * @param originUrl Original URL
          */
         public HttpConnectionContext(Map<String, String> urlInfo, URL originUrl) {
             this.urlInfo = urlInfo;

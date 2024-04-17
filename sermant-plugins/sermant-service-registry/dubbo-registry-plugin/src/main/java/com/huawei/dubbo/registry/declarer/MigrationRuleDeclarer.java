@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 
 /**
- * 增强MigrationRule类的parse方法
+ * Enhance the parse method of the MigrationRule class
  *
  * @author provenceee
  * @since 2022-01-26
@@ -32,7 +32,7 @@ public class MigrationRuleDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "parse";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public MigrationRuleDeclarer() {
         super(ENHANCE_CLASS);

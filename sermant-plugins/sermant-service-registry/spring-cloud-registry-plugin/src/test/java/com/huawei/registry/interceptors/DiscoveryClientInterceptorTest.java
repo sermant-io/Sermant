@@ -46,7 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试服务发现
+ * Test service discovery
  *
  * @author zhouss
  * @since 2022-09-07
@@ -84,7 +84,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
     public void doBefore() throws NoSuchMethodException {
         Mockito.when(registerCenterService.getServerList(serviceName)).thenReturn(instanceList);
 
-        // isEmpty为false，isAvailable为true的普通场景
+        // A normal scenario where isEmpty is false and isAvailable is true
         RegisterContext.INSTANCE.setAvailable(true);
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
@@ -95,7 +95,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
         Assert.assertTrue(contextResult.getResult() instanceof List);
         Assert.assertEquals(((List<?>) contextResult.getResult()).size(), zkInstanceList.size() + instanceList.size());
 
-        // isEmpty为false，isAvailable为true的isWebfLux场景
+        // IsWebfLux scenario where isEmpty is false and isAvailable is true
         final ExecuteContext fluxContext = interceptor.doBefore(buildContext(reactiveDiscoveryClient,
                 new Object[]{serviceName}, Flux.fromIterable(zkInstanceList)));
         final ExecuteContext fluxContextResult = interceptor.doAfter(fluxContext);
@@ -104,7 +104,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
         Assert.assertNotNull(block);
         Assert.assertEquals(block.size(), zkInstanceList.size() + instanceList.size());
 
-        // isEmpty为false，isAvailable为false场景
+        // Scenario where isEmpty is false and isAvailable is false
         RegisterContext.INSTANCE.setAvailable(false);
         final ExecuteContext notAvailableContext = interceptor.doBefore(
                 buildContext(client, new Object[]{serviceName}, zkInstanceList));
@@ -114,7 +114,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
         Assert.assertTrue(notAvailableContextResult.getResult() instanceof List);
         Assert.assertEquals(((List<?>) notAvailableContextResult.getResult()).size(), instanceList.size());
 
-        // isEmpty为true，isAvailable为true场景
+        // Scenario where isEmpty is true and isAvailable is true
         RegisterContext.INSTANCE.setAvailable(true);
         Mockito.when(registerCenterService.getServerList(serviceName)).thenReturn(Collections.emptyList());
         final ExecuteContext contextWithEmptyList = interceptor.doBefore(
@@ -123,7 +123,7 @@ public class DiscoveryClientInterceptorTest extends BaseRegistryTest<DiscoveryCl
         Assert.assertTrue(contextWithEmptyListResult.getResult() instanceof List);
         Assert.assertEquals(((List<?>) contextWithEmptyListResult.getResult()).size(), zkInstanceList.size());
 
-        // isEmpty为true，isAvailable为false场景
+        // Scenario where isEmpty is true and isAvailable is false
         Mockito.when(registerCenterService.getServerList(serviceName)).thenReturn(Collections.emptyList());
         final ExecuteContext contextWithEmptyListx = interceptor.doBefore(
                 buildContext(client, new Object[]{serviceName}, zkInstanceList));

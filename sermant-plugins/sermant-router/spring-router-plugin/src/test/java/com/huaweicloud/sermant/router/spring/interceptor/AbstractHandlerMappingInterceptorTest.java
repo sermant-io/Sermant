@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试AbstractHandlerMappingInterceptor
+ * Test AbstractHandlerMappingInterceptor
  *
  * @author provenceee
  * @since 2022-10-10
@@ -53,7 +53,7 @@ public class AbstractHandlerMappingInterceptorTest extends BaseTransmitConfigTes
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -65,7 +65,7 @@ public class AbstractHandlerMappingInterceptorTest extends BaseTransmitConfigTes
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -83,7 +83,7 @@ public class AbstractHandlerMappingInterceptorTest extends BaseTransmitConfigTes
     }
 
     /**
-     * 重置测试数据
+     * Reset the test data
      */
     @Before
     public void clear() {
@@ -92,11 +92,11 @@ public class AbstractHandlerMappingInterceptorTest extends BaseTransmitConfigTes
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
-        // 测试before方法
+        // Test the before method
         interceptor.before(context);
         RequestTag requestTag = ThreadLocalUtils.getRequestTag();
         Map<String, List<String>> header = requestTag.getTag();
@@ -107,27 +107,27 @@ public class AbstractHandlerMappingInterceptorTest extends BaseTransmitConfigTes
     }
 
     /**
-     * 测试after方法,验证是否释放线程变量
+     * Test the after method to verify whether the thread variable is released
      */
     @Test
     public void testAfter() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试after方法,不释放线程变量
+        // Test the after method without releasing thread variables
         interceptor.after(context);
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
     }
 
     /**
-     * 测试onThrow方法,验证是否释放线程变量
+     * Test the onThrow method to verify whether the thread variable is released
      */
     @Test
     public void testOnThrow() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试onThrow方法,验证是否释放线程变量
+        // Test the on Throw method to verify whether the thread variable is released
         interceptor.onThrow(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }

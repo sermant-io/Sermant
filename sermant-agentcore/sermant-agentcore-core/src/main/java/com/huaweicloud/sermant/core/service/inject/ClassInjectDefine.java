@@ -21,55 +21,55 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * 类注入器, 基于springFactories注入到spring容器中
+ * ClassInjectDefine, based on springFactories to inject classes into the spring container
  *
  * @author zhouss
  * @since 2022-04-20
  */
 public interface ClassInjectDefine {
     /**
-     * 启动注入factoryName
+     * BOOTSTRAP_FACTORY_NAME
      */
     String BOOTSTRAP_FACTORY_NAME = "org.springframework.cloud.bootstrap.BootstrapConfiguration";
 
     /**
-     * 自动配置factoryName
+     * ENABLE_AUTO_CONFIGURATION_FACTORY_NAME
      */
     String ENABLE_AUTO_CONFIGURATION_FACTORY_NAME = "org.springframework.boot.autoconfigure.EnableAutoConfiguration";
 
     /**
-     * 环境变量注入factoryName
+     * ENVIRONMENT_PROCESSOR_FACTOR_NAME
      */
     String ENVIRONMENT_PROCESSOR_FACTOR_NAME = "org.springframework.boot.env.EnvironmentPostProcessor";
 
     /**
-     * 注入类的全限定名（务必使用全限定名，防止类加载器问题）
+     * fully qualified name of injected class (always use the fully qualified name to prevent classloader problems)
      *
-     * @return 注入类的全限定名
+     * @return fully qualified name
      */
     String injectClassName();
 
     /**
-     * 注入类的工厂名（务必使用全限定名，防止类加载器问题）
+     * The factory name of the injected class (be sure to use a fully qualified name to prevent classloader problems)
      *
-     * @return 工厂名
+     * @return factory name
      */
     String factoryName();
 
     /**
-     * 前置注入类全限定名
+     * Pre-injection class fully qualified name
      *
-     * @return 前置注入类全限定名
+     * @return Pre-injection class fully qualified name
      */
     default ClassInjectDefine[] requiredDefines() {
         return new ClassInjectDefine[0];
     }
 
     /**
-     * 构建前置类
+     * build pre-injection class
      *
-     * @param injectClassName 注入全限定名
-     * @param factoryName 工厂名
+     * @param injectClassName fully qualified name
+     * @param factoryName factoryName
      * @return ClassInjectDefine
      */
     default ClassInjectDefine build(String injectClassName, String factoryName) {
@@ -87,11 +87,11 @@ public interface ClassInjectDefine {
     }
 
     /**
-     * 构建前置类
+     * build pre-injection class
      *
-     * @param injectClassName 注入全限定名
-     * @param factoryName 工厂名
-     * @param canInject 是否可注入
+     * @param injectClassName fully qualified name
+     * @param factoryName factoryName
+     * @param canInject canInject
      * @return ClassInjectDefine
      */
     default ClassInjectDefine build(String injectClassName, String factoryName, Supplier<Boolean> canInject) {
@@ -118,51 +118,51 @@ public interface ClassInjectDefine {
     }
 
     /**
-     * 是否可注入
+     * canInject
      *
-     * @return 注入类的前置条件
+     * @return result
      */
     default boolean canInject() {
         return true;
     }
 
     /**
-     * 作用插件
+     * Plugin
      *
-     * @return 插件
+     * @return plugin
      */
     default Plugin plugin() {
         return Plugin.ALL;
     }
 
     /**
-     * 注入的插件类型, 根据插件类型选择注入
+     * Type of the plugin to be injected. Select injection based on the plugin type
      *
      * @since 2022-05-23
      */
     enum Plugin {
         /**
-         * 动态配置插件
+         * DYNAMIC_CONFIG_PLUGIN
          */
         DYNAMIC_CONFIG_PLUGIN,
 
         /**
-         * Spring注册插件
+         * SPRING_REGISTRY_PLUGIN
          */
         SPRING_REGISTRY_PLUGIN,
 
         /**
-         * 流控插件
+         * FLOW_CONTROL_PLUGIN
          */
         FLOW_CONTROL_PLUGIN,
 
         /**
-         * 负载均衡插件
+         * LOAD_BALANCER_PLUGIN
          */
         LOAD_BALANCER_PLUGIN,
 
         /**
-         * 所有插件
+         * ALL
          */
         ALL
     }

@@ -34,7 +34,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * 测试ExtensionLoaderInterceptor
+ * Test ExtensionLoaderInterceptor
  *
  * @author provenceee
  * @since 2022-02-15
@@ -47,7 +47,7 @@ public class ExtensionLoaderInterceptorTest {
     private final RegisterServiceCommonConfig commonConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ExtensionLoaderInterceptorTest() throws NoSuchFieldException, IllegalAccessException {
         interceptor = new ExtensionLoaderInterceptor();
@@ -59,7 +59,7 @@ public class ExtensionLoaderInterceptorTest {
     }
 
     /**
-     * 测试Alibaba ExtensionLoader加载非目标spi
+     * Test Alibaba ExtensionLoader loading non target spi
      *
      * @see com.alibaba.dubbo.common.extension.ExtensionLoader
      */
@@ -71,7 +71,7 @@ public class ExtensionLoaderInterceptorTest {
     }
 
     /**
-     * 测试Alibaba ExtensionLoader加载目标spi
+     * Test Alibaba ExtensionLoader loading target spi
      *
      * @see com.alibaba.dubbo.common.extension.ExtensionLoader
      */
@@ -82,23 +82,23 @@ public class ExtensionLoaderInterceptorTest {
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
         cachedClasses.remove("sc", ServiceCenterRegistryFactory.class);
 
-        // spi名为null
+        // The SPI is named Null
         interceptor.before(context);
         Assert.assertEquals(0, cachedClasses.size());
 
-        // spi名不为sc
+        // The SPI name is not SC
         arguments[0] = TestConstant.BAR;
         interceptor.before(context);
         Assert.assertEquals(0, cachedClasses.size());
 
-        // spi名为sc
+        // The SPI name is SC
         arguments[0] = Constant.SC_REGISTRY_PROTOCOL;
         interceptor.before(context);
         Assert.assertEquals(1, cachedClasses.size());
     }
 
     /**
-     * 测试Apache ExtensionLoader加载非目标spi
+     * Test Apache ExtensionLoader loading non target SPI
      *
      * @see org.apache.dubbo.common.extension.ExtensionLoader
      */
@@ -111,7 +111,7 @@ public class ExtensionLoaderInterceptorTest {
     }
 
     /**
-     * 测试Apache ExtensionLoader加载目标spi
+     * Test Apache ExtensionLoader loading target spi
      *
      * @see org.apache.dubbo.common.extension.ExtensionLoader
      */
@@ -124,16 +124,16 @@ public class ExtensionLoaderInterceptorTest {
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
         cachedClasses.remove("sc", com.huawei.dubbo.registry.apache.ServiceCenterRegistryFactory.class);
 
-        // spi名为null
+        // The SPI is named Null
         interceptor.before(context);
         Assert.assertEquals(1, cachedClasses.size());
 
-        // spi名不为sc
+        // The SPI name is not SC
         arguments[0] = TestConstant.BAR;
         interceptor.before(context);
         Assert.assertEquals(1, cachedClasses.size());
 
-        // spi名为sc
+        // The SPI name is SC
         arguments[0] = Constant.SC_REGISTRY_PROTOCOL;
         interceptor.before(context);
         Assert.assertEquals(2, cachedClasses.size());
@@ -142,16 +142,16 @@ public class ExtensionLoaderInterceptorTest {
     private void testExtensionLoader(ExecuteContext context) {
         Map<String, Class<?>> cachedClasses = ReflectUtils.getExtensionClasses(context.getObject());
 
-        // spi名为null
+        // The SPI is named Null
         interceptor.before(context);
         Assert.assertEquals(0, cachedClasses.size());
 
-        // spi名不为sc
+        // The SPI name is not SC
         arguments[0] = TestConstant.BAR;
         interceptor.before(context);
         Assert.assertEquals(0, cachedClasses.size());
 
-        // spi名为sc，但非目标spi
+        // SPI named sc, but not the target SPI
         arguments[0] = Constant.SC_REGISTRY_PROTOCOL;
         interceptor.before(context);
         Assert.assertEquals(0, cachedClasses.size());

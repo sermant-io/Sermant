@@ -29,7 +29,7 @@
             <version>${spring-components.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!--测试依赖-->
+        <!--Test dependencies-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

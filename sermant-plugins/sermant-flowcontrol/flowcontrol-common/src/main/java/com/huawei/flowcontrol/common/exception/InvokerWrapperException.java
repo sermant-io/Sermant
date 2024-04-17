@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.exception;
 
 /**
- * 调用包装异常，包装实际方法调用的真正异常
+ * Call wrapping exception, which wraps the actual exception of the actual method call
  *
  * @author zhouss
  * @since 2022-03-15
@@ -27,14 +27,14 @@ public class InvokerWrapperException extends RuntimeException {
     private static final long serialVersionUID = 4590564899065412250L;
 
     /**
-     * 真实方法抛出异常
+     * the real method throws an exception
      */
     private final Throwable realException;
 
     /**
-     * 真实异常包装
+     * true exception packaging
      *
-     * @param realException 真实异常
+     * @param realException real exception
      */
     public InvokerWrapperException(Throwable realException) {
         this.realException = realException;

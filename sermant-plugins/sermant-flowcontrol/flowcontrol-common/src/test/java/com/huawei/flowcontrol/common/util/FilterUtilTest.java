@@ -17,20 +17,18 @@
 
 package com.huawei.flowcontrol.common.util;
 
-import static org.junit.Assert.*;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 路径格式化测试
+ * path formatting test
  *
  * @author zhouss
  * @since 2022-08-29
  */
 public class FilterUtilTest {
     /**
-     * 测试
+     * test
      */
     @Test
     public void test() {

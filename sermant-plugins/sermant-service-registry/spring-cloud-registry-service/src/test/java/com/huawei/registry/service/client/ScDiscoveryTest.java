@@ -25,14 +25,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * 测试sc服务发现事件处理
+ * Test SC service discovery event processing
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class ScDiscoveryTest {
     /**
-     * 测试事件发布
+     * Test event release
      */
     @Test
     public void testEvent() {

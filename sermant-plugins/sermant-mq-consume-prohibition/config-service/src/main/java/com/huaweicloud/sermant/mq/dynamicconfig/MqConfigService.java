@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import java.util.logging.Logger;
 
 /**
- * 消息队列禁止消费的动态配置服务
+ * Dynamical configuration service of message queue consume prohibition
  *
  * @author lilai
  * @since 2023-12-08

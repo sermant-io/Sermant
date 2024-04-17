@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 /**
- * 链路追踪消息发送器
+ * Tracing message sender
  *
  * @author luanwenfei
  * @since 2022-03-04
@@ -57,7 +57,7 @@ public class TracingSender {
     private GatewayClient gatewayClient;
 
     /**
-     * 当前服务开启和关闭的标记位
+     * Flag that enable and disable the current service
      */
     private boolean isSending;
 
@@ -66,9 +66,9 @@ public class TracingSender {
     }
 
     /**
-     * 获取TracingSender单例
+     * Get the TracingSender singleton
      *
-     * @return TracingSender单例
+     * @return TracingSender singleton
      */
     public static synchronized TracingSender getInstance() {
         if (tracingSender == null) {
@@ -106,9 +106,9 @@ public class TracingSender {
     }
 
     /**
-     * 检查阻塞队列、阻塞队列为空或者等待超时后关闭
+     * Check whether the block queue is empty or closes after waiting for timeout
      *
-     * @param timeOut 超时时间
+     * @param timeOut timeout
      */
     public void stopSoft(long timeOut) {
         long timeDuring = 0L;
@@ -130,9 +130,9 @@ public class TracingSender {
     }
 
     /**
-     * 向阻塞队列里添加SpanEvent 发送数据线程获取后发送到backend
+     * Add SpanEvent to the blocking queue to send data to backend after the thread obtains it
      *
-     * @param spanEvent span数据
+     * @param spanEvent span event
      */
     public void offerSpanEvent(SpanEvent spanEvent) {
         if (spanEvent == null) {
@@ -145,7 +145,7 @@ public class TracingSender {
     }
 
     /**
-     * 链路追踪消息发送线程
+     * Tracing message sending thread
      *
      * @author luanwenfei
      * @since 2022-03-04
@@ -157,7 +157,7 @@ public class TracingSender {
             while (isSending) {
                 Optional<TracingMessage> tracingMessage = buildTracingMessage();
                 if (!tracingMessage.isPresent()) {
-                    // 如果没有获取到SpanEvent,等待一段时间后再次执行
+                    // If no SpanEvent is obtained, wait for a period of time and then execute it again
                     try {
                         Thread.sleep(TRACING_SENDER_MINIMAL_INTERVAL);
                     } catch (InterruptedException e) {
@@ -177,7 +177,7 @@ public class TracingSender {
                 return Optional.empty();
             }
 
-            // 节点信息待整改配置后获取
+            // Node information needs to be obtained after the configuration is modified
             TracingMessageHeader tracingMessageHeader = new TracingMessageHeader();
             return Optional.of(new TracingMessage(spanEvent.getTraceId(), tracingMessageHeader, spanEvent));
         }

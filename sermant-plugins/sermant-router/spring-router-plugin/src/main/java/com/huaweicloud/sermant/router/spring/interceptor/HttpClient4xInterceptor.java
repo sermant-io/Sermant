@@ -34,18 +34,18 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 仅针对4.x版本得http拦截
+ * HTTP interception only for version 4. x
  *
  * @author yangrh
  * @since 2022-10-25
  */
 public class HttpClient4xInterceptor extends MarkInterceptor {
     /**
-     * 前置触发点
+     * Pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
@@ -79,11 +79,11 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
     }
 
     /**
-     * 后置触发点
+     * Rear trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {

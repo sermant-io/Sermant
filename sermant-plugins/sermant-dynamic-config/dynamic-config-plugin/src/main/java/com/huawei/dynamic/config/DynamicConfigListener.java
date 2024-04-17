@@ -20,23 +20,23 @@ package com.huawei.dynamic.config;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 动态配置监听器
+ * configure the listener dynamically
  *
  * @author zhouss
  * @since 2022-04-13
  */
 public interface DynamicConfigListener {
     /**
-     * 通知刷新配置
+     * notification refresh configuration
      *
-     * @param event 配置修改事件
+     * @param event configuration modification event
      */
     void configChange(DynamicConfigEvent event);
 
     /**
-     * 优先级
+     * priority
      *
-     * @return 执行优先级
+     * @return execution priority
      */
     default int getOrder() {
         return 0;

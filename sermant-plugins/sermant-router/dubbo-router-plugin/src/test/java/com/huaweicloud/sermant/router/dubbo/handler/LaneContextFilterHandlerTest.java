@@ -19,7 +19,6 @@ package com.huaweicloud.sermant.router.dubbo.handler;
 import com.huaweicloud.sermant.core.service.ServiceManager;
 import com.huaweicloud.sermant.router.dubbo.TestDubboConfigService;
 import com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtilsTest.ApacheInvoker;
 
 import org.apache.dubbo.rpc.RpcInvocation;
 import org.junit.AfterClass;
@@ -35,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LaneContextFilterHandler
+ * Test LaneContextFilterHandler
  *
  * @author provenceee
  * @since 2023-02-25
@@ -53,8 +52,11 @@ public class LaneContextFilterHandlerTest {
 
     private final ApacheInvoker<?> invoker;
 
+    private static final org.apache.dubbo.common.URL APACHE_URL = org.apache.dubbo.common.URL
+            .valueOf("dubbo://localhost:8081/com.huaweicloud.foo.FooTest?foo=bar&version=0.0.1");
+
     /**
-     * UT执行前进行mock
+     * Mock before UT execution
      */
     @BeforeClass
     public static void before() {
@@ -64,7 +66,7 @@ public class LaneContextFilterHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release all mock objects after UT execution
      */
     @AfterClass
     public static void after() {
@@ -85,13 +87,13 @@ public class LaneContextFilterHandlerTest {
 
     @Test
     public void testGetRequestTag() {
-        // 测试getMatchTags返回空
+        // Test getMatchTags returns null
         configService.setReturnEmptyWhenGetInjectTags(true);
         Map<String, List<String>> requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation,
                 invocation.getObjectAttachments(), configService.getMatchKeys(), configService.getInjectTags());
         Assert.assertEquals(requestTag, Collections.emptyMap());
 
-        // 测试getLane返回空
+        // the test getLane returns null
         configService.setReturnEmptyWhenGetInjectTags(false);
         LANE_CONTEXT_FILTER_SERVICE.setReturnEmpty(true);
         requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation, invocation.getObjectAttachments(),
@@ -100,7 +102,7 @@ public class LaneContextFilterHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试getLane不为空
+        // test that the getLane is not empty
         configService.setReturnEmptyWhenGetInjectTags(false);
         LANE_CONTEXT_FILTER_SERVICE.setReturnEmpty(false);
         requestTag = laneContextFilterHandler.getRequestTag(invoker, invocation, invocation.getObjectAttachments(),
@@ -128,6 +130,33 @@ public class LaneContextFilterHandlerTest {
 
         public void setReturnEmpty(boolean returnEmpty) {
             this.returnEmpty = returnEmpty;
+        }
+    }
+
+    public static class ApacheInvoker<T> implements org.apache.dubbo.rpc.Invoker<T> {
+        @Override
+        public Class<T> getInterface() {
+            return null;
+        }
+
+        @Override
+        public org.apache.dubbo.rpc.Result invoke(org.apache.dubbo.rpc.Invocation invocation)
+                throws org.apache.dubbo.rpc.RpcException {
+            return null;
+        }
+
+        @Override
+        public org.apache.dubbo.common.URL getUrl() {
+            return APACHE_URL;
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return false;
+        }
+
+        @Override
+        public void destroy() {
         }
     }
 }

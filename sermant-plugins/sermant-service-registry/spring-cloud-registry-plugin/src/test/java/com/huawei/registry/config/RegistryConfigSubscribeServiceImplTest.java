@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 配置订阅初始化测试
+ * Configure the subscription initialization test
  *
  * @author zhouss
  * @since 2022-09-06

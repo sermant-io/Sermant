@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 存储增强信息的静态类
+ * A static class that stores enhancement information
  *
  * @author tangle
  * @since 2023-11-02
@@ -43,12 +43,12 @@ public class EnhancementManager {
     }
 
     /**
-     * 添加拦截器信息
+     * Add interceptor information
      *
-     * @param plugin 插件
-     * @param interceptorList 拦截器列表
-     * @param classLoader 类加载器
-     * @param methodDesc 被增强方法的信息
+     * @param plugin plugin
+     * @param interceptorList interceptor list
+     * @param classLoader classLoader
+     * @param methodDesc information of the enhanced method
      */
     public static void addEnhancements(Plugin plugin, List<Interceptor> interceptorList, ClassLoader classLoader,
             String methodDesc) {
@@ -65,30 +65,30 @@ public class EnhancementManager {
     }
 
     /**
-     * 卸载插件时清除该插件的增强信息
+     * Clear the enhancement information of the plugin when uninstall it
      *
-     * @param plugin 插件
+     * @param plugin plugin
      */
     public static void removePluginEnhancements(Plugin plugin) {
         ENHANCEMENTS.remove(combinePluginInfo(plugin));
     }
 
     /**
-     * 清理缓存的增强信息
+     * Clear cached enhancement information
      */
     public static void shutdown() {
         ENHANCEMENTS.clear();
     }
 
     /**
-     * 拼接插件信息
+     * Combine plugin information
      */
     private static String combinePluginInfo(Plugin plugin) {
         return plugin.getName() + ":" + plugin.getVersion();
     }
 
     /**
-     * 拼接增强信息
+     * Combine enhancement information
      */
     private static String combineEnhanceInfo(String methodDesc, ClassLoader classLoader) {
         return methodDesc + "@" + classLoader;

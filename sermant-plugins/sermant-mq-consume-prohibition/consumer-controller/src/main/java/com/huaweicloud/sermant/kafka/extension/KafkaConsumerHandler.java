@@ -19,30 +19,31 @@ package com.huaweicloud.sermant.kafka.extension;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * KafkaConsumer拦截点处理器接口，供外部实现在KafkaConsumer的拦截点执行相应操作
+ * The handler interface of the Kafka Consumer intercept point is used by external implementations to perform
+ * corresponding operations at the intercept point of the Kafka consumer
  *
  * @author lilai
  * @since 2023-12-05
  */
 public interface KafkaConsumerHandler {
     /**
-     * 拦截点之前的处理
+     * Handling before the intercept point
      *
-     * @param context 拦截点上下文
+     * @param context Intercept point context
      */
     void doBefore(ExecuteContext context);
 
     /**
-     * 拦截点之后的处理
+     * Handling after the intercept point
      *
-     * @param context 拦截点上下文
+     * @param context Intercept point context
      */
     void doAfter(ExecuteContext context);
 
     /**
-     * 拦截点异常时的处理
+     * Handling when an exception occurs at an interception point
      *
-     * @param context 拦截点上下文
+     * @param context Intercept point context
      */
     void doOnThrow(ExecuteContext context);
 }

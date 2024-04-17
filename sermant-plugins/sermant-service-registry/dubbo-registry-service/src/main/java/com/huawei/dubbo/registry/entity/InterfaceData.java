@@ -22,38 +22,40 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * dubbo接口注册到注册中心的额外数据
+ * The dubbo interface registers additional data to the registry
  *
  * @author provenceee
  * @since 2022-04-11
  */
 public class InterfaceData extends InterfaceKey {
-    // 2.7.11开始存在该参数
+    // This parameter exists from 2.7.11
     private String serviceName;
 
-    // 接口的序号，适配2.6.x, 2.7.0-2.7.7
+    // The serial number of the interface is adapted to 2.6.x, 2.7.0-2.7.7
     private Integer order;
 
-    // 协议
+    // protocol
     private Set<String> protocol;
 
-    // 接口级的额外参数
+    // Additional parameters at the interface level
     private Map<String, String> parameters;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public InterfaceData() {
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param group 组
-     * @param version 版本
-     * @param serviceName 2.7.11开始存在该参数
-     * @param order 接口的序号，接口的序号，适配2.6.x, 2.7.0-2.7.7
-     * @param parameters 接口级的额外参数
+     * @param group Group
+     * @param version Version
+     * @param serviceName This parameter exists from 2.7.11
+     * @param order The serial number of the interface and the serial number of the interface are adapted to 2.6.x,
+     * 2.7.0-2.7.7
+     *
+     * @param parameters Additional parameters at the interface level
      */
     public InterfaceData(String group, String version, String serviceName, Integer order,
             Map<String, String> parameters) {

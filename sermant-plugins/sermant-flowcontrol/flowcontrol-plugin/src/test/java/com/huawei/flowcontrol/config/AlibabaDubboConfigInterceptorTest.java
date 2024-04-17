@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * 测试配置
+ * testConfiguration
  *
  * @author zhouss
  * @since 2022-08-30
@@ -51,7 +51,7 @@ public class AlibabaDubboConfigInterceptorTest {
     @After
     public void tearDown() throws Exception {
         pluginConfigManagerMockedStatic.close();
-        // 重置
+        // reset
         FlowControlServiceMeta.getInstance().setVersion(null);
         EnvUtils.delEnv(Collections.singletonMap(CseConstants.KEY_DUBBO_VERSION, null));
     }
@@ -64,9 +64,9 @@ public class AlibabaDubboConfigInterceptorTest {
     }
 
     /**
-     * 测试关闭适配
+     * Test Close Adaptation
      *
-     * @throws Exception 不会抛出
+     * @throws Exception willNotThrow
      */
     @Test
     public void testClose() throws Exception {
@@ -76,9 +76,9 @@ public class AlibabaDubboConfigInterceptorTest {
     }
 
     /**
-     * 测试开启适配sdk
+     * test enable adaptation sdk
      *
-     * @throws Exception 不会抛出
+     * @throws Exception willNotThrow
      */
     @Test
     public void testOpen() throws Exception {
@@ -103,7 +103,7 @@ public class AlibabaDubboConfigInterceptorTest {
     }
 
     /**
-     * 获取测试拦截器
+     * get the test interceptor
      *
      * @return AbstractInterceptor
      */

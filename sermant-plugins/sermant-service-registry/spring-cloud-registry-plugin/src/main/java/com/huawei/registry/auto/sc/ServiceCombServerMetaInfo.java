@@ -20,7 +20,7 @@ package com.huawei.registry.auto.sc;
 import com.netflix.loadbalancer.Server.MetaInfo;
 
 /**
- * ServiceComb服务元信息
+ * ServiceComb service meta information
  *
  * @author zhouss
  * @since 2022-06-07
@@ -30,10 +30,10 @@ public class ServiceCombServerMetaInfo implements MetaInfo {
     private final String serviceName;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param instanceId 实例ID
-     * @param serviceName 服务名
+     * @param instanceId Instance ID
+     * @param serviceName Service name
      */
     public ServiceCombServerMetaInfo(String instanceId, String serviceName) {
         this.instanceId = instanceId;

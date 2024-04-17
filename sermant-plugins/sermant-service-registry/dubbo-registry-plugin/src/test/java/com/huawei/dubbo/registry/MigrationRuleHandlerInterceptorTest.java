@@ -28,7 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试MigrationRuleHandlerInterceptor
+ * Test MigrationRuleHandlerInterceptor
  *
  * @author provenceee
  * @since 2022-02-15
@@ -41,7 +41,7 @@ public class MigrationRuleHandlerInterceptorTest {
     private final Object[] arguments;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public MigrationRuleHandlerInterceptorTest() {
         interceptor = new MigrationRuleHandlerInterceptor();
@@ -50,18 +50,18 @@ public class MigrationRuleHandlerInterceptorTest {
     }
 
     /**
-     * 测试MigrationRuleHandler
+     * Test MigrationRuleHandler
      *
      * @see org.apache.dubbo.registry.client.migration.MigrationRuleHandler
      */
     @Test
     public void testMigrationRuleHandler() {
-        // obj不为MigrationRuleHandler
+        // Obj is not a MigrationRuleHandler
         ExecuteContext context = ExecuteContext.forMemberMethod(TestConstant.BAR, null, arguments, null, null);
         interceptor.before(context);
         Assert.assertEquals(INIT, context.getArguments()[0]);
 
-        // 不是sc协议
+        // Not the SC protocol
         MigrationInvoker<?> invoker = new MigrationInvoker<>(null, null, null, null,
             URL.valueOf("foo://localhost:30100"), null);
         MigrationRuleHandler<?> handler = new MigrationRuleHandler<>(invoker);
@@ -69,7 +69,7 @@ public class MigrationRuleHandlerInterceptorTest {
         interceptor.before(context);
         Assert.assertEquals(INIT, context.getArguments()[0]);
 
-        // sc协议
+        // SC protocol
         invoker = new MigrationInvoker<>(null, null, null, null, URL.valueOf(TestConstant.SC_ADDRESS), null);
         handler = new MigrationRuleHandler<>(invoker);
         context = ExecuteContext.forMemberMethod(handler, null, arguments, null, null);

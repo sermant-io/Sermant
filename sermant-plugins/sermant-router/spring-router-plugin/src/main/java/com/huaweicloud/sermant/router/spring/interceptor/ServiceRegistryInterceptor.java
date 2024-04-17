@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * AbstractAutoServiceRegistration增强类，spring cloud注册方法
+ * AbstractAutoServiceRegistration enhancement class, spring cloud registration method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -49,7 +49,7 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ServiceRegistryInterceptor() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);

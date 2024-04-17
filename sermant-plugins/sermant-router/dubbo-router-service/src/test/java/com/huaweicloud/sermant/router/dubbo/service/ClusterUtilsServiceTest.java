@@ -16,8 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import com.alibaba.dubbo.common.URL;
 
@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试ClusterServiceImpl
+ * Test ClusterServiceImpl
  *
  * @author provenceee
  * @since 2022-03-21
@@ -47,7 +47,7 @@ public class ClusterUtilsServiceTest {
     private final Map<String, String> map = new HashMap<>();
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ClusterUtilsServiceTest() {
         clusterUtilsService = new ClusterUtilsServiceImpl();
@@ -58,19 +58,19 @@ public class ClusterUtilsServiceTest {
     }
 
     /**
-     * 测试alibaba url
+     * Test Alibaba URL
      *
      * @see com.alibaba.dubbo.common.URL
      */
     @Test
     public void testAlibaba() {
-        // 数组长度不匹配
+        // the array length does not match
         Object[] arguments = new Object[1];
         arguments[0] = ALIBABA_URL;
         clusterUtilsService.doBefore(arguments);
         Assert.assertNull(DubboCache.INSTANCE.getApplication("com.huawei.foo.BarTest"));
 
-        // 正常
+        // normal
         arguments = new Object[EXPECT_LENGTH];
         arguments[0] = ALIBABA_URL;
         arguments[1] = map;
@@ -82,26 +82,26 @@ public class ClusterUtilsServiceTest {
         Assert.assertEquals("foo", resultMap.get(null));
         Assert.assertEquals("bar", DubboCache.INSTANCE.getApplication("com.huawei.foo.BarTest"));
 
-        // arguments[1]为null
+        // arguments[1] is null
         arguments[1] = null;
         clusterUtilsService.doBefore(arguments);
         Assert.assertNull(arguments[1]);
     }
 
     /**
-     * 测试apache url
+     * test apache url
      *
      * @see org.apache.dubbo.common.URL
      */
     @Test
     public void testApache() {
-        // 数组长度不匹配
+        // the array length does not match
         Object[] arguments = new Object[1];
         arguments[0] = APACHE_URL;
         clusterUtilsService.doBefore(arguments);
         Assert.assertNull(DubboCache.INSTANCE.getApplication("com.huawei.foo.FooTest"));
 
-        // 正常
+        // normal
         arguments = new Object[EXPECT_LENGTH];
         arguments[0] = APACHE_URL;
         arguments[1] = map;
@@ -113,7 +113,7 @@ public class ClusterUtilsServiceTest {
         Assert.assertEquals("foo", resultMap.get(null));
         Assert.assertEquals("foo", DubboCache.INSTANCE.getApplication("com.huawei.foo.FooTest"));
 
-        // arguments[1]为null
+        // arguments[1] is null
         arguments[1] = null;
         clusterUtilsService.doBefore(arguments);
         Assert.assertNull(arguments[1]);

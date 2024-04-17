@@ -26,7 +26,7 @@ import io.vavr.collection.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 适配接口io.github.resilience4j.circuitbreaker.CircuitBreaker, 增加新的字段功能
+ * adaptation interface: io.github.resilience4j.circuitbreaker.CircuitBreaker, added new field functionality
  *
  * @author zhouss
  * @since 2022-08-09
@@ -35,20 +35,20 @@ public class CircuitBreakerAdaptor implements CircuitBreaker {
     private final CircuitBreaker oldCircuitBreaker;
 
     /**
-     * 强制关闭熔断
+     * force off the circuit breaker
      */
     private boolean forceClosed = false;
 
     /**
-     * 强制开启熔断
+     * force open the circuit breaker
      */
     private boolean forceOpen = false;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param oldCircuitBreaker rest4j 原生熔断器
-     * @param rule 熔断规则
+     * @param oldCircuitBreaker rest4j primary circuit breaker
+     * @param rule circuit breaker rule
      */
     public CircuitBreakerAdaptor(CircuitBreaker oldCircuitBreaker, CircuitBreakerRule rule) {
         this.oldCircuitBreaker = oldCircuitBreaker;

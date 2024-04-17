@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * CPU实时信息命令
+ * cpu real time information command
  *
  * @author zhp
  * @version 1.0.0
@@ -37,12 +37,12 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
     private static final String COMMAND = "cat /proc/stat";
 
     /**
-     * 采集行前缀
+     * collection line prefix
      */
     private static final String COLLECT_LINE_PREFIX = "cpu ";
 
     /**
-     * 各状态列索引
+     * index of each status column
      */
     private static final int USER_INDEX = 1;
 
@@ -60,10 +60,10 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
     }
 
     /**
-     * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.CpuParser parse方法
+     * Refactor the pan-PaaS class: com.huawei.sermant.plugin.collection.util.CpuParser parse method
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after parse
      */
     @Override
     public CpuStat parseResult(InputStream inputStream) {
@@ -83,44 +83,44 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
     }
 
     /**
-     * CPU信息
+     * cpu information
      *
      * @since 2022-08-02
      */
     public static class CpuStat {
         /**
-         * 用户态
+         * user mode
          */
         private final long user;
 
         /**
-         * CPU nice信息
+         * CPU nice information
          */
         private final long nice;
 
         /**
-         * 系统占用CPU
+         * system cpu usage
          */
         private final long system;
 
         /**
-         * CPU空闲情况
+         * cpu idle condition
          */
         private final long idle;
 
         /**
-         * CPU等待时间
+         * CPU waiting time
          */
         private final long ioWait;
 
         /**
-         * 构造方法
+         * constructionMethod
          *
-         * @param user 用户态
-         * @param nice nice信息
-         * @param system 系统占用CPU
-         * @param idle CPU空闲情况
-         * @param ioWait CPU等待时间
+         * @param user user mode
+         * @param nice nice information
+         * @param system system CPU usage
+         * @param idle cpu idle condition
+         * @param ioWait cpu waiting time
          */
         public CpuStat(long user, long nice, long system, long idle, long ioWait) {
             this.user = user;
@@ -151,9 +151,9 @@ public class CpuCommand extends CommonMonitorCommand<CpuCommand.CpuStat> {
         }
 
         /**
-         * 获取总的CPU占用率
+         * obtain the total cpu usage
          *
-         * @return CPU占用率之和
+         * @return sum of cpu usage
          */
         public long getTotal() {
             return system + user + nice + idle + ioWait;

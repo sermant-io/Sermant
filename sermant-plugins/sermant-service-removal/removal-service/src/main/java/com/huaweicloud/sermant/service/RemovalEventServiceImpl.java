@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.event.RemovalEventCollector;
 import com.huaweicloud.sermant.event.RemovalEventDefinitions;
 
 /**
- * 离群事件采集服务
+ * Outlier event collection service
  *
  * @author zhp
  * @since 2023-02-27
@@ -49,11 +49,11 @@ public class RemovalEventServiceImpl implements RemovalEventService {
     }
 
     /**
-     * 创建事件信息
+     * Create event information
      *
-     * @param eventDefinition 事件定义
-     * @param info 实例信息
-     * @return 事件信息
+     * @param eventDefinition Event definitions
+     * @param info Instance information
+     * @return Event information
      */
     private static Event getEvent(RemovalEventDefinitions eventDefinition, InstanceInfo info) {
         String description = eventDefinition.getDescription() + info.getHost() + RemovalConstants.CONNECTOR

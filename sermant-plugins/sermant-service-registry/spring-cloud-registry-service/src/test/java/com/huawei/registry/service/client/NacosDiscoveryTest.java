@@ -35,7 +35,7 @@ import com.huawei.registry.service.register.NacosServiceManager;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 测试nacos服务发现事件处理
+ * Test the processing of Nacos service discovery events
  *
  * @author chengyouling
  * @since 2022-11-10
@@ -63,7 +63,7 @@ public class NacosDiscoveryTest {
     }
 
     /**
-     * 测试实例转化
+     * Test instance conversions
      */
     @Test
     public void testhostToServiceInstanceList() {

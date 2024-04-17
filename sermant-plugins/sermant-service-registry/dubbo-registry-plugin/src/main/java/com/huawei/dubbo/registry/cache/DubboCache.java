@@ -17,29 +17,29 @@
 package com.huawei.dubbo.registry.cache;
 
 /**
- * dubbo应用名缓存
+ * Dubbo application name caching
  *
  * @author provenceee
  * @since 2021-12-23
  */
 public enum DubboCache {
     /**
-     * 单例缓存
+     * Singleton caching
      */
     INSTANCE;
 
     /**
-     * 服务名
+     * Service name
      */
     private String serviceName;
 
     /**
-     * 是否加载了sc的注册spi的标志
+     * Whether the flag for SC's registered SPI is loaded
      */
     private boolean isLoadSc;
 
     /**
-     * 加载的url的class(alibaba/apache)
+     * The class of the loaded URL (alibaba/apache)
      */
     private Class<?> urlClass;
 
@@ -52,7 +52,7 @@ public enum DubboCache {
     }
 
     /**
-     * 加载sc spi
+     * Load the sc spi
      */
     public void loadSc() {
         isLoadSc = true;

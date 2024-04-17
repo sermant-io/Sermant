@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RouteMappingHandler
+ * Test RouteMappingHandler
  *
  * @author provenceee
  * @since 2023-02-28
@@ -46,7 +46,7 @@ public class RouteMappingHandlerTest {
     private final RouteMappingHandler handler;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -57,7 +57,7 @@ public class RouteMappingHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -69,11 +69,11 @@ public class RouteMappingHandlerTest {
     }
 
     /**
-     * 测试getRequestTag方法
+     * Test the getRequestTag method
      */
     @Test
     public void testGetRequestTag() {
-        // 正常情况
+        // Normal
         configService.setReturnEmptyWhenGetMatchKeys(false);
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("bar", Collections.singletonList("bar1"));
@@ -84,7 +84,7 @@ public class RouteMappingHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试getMatchKeys返回空
+        // Test getMatchKeys returns null
         configService.setReturnEmptyWhenGetMatchKeys(true);
         requestTag = handler.getRequestTag("", "", null, null);
         Assert.assertEquals(Collections.emptyMap(), requestTag);

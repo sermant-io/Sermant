@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 拦截获取服务列表
+ * Intercept to get a list of services
  *
  * @author zhouss
  * @since 2021-12-13
@@ -118,9 +118,9 @@ public class DiscoveryClientInterceptor extends InstanceInterceptorSupport {
     }
 
     /**
-     * 获取实例类与宿主关联
+     * Obtain the instance class associated with the host
      *
-     * @return 类权限定名
+     * @return The class permission is named
      */
     @Override
     protected String getInstanceClassName() {

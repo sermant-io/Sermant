@@ -28,7 +28,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 /**
- * 测试ReflectUtils工具类
+ * Test the ReflectUtils utility class
  *
  * @author zhouss
  * @since 2022-06-29
@@ -37,7 +37,7 @@ public class ReflectUtilsTest {
     private static final String FINAL_FIELD_NAME = "finalValue";
 
     /**
-     * 测试方法调用
+     * Test method calls
      */
     @Test
     public void testInvokeMethod() {
@@ -55,7 +55,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试设置字段值
+     * Test the setting field value
      */
     @Test
     public void setFieldValue() {
@@ -67,7 +67,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试获取字段值
+     * Test to get field values
      */
     @Test
     public void getFieldValue() {
@@ -81,7 +81,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 父类
+     * Parent class
      *
      * @since 2022-06-29
      */
@@ -92,7 +92,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 子类
+     * Subclasses
      *
      * @since 2022-06-29
      */

@@ -25,20 +25,21 @@ import com.huaweicloud.sermant.core.utils.tag.TrafficUtils;
 import com.huaweicloud.sermant.tag.transmission.config.TagTransmissionConfig;
 
 /**
- * 客户端拦截器抽象类，获取当前线程的流量标签并透传至下游进程，适用于http客户端/rpc客户端/消息队列生产者
+ * The client interceptor abstract class takes the current thread's traffic tag and transmits it transparently to
+ * downstream processes，applicable to http client/rpc client/message queue producer.
  *
- * @param <C> 标签载体
+ * @param <C> tag carrier
  * @author lilai
  * @since 2023-07-18
  */
 public abstract class AbstractClientInterceptor<C> extends AbstractInterceptor {
     /**
-     * 流量标签透传配置类
+     * Traffic tag transparent transmission configuration class
      */
     protected final TagTransmissionConfig tagTransmissionConfig;
 
     /**
-     * 构造器
+     * constructor
      */
     public AbstractClientInterceptor() {
         this.tagTransmissionConfig = PluginConfigManager.getPluginConfig(TagTransmissionConfig.class);
@@ -64,25 +65,25 @@ public abstract class AbstractClientInterceptor<C> extends AbstractInterceptor {
     }
 
     /**
-     * 前置触发点
+     * preTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execute context
+     * @return ExecuteContext
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
 
     /**
-     * 后置触发点
+     * postTriggerPoint
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execute context
+     * @return ExecuteContext
      */
     protected abstract ExecuteContext doAfter(ExecuteContext context);
 
     /**
-     * 将标签流量注入载体
+     * the traffic tag is injected into the carrier
      *
-     * @param carrier 载体
+     * @param carrier carrier
      */
     protected abstract void injectTrafficTag2Carrier(C carrier);
 }

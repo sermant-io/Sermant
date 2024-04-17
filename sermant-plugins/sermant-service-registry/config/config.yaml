@@ -1,30 +1,56 @@
 register.service:
-  registerType: SERVICE_COMB # 注册服务类型，支持SERVICE_COMB/NACOS
-  # 注册服务地址，service_comb：http://localhost:30100；nacos：127.0.0.1:8848
+  # Registration service type, supported SERVICE_COMB/NACOS
+  registerType: SERVICE_COMB
+  # Registration service address，service_comb：http://localhost:30100；nacos：127.0.0.1:8848
   address: http://localhost:30100
-  secure: false # 是否开启SSL，true为是，服务发现返回实例协议为https，false为否，服务发现返回实例协议为http
+  # If SSL is enabled, the instance protocol is https for Service Discovery when secure is true,
+  # the instance protocol is http for Service Discovery when secure is false
+  secure: false
 servicecomb.service:
-  heartbeatInterval: 15 # 服务实例心跳发送间隔（单位：秒）
-  openMigration: false # 是否开启迁移功能
-  enableSpringRegister: false # 是否开启spring插件注册能力
-  enableDubboRegister: false #是 否开启dubbo插件注册能力
-  sslEnabled: false # 是否开启ssl
-  preferIpAddress: false # 若为true, 则采用IP地址访问代替域名方法
+  # Heartbeat sending interval of a service instance (unit: seconds)
+  heartbeatInterval: 15
+  # Specifies whether to enable the migration feature
+  openMigration: false
+  # Specifies whether to enable the Spring plug-in registration capability
+  enableSpringRegister: false
+  # Specifies whether to enable the dubbo plug-in registration capability
+  enableDubboRegister: false
+  # Specifies whether SSL is enabled
+  sslEnabled: false
+  # If true, the IP address access method is used instead of the domain name
+  preferIpAddress: false
 grace.rule:
-  enableSpring: false # springCloud优雅上下线开关
-  startDelayTime: 0  # 优雅上下线启动延迟时间, 单位S
-  enableWarmUp: false # 是否开启预热
-  warmUpTime: 120    # 预热时间, 单位S
-  enableGraceShutdown: false # 是否开启优雅下线
-  shutdownWaitTime: 30  # 关闭前相关流量检测的最大等待时间, 单位S. 需开启enabledGraceShutdown才会生效
-  enableOfflineNotify: false # 是否开启下线主动通知
-  httpServerPort: 16688 # 开启下线主动通知时的httpServer端口
-  upstreamAddressMaxSize: 500 # 缓存上游地址的默认大小
-  upstreamAddressExpiredTime: 60 # 缓存上游地址的过期时间
+  # springCloud elegant on-line and off-line switches
+  enableSpring: false
+  # Elegant up/down line start-up delay time, in S
+  startDelayTime: 0
+  # Specifies whether to enable preheating
+  enableWarmUp: false
+  # Warm-up time, in S
+  warmUpTime: 120
+  # Whether to enable elegant offline
+  enableGraceShutdown: false
+  # The maximum wait time for correlation traffic detection before closing,
+  # in S. enabledGraceShutdown must be enabled for it to take effect
+  shutdownWaitTime: 30
+  # Is offline active notification enabled
+  enableOfflineNotify: false
+  # HTTP Server port when enabling active offline notifications
+  httpServerPort: 16688
+  # The default size of the cache upstream address
+  upstreamAddressMaxSize: 500
+  # The expiration time of the upstream address of the cache
+  upstreamAddressExpiredTime: 60
 nacos.service:
-  username: "" # nacos验证账户
-  password: "" # nacos的验证密码
-  namespace: "" # 命名空间，nacos配置创建命名空间的id值
-  weight: 1 # 服务实例权重值
-  clusterName: DEFAULT # 集群名称
-  ephemeral: true # 是否是临时节点，true为是，false为否
+  # Nacos verification Account
+  username: ""
+  # Nacos verification password
+  password: ""
+  # Namespace，The ID value of the namespace created by Nacos is configured
+  namespace: ""
+  # The weight value of the service instance
+  weight: 1
+  # The name of the cluster
+  clusterName: DEFAULT
+  # Whether it is a temporary node，True is yes, false is no
+  ephemeral: true

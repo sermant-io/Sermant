@@ -21,7 +21,7 @@ import com.huaweicloud.loadbalancer.rule.RuleManager;
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 
 /**
- * 用于发布配置
+ * for publishing configuration
  *
  * @author zhouss
  * @since 2022-08-16
@@ -31,10 +31,10 @@ public class RuleManagerHelper {
     private static final String BALANCER_KEY = "servicecomb.loadbalance.test";
 
     /**
-     * 发布规则
+     * publishing rule
      *
-     * @param rule 负载均衡规则
-     * @param serviceName 服务名
+     * @param rule load balancing rule
+     * @param serviceName service name
      */
     public static void publishRule(String serviceName, String rule) {
         final DynamicConfigEvent matchGroupEvent = buildEvent(MATCH_GROUP_KEY, getMatchGroup(serviceName));
@@ -44,10 +44,10 @@ public class RuleManagerHelper {
     }
 
     /**
-     * 删除规则
+     * deleteRule
      *
-     * @param rule 负载均衡规则
-     * @param serviceName 服务名
+     * @param rule load balancing rule
+     * @param serviceName service name
      */
     public static void deleteRule(String serviceName, String rule) {
         final DynamicConfigEvent matchGroupEvent = buildDelEvent(MATCH_GROUP_KEY, getMatchGroup(serviceName));

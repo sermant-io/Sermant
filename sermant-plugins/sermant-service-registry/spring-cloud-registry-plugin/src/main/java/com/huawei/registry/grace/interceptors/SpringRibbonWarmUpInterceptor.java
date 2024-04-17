@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * spring基于预热参数选择实例
+ * Spring selects an instance based on the warm-up parameters
  *
  * @author zhouss
  * @since 2022-05-17
@@ -84,10 +84,10 @@ public class SpringRibbonWarmUpInterceptor extends GraceSwitchInterceptor {
     }
 
     /**
-     * 已被通知下线的实例直接剔除
+     * Instances that have been notified to go offline are directly removed
      *
-     * @param serverList 原serverList
-     * @return 过滤后的服务
+     * @param serverList Original serverList
+     * @return Filtered services
      */
     private List<Server> filterOfflineInstance(List<Server> serverList) {
         if (graceConfig.isEnableGraceShutdown()) {

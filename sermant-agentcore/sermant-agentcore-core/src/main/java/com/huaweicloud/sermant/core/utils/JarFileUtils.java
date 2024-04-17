@@ -22,7 +22,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
 /**
- * jar包工具类
+ * jar package tool class
  *
  * @author HapThorin
  * @version 1.0.0
@@ -33,22 +33,22 @@ public class JarFileUtils {
     }
 
     /**
-     * 获取manifest内部属性
+     * Gets the manifest internal attributes
      *
-     * @param jarFile jar包名称
-     * @param key     manifest的键
-     * @return manifest内部属性
-     * @throws IOException 找不到manifest文件
+     * @param jarFile jar package name
+     * @param key manifest key
+     * @return attributes of manifest
+     * @throws IOException can not find manifest
      */
     public static Object getManifestAttr(JarFile jarFile, String key) throws IOException {
         return jarFile.getManifest().getMainAttributes().get(new Attributes.Name(key));
     }
 
     /**
-     * 获取类所在jar包的URL
+     * Gets the URL of the jar package the class is in
      *
-     * @param cls 类
-     * @return 类所在jar包的URL
+     * @param cls class
+     * @return url
      */
     public static URL getJarUrl(Class<?> cls) {
         return cls.getProtectionDomain().getCodeSource().getLocation();

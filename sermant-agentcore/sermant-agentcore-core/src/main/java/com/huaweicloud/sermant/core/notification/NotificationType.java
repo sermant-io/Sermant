@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.notification;
 
 /**
- * 通知类型父类
+ * Notification Type Interface
  *
  * @author zhp
  * @since 2023-06-16

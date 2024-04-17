@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.nacos;
 
 /**
- * Nacos连接异常
+ * Nacos Connection Exception
  *
  * @author tangle
  * @since 2023-08-17
@@ -26,9 +26,9 @@ public class NacosInitException extends RuntimeException {
     private static final long serialVersionUID = -5916948812185593365L;
 
     /**
-     * nacos连接失败
+     * Nacos connection failed
      *
-     * @param connectString 连接字符串
+     * @param connectString connect string
      */
     public NacosInitException(String connectString) {
         super("Connect to " + connectString + " failed. ");

@@ -24,14 +24,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 服务实例缓存类
+ * Service instance cache class
  *
  * @author zhp
  * @since 2023-02-17
  */
 public class InstanceCache {
     /**
-     * 实例信息缓存MAP
+     * Instance information caches MAP
      */
     public static final Map<String, InstanceInfo> INSTANCE_MAP = new ConcurrentHashMap<>();
 
@@ -39,9 +39,9 @@ public class InstanceCache {
     }
 
     /**
-     * 调用信息保存
+     * Invocation information is saved
      *
-     * @param requestInfo 服务调用信息
+     * @param requestInfo Service call information
      */
     public static void saveInstanceInfo(RequestInfo requestInfo) {
         String key = requestInfo.getHost() + RemovalConstants.CONNECTOR + requestInfo.getPort();

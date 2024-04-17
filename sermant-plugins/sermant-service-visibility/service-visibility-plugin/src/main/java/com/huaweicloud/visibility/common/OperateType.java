@@ -18,34 +18,34 @@
 package com.huaweicloud.visibility.common;
 
 /**
- * 操作类型
+ * The type of operation
  *
  * @author zhp
  * @since 2022-12-07
  */
 public enum OperateType {
     /**
-     * 新增
+     * Add
      */
     ADD("ADD"),
 
     /**
-     * 全量更新血缘关系
+     * Full update of kinship
      */
     UPDATE_CONSANGUINITY("UPDATE_CONSANGUINITY"),
 
     /**
-     * 全量更新契约信息
+     * The contract information is fully updated
      */
     UPDATE_CONTRACT("UPDATE_CONTRACT"),
 
     /**
-     * 删除
+     * Delete
      */
     DELETE("DELETE"),
 
     /**
-     * 服务下线
+     * The service is offline
      */
     OFFLINE("OFFLINE");
 

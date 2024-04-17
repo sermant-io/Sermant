@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * 配置
+ * configuration
  *
  * @author zhouss
  * @since 2022-05-19
@@ -42,10 +42,10 @@ public abstract class BaseAutoConfigurationDefine implements ClassInjectDefine {
     }
 
     /**
-     * 指定类是否被当前的类加载器加载
+     * Specifies whether the class is loaded by the current classloader
      *
-     * @param className 类全限定名
-     * @return 是否被加载
+     * @param className Class full limited name
+     * @return Whether it is loaded or not
      */
     protected boolean isClassExistedOnCurrentClassLoader(String className) {
         return ClassUtils.loadClass(className, Thread.currentThread().getContextClassLoader(), false).isPresent();

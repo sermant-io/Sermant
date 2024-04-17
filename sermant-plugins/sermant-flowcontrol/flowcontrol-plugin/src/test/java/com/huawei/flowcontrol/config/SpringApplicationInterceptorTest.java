@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 启动订阅测试
+ * start subscription test
  *
  * @author zhouss
  * @since 2022-08-30
@@ -72,7 +72,7 @@ public class SpringApplicationInterceptorTest {
     }
 
     /**
-     * 测试开始
+     * test start
      */
     @Test
     public void testStart() throws Exception {

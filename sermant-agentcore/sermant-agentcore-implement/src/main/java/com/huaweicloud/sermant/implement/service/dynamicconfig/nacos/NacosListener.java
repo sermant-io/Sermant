@@ -23,39 +23,39 @@ import com.alibaba.nacos.api.config.listener.Listener;
 import java.util.Map;
 
 /**
- * Nacos监听器包装类
+ * NacosListener Wrapper
  *
  * @author tangle
  * @since 2023-08-17
  */
 public class NacosListener {
     /**
-     * 监听器类型：GROUP和KEY两种类型
+     * Listener type: GROUP or KEY
      */
     private String type;
 
     /**
-     * 监听器组
+     * Listener group
      */
     private String group;
 
     /**
-     * 监听器key和对应的nacos监听器组成的Map
+     * Map of listener keys and corresponding Nacos listeners
      */
     private Map<String, Listener> keyListener;
 
     /**
-     * 当前监听器所对应的动态配置监听器
+     * Dynamic configuration listener corresponding to the current listener
      */
     private DynamicConfigListener dynamicConfigListener;
 
     /**
-     * 构造函数初始化监听器
+     * Constructor initializes the listener
      *
-     * @param type 监听器类型
-     * @param group 监听器组名
-     * @param keyListener 监听器的key和对应的nacos提供的监听器组成的map
-     * @param dynamicConfigListener 动态配置监听器
+     * @param type Listener type
+     * @param group Listener group
+     * @param keyListener Map of listener keys and corresponding Nacos listeners
+     * @param dynamicConfigListener dynamic config listener
      */
     public NacosListener(String type, String group, Map<String, Listener> keyListener,
             DynamicConfigListener dynamicConfigListener) {

@@ -22,75 +22,75 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 匹配规则
+ * Matching rules
  *
  * @author provenceee
  * @since 2021-10-27
  */
 public class Match {
     /**
-     * 来源，即目标应用的上游应用
+     * Source, which is the upstream application of the target application
      */
     private String source;
 
     /**
-     * http请求方法/dubbo接口方法
+     * HTTP request method/Dubbo interface method
      */
     private String method;
 
     /**
-     * dubbo为接口名，spring为url路径
+     * Dubbo is the interface name, spring is the URL path
      */
     private String path;
 
     /**
-     * 协议：http/dubbo
+     * protocol: http/dubbo
      */
     private Protocol protocol;
 
     /**
-     * 是否全匹配
+     * Whether it is a full match
      */
     private boolean fullMatch = true;
 
     /**
-     * dubbo参数规则
+     * Dubbo parameter rules
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> args;
 
     /**
-     * dubbo attachents参数
+     * dubbo attachments parameter
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> attachments;
 
     /**
-     * spring http header规则
+     * spring http header rules
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> headers;
 
     /**
-     * spring http parameter规则
+     * spring http parameter rules
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> parameters;
 
     /**
-     * spring http cookie规则
+     * spring http cookie policy
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> cookie;
 
     /**
-     * consumer的tag匹配规则
+     * Tag matching rules for consumers
      */
     @JSONField(deserializeUsing = ValueMatchDeserializer.class)
     private Map<String, List<MatchRule>> tags;
 
     /**
-     * 阈值策略
+     * Threshold policy
      */
     private Policy policy;
 

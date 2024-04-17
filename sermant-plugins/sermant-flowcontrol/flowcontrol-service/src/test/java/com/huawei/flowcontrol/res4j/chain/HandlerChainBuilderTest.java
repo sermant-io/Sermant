@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 链构建测试
+ * HandlerChainBuilderTest
  *
  * @author zhouss
  * @since 2022-08-30
@@ -36,7 +36,7 @@ public class HandlerChainBuilderTest {
     private static final String FIELD_NAME = "HANDLERS";
 
     /**
-     * 构建链，确定handler数量
+     * ChainBuilder，determine the number of handlers
      */
     @Test
     public void testBuild() {
@@ -51,7 +51,7 @@ public class HandlerChainBuilderTest {
     }
 
     /**
-     * 获取构建的Handler实例对象
+     * gets the built handler instance object
      */
     @Test
     public void testGetHandler() {
@@ -62,7 +62,7 @@ public class HandlerChainBuilderTest {
     }
 
     /**
-     * 测试静态方法执行情况
+     * tests static method execution
      */
     @Test
     public void testStatic() {

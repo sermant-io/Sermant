@@ -27,7 +27,7 @@ import com.huaweicloud.visibility.entity.ServerInfo;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 /**
- * SpringCloud注册增强器
+ * SpringCloud registration enhancer
  *
  * @author zhp
  * @since 2022-12-05

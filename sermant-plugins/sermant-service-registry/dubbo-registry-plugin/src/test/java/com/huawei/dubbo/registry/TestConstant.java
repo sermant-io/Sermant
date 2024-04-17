@@ -17,29 +17,29 @@
 package com.huawei.dubbo.registry;
 
 /**
- * 测试常量
+ * Test constants
  *
  * @author provenceee
  * @since 2022-02-16
  */
 public class TestConstant {
     /**
-     * 匿名字段
+     * Anonymous fields
      */
     public static final String FOO = "foo";
 
     /**
-     * 匿名字段
+     * Anonymous fields
      */
     public static final String BAR = "bar";
 
     /**
-     * sc协议的注册地址
+     * The registered address of the SC protocol
      */
     public static final String SC_ADDRESS = "sc://localhost:30100";
 
     /**
-     * nacos协议的注册地址
+     * The registered address of the NACOS protocol
      */
     public static final String NACOS_ADDRESS = "nacos://127.0.0.1:8848";
 

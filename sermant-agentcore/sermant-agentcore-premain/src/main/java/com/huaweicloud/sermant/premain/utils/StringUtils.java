@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.premain.utils;
 
 /**
- * 字符串工具
+ * String tool
  *
  * @author luanwenfei
  * @since 2023-09-23

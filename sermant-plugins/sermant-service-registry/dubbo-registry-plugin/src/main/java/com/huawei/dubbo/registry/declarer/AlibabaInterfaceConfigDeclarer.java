@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * AbstractInterfaceConfig增强类
+ * AbstractInterfaceConfig Enhancement Classes
  *
  * @author provenceee
  * @since 2022-11-24
@@ -34,7 +34,7 @@ public class AlibabaInterfaceConfigDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "loadRegistries";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AlibabaInterfaceConfigDeclarer() {
         super(ENHANCE_CLASS);

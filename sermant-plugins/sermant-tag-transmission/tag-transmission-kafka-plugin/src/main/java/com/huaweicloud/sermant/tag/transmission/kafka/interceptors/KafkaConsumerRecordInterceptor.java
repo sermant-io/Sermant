@@ -36,7 +36,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * kafka消息处理的拦截器，在获取消息内容时获取流量标签并放置于线程变量中，支持1.x, 2.x, 3.x
+ * Kafka message processing interceptor, obtains the traffic tag and places it in the thread variable when obtaining
+ * the message content, supports 1.x, 2.x, 3.x
  *
  * @author lilai
  * @since 2023-07-18
@@ -53,7 +54,8 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor<Co
 
         Map<String, List<String>> tagMap = extractTrafficTagFromCarrier((ConsumerRecord<?, ?>) consumerRecordObject);
 
-        // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+        // Message queue consumers do not remove thread variables and need to set new objects each time to
+        // ensure variable isolation between parent and child threads
         TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
 
         return context;
@@ -65,10 +67,10 @@ public class KafkaConsumerRecordInterceptor extends AbstractServerInterceptor<Co
     }
 
     /**
-     * 从ConsumerRecord中解析流量标签
+     * Parse traffic tags from ConsumerRecord
      *
-     * @param consumerRecord kafka 消费端的流量标签载体
-     * @return 流量标签
+     * @param consumerRecord kafka consumer traffic label carrier
+     * @return traffic tag
      */
     @Override
     protected Map<String, List<String>> extractTrafficTagFromCarrier(ConsumerRecord<?, ?> consumerRecord) {

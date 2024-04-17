@@ -21,56 +21,56 @@ import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import java.util.Collection;
 
 /**
- * 生效策略
+ * Effective policy
  *
  * @author provenceee
  * @since 2022-10-08
  */
 public enum Strategy {
     /**
-     * 全部生效
+     * All in effect
      */
     ALL((values, serviceName) -> true),
 
     /**
-     * 全不生效
+     * None of them take effect
      */
     NONE((values, serviceName) -> false),
 
     /**
-     * 白名单策略
+     * Whitelist policies
      */
     WHITE((values, serviceName) -> !CollectionUtils.isEmpty(values) && values.contains(serviceName)),
 
     /**
-     * 黑名单策略
+     * Blacklist policies
      */
     BLACK((values, serviceName) -> CollectionUtils.isEmpty(values) || !values.contains(serviceName));
 
     private final Matcher matcher;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param matcher 匹配器
+     * @param matcher Matcher
      */
     Strategy(Matcher matcher) {
         this.matcher = matcher;
     }
 
     /**
-     * 是否匹配
+     * Whether it matches or not
      *
-     * @param values 配置值
-     * @param serviceName 服务名
-     * @return 是否匹配
+     * @param values Configure the value
+     * @param serviceName Service name
+     * @return Whether it matches or not
      */
     public boolean isMatch(Collection<String> values, String serviceName) {
         return matcher.isMatch(values, serviceName);
     }
 
     /**
-     * 策略匹配器
+     * Policy Matcher
      *
      * @author provenceee
      * @since 2022-10-08
@@ -78,11 +78,11 @@ public enum Strategy {
     @FunctionalInterface
     interface Matcher {
         /**
-         * 是否匹配
+         * Whether it matches or not
          *
-         * @param values 配置值
-         * @param serviceName 服务名
-         * @return 是否匹配
+         * @param values Configure the value
+         * @param serviceName Service name
+         * @return Whether it matches or not
          */
         boolean isMatch(Collection<String> values, String serviceName);
     }

@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RocketmqProducerInterceptor
+ * RocketmqProducerInterceptorTest
  *
  * @author tangle
  * @since 2023-07-27
@@ -52,7 +52,7 @@ public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the TagTransmissionConfig switch is off
         tagTransmissionConfig.setEnabled(false);
         TrafficUtils.updateTrafficTag(tags);
         context = buildContext(addHeaders);
@@ -61,7 +61,7 @@ public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
         tagTransmissionConfig.setEnabled(true);
         TrafficUtils.removeTrafficTag();
 
-        // 包含Headers但不包含tags
+        // contains headers but not tags
         addHeaders.put("defualtKey", "defaultValue");
         context = buildContext(addHeaders);
         resContext = interceptor.before(context);
@@ -69,7 +69,7 @@ public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
                 ((SendMessageRequestHeader) resContext.getArguments()[3]).getProperties());
         interceptor.after(context);
 
-        // 包含Headers也包含tag
+        // including headers also contains tags
         TrafficUtils.updateTrafficTag(tags);
         context = buildContext(addHeaders);
         resContext = interceptor.before(context);
@@ -78,7 +78,7 @@ public class RocketmqProducerInterceptorTest extends BaseInterceptorTest {
         interceptor.after(context);
         TrafficUtils.removeTrafficTag();
 
-        // 第二次Message（不同tag）,测试tag数据不会污染其他Message
+        // Second Message (different tag), test that tag data does not contaminate other messages
         tags.clear();
         tags.put("name", Collections.singletonList("testName001"));
         TrafficUtils.updateTrafficTag(tags);

@@ -44,7 +44,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 
 /**
- * Apache duubo 集群调用测试
+ * Apache duubo cluster invoke test
  *
  * @author zhouss
  * @since 2022-09-14
@@ -64,9 +64,9 @@ public class ApacheDubboClusterInvokerTest {
     }
 
     /**
-     * 前置初始化
+     * preinitialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {
@@ -104,7 +104,7 @@ public class ApacheDubboClusterInvokerTest {
         Mockito.when(invoker.invoke(invocation)).thenReturn(asyncRpcResult);
         final Result result = clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
         Assert.assertEquals(result, asyncRpcResult);
-        // 测试抛出异常
+        // test throw exception
         Mockito.when(invoker.invoke(invocation)).thenThrow(new RpcException("test error"));
         boolean isEx = false;
         try {

@@ -21,7 +21,7 @@ import com.huawei.discovery.entity.ServiceInstance;
 import java.util.List;
 
 /**
- * 实例缓存类
+ * Instance cache class
  *
  * @author zhouss
  * @since 2022-09-26
@@ -32,15 +32,15 @@ public class InstanceCache {
     private List<ServiceInstance> instances;
 
     /**
-     * 更新时间
+     * Update time
      */
     private long updateTimestamp;
 
     /**
-     * 实例缓存
+     * Instance caching
      *
-     * @param serviceName 目标服务名
-     * @param instances 缓存
+     * @param serviceName Target service name
+     * @param instances Cache
      */
     public InstanceCache(String serviceName, List<ServiceInstance> instances) {
         this.serviceName = serviceName;

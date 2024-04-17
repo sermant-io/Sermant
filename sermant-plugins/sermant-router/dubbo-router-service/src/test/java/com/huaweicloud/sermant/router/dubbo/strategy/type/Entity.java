@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.strategy.type;
 
 /**
- * 测试实体
+ * test entities
  *
  * @author provenceee
  * @since 2022-03-22

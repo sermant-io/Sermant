@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 限流请求处理
+ * Current limiting request handler
  *
  * @author zhouss
  * @since 2022-07-05

@@ -26,7 +26,7 @@ import java.util.Enumeration;
 import java.util.logging.Logger;
 
 /**
- * 获取当前主机ip地址
+ * Obtain the IP address of the current host
  *
  * @author chengyouling
  * @since 2022-09-29
@@ -42,9 +42,9 @@ public class HostIpAddressUtils {
     }
 
     /**
-     * 获取本机ip
+     * Get the native IP
      *
-     * @return 主机ip
+     * @return Host IP
      * @throws SocketException
      */
     public static String getHostAddress() throws SocketException {
@@ -56,9 +56,9 @@ public class HostIpAddressUtils {
                 for (Enumeration<InetAddress> inetAdd = ni.getInetAddresses(); inetAdd.hasMoreElements();) {
                     InetAddress inetAddress = inetAdd.nextElement();
 
-                    // 判断是不是回环地址
+                    // Determine whether it is a loopback address
                     if (!inetAddress.isLoopbackAddress()) {
-                        // 如果是site-local地址，直接返回
+                        // If it is a site-local address, return it directly
                         if (inetAddress.isSiteLocalAddress()) {
                             return inetAddress.getHostAddress();
                         }
@@ -69,7 +69,7 @@ public class HostIpAddressUtils {
                 }
             }
 
-            // 如果出去loopback回环地之外无其它地址了，那就InetAddress直接获取
+            // If there is no other address outside the loopback, then Inet Address will be obtained directly
             return candidateAddress == null ? InetAddress.getLocalHost().getHostAddress()
                     : candidateAddress.getHostAddress();
         } catch (UnknownHostException e) {

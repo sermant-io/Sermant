@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 标签配置处理器（兼容1.0.x版本使用）
+ * Tag Configuration handler (Compatible with 1.0.x Edition)
  *
  * @author provenceee
  * @since 2024-01-11
@@ -33,7 +33,7 @@ public class TagKindHandler extends AbstractKindHandler {
     private final Set<String> keys;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public TagKindHandler() {
         super(RouterConstant.TAG_KEY_PREFIX, RouterConstant.TAG_MATCH_KIND);
@@ -43,8 +43,8 @@ public class TagKindHandler extends AbstractKindHandler {
     }
 
     @Override
-    public boolean shouldHandle(String key, String content) {
-        return super.shouldHandle(key, content)
+    public boolean shouldHandle(String key) {
+        return super.shouldHandle(key)
                 && (keys.contains(key) || key.startsWith(RouterConstant.TAG_KEY_PREFIX + RouterConstant.POINT));
     }
 }

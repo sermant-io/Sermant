@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.service.DubboService;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 基于sentinel实现
+ * implementation based on sentinel
  *
  * @author zhouss
  * @since 2022-01-25

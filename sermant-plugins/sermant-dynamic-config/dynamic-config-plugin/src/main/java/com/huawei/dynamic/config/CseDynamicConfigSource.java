@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Cse场景动态配置
+ * dynamic configuration in cse scenarios
  *
  * @author zhouss
  * @since 2022-04-22

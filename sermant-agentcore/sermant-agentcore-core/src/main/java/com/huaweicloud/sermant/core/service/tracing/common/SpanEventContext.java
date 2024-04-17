@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.utils.TracingUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 存放SpanEvent、Span计数器及其分支计数器
+ * SpanEventContext, stores SpanEvent, Span and count
  *
  * @author luanwenfei
  * @since 2022-03-03
@@ -33,19 +33,19 @@ public class SpanEventContext {
     SpanEvent spanEvent = new SpanEvent();
 
     /**
-     * 当前已有span的计数
+     * The current span count
      */
     private AtomicInteger spanIdCount = new AtomicInteger(0);
 
     /**
-     * 向其他进程调用的计数
+     * The count of calls to other processes
      */
     private AtomicInteger nextSpanIdCount = new AtomicInteger(0);
 
     /**
-     * 通过TracingRequest创建SpanEventContext
+     * Create SpanEventContext with TracingRequest
      *
-     * @param tracingRequest 传递Span信息
+     * @param tracingRequest transmit span information
      */
     public SpanEventContext(TracingRequest tracingRequest) {
         checkAndSetTraceId(tracingRequest.getTraceId());
@@ -58,7 +58,8 @@ public class SpanEventContext {
     }
 
     private void checkAndSetTraceId(String traceId) {
-        // 校验数据为透传链路 还是 新建链路，如果traceId为空则需要新建链路并生成traceId
+        // Check Whether data is a transparent link or a new link. If the traceId is empty, create a link
+        // and generate a traceId
         if (StringUtils.isBlank(traceId)) {
             this.spanEvent.setTraceId(TracingUtils.generateTraceId());
         } else {
@@ -67,7 +68,8 @@ public class SpanEventContext {
     }
 
     private void checkAndSetSpanId(String spanIdPrefix) {
-        // 校验SpanId前缀是否为空，如果没有前缀则代表当前深度为第一层需要不需要添加前缀
+        // Check whether the SpanId prefix is empty. If no prefix exists, it indicates that the current depth is
+        // layer 1 and no prefix needs to be added
         if (StringUtils.isBlank(spanIdPrefix)) {
             this.spanEvent.setSpanId(String.valueOf(this.spanIdCount.getAndIncrement()));
         } else {
@@ -76,7 +78,7 @@ public class SpanEventContext {
     }
 
     /**
-     * 当触发非onEntry事件时添加的span均为子span
+     * All the spans added when non-onEntry events are triggered are sub-spans
      */
     public void addChildrenSpan() {
         this.spanEvent = new SpanEvent(this.spanEvent);
@@ -85,15 +87,15 @@ public class SpanEventContext {
             return;
         }
         this.spanEvent
-            .setSpanId(this.spanEvent.getSpanIdPrefix() + SPAN_ID_SEPARATOR + this.spanIdCount.getAndIncrement());
+                .setSpanId(this.spanEvent.getSpanIdPrefix() + SPAN_ID_SEPARATOR + this.spanIdCount.getAndIncrement());
     }
 
     /**
-     * 配置下一进程的spanIdPrefix
+     * Configure the spanIdPrefix of the next process
      */
     public void configNextSpanIdPrefix() {
         this.spanEvent.setNextSpanIdPrefix(
-            this.spanEvent.getSpanId() + SPAN_ID_SEPARATOR + this.nextSpanIdCount.getAndIncrement());
+                this.spanEvent.getSpanId() + SPAN_ID_SEPARATOR + this.nextSpanIdCount.getAndIncrement());
     }
 
     public SpanEvent getSpanEvent() {

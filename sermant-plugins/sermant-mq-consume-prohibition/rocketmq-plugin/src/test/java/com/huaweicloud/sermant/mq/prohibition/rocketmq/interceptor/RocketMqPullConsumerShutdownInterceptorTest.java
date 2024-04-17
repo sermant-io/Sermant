@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * pullconsumer shutdown方法拦截器UT
+ * PullConsumer shutdown method interceptor UT
  *
  * @author daizhenyu
  * @since 2023-12-25

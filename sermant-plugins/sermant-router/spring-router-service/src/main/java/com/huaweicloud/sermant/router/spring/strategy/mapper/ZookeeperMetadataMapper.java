@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * metadata获取mapper
+ * Obtain mapper from metadata
  *
  * @author provenceee
  * @since 2021-10-14

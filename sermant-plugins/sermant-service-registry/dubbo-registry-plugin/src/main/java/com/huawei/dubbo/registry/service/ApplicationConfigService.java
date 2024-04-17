@@ -19,16 +19,17 @@ package com.huawei.dubbo.registry.service;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 接口配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * The interface configuration service, the reflection call class method is used in the code to be compatible with both
+ * Alibaba and Apache Dubbo
  *
  * @author provenceee
  * @since 2021-12-15
  */
 public interface ApplicationConfigService extends PluginService {
     /**
-     * 获取dubbo服务名
+     * Obtain the dubbo service name
      *
-     * @param obj 增强的类
+     * @param obj Enhanced classes
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */

@@ -24,30 +24,29 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.stream.Stream;
 
 /**
- * 滑动窗口
+ * sliding window
  *
  * @author xuezechao1
  * @since 2022-12-07
  */
 public enum WindowsArray {
-
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     /**
-     * 默认窗口大小
+     * default window size
      */
     private static final int DEFAULT_WINDOWS_SIZE = 60;
 
     /**
-     * 滑动窗口数组
+     * sliding window array
      */
     private static AtomicReferenceArray<WindowsBucket> windowsArray = null;
 
     /**
-     * 初始化
+     * initialize
      */
     public void initWindowsArray() {
         windowsArray = new AtomicReferenceArray<>(DEFAULT_WINDOWS_SIZE);
@@ -56,90 +55,90 @@ public enum WindowsArray {
     }
 
     /**
-     * 获取当前时间点窗口
+     * gets the current point in time window
      *
-     * @return 当前时间点窗口
+     * @return current point in time window
      */
     public WindowsBucket getCurrentWindow() {
         return windowsArray.get(calculateCurrentWindowsIndex());
     }
 
     /**
-     * 获取当前时间点前一个窗口
+     * gets a window before the current point in time
      *
-     * @return 当前时间点前一个窗口
+     * @return window before the current point in time
      */
     public WindowsBucket getPreviousWindow() {
         return windowsArray.get(calculatePreviousWindowsIndex());
     }
 
     /**
-     * 获取指定索引窗口
+     * gets the window for the specified index
      *
-     * @param index 索引
-     * @return 指定索引窗口
+     * @param index index
+     * @return the window for the specified index
      */
     public WindowsBucket getWindow(int index) {
         return windowsArray.get(index);
     }
 
     /**
-     * 获取当前线程数
+     * gets the current number of threads
      *
-     * @return 当前线程数
+     * @return the current number of threads
      */
     public long getThreadNum() {
         return getCurrentWindow().threadNum.sum();
     }
 
     /**
-     * 增加成功数
+     * increase success count
      *
-     * @param startTime 请求时间
+     * @param startTime requestTime
      */
     public void addSuccess(long startTime) {
         windowsArray.get(calculateWindowsIndex(startTime)).success.increment();
     }
 
     /**
-     * 增加响应时间
+     * increase response time
      *
-     * @param startTime 请求时间
-     * @param responseTime 响应时间
+     * @param startTime requestTime
+     * @param responseTime responseTime
      */
     public void addRt(long startTime, long responseTime) {
         windowsArray.get(calculateWindowsIndex(startTime)).rt.add(responseTime);
     }
 
     /**
-     * 增加线程数
+     * increase thread count
      *
-     * @param startTime 请求时间
+     * @param startTime requestTime
      */
     public void addThreadNum(long startTime) {
         windowsArray.get(calculateWindowsIndex(startTime)).threadNum.increment();
     }
 
     /**
-     * 减少线程数
+     * reduce thread count
      *
-     * @param startTime 请求时间
+     * @param startTime requestTime
      */
     public void decreaseThreadNum(long startTime) {
         windowsArray.get(calculateWindowsIndex(startTime)).threadNum.decrement();
     }
 
     /**
-     * 计算当前时间点窗口索引
+     * Computes the window index for the current point in time
      *
-     * @return 当前时间点窗口索引
+     * @return the window index for the current point in time
      */
     public int calculateCurrentWindowsIndex() {
         return Calendar.getInstance().get(Calendar.SECOND) % DEFAULT_WINDOWS_SIZE;
     }
 
     /**
-     * 重置下一个窗口数据
+     * reset the next window data
      */
     public void resetNextWindows() {
         WindowsBucket windowsBucket = getWindow(calculateNextWindowsIndex());
@@ -149,9 +148,9 @@ public enum WindowsArray {
     }
 
     /**
-     * 计算当前时间点下一个窗口索引
+     * Calculates the index of the next window at the current point in time
      *
-     * @return 当前时间点下一个窗口索引
+     * @return the index of the next window at the current point in time
      */
     public int calculateNextWindowsIndex() {
         int nextIndex = calculateCurrentWindowsIndex() + 1;
@@ -162,10 +161,10 @@ public enum WindowsArray {
     }
 
     /**
-     * 计算窗口索引
+     * compute window index
      *
-     * @param startTime 请求时间
-     * @return 窗口索引
+     * @param startTime request time
+     * @return window index
      */
     public int calculateWindowsIndex(long startTime) {
         if (System.currentTimeMillis() - startTime > DEFAULT_WINDOWS_SIZE * CommonConst.S_MS_UNIT) {
@@ -175,9 +174,9 @@ public enum WindowsArray {
     }
 
     /**
-     * 计算当前时间前一个窗口索引
+     * Calculates the index of the previous window at the current time
      *
-     * @return 当前时间前一个窗口索引
+     * @return the index of the previous window at the current time
      */
     public int calculatePreviousWindowsIndex() {
         int previousIndex = calculateCurrentWindowsIndex() - 1;
@@ -188,9 +187,9 @@ public enum WindowsArray {
     }
 
     /**
-     * 获取滑动窗口数组
+     * gets the sliding window array
      *
-     * @return 滑动窗口
+     * @return the sliding window array
      */
     public AtomicReferenceArray<WindowsBucket> getWindowsArray() {
         return windowsArray;

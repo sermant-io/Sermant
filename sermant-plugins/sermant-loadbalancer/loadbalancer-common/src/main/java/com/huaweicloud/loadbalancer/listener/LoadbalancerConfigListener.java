@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 /**
- * 配置监听器
+ * configure listener
  *
  * @author pengyuyi
  * @since 2022-01-22

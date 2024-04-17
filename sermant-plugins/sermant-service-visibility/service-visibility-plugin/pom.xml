@@ -26,7 +26,7 @@
         <apache.dubbo.version>2.7.3</apache.dubbo.version>
     </properties>
     <dependencies>
-        <!--Provider依赖-->
+        <!--Provider dependency-->
         <dependency>
             <groupId>com.huaweicloud.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>

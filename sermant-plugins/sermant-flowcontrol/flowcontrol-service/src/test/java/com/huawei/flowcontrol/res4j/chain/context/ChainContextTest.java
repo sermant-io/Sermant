@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 链上下文测试
+ * ChainContextTest
  *
  * @author zhouss
  * @since 2022-08-30
@@ -35,7 +35,8 @@ import java.util.Optional;
 public class ChainContextTest {
 
     /**
-     * 测试获取当前前程变量, 不超过ChainContext#MAX_SIZE, 超出抛异常IllegalArgumentException
+     * test:Get the current thread variable, no more than ChainContext#MAX_SIZE,
+     * IllegalArgumentException is thrown when exceeding
      */
     @Test(expected = IllegalArgumentException.class)
     public void getThreadLocalContext() {
@@ -55,10 +56,10 @@ public class ChainContextTest {
     }
 
     /**
-     * 测试移除线程变量
+     * test to remove thread variables
      *
-     * @throws NoSuchFieldException 无字段抛出
-     * @throws IllegalAccessException 无法获取值抛出
+     * @throws NoSuchFieldException fieldless throw
+     * @throws IllegalAccessException unable to get value thrown
      */
     @Test
     public void remove() throws NoSuchFieldException, IllegalAccessException {
@@ -73,10 +74,10 @@ public class ChainContextTest {
     }
 
     /**
-     * 测试移除指定线程变量
+     * tests to remove the specified thread variable
      *
-     * @throws NoSuchFieldException 无字段抛出
-     * @throws IllegalAccessException 无法获取值抛出
+     * @throws NoSuchFieldException fieldless throw
+     * @throws IllegalAccessException unable to get value thrown
      */
     @Test
     public void testRemoveTargetName() throws NoSuchFieldException, IllegalAccessException {
@@ -95,7 +96,7 @@ public class ChainContextTest {
     }
 
     /**
-     * 测试配置前缀
+     * test configuration prefix
      */
     @Test
     public void testKeyPrefix() {

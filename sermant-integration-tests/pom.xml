@@ -34,5 +34,6 @@
         <module>spring-test</module>
         <module>tag-transmission-test</module>
         <module>mq-consume-prohibition-test</module>
+        <module>database-write-prohibition-test</module>
     </modules>
 </project>

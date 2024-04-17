@@ -26,7 +26,7 @@ import org.springframework.cloud.zookeeper.discovery.ZookeeperInstance;
 import java.util.function.Predicate;
 
 /**
- * zk转换帮助类
+ * zk conversion helper class
  *
  * @author zhouss
  * @since 2022-10-12
@@ -38,9 +38,9 @@ public class ZkInstanceHelper {
     }
 
     /**
-     * 转换工具类
+     * Conversion tool class
      *
-     * @param curInstance 已反序列化的类
+     * @param curInstance Deserialized classes
      * @return ServiceInstance
      */
     public static ServiceInstance convert2Instance(org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance>
@@ -60,9 +60,9 @@ public class ZkInstanceHelper {
     }
 
     /**
-     * 构建predicate, 根据配置过滤实例
+     * Build a predicate to filter instances based on your configuration
      *
-     * @param onlyCurRegisterInstances 是否仅本插件注册的实例
+     * @param onlyCurRegisterInstances Whether it is only the instance registered by this plugin
      * @return Predicate
      */
     public static Predicate<org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstance>> predicate(

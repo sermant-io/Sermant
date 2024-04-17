@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截获取服务列表
+ * Intercept to get a list of services
  *
  * @author chengyouling
  * @since 2022-09-27

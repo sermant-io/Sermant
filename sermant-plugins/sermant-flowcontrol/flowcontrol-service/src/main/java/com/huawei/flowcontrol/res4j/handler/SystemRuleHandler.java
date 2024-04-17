@@ -25,13 +25,12 @@ import com.huawei.flowcontrol.res4j.exceptions.SystemRuleFault;
 import java.util.Optional;
 
 /**
- * 系统流控处理器
+ * system flow control handler
  *
  * @author xuezechao1
  * @since 2022-12-06
  */
 public class SystemRuleHandler extends AbstractRequestHandler<SystemRuleFault, SystemRule> {
-
     @Override
     protected Optional<SystemRuleFault> createProcessor(String businessName, SystemRule rule) {
         return Optional.of(new SystemRuleFault(rule));

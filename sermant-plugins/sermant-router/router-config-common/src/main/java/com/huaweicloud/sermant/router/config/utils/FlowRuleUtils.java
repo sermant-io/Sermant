@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * 流量匹配方式的路由工具类
+ * The routing tool class of the traffic matching method
  *
  * @author lilai
  * @since 2023-02-21
@@ -40,13 +40,13 @@ public class FlowRuleUtils {
     }
 
     /**
-     * 获取目标规则
+     * Get the target rule
      *
-     * @param configuration 路由配置
-     * @param targetService 目标服务
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
-     * @return 目标规则
+     * @param configuration Route configuration
+     * @param targetService Target service
+     * @param path Dubbo interface name/URL path
+     * @param serviceName The name of the service
+     * @return Target rules
      */
     public static List<Rule> getFlowRules(RouterConfiguration configuration, String targetService, String path,
             String serviceName) {
@@ -70,12 +70,12 @@ public class FlowRuleUtils {
     }
 
     /**
-     * 获取目标规则
+     * Get the target rule
      *
-     * @param rule 路由规则
-     * @param path dubbo接口名/url路径
-     * @param serviceName 本服务服务名
-     * @return 是否是目标规则
+     * @param rule Routing rules
+     * @param path Dubbo interface name/URL path
+     * @param serviceName The name of the service
+     * @return Whether it is a target rule
      */
     private static boolean isTargetFlowRule(Rule rule, String path, String serviceName) {
         if (rule == null) {
@@ -102,10 +102,10 @@ public class FlowRuleUtils {
     }
 
     /**
-     * 在attachment和header规则匹配是，删除接口中的方法名
+     * In the attachment and header rule matching yes, remove the method name in the interface
      *
      * @param path path
-     * @return 去除方法名的path
+     * @return Remove the path of the method name
      */
     private static String getInterfaceName(String path) {
         String[] pathList = path.split(":");
@@ -114,10 +114,10 @@ public class FlowRuleUtils {
     }
 
     /**
-     * 删除方法名
+     * Delete the method name
      *
      * @param path path
-     * @return 删除方法名的path
+     * @return Delete the path of the method name
      */
     private static String delMethodName(String path) {
         ArrayList<String> list = new ArrayList<>(Arrays.asList(path.split("\\.")));

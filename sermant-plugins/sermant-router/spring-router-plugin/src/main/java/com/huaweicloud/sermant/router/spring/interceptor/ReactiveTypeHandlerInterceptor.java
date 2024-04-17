@@ -21,7 +21,8 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 /**
- * 拦截ReactiveTypeHandler，同时引入spring-boot-starter-web、spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * When intercepting the ReactiveTypeHandler and introducing spring-boot-starter-web and spring-boot-starter-webflux
+ * for reactive programming, you need to remove thread variables from the posterior method
  * <p>spring cloud Finchley.RELEASE+
  *
  * @author provenceee

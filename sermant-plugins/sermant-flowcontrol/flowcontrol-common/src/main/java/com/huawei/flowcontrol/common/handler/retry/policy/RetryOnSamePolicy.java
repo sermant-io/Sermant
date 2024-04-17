@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.handler.retry.policy;
 
 /**
- * 同一个实例重试, 不考虑线程安全, 仅作用于线程变量
+ * Retry on the same instance, regardless of thread safety, only on thread variables
  *
  * @author zhouss
  * @since 2022-07-25
@@ -35,9 +35,9 @@ public class RetryOnSamePolicy implements RetryPolicy {
     private boolean isFirstMark = true;
 
     /**
-     * 重试构造器
+     * retry constructor
      *
-     * @param retryOnSame 针对同一个实例重试的次数
+     * @param retryOnSame the number of retries for the same instance
      */
     public RetryOnSamePolicy(int retryOnSame) {
         this.retryOnSame = retryOnSame;

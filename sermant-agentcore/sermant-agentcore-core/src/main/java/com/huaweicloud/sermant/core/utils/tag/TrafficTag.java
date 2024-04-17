@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量标签
+ * TrafficTag
  *
  * @author lilai
  * @since 2023-07-17
@@ -32,9 +32,9 @@ public class TrafficTag {
     private final Map<String, List<String>> tag;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param tag 流量标签 http请求的header/dubbo请求的attachment/消息队列header或properties
+     * @param tag TrafficTag map, http request header/dubbo attachment/MQ header or properties
      */
     public TrafficTag(Map<String, List<String>> tag) {
         this.tag = MapUtils.isEmpty(tag) ? new HashMap<>() : tag;
@@ -45,9 +45,9 @@ public class TrafficTag {
     }
 
     /**
-     * 更新流量标签
+     * update TrafficTag
      *
-     * @param map 流量标签
+     * @param map TrafficTag map
      */
     public void updateTag(Map<String, List<String>> map) {
         this.tag.putAll(map);

@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
- * 操作管理器
+ * Operation Manager
  *
  * @author luanwenfei
  * @since 2022-06-28
@@ -47,11 +47,11 @@ public class OperationManager {
     }
 
     /**
-     * 获取操作实例
+     * get operation instance
      *
-     * @param operationClass 操作class
-     * @param <T> 服务泛型
-     * @return operation 操作类实例
+     * @param operationClass operation class
+     * @param <T> service generic class
+     * @return operation instance
      * @throws IllegalArgumentException IllegalArgumentException
      */
     public static <T extends BaseOperation> T getOperation(Class<T> operationClass) {
@@ -63,12 +63,12 @@ public class OperationManager {
     }
 
     /**
-     * 加载操作类实例至操作实例集
+     * Load the operation class instance to the operation instance set
      *
-     * @param operation 操作实例
-     * @param operationCls 操作class
-     * @param baseCls 基本操作class
-     * @return 是否加载成功
+     * @param operation operation instance
+     * @param operationCls operation class
+     * @param baseCls base class
+     * @return load result
      */
     private static boolean loadOperation(BaseOperation operation, Class<?> operationCls,
             Class<? extends BaseOperation> baseCls) {
@@ -96,7 +96,7 @@ public class OperationManager {
     }
 
     /**
-     * 关闭OperationManager
+     * close OperationManager
      */
     public static void shutdown() {
         OPERATIONS.clear();

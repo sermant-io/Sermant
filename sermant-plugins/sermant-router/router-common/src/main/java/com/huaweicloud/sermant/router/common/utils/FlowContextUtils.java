@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 流量标识解码工具类.
+ * Traffic identification decoding tool class.
  *
  * @author yangrh
  * @since 2022-10-25
@@ -46,10 +46,10 @@ public class FlowContextUtils {
     }
 
     /**
-     * 解析base64加密信息成明文信息
+     * Parsing base 64 encrypted information into plaintext information
      *
      * @param encodeTagsString encodeTagsString
-     * @return 解密后的流量标识
+     * @return The identity of the decrypted traffic
      */
     public static Map<String, List<String>> decodeTags(String encodeTagsString) {
         if (StringUtils.isEmpty(encodeTagsString)) {
@@ -70,9 +70,9 @@ public class FlowContextUtils {
     }
 
     /**
-     * 解码附件
+     * Decode attachments
      *
-     * @param attachments 附件信息
+     * @param attachments Attachment information
      * @return {@link Map}<{@link String}, {@link Object}>
      */
     public static Map<String, Object> decodeAttachments(Map<String, Object> attachments) {
@@ -97,9 +97,9 @@ public class FlowContextUtils {
     }
 
     /**
-     * 解码
+     * Decode
      *
-     * @param encodeString 编码的字符串
+     * @param encodeString Encoded strings
      * @return {@link String}
      */
     private static String decode(String encodeString) {
@@ -107,7 +107,7 @@ public class FlowContextUtils {
     }
 
     /**
-     * 获取请求头中需要解析的tag
+     * Obtain the tag in the request header that needs to be parsed
      *
      * @return {@link String}
      */

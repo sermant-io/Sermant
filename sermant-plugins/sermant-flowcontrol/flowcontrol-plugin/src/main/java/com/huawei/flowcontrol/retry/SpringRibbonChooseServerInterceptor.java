@@ -26,7 +26,8 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.google.common.base.Optional;
 
 /**
- * ribbon选择实例方法拦截, 通过拦截获取上次调用的服务是哪一个, 从而在重试时根据负载均衡再次选择上次调用的服务
+ * Ribbon method select instance method to intercept. Obtain the last called service through interception, so that the
+ * last called service can be selected again based on load balancing when retrying.
  *
  * @author zhouss
  * @see com.huawei.flowcontrol.common.handler.retry.policy.RetryOnSamePolicy

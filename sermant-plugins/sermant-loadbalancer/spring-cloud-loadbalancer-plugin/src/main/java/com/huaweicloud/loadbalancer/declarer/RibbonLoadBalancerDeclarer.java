@@ -18,7 +18,7 @@
 package com.huaweicloud.loadbalancer.declarer;
 
 /**
- * Ribbon BaseLoadBalancer负载均衡增强类
+ * Ribbon BaseLoadBalancer load balancing enhancement class
  *
  * @author provenceee
  * @since 2022-02-24
@@ -32,7 +32,7 @@ public class RibbonLoadBalancerDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "chooseServer";
 
     /**
-     * 构造方法
+     * construction method
      */
     public RibbonLoadBalancerDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

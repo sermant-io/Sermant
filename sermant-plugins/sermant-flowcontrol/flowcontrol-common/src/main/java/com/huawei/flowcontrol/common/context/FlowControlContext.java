@@ -17,37 +17,37 @@
 package com.huawei.flowcontrol.common.context;
 
 /**
- * 流控上下文, 当前仅用于标记是否触发流控规则
+ * Flow control context, currently used only to flag whether a flow control rule is triggered
  *
  * @author zhouss
  * @since 2022-09-13
  */
 public enum FlowControlContext {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     private final ThreadLocal<Boolean> isFlowControl = new ThreadLocal<>();
 
     /**
-     * 触发流控
+     * trigger flow control
      */
     public void triggerFlowControl() {
         isFlowControl.set(Boolean.TRUE);
     }
 
     /**
-     * 清理
+     * clear
      */
     public void clear() {
         isFlowControl.remove();
     }
 
     /**
-     * 是否触发流控
+     * whether to trigger flow control
      *
-     * @return 是否触发流控
+     * @return whether to trigger flow control
      */
     public boolean isFlowControl() {
         return isFlowControl.get() != null;

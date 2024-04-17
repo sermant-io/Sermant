@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.handler;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
@@ -27,7 +28,6 @@ import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.entity.ValueMatch;
 import com.huaweicloud.sermant.router.config.utils.TagRuleUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.strategy.RuleStrategyHandler;
 
 import java.util.Collections;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * tag匹配方式的路由处理器
+ * the route handler of the tag matching mode
  *
  * @author lilai
  * @since 2023-02-24
@@ -104,21 +104,22 @@ public class TagRouteHandler extends AbstractRouteHandler {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 String tagValue = parameters.get(key);
                 if (!isFullMatch && matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
-                    // 如果不是全匹配，且匹配了一个，那么直接return
+                    // If it is not all matched, and one is matched, then return directly
                     return rule.getRoute();
                 }
                 if (isFullMatch && !matchStrategy.isMatch(values, tagValue, matchRule.isCaseInsensitive())) {
-                    // 如果是全匹配，且有一个不匹配，则继续下一个规则
+                    // If it's an all-match and there is a mismatch, move on to the next rule
                     return Collections.emptyList();
                 }
             }
         }
         if (isFullMatch) {
-            // 如果是全匹配，走到这里，说明没有不匹配的，直接return
+            // If it's an all-match, go here, it means that there is no mismatch, just return
             return rule.getRoute();
         }
 
-        // 如果不是全匹配，走到这里，说明没有一个规则能够匹配上，则继续下一个规则
+        // If it is not an all-match, if you go to this point, it means that none of the rules can be matched,
+        // then move on to the next rule
         return Collections.emptyList();
     }
 }

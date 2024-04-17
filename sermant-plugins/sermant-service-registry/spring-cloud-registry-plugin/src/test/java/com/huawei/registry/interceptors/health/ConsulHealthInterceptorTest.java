@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * 测试consul健康监控
+ * Test consul health monitoring
  *
  * @author zhouss
  * @since 2022-09-07

@@ -20,19 +20,19 @@ package com.huawei.flowcontrol.common.core.resolver;
 import com.huawei.flowcontrol.common.core.rule.fault.FaultRule;
 
 /**
- * 错误注入规则解析
+ * error injection rule parsing
  *
  * @author zhouss
  * @since 2022-08-11
  */
 public class FaultRuleResolver extends AbstractResolver<FaultRule> {
     /**
-     * 隔离仓配置 键
+     * error injection key
      */
     public static final String CONFIG_KEY = "servicecomb.faultInjection";
 
     /**
-     * 隔离仓构造器
+     * constructor
      */
     public FaultRuleResolver() {
         super(CONFIG_KEY);

@@ -23,16 +23,16 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import java.util.function.Consumer;
 
 /**
- * 注册延时使用
+ * Register for Extended Time
  *
  * @author zhouss
  * @since 2022-05-17
  */
 public class RegistryDelayConsumer implements Consumer<Long> {
     /**
-     * 延迟睡眠
+     * Delayed sleep
      *
-     * @param sleepTime 延时时间 单位秒
+     * @param sleepTime Delay time in seconds
      */
     @Override
     public void accept(Long sleepTime) {

@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 配置监听器
+ * Configure the listener
  *
  * @author provenceee
  * @since 2021-11-29
@@ -46,9 +46,9 @@ public class RouterConfigListener implements DynamicConfigListener {
     private final Set<AbstractHandler> handlers;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param cacheName 缓存的标签名
+     * @param cacheName The name of the cached tag
      */
     public RouterConfigListener(String cacheName) {
         this.cacheName = cacheName;
@@ -65,7 +65,7 @@ public class RouterConfigListener implements DynamicConfigListener {
     public void process(DynamicConfigEvent event) {
         String key = event.getKey();
         handlers.forEach(handler -> {
-            if (handler.shouldHandle(key, event.getContent())) {
+            if (handler.shouldHandle(key)) {
                 handler.handle(event, cacheName);
             }
         });

@@ -28,7 +28,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 优雅关闭测试
+ * Gracefully close the test
  *
  * @author zhouss
  * @since 2022-09-06

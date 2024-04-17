@@ -41,7 +41,7 @@ import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
- * Ribbon BaseLoadBalancer负载均衡增强类
+ * Ribbon BaseLoadBalancer load balancing enhancement class
  *
  * @author provenceee
  * @since 2022-02-24
@@ -50,17 +50,17 @@ public class RibbonLoadBalancerInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 默认的ribbon负载均衡键
+     * default ribbon load balancing key
      */
     private static final String DEFAULT_RIBBON_LOADBALANCER_KEY = "default";
 
     /**
-     * 存储哪些服务备份过负载均衡, 无需考虑线程安全
+     * Store which services are backed up by load balancing, regardless of thread safety
      */
     private final Set<String> backUpMarks = new HashSet<>();
 
     /**
-     * 服务负载均衡缓存key: 服务名, value: 负载均衡缓存
+     * service load balancing cache key: serviceName, value: loadBalancing
      */
     private final Map<String, Map<RibbonLoadbalancerType, AbstractLoadBalancerRule>> servicesRuleMap =
             new ConcurrentHashMap<>();
@@ -83,7 +83,7 @@ public class RibbonLoadBalancerInterceptor extends AbstractInterceptor {
     private final LoadbalancerConfig config;
 
     /**
-     * 构造方法
+     * construction method
      */
     public RibbonLoadBalancerInterceptor() {
         this.config = PluginConfigManager.getPluginConfig(LoadbalancerConfig.class);
@@ -160,10 +160,10 @@ public class RibbonLoadBalancerInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 获取服务名
+     * getServiceName
      *
-     * @param context 上下文
-     * @return 服务名
+     * @param context context
+     * @return service name
      */
     private Optional<String> getServiceName(ExecuteContext context) {
         final Object object = context.getObject();
@@ -176,7 +176,8 @@ public class RibbonLoadBalancerInterceptor extends AbstractInterceptor {
     private void doSet(Object obj, AbstractLoadBalancerRule rule) {
         BaseLoadBalancer loadBalancer = (BaseLoadBalancer) obj;
         if (rule == null || loadBalancer.getRule().getClass() == rule.getClass()) {
-            // 如果原来的负载均衡器跟需要的一样，就不需要修改了，直接return，不影响原方法
+            // If the original load balancer is the same as required, it does not need to be modified,
+            // and directly return, without affecting the original method
             return;
         }
         loadBalancer.setRule(rule);

@@ -18,24 +18,24 @@
 package com.huawei.registry.config;
 
 /**
- * 注册类型, 当前仅支持SC
+ * registry type, currently only SC is supported
  *
  * @author zhouss
  * @since 2022-05-24
  */
 public enum RegisterType {
     /**
-     * sc注册中心
+     * SC Registry
      */
     SERVICE_COMB,
 
     /**
-     * zk注册中心
+     * ZK Registry
      */
     ZOOKEEPER,
 
     /**
-     * nacos注册中心
+     * NACOS Registry
      */
     NACOS
 }

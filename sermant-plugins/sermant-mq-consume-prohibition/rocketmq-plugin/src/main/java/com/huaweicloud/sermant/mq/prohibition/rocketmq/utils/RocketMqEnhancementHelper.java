@@ -31,7 +31,7 @@ import com.huaweicloud.sermant.mq.prohibition.rocketmq.interceptor.RocketMqPushC
 import com.huaweicloud.sermant.rocketmq.extension.RocketMqConsumerHandler;
 
 /**
- * rocketmq拦截点辅助类
+ * Rocketmq interception point auxiliary class
  *
  * @author daizhenyu
  * @since 2023-12-13
@@ -57,75 +57,75 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pushconsumer拦截点的ClassMatcher
+     * Obtain ClassMatcher for pushConsumer interception point
      *
-     * @return 返回ClassMatcher
+     * @return Return classMatcher
      */
     public static ClassMatcher getPushConsumerClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_PUSH_CONSUMER_CLASS);
     }
 
     /**
-     * 获取pullconsumer拦截点的ClassMatcher
+     * Obtain ClassMatcher for pullConsumer interception point
      *
-     * @return 返回ClassMatcher
+     * @return Return classMatcher
      */
     public static ClassMatcher getPullConsumerClassMatcher() {
         return ClassMatcher.nameEquals(ENHANCE_PULL_CONSUMER_CLASS);
     }
 
     /**
-     * 获取pushconsumer拦截点的start方法拦截声明器
+     * Obtain the interception declarer for the start method of pushconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerStartInterceptDeclarers() {
         return InterceptDeclarer.build(getStartMethodMatcher(), new RocketMqPushConsumerStartInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的start方法拦截声明器
+     * Obtain the interception declarer for the start method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerStartInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getStartMethodMatcher(), new RocketMqPushConsumerStartInterceptor(handler));
     }
 
     /**
-     * 获取pullconsumer拦截点的start方法拦截声明器
+     * Obtain the interception declarer for the start method of pullconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerStartInterceptDeclarers() {
         return InterceptDeclarer.build(getStartMethodMatcher(), new RocketMqPullConsumerStartInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的start方法拦截声明器
+     * Obtain the interception declarer for the start method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerStartInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getStartMethodMatcher(), new RocketMqPullConsumerStartInterceptor(handler));
     }
 
     /**
-     * 获取pushconsumer拦截点的shutdown方法拦截声明器
+     * Obtain the interception declarer for the shutdown method of pushconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerShutdownInterceptDeclarers() {
         return InterceptDeclarer.build(getShutdownMethodMatcher(), new RocketMqPushConsumerShutdownInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的shutdown方法拦截声明器
+     * Obtain the interception declarer for the shutdown method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerShutdownInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getShutdownMethodMatcher(),
@@ -133,19 +133,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pullconsumer拦截点的shutdown方法拦截声明器
+     * Obtain the interception declarer for the shutdown method of pullconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerShutdownInterceptDeclarers() {
         return InterceptDeclarer.build(getShutdownMethodMatcher(), new RocketMqPullConsumerShutdownInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的shutdown方法拦截声明器
+     * Obtain the interception declarer for the shutdown method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerShutdownInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getShutdownMethodMatcher(),
@@ -153,19 +153,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pushconsumer拦截点的subscribe方法拦截声明器
+     * Obtain the interception declarer for the subscribe method of pushconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerSubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getSubscribeMethodMatcher(), new RocketMqPushConsumerSubscribeInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的subscribe方法拦截声明器
+     * Obtain the interception declarer for the subscribe method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerSubscribeInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getSubscribeMethodMatcher(),
@@ -173,19 +173,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pullconsumer拦截点的subscribe方法拦截声明器
+     * Obtain the interception declarer for the subscribe method of pullconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerSubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getSubscribeMethodMatcher(), new RocketMqPullConsumerSubscribeInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的subscribe方法拦截声明器
+     * Obtain the interception declarer for the subscribe method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerSubscribeInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getSubscribeMethodMatcher(),
@@ -193,19 +193,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pushconsumer拦截点的unsubscribe方法拦截声明器
+     * Obtain the interception declarer for the unsubscribe method of pushconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerUnsubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getUnsubscribeMethodMatcher(), new RocketMqPushConsumerUnsubscribeInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的unsubscribe方法拦截声明器
+     * Obtain the interception declarer for the unsubscribe method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPushConsumerUnsubscribeInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getUnsubscribeMethodMatcher(),
@@ -213,19 +213,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pullconsumer拦截点的unsubscribe方法拦截声明器
+     * Obtain the interception declarer for the unsubscribe method of pullconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerUnsubscribeInterceptDeclarers() {
         return InterceptDeclarer.build(getUnsubscribeMethodMatcher(), new RocketMqPullConsumerUnsubscribeInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的unsubscribe方法拦截声明器
+     * Obtain the interception declarer for the unsubscribe method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerUnsubscribeInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getUnsubscribeMethodMatcher(),
@@ -233,19 +233,19 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取pullconsumer拦截点的assign方法拦截声明器
+     * Obtain the interception declarer for the assign method of pullconsumer interception point
      *
-     * @return 返回拦截声明器
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerAssignInterceptDeclarers() {
         return InterceptDeclarer.build(getAssignMethodMatcher(), new RocketMqPullConsumerAssignInterceptor());
     }
 
     /**
-     * 获取带有RocketMqConsumerHandler的assign方法拦截声明器
+     * Obtain the interception declarer for the assign method with RocketMqConsumerHandler
      *
-     * @param handler rocketmq消费者外部扩展处理器
-     * @return 返回拦截声明器
+     * @param handler rocketmq consumer external extension handler
+     * @return return to the interception declarer
      */
     public static InterceptDeclarer getPullConsumerAssignInterceptDeclarers(RocketMqConsumerHandler handler) {
         return InterceptDeclarer.build(getAssignMethodMatcher(),
@@ -253,45 +253,45 @@ public class RocketMqEnhancementHelper {
     }
 
     /**
-     * 获取start方法拦截的方法匹配器
+     * Obtain the method matcher intercepted by the start method
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     private static MethodMatcher getStartMethodMatcher() {
         return MethodMatcher.nameEquals(START_METHOD_NAME);
     }
 
     /**
-     * 获取shutdown方法拦截的方法匹配器
+     * Obtain the method matcher intercepted by the shutdown method
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     private static MethodMatcher getShutdownMethodMatcher() {
         return MethodMatcher.nameEquals(SHUTDOWN_METHOD_NAME);
     }
 
     /**
-     * 获取subscribe方法拦截的方法匹配器
+     * Obtain the method matcher intercepted by the subscribe method
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     private static MethodMatcher getSubscribeMethodMatcher() {
         return MethodMatcher.nameEquals(SUBSCRIBE_METHOD_NAME);
     }
 
     /**
-     * 获取unsubscribe方法拦截的方法匹配器
+     * Obtain the method matcher intercepted by the unsubscribe method
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     private static MethodMatcher getUnsubscribeMethodMatcher() {
         return MethodMatcher.nameEquals(UNSUBSCRIBE_METHOD_NAME);
     }
 
     /**
-     * 获取assign方法拦截的方法匹配器
+     * Obtain the method matcher intercepted by the assign method
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     private static MethodMatcher getAssignMethodMatcher() {
         return MethodMatcher.nameEquals(ASSIGN_METHOD_NAME);

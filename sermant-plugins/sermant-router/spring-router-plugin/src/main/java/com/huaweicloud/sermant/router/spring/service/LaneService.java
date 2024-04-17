@@ -22,32 +22,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * LaneHandlerInterceptor的service
+ * LaneHandlerInterceptor service
  *
  * @author provenceee
  * @since 2023-02-20
  */
 public interface LaneService extends PluginService {
     /**
-     * 获取泳道标记
+     * Get swimlane markers
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @return 泳道标记
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @return Swimlane markers
      */
     Map<String, List<String>> getLaneByParameterArray(String path, String methodName, Map<String, List<String>> headers,
             Map<String, String[]> parameters);
 
     /**
-     * 获取泳道标记
+     * Get swimlane markers
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @return 泳道标记
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @return Swimlane markers
      */
     Map<String, List<String>> getLaneByParameterList(String path, String methodName, Map<String, List<String>> headers,
             Map<String, List<String>> parameters);

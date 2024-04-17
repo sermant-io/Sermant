@@ -23,19 +23,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截ribbon serverList
+ * Intercept ribbon serverList
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class DynamicServerListLoadbalancerDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
+     * Fully qualified name of the enhanced class This client injection priority is the highest, so just intercept it
      */
     private static final String ENHANCE_CLASS = "com.netflix.loadbalancer.DynamicServerListLoadBalancer";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = DynamicServerListInterceptor.class.getCanonicalName();
 

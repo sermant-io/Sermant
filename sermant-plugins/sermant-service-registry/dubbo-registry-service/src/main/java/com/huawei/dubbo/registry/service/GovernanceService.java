@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
- * dubbo url参数
+ * dubbo URL parameter
  *
  * @author provenceee
  * @since 2022-04-21
@@ -39,7 +39,7 @@ public class GovernanceService implements PluginService {
     private static final AtomicBoolean INIT = new AtomicBoolean();
 
     /**
-     * 启动初始化任务
+     * Start the initialization task
      */
     public void doStart() {
         if (INIT.compareAndSet(false, true)) {

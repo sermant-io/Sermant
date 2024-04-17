@@ -23,7 +23,7 @@
 package com.huawei.registry.entity;
 
 /**
- * 优雅下线HOOK
+ * Elegant offline HOOK
  *
  * @author zhouss
  * @since 2022-06-24
@@ -32,7 +32,7 @@ public class GraceShutdownHook extends Thread {
     private static final String GRACE_SHUTDOWN_THREAD = "SermantGraceShutdown";
 
     /**
-     * 构造函数 默认线程名
+     * Constructor Default thread name
      */
     public GraceShutdownHook() {
         super(new GraceShutdownBehavior(), GRACE_SHUTDOWN_THREAD);

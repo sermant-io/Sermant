@@ -17,19 +17,19 @@
 package com.huaweicloud.sermant.router.config.entity;
 
 /**
- * 协议
+ * Protocol
  *
  * @author provenceee
  * @since 2023-02-16
  */
 public enum Protocol {
     /**
-     * http协议
+     * http protocol
      */
     HTTP,
 
     /**
-     * dubbo协议
+     * dubbo protocol
      */
     DUBBO;
 }

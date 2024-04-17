@@ -25,14 +25,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 健康检查
+ * Health checks
  *
  * @author zhouss
  * @since 2022-06-13
  */
 public class HealthIndicatorDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 健康检查增强类
+     * Health Check Enhancement Class
      */
     private static final String[] ENHANCE_CLASSES = {
         "org.springframework.boot.actuate.health.AbstractHealthIndicator",
@@ -41,7 +41,7 @@ public class HealthIndicatorDeclarer extends AbstractDoubleRegistryDeclarer {
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = HealthIndicatorInterceptor.class.getCanonicalName();
 

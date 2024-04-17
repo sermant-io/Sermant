@@ -20,20 +20,20 @@ import com.huaweicloud.sermant.router.common.request.RequestData;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
 
 /**
- * Runnable包装类
+ * Runnable packaging class
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2024-01-16
  */
 public class RunnableWrapper<T> extends AbstractThreadWrapper<T> implements Runnable {
     /**
-     * 构造方法
+     * Constructor
      *
      * @param runnable runnable
-     * @param requestTag 请求标记
-     * @param requestData 请求数据
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param requestTag Request tags
+     * @param requestData Request data
+     * @param cannotTransmit Whether the thread variable needs to be deleted before the method can be executed
      */
     public RunnableWrapper(Runnable runnable, RequestTag requestTag, RequestData requestData, boolean cannotTransmit) {
         super(runnable, null, requestTag, requestData, cannotTransmit);

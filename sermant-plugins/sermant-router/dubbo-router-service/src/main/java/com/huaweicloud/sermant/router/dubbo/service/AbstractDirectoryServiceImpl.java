@@ -17,37 +17,38 @@
 package com.huaweicloud.sermant.router.dubbo.service;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.request.RequestTag;
+import com.huaweicloud.sermant.router.common.service.AbstractDirectoryService;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.handler.HandlerChainEntry;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * AbstractDirectory的service
+ * The service of AbstractDirectory
  *
  * @author provenceee
  * @since 2021-11-24
  */
 public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
-    // dubbo请求参数中是否为consumer的key值
+    // Whether the key value of the request parameter is consumer
     private static final String CONSUMER_KEY = "side";
 
-    // dubbo请求参数中接口名的key值
+    // The key value of the interface name in the dubbo request parameter
     private static final String INTERFACE_KEY = "interface";
 
-    // dubbo请求参数中是否为consumer的value值
+    // Whether the value of the request parameter is consumer
     private static final String CONSUMER_VALUE = "consumer";
 
     /**
-     * 筛选标签invoker
+     * filter the label invoker
      *
      * @param registryDirectory RegistryDirectory
-     * @param arguments 参数
+     * @param invocation Parameter
      * @param result invokers
      * @return invokers
      * @see com.alibaba.dubbo.registry.integration.RegistryDirectory
@@ -56,14 +57,13 @@ public class AbstractDirectoryServiceImpl implements AbstractDirectoryService {
      * @see org.apache.dubbo.rpc.Invoker
      */
     @Override
-    public Object selectInvokers(Object registryDirectory, Object[] arguments, Object result) {
-        if (arguments == null || arguments.length == 0) {
+    public Object selectInvokers(Object registryDirectory, Object invocation, Object result) {
+        if (invocation == null) {
             return result;
         }
         if (!(result instanceof List<?>)) {
             return result;
         }
-        Object invocation = arguments[0];
         putAttachment(invocation);
         List<Object> invokers = (List<Object>) result;
         Map<String, String> queryMap = DubboReflectUtils.getQueryMap(registryDirectory);

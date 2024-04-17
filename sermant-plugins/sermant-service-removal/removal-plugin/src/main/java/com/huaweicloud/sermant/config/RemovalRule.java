@@ -17,29 +17,29 @@
 package com.huaweicloud.sermant.config;
 
 /**
- * 离群实例规则
+ * Outlier instance rules
  *
  * @author zhp
  * @since 2023-02-24
  */
 public class RemovalRule {
     /**
-     * 服务名称
+     * The name of the service
      */
     private String key;
 
     /**
-     * 摘除实例比上限
+     * Remove the upper limit of the instance ratio
      */
     private float scaleUpLimit;
 
     /**
-     * 最小实例个数
+     * The minimum number of instances
      */
     private int minInstanceNum;
 
     /**
-     * 失败率阈值
+     * Failure rate threshold
      */
     private float errorRate;
 

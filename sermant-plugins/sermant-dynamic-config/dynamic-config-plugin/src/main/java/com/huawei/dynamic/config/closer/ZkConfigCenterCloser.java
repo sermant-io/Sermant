@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * ZK关闭
+ * ZK closer
  *
  * @author zhouss
  * @since 2022-07-12
@@ -39,10 +39,11 @@ import java.util.Optional;
 public class ZkConfigCenterCloser implements ConfigCenterCloser {
     private static final String CONFIG_CENTER_PROPERTY_SOURCE_TYPE =
             "org.springframework.cloud.zookeeper.config.ZookeeperPropertySource";
+
     private final List<Object> configWatches = new ArrayList<>();
 
     /**
-     * 所有版本的注入watcher名称
+     * all versions of the injected watcher name
      */
     private final List<String> watcherNames = Arrays.asList("configDataConfigWatcher",
             "propertySourceLocatorConfigWatcher",

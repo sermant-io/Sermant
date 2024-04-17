@@ -60,7 +60,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link AgentBuilder}的包装类提供一系列按配置进行的默认操作，并提供插件的增强操作
+ * The wrapper class for {@link AgentBuilder}, which provides a set of default actions as configured and provides
+ * enhancement actions for plugins
  *
  * @author HapThorin
  * @version 1.0.0
@@ -68,22 +69,23 @@ import java.util.logging.Logger;
  */
 public class BufferedAgentBuilder {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 增强配置
+     * enhancement configuration
      */
     private final AgentConfig config = ConfigManager.getConfig(AgentConfig.class);
 
     /**
-     * 构建行为集
+     * BuilderAction list
      */
     private final List<BuilderAction> actions = new ArrayList<>();
 
     /**
-     * 为对框架类的增强维护一个虚拟的插件，用于记录adviceKey锁和已经创建的拦截器
+     * Maintain a virtual plugin for enhancements to the framework class to record adviceKey locks and the interceptors
+     * that have been created
      */
     private final Plugin virtualPlugin = new Plugin("virtual-plugin", null, false, null);
 
@@ -91,15 +93,15 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 创建{@link BufferedAgentBuilder}并依据配置设置基础操作：
+     * Create {@link BufferedAgentBuilder} and set the base actions according to the configuration:
      * <pre>
-     *     1.设置启动类加载器相关的增强策略，见{@link #setBootStrapStrategy}
-     *     2.设置增强扫描过滤规则，见{@link #setIgnoredRule}
-     *     3.设置增强时的扫描日志监听器，见{@link #setLogListener}
-     *     4.设置输出增强后字节码的监听器，见{@link #setOutputListener}
+     *     1.Set the enhancement strategy associated with BootStrapClassLoader, see {@link #setBootStrapStrategy}
+     *     2.Set enhancement scan filtering rules, see {@link #setIgnoredRule}
+     *     3.Set up the log scan listener during enhancement, see {@link #setLogListener}
+     *     4.Set up a listener for output enhanced bytecode, see {@link #setOutputListener}
      * </pre>
      *
-     * @return BufferedAgentBuilder实例
+     * @return BufferedAgentBuilder instance
      */
     public static BufferedAgentBuilder build() {
         return new BufferedAgentBuilder().setBootStrapStrategy()
@@ -109,13 +111,15 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 设置字节码增强的重定义策略，由{@link AgentConfig#isReTransformEnable()}而定
+     * Set the bytecode enhancement redefinition strategy, as determined by {@link AgentConfig#isReTransformEnable()}
      * <pre>
-     *     1.若不增强启动类加载器加载的类，则直接使用默认规则{@link AgentBuilder.RedefinitionStrategy#DISABLED}
-     *     1.若增强启动类加载器加载的类，则使用规则{@link AgentBuilder.RedefinitionStrategy#RETRANSFORMATION}
+     *     1.If don't enhance classes loaded by BootStrapClassLoader，use default strategy
+     *     {@link AgentBuilder.RedefinitionStrategy#DISABLED}
+     *     2.If need to enhance classes loaded by BootStrapClassLoader，use strategy
+     *     {@link AgentBuilder.RedefinitionStrategy#RETRANSFORMATION}
      * </pre>
      *
-     * @return BufferedAgentBuilder本身
+     * @return BufferedAgentBuilder
      */
     private BufferedAgentBuilder setBootStrapStrategy() {
         if (!config.isReTransformEnable()) {
@@ -125,22 +129,25 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 设置扫描的过滤规则
-     * <p>注意，数组类型，8种基础类型，以及{@link ServiceClassLoader},{@link FrameworkClassLoader}加载的类默认不增强，直接被过滤
-     * <p>其他类若符合配置中{@link AgentConfig#getIgnoredPrefixes}指定的前缀之一，则被过滤
+     * Set ignore rules for scanning
+     * <p>Note that the array type, 8 base types, and {@link ServiceClassLoader},{@link FrameworkClassLoader} loaded
+     * classes are not enhanced by default and are ignored directly
+     * <p>Other classes are ignored if they match one of the prefixes specified in the configuration
+     * {@link AgentConfig#getIgnoredPrefixes}
      *
-     * @return BufferedAgentBuilder本身
+     * @return BufferedAgentBuilder
      */
     private BufferedAgentBuilder setIgnoredRule() {
         return addAction(builder -> builder.ignore(new IgnoredMatcher(config)));
     }
 
     /**
-     * 设置输出日志的监听器，由{@link AgentConfig#isShowEnhanceLog()}而定
-     * <p>使用{@link AgentBuilder.Listener.StreamWriting}转化为字符串信息后输出为日志
-     * <p>注意，输出时使用的缓冲区将不会被释放，需要关注{@link AgentBuilder.Listener.StreamWriting}中单行信息的长度
+     * Set the listener to output logs, which is determined by {@link AgentConfig#isShowEnhanceLog()}
+     * <p>Use {@link AgentBuilder.Listener.StreamWriting} to convert information to a string and output as a log
+     * <p>Note that the buffer used for output will not be released, notice length of a single line of information
+     * in {@link AgentBuilder.Listener.StreamWriting}
      *
-     * @return BufferedAgentBuilder本身
+     * @return BufferedAgentBuilder
      */
     private BufferedAgentBuilder setLogListener() {
         if (!config.isShowEnhanceLog()) {
@@ -168,7 +175,7 @@ public class BufferedAgentBuilder {
                         reset();
                     }
 
-                    // 针对Byte-buddy中触发的Error及Warn级别日志上报事件
+                    // Logs of Error and Warn levels triggered in Byte-buddy are reported
                     private void logAndCollectEvent(String enhanceLog) {
                         if (enhanceLog.contains(CommonConstant.ERROR)) {
                             FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
@@ -183,9 +190,9 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 设置输出增强后字节码的监听器
+     * Set the listener for outputting enhanced bytecode
      *
-     * @return BufferedAgentBuilder本身
+     * @return BufferedAgentBuilder
      */
     private BufferedAgentBuilder setOutputListener() {
         if (!config.isOutputEnhancedClasses()) {
@@ -224,10 +231,10 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 添加插件
+     * Add plugin
      *
-     * @param plugins 插件描述列表
-     * @return BufferedAgentBuilder AgentBuilder的封装
+     * @param plugins PluginDescription set
+     * @return BufferedAgentBuilder Wrapper of AgentBuilder
      */
     public BufferedAgentBuilder addPlugins(Iterable<PluginDescription> plugins) {
         return addAction(new BuilderAction() {
@@ -235,7 +242,8 @@ public class BufferedAgentBuilder {
             public AgentBuilder process(AgentBuilder builder) {
                 AgentBuilder newBuilder = builder;
                 for (PluginDescription plugin : plugins) {
-                    // 此处必须赋值给newBuilder，不可在原builder上重复操作，否则上次循环中的操作会不生效
+                    // This must be assigned to the newBuilder, and the operation cannot be repeated on the original
+                    // builder, otherwise the operation in the last loop will not take effect
                     newBuilder = newBuilder.type(plugin).transform(plugin);
                 }
                 return newBuilder;
@@ -244,9 +252,9 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 基于{@link com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer}添加字节码增强
+     * Add bytecode enhancement based on{@link com.huaweicloud.sermant.core.plugin.agent.declarer.PluginDeclarer}
      *
-     * @param pluginDeclarer 插件声明器
+     * @param pluginDeclarer plugin declarer
      */
     public void addEnhance(AbstractPluginDeclarer pluginDeclarer) {
         addAction(builder -> {
@@ -272,10 +280,10 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 添加行动
+     * add action
      *
-     * @param action 行动
-     * @return BufferedAgentBuilder本身
+     * @param action action
+     * @return BufferedAgentBuilder
      */
     public BufferedAgentBuilder addAction(BuilderAction action) {
         actions.add(action);
@@ -283,10 +291,12 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 构建{@link AgentBuilder}，执行所有{@link BuilderAction}并执行{@link AgentBuilder#installOn(Instrumentation)}
+     * Build {@link AgentBuilder}，execute all {@link BuilderAction} and execute {@link
+     * AgentBuilder#installOn(Instrumentation)}
      *
-     * @param instrumentation Instrumentation对象
-     * @return 安装结果，可重置的转换器，若无类元信息改动，调用其reset方法即可重置
+     * @param instrumentation Instrumentation
+     * @return Install result, ResettableClassFileTransformer. If the class metadata is not changed, call the reset
+     * method to reset it
      */
     public ResettableClassFileTransformer install(Instrumentation instrumentation) {
         AgentBuilder builder = new Default().disableClassFormatChanges();
@@ -297,7 +307,7 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 忽略匹配器
+     * IgnoredMatcher
      *
      * @author provenceee
      * @since 2022-11-17
@@ -372,16 +382,16 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * 构建行为
+     * Builder action
      *
      * @since 2022-01-22
      */
     public interface BuilderAction {
         /**
-         * 执行构建行为
+         * Execute build
          *
-         * @param builder 构建器
-         * @return 构建器
+         * @param builder builder
+         * @return AgentBuilder
          */
         AgentBuilder process(AgentBuilder builder);
     }

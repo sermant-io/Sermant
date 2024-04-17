@@ -38,7 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 负载均衡测试
+ * Load balancing test
  *
  * @author zhouss
  * @since 2022-10-10
@@ -66,7 +66,7 @@ public class LbServiceImplTest extends BaseTest {
     @Override
     public void tearDown() {
         super.tearDown();
-        // 重置状态
+        // Reset the state
         final Optional<Object> isStarted = ReflectUtils.getFieldValue(DiscoveryManager.INSTANCE, "isStarted");
         Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
         ((AtomicBoolean) isStarted.get()).set(false);

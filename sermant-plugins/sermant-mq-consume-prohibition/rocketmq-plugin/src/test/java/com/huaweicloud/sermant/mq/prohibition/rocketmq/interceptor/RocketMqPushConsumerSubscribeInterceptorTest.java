@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * pushConsumer subscribe方法拦截器UT
+ * PushConsumer subscribe method interceptor UT
  *
  * @author daizhenyu
  * @since 2023-12-25

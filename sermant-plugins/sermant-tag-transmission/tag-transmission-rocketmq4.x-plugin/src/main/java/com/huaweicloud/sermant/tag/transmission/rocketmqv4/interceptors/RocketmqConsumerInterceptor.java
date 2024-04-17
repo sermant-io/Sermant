@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * RocketMQ流量标签透传的消费者拦截器，支持RocketMQ4.x
+ * RocketMQ Consumer interceptor for transparent transmission of traffic tags, supports RocketMQ4.x
  *
  * @author tangle
  * @since 2023-07-19
@@ -43,12 +43,12 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * getBody拦截方法的所在类名
+     * The class name of the getBody method
      */
     private static final String ROCKETMQ_SELECT_CLASSNAME = "org.apache.rocketmq.common.message.Message";
 
     /**
-     * getBody拦截方法应被过滤的前缀
+     * The prefix the getBody method should be filtered by
      */
     private static final String ROCKETMQ_FILER_PREFIX = "org.apache.rocketmq";
 
@@ -67,7 +67,8 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
 
         Map<String, List<String>> tagMap = extractTrafficTagFromCarrier((Message) context.getObject());
 
-        // 消息队列消费者不会remove线程变量，需要每次set新对象，以保证父子线程之间的变量隔离
+        // Message queue consumers do not remove thread variables and need to set new objects each time to
+        // ensure variable isolation between parent and child threads
         TrafficUtils.setTrafficTag(new TrafficTag(tagMap));
         return context;
     }
@@ -78,9 +79,9 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
     }
 
     /**
-     * 从Message中解析流量标签
+     * Parse traffic tag from Message
      *
-     * @param message RocketMQ 消费端的流量标签载体
+     * @param message RocketMQ consumer traffic tag carrier
      * @return 流量标签
      */
     @Override
@@ -109,9 +110,9 @@ public class RocketmqConsumerInterceptor extends AbstractServerInterceptor<Messa
     }
 
     /**
-     * 判断当前调用栈是否匹配拦截点进入的要求
+     * Determines whether the current call stack matches the intercept point entry requirements
      *
-     * @param stackTraceElements 调用栈
+     * @param stackTraceElements stack
      * @return boolean
      */
     private boolean isRocketMqStackTrace(StackTraceElement[] stackTraceElements) {

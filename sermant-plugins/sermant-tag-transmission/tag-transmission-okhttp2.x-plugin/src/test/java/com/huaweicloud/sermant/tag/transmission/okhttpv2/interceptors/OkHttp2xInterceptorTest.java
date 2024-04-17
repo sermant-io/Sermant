@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OkHttp2xInterceptor 单元测试
+ * OkHttp2xInterceptorTest
  *
  * @author lilai
  * @since 2023-08-17
@@ -56,7 +56,7 @@ public class OkHttp2xInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 无Headers无Tags
+        // no headers no tags
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
         resContext = interceptor.before(context);
@@ -66,7 +66,7 @@ public class OkHttp2xInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals(0, nameAndValues.size());
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers无Tags
+        // there are headers but no tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders);
         TrafficUtils.updateTrafficTag(tags);
@@ -78,7 +78,7 @@ public class OkHttp2xInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals("defaultValue", (headerBuilder.get("defaultKey")));
         TrafficUtils.removeTrafficTag();
 
-        // 有Headers有Tags
+        // there are headers and tags
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
@@ -93,7 +93,7 @@ public class OkHttp2xInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals("testId002", headerBuilder.get("id"));
         TrafficUtils.removeTrafficTag();
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         tagTransmissionConfig.setEnabled(false);
         addHeaders.clear();
         context = buildContext(addHeaders);

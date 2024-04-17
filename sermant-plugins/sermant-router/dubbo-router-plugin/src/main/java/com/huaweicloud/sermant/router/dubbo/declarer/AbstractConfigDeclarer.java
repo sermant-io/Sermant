@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.dubbo.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 增强AbstractConfig类的appendParameters方法，增加路由标签
+ * The appendParameters method of the AbstractConfig class is enhanced to add route labels
  *
  * @author chengyouling
  * @since 2022-12-28
@@ -35,16 +35,16 @@ public class AbstractConfigDeclarer extends AbstractDeclarer {
     private static final int PARAMETER_COUNT = 2;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractConfigDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 
     /**
-     * 获取方法匹配器
+     * get the method matcher
      *
-     * @return 方法匹配器
+     * @return method matcher
      */
     @Override
     public MethodMatcher getMethodMatcher() {

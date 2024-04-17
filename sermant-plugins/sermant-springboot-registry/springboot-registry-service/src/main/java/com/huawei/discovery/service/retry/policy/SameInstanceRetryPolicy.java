@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import java.util.Optional;
 
 /**
- * 针对同一个实例进行重试, 超过同一个实例的最大重试次数则采用负载均衡选择其他实例
+ * If the maximum number of retries exceeds the same instance, Server Load Balancer selects other instances
  *
  * @author zhouss
  * @since 2022-10-21
@@ -33,7 +33,7 @@ public class SameInstanceRetryPolicy extends RoundRobinRetryPolicy {
     private final int maxSameRetry;
 
     /**
-     * 构造器
+     * Constructor
      */
     public SameInstanceRetryPolicy() {
         this.maxSameRetry = PluginConfigManager.getPluginConfig(LbConfig.class).getMaxSameRetry();

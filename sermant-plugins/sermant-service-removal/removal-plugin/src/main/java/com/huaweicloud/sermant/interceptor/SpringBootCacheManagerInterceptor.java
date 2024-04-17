@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.Optional;
 
 /**
- * SpringBoot服务调用增强类
+ * SpringBoot service call enhancement class
  *
  * @author zhp
  * @since 2023-02-17

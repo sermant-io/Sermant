@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 针对HttpUrlConnection连接拦截
+ * Blocking HttpUrlConnection connections
  *
  * @author zhouss
  * @since 2022-10-20

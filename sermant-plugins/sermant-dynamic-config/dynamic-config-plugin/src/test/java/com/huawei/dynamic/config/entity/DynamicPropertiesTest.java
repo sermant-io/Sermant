@@ -30,14 +30,14 @@ import org.mockito.Mockito;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 属性初始化测试
+ * attribute initialization test
  *
  * @author zhouss
  * @since 2022-09-05
  */
 public class DynamicPropertiesTest {
     /**
-     * 测试初始化方法
+     * test the initialization method
      */
     @Test
     public void testInit() {

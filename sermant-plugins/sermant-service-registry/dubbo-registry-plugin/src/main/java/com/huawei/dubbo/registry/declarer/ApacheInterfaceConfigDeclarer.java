@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * AbstractInterfaceConfig增强类
+ * AbstractInterfaceConfig Enhancement Classes
  *
  * @author provenceee
  * @since 2021-11-24
@@ -31,11 +31,12 @@ public class ApacheInterfaceConfigDeclarer extends AbstractDeclarer {
     private static final String INTERCEPT_CLASS
             = "com.huawei.dubbo.registry.interceptor.ApacheInterfaceConfigInterceptor";
 
-    // 增强loadRegistriesFromBackwardConfig方法是为了兼容2.7.0-2.7.4.1，其它版本主要是增强setRegistries方法
+    // The enhancement of the loadRegisteriesFromBackwardConfig method is to be compatible with 2.7.0-2.7.4.1,
+    // while other versions mainly enhance the setRegisteries method
     private static final String[] METHOD_NAME = {"setRegistries", "loadRegistriesFromBackwardConfig"};
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApacheInterfaceConfigDeclarer() {
         super(ENHANCE_CLASS);

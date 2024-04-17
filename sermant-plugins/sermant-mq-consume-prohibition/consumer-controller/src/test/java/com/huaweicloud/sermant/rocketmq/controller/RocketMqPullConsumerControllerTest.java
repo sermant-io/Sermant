@@ -46,7 +46,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * RocketMqPullConsumerController的单元测试
+ * RocketMqPullConsumerController Unit test
  *
  * @author daizhenyu
  * @since 2023-12-26
@@ -88,7 +88,7 @@ public class RocketMqPullConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic为空
+     * Consumer subscription topic is empty
      */
     @Test
     public void testDisablePullConsumptionNoTopic() {
@@ -100,7 +100,7 @@ public class RocketMqPullConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic和禁消费的topic存在交集
+     * Consumer subscription topics intersect with prohibited consumption topics
      */
     @Test
     public void testDisablePullConsumptionWithSubTractTopics() {
@@ -122,7 +122,7 @@ public class RocketMqPullConsumerControllerTest {
     }
 
     /**
-     * 消费者订阅topic和禁消费的topic不存在交集
+     * There is no intersection between consumer subscription topics and prohibited consumption topics
      */
     @Test
     public void testDisablePullConsumptionWithNoSubTractTopics() {
@@ -144,7 +144,8 @@ public class RocketMqPullConsumerControllerTest {
     }
 
     /**
-     * 消费者指定队列消费，队列的topic和禁消费的topic存在交集
+     * Consumers specify a queue for consumption, and there is an intersection between the topics in the queue
+     * and those prohibited from consumption
      */
     @Test
     public void testDisablePullConsumptionWithAssignSubTractTopics() {
@@ -160,7 +161,8 @@ public class RocketMqPullConsumerControllerTest {
     }
 
     /**
-     * 消费者指定队列消费，队列的topic和禁消费的topic不存在交集的情况
+     * The consumer specifies a queue for consumption, and there is no intersection between the topics in the
+     * queue and those prohibited from consumption
      */
     @Test
     public void testDisablePullConsumptionWithAssignNoSubTractTopics() {

@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * AbstractHandlerMapping处理器
+ * AbstractHandlerMapping handler
  *
  * @author provenceee
  * @since 2023-02-21
@@ -41,42 +41,43 @@ public class LaneMappingHandler extends AbstractMappingHandler {
     private final LaneService laneService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LaneMappingHandler() {
         laneService = PluginServiceManager.getPluginService(LaneService.class);
     }
 
     /**
-     * 获取透传的标记
+     * Obtain transparent tags
      *
-     * @param path 请求路径
-     * @param methodName http方法
-     * @param headers http请求头
-     * @param parameters url参数
-     * @return 透传的标记
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @return Marks for transparent transmission
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
             Map<String, List<String>> parameters) {
         Set<String> injectTags = configService.getInjectTags();
         if (CollectionUtils.isEmpty(injectTags)) {
-            // 染色标记为空，代表没有染色规则，直接return
+            // The staining mark is empty, which means that there are no staining rules, and it is returned directly
             LOGGER.fine("Lane tags are empty.");
             return Collections.emptyMap();
         }
 
-        // 上游透传的标记
+        // Markers for upstream transparent transmissions
         Map<String, List<String>> tags = getRequestTag(headers, injectTags);
 
-        // 本次染色标记
+        // This staining marker
         Map<String, List<String>> laneTag = laneService.getLaneByParameterList(path, methodName, headers, parameters);
         if (CollectionUtils.isEmpty(laneTag)) {
             LOGGER.fine("Lane is empty.");
             return tags;
         }
 
-        // 如果上游传来的标记中，存在与本次染色相同的标记，以上游传递的为准
+        // If there is a marker in the upstream transmission that is the same as the one in this staining,
+        // the upstream transmission shall prevail
         laneTag.forEach(tags::putIfAbsent);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Lane is " + tags);

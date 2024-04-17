@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * 路由配置
+ * Route configuration
  *
  * @author provenceee
  * @since 2021-11-18
@@ -37,58 +37,66 @@ import java.util.Map;
 @ConfigTypeKey("router.plugin")
 public class RouterConfig implements PluginConfig {
     /**
-     * 路由版本
+     * Route version
      */
     private String routerVersion = RouterConstant.ROUTER_DEFAULT_VERSION;
 
     /**
-     * 区域
+     * Region
      */
     private String zone;
 
     /**
-     * 是否初始化dubbo区域路由，兼容性开关，开启后，会在dubbo的配置缓存中初始化一条以zone匹配的同标签路由
+     * After the compatibility switch is enabled, a route with the same label matching zone will be initialized in the
+     * configuration cache of dubbo
      */
     @ConfigFieldKey("enabled-dubbo-zone-router")
     private boolean enabledDubboZoneRouter;
 
     /**
-     * 是否初始化spring cloud区域路由，兼容性开关，开启后，会在spring cloud的配置缓存中初始化一条以zone匹配的同标签路由
+     * After the Spring Cloud region route is initialized, a zone matching route with the same label will be initialized
+     * in the Spring Cloud configuration cache
      */
     @ConfigFieldKey("enabled-spring-zone-router")
     private boolean enabledSpringZoneRouter;
 
     /**
-     * 是否适配注册插件
+     * whether the registration plugin is suitable
      */
     @ConfigFieldKey("enabled-registry-plugin-adaptation")
     private boolean enabledRegistryPluginAdaptation;
 
     /**
-     * 是否使用请求信息做路由
+     * whether to use the request information for routing
      */
     @ConfigFieldKey("use-request-router")
     private boolean useRequestRouter;
 
     /**
-     * 使用请求信息做路由时的tags
+     * use the request information as a route tags
      */
     @ConfigFieldKey("request-tags")
     private List<String> requestTags;
 
     /**
-     * 其它配置
+     * other configurations
      */
     private Map<String, String> parameters;
 
     /**
-     * 需要解析的请求头的tag
+     * the tag of the request header to be resolved
      */
     @ConfigFieldKey("parse-header-tag")
     private String parseHeaderTag;
 
     /**
-     * 构造方法
+     * compatibility router config 1.0, default is false not support
+     */
+    @ConfigFieldKey("enabled-previous-rule")
+    private boolean enabledPreviousRule = false;
+
+    /**
+     * Constructor
      */
     public RouterConfig() {
         ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
@@ -153,9 +161,9 @@ public class RouterConfig implements PluginConfig {
     }
 
     /**
-     * 请求头在http请求中，会统一转成小写
+     * The request header is changed to lowercase in the HTTP request
      *
-     * @param requestTags 使用请求信息做路由时的tags
+     * @param requestTags use the request information as a route tags
      */
     public void setRequestTags(List<String> requestTags) {
         if (requestTags != null) {
@@ -180,5 +188,13 @@ public class RouterConfig implements PluginConfig {
 
     public void setParseHeaderTag(String parseHeaderTag) {
         this.parseHeaderTag = parseHeaderTag;
+    }
+
+    public boolean isEnabledPreviousRule() {
+        return enabledPreviousRule;
+    }
+
+    public void setEnabledPreviousRule(boolean enabledPreviousRule) {
+        this.enabledPreviousRule = enabledPreviousRule;
     }
 }

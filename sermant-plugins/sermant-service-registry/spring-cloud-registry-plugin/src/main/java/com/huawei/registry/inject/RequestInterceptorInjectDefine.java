@@ -20,7 +20,7 @@ package com.huawei.registry.inject;
 import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 
 /**
- * 请求拦截注入
+ * Request to intercept the injection
  *
  * @author zhouss
  * @since 2022-05-17

@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 测试LaneInterceptorHandler
+ * Test LaneInterceptorHandler
  *
  * @author provenceee
  * @since 2023-02-28
@@ -48,7 +48,7 @@ public class LaneRequestTagHandlerTest {
     private final LaneRequestTagHandler handler;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -59,7 +59,7 @@ public class LaneRequestTagHandlerTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -71,15 +71,15 @@ public class LaneRequestTagHandlerTest {
     }
 
     /**
-     * 测试getRequestTag方法
+     * Test the getRequestTag method
      */
     @Test
     public void testGetRequestTag() {
-        // 测试matchTags为null
+        // Test matchTags as null
         Map<String, List<String>> requestTag = handler.getRequestTag("", "", null, null, new Keys(null, null));
         Assert.assertEquals(requestTag, Collections.emptyMap());
 
-        // 测试getLane返回空
+        // Test getLane returns null
         laneService.setReturnEmpty(true);
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("bar", Collections.singletonList("bar1"));
@@ -92,7 +92,7 @@ public class LaneRequestTagHandlerTest {
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
-        // 测试getLane不为空
+        // Test getLane is not empty
         laneService.setReturnEmpty(false);
         requestTag = handler.getRequestTag("", "", headers, null, new Keys(null, matchTags));
         Assert.assertEquals(3, requestTag.size());

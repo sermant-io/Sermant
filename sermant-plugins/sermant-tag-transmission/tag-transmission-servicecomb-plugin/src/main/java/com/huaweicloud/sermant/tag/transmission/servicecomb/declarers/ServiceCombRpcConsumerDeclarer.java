@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.servicecomb.interceptors.ServiceCombRpcConsumerInterceptor;
 
 /**
- * servicecombRPC consumer端declarer，支持servicecomb2.x版本
+ * servicecombRPC consumer declarer, supports servicecomb2.x
  *
  * @author daizhenyu
  * @since 2023-08-26

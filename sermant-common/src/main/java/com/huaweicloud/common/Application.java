@@ -17,7 +17,7 @@
 package com.huaweicloud.common;
 
 /**
- * JavaDoc启动类
+ * JavaDoc application
  *
  * @author zhp
  * @version 0.0.1

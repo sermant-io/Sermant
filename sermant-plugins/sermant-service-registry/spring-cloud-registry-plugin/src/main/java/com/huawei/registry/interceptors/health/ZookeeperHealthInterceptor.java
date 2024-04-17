@@ -33,7 +33,7 @@ import java.security.AccessController;
 import java.util.logging.Logger;
 
 /**
- * 注册中心健康状态变更
+ * Registration Center Health Status Change
  *
  * @author zhouss
  * @since 2021-12-13
@@ -55,13 +55,13 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
         AccessController.doPrivileged(new FieldAccessAction(modifiersField));
         final CuratorFramework client = (CuratorFramework) curator.get(target);
 
-        // 关闭客户端, 停止定时器
+        // Shut down the client and stop the timer
         client.close();
         final Field cache = watch.getClass().getDeclaredField("cache");
         AccessController.doPrivileged(new FieldAccessAction(cache));
         modifiersField.setInt(cache, cache.getModifiers() & ~Modifier.FINAL);
 
-        // 清空缓存
+        // Clear the cache
         cache.set(target, null);
         LOGGER.warning("Zookeeper client has been closed by user.");
     }
@@ -72,10 +72,10 @@ public class ZookeeperHealthInterceptor extends SingleStateCloseHandler {
         if (arguments.length > 1 && arguments[1] instanceof TreeCacheEvent) {
             TreeCacheEvent event = (TreeCacheEvent) arguments[1];
             if (!isAvailable(event.getType())) {
-                // 注册中心断开
+                // The registry is disconnected
                 RegisterContext.INSTANCE.compareAndSet(true, false);
             } else if (isAvailable(event.getType())) {
-                // 注册中心可用
+                // The registry is available
                 RegisterContext.INSTANCE.compareAndSet(false, true);
             } else {
                 return context;

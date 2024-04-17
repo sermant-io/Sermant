@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
- * 基于SPI将所有operator加载进来
+ * all operators are loaded based on spi
  *
  * @author zhouss
  * @since 2021-11-24
  */
 public enum OperatorManager {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
     /**
-     * 所有比较器 map -> name, operator
+     * allComparator map -> name, operator
      */
     private final Map<String, Operator> operators = new HashMap<String, Operator>();
 
@@ -49,9 +49,9 @@ public enum OperatorManager {
     }
 
     /**
-     * 获取比较器
+     * get comparator
      *
-     * @param id 比较器ID
+     * @param id comparator id
      * @return Operator
      */
     public Operator getOperator(String id) {

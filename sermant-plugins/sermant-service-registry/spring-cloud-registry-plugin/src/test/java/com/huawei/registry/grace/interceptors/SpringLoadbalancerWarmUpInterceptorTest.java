@@ -35,16 +35,16 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 测试预热能力-loadbalancer
+ * Test the warm-up capacity-loadbalancer
  *
  * @author zhouss
  * @since 2022-06-30
  */
 public class SpringLoadbalancerWarmUpInterceptorTest extends WarmUpTest {
     /**
-     * 测试预热
+     * Test warm-up
      *
-     * @throws NoSuchMethodException 找不到反复抛出
+     * @throws NoSuchMethodException Can't find a repeated throw
      */
     @Test
     public void testWarmUp() throws NoSuchMethodException {
@@ -60,11 +60,11 @@ public class SpringLoadbalancerWarmUpInterceptorTest extends WarmUpTest {
     }
 
     /**
-     * 执行操作
+     * Take action
      *
-     * @param interceptor    拦截器
-     * @param executeContext 上下文
-     * @param argument       参数
+     * @param interceptor    Interceptor
+     * @param executeContext Context
+     * @param argument       Parameter
      */
     private void process(GraceSwitchInterceptor interceptor, ExecuteContext executeContext, Object argument) {
         final HashMap<String, Integer> statResult = new HashMap<>();

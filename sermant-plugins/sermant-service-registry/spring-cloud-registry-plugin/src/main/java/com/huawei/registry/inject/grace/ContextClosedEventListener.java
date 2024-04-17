@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.logging.Logger;
 
 /**
- * spring关闭时间监听器
+ * Spring closes the time listener
  *
  * @author provenceee
  * @since 2022-05-25
@@ -42,7 +42,7 @@ public class ContextClosedEventListener {
     private GraceService graceService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ContextClosedEventListener() {
         try {
@@ -54,7 +54,7 @@ public class ContextClosedEventListener {
     }
 
     /**
-     * ContextClosedEvent事件监听器
+     * ContextClosedEvent Event listeners
      */
     @EventListener(value = ContextClosedEvent.class)
     public void listener() {

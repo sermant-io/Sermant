@@ -17,9 +17,9 @@
 
 package com.huawei.flowcontrol.config;
 
+import com.huawei.flowcontrol.common.config.FlowControlConfig;
 import com.huawei.flowcontrol.common.core.constants.CseConstants;
 import com.huawei.flowcontrol.common.entity.FlowControlServiceMeta;
-import com.huawei.flowcontrol.common.config.FlowControlConfig;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
@@ -28,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import org.apache.dubbo.common.utils.ConfigUtils;
 
 /**
- * apache dubbo配置拦截
+ * apache dubbo configuration interceptor
  *
  * @author zhouss
  * @since 2022-01-28
@@ -42,19 +42,19 @@ public class ApacheDubboConfigInterceptor extends AbstractInterceptor {
             return context;
         }
         FlowControlServiceMeta.getInstance().setVersion(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_VERSION,
-            CseConstants.DEFAULT_DUBBO_VERSION));
+                CseConstants.DEFAULT_DUBBO_VERSION));
         FlowControlServiceMeta.getInstance().setProject(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_KIE_PROJECT,
-            CseConstants.DEFAULT_PROJECT));
+                CseConstants.DEFAULT_PROJECT));
         FlowControlServiceMeta.getInstance().setServiceName(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_SERVICE_NAME,
-            CseConstants.DEFAULT_DUBBO_SERVICE_NAME));
+                CseConstants.DEFAULT_DUBBO_SERVICE_NAME));
         FlowControlServiceMeta.getInstance().setEnvironment(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_ENVIRONMENT,
-            CseConstants.DEFAULT_DUBBO_ENVIRONMENT));
+                CseConstants.DEFAULT_DUBBO_ENVIRONMENT));
         FlowControlServiceMeta.getInstance().setApp(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_APP_NAME,
-            CseConstants.DEFAULT_DUBBO_APP_NAME));
+                CseConstants.DEFAULT_DUBBO_APP_NAME));
         FlowControlServiceMeta.getInstance().setCustomLabel(ConfigUtils.getProperty(CseConstants.KEY_DUBBO_CUSTOM_LABEL,
-            CseConstants.DEFAULT_CUSTOM_LABEL));
+                CseConstants.DEFAULT_CUSTOM_LABEL));
         FlowControlServiceMeta.getInstance().setCustomLabelValue(ConfigUtils.getProperty(
-            CseConstants.KEY_DUBBO_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
+                CseConstants.KEY_DUBBO_CUSTOM_LABEL_VALUE, CseConstants.DEFAULT_CUSTOM_LABEL_VALUE));
         return context;
     }
 

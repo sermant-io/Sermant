@@ -18,19 +18,33 @@ package com.huaweicloud.sermant.database.interceptor;
 
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import com.huaweicloud.sermant.database.controller.DatabaseController;
+import com.huaweicloud.sermant.database.entity.DatabaseInfo;
 import com.huaweicloud.sermant.database.handler.DatabaseHandler;
+import com.huaweicloud.sermant.database.utils.SqlParserUtils;
+
+import java.util.Set;
 
 /**
- * mongodb抽象interceptor
+ * database abstract interceptor
  *
  * @author daizhenyu
  * @since 2024-01-22
  **/
 public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
+    /**
+     * key for storing database information
+     */
+    protected static final String DATABASE_INFO = "databaseInfo";
+
+    /**
+     * customize the database handling
+     */
     protected DatabaseHandler handler;
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
+        createAndCacheDatabaseInfo(context);
         if (handler != null) {
             handler.doBefore(context);
             return context;
@@ -57,10 +71,58 @@ public abstract class AbstractDatabaseInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 方法执行前
+     * before method execution
      *
-     * @param context 上下文
-     * @return ExecuteContext 上下文
+     * @param context context
+     * @return ExecuteContext context
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
+
+    /**
+     * Create a database instance object and cache it in the context's local property set
+     *
+     * @param context context
+     */
+    protected abstract void createAndCacheDatabaseInfo(ExecuteContext context);
+
+    /**
+     * Gets database instance information from the context local property set
+     *
+     * @param context context
+     * @return DatabaseInfo database instance information
+     */
+    protected DatabaseInfo getDataBaseInfo(ExecuteContext context) {
+        return (DatabaseInfo) context.getLocalFieldValue(DATABASE_INFO);
+    }
+
+    /**
+     * If database write prohibition is enabled on the current database and
+     * the write operation is performed, the write prohibition logic is performed，
+     *
+     * @param sql executed sql
+     * @param databaseName name of the database where the sql is executed
+     * @param prohibitionDatabases write forbidden database collection
+     * @param context contextual information
+     */
+    protected void handleWriteOperationIfWriteDisabled(String sql, String databaseName,
+            Set<String> prohibitionDatabases, ExecuteContext context) {
+        if (prohibitionDatabases.contains(databaseName) && SqlParserUtils.isWriteOperation(sql)) {
+            DatabaseController.disableDatabaseWriteOperation(databaseName, context);
+        }
+    }
+
+    /**
+     * If the mongodb database has write prohibition enabled and it is a write operation, the write prohibition logic
+     * will be executed
+     *
+     * @param databaseName databaseName
+     * @param prohibitionDatabases prohibition write database collection
+     * @param context contextual information
+     */
+    protected void handleWriteOperationIfWriteDisabled(String databaseName,
+            Set<String> prohibitionDatabases, ExecuteContext context) {
+        if (prohibitionDatabases.contains(databaseName)) {
+            DatabaseController.disableDatabaseWriteOperation(databaseName, context);
+        }
+    }
 }

@@ -21,39 +21,46 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 
 /**
- * dubbo拦截
+ * dubbo intercept
  *
  * @author zhouss
  * @since 2022-01-25
  */
 public interface DubboService {
     /**
-     * 前置拦截
+     * preintercept
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param requestEntity 请求信息
-     * @param fixedResult   修正结果
-     * @param isProvider    是否为生产者
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param requestEntity requestInformation
+     * @param fixedResult fixedResult
+     * @param isProvider isProvider
      */
     void onBefore(String sourceName, RequestEntity requestEntity, FlowControlResult fixedResult, boolean isProvider);
 
     /**
-     * 后置方法
+     * postsetMethod
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param result       响应结果
-     * @param isProvider   是否为生产者
-     * @param hasException 是否发生调用异常， dubbo场景发生异常会调用after方法
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param result response result
+     * @param isProvider is provider
+     * @param hasException whether a call exception occurs， The after method is called when an exception occurs in the
+     * dubbo scenario
      */
     void onAfter(String sourceName, Object result, boolean isProvider, boolean hasException);
 
     /**
-     * 异常抛出方法
+     * exception throwing method
      *
-     * @param sourceName 发起原, 建议为目标拦截器权限定名, 该值用于在跨多个拦截器时区分线程变量
-     * @param throwable  异常信息
-     * @param isProvider 是否为生产者
-     * @return 是否需要重试
+     * @param sourceName From the origin, it is recommended to name the target interceptor permission. This value is
+     * used to distinguish thread variables when spanning multiple interceptors.
+     *
+     * @param throwable exception message
+     * @param isProvider is provider
+     * @return need to retry
      */
     boolean onThrow(String sourceName, Throwable throwable, boolean isProvider);
 }

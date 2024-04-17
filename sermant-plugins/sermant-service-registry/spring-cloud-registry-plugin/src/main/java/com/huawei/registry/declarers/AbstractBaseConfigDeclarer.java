@@ -23,28 +23,28 @@ import com.huaweicloud.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 拦截点基础配置
+ * Basic configuration of interception points
  *
  * @author zhouss
  * @since 2022-08-18
  */
 public abstract class AbstractBaseConfigDeclarer extends AbstractPluginDeclarer {
     /**
-     * 注册配置
+     * Registration Configuration
      */
     protected final RegisterConfig registerConfig;
 
     /**
-     * 构造器
+     * Constructor
      */
     protected AbstractBaseConfigDeclarer() {
         this.registerConfig = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }
 
     /**
-     * 是否开启双注册, 默认
+     * Whether to enable dual registration
      *
-     * @return true 双注册
+     * @return true Dual Registration
      */
     protected boolean isEnableSpringDoubleRegistry() {
         return registerConfig.isEnableSpringRegister() && registerConfig.isOpenMigration();

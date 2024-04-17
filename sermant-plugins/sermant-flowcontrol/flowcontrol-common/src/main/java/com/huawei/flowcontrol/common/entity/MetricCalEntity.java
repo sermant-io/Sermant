@@ -16,29 +16,29 @@
 package com.huawei.flowcontrol.common.entity;
 
 /**
- * 指标计算实体类
+ * index computes entity class
  *
  * @author zhp
  * @since 2022-09-15
  */
 public class MetricCalEntity {
     /**
-     * 服务端累计请求数
+     * total requests on the server
      */
     private long serverReqSum;
 
     /**
-     * 服务端累计成功请求数
+     * total successful requests on the server
      */
     private long successFulServerReqSum;
 
     /**
-     * 服务端累计请求时间
+     * total request time on the server
      */
     private long consumeServerReqTimeSum;
 
     /**
-     * 服务端累计失败请求数
+     * total number of failed requests on the server
      */
     private long failedServerReqSum;
 

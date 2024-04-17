@@ -17,34 +17,34 @@
 package com.huawei.discovery.entity;
 
 /**
- * 状态记录
+ * Status Records
  *
  * @author zhouss
  * @since 2022-09-28
  */
 public interface Recorder {
     /**
-     * 调用前请求
+     * Pre-call requests
      */
     void beforeRequest();
 
     /**
-     * 异常调用统计
+     * Statistics on abnormal calls
      *
-     * @param ex 异常类型
-     * @param consumeTimeMs 调用消耗的时间
+     * @param ex The type of exception
+     * @param consumeTimeMs The time consumed by the call
      */
     void errorRequest(Throwable ex, long consumeTimeMs);
 
     /**
-     * 结果调用
+     * Result call
      *
-     * @param consumeTimeMs 调用消耗的时间
+     * @param consumeTimeMs The time consumed by the call
      */
     void afterRequest(long consumeTimeMs);
 
     /**
-     * 结束请求
+     * End the request
      */
     void completeRequest();
 }

@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ServerMetadataInterceptor类的单元测试
+ * ServerHeaderInterceptorTest
  *
  * @author daizhenyu
  * @since 2023-08-31
@@ -52,7 +52,7 @@ public class ServerHeaderInterceptorTest extends AbstractRpcInterceptorTest {
 
     @Test
     public void testInterceptCall() {
-        // 配置grpc拦截器所需参数
+        // Configure parameters required by the grpc interceptor
         ServerCall call = Mockito.mock(ServerCall.class);
         ServerCallHandler handler = Mockito.mock(ServerCallHandler.class);
         Metadata metadata;
@@ -60,11 +60,11 @@ public class ServerHeaderInterceptorTest extends AbstractRpcInterceptorTest {
         Key<String> name = Key.of("name", Metadata.ASCII_STRING_MARSHALLER);
         Key<String> id = Key.of("id", Metadata.ASCII_STRING_MARSHALLER);
 
-        // metadata为null
+        // metadata is null
         interceptor.interceptCall(call, null, handler);
         Assert.assertNull(TrafficUtils.getTrafficTag());
 
-        // metadata含有均符合匹配规则的流量标签，且value不为null
+        // The metadata contains traffic labels that all match the matching rules, and the value is not null.
         metadata = new Metadata();
         metadata.put(id, "001");
         metadata.put(name, "test001");
@@ -74,7 +74,7 @@ public class ServerHeaderInterceptorTest extends AbstractRpcInterceptorTest {
         interceptor.interceptCall(call, metadata, handler);
         Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTag);
 
-        // metadata含有为null部分的流量标签
+        // metadata contains null traffic tag
         metadata = new Metadata();
         metadata.put(name, "null");
         metadata.put(id, "001");

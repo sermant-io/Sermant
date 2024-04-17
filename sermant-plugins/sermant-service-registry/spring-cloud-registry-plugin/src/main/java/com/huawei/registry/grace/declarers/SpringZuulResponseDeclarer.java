@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截zuul请求
+ * Intercept zuul requests
  *
  * @author zhouss
  * @since 2022-05-25
@@ -34,7 +34,7 @@ public class SpringZuulResponseDeclarer extends AbstractPluginDeclarer {
     private static final String ENHANCE_CLASS = "com.netflix.zuul.http.ZuulServlet";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = SpringZuulResponseInterceptor.class.getCanonicalName();
 

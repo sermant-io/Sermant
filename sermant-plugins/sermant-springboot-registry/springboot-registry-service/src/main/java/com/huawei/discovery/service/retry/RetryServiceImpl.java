@@ -27,6 +27,7 @@ import com.huawei.discovery.service.InvokerService;
 import com.huawei.discovery.service.retry.policy.RetryPolicy;
 import com.huawei.discovery.service.retry.policy.RoundRobinRetryPolicy;
 import com.huawei.discovery.service.util.ApplyUtil;
+
 import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
@@ -40,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 重试调用
+ * Retry the call
  *
  * @author zhouss
  * @since 2022-09-28
@@ -53,7 +54,7 @@ public class RetryServiceImpl implements InvokerService {
     private RetryPolicy retryPolicy;
 
     /**
-     * 最大配置数量
+     * Maximum number of configurations
      */
     private int maxSize;
 
@@ -98,13 +99,14 @@ public class RetryServiceImpl implements InvokerService {
     }
 
     private Optional<Object> invoke(Function<InvokerContext, Object> invokeFunc, Function<Throwable, Object> exFunc,
-                                    String serviceName, Retry retry) {
+            String serviceName, Retry retry) {
         try {
             return invokeWithEx(invokeFunc, serviceName, retry);
         } catch (RetryException ex) {
             return Optional.ofNullable(exFunc.apply(ex.getRealEx()));
         } catch (Exception ex) {
-            // 重试最终失败抛出异常, 需对异常进行封装, 返回给上游, 或者作为当前调用返回调用方
+            // If the retry finally fails to throw an exception, the exception needs to be encapsulated and returned to
+            // the upstream or returned to the caller as the current call
             LOGGER.log(Level.WARNING, String.format(Locale.ENGLISH, "Request failed for service [%s]", serviceName),
                     ex);
             return Optional.ofNullable(exFunc.apply(ex));

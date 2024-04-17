@@ -41,19 +41,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 负载均衡规则解析器
+ * load balancing rule resolver
  *
  * @author zhouss
  * @since 2022-08-09
  */
 public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> {
     /**
-     * lb配置前缀
+     * lb configuration prefix
      */
     public static final String LOAD_BALANCER_PREFIX = "servicecomb.loadbalance.";
 
     /**
-     * 流量标记前缀
+     * traffic mark prefix
      */
     public static final String MATCH_GROUP_PREFIX = "servicecomb.matchGroup.";
 
@@ -64,35 +64,35 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     private final RuleConverter converter;
 
     /**
-     * 仅存放matchGroup的服务名
+     * store only the service name of the matchGroup
      * <pre>
-     *     key: 业务场景名称
-     *     value: 匹配的服务名
+     *     key: business scenario name
+     *     value: matching service name
      * </pre>
      */
     private final Map<String, String> serviceCache = new HashMap<>();
 
     /**
-     * 仅存放loadbalancer的规则类型
+     * only the loadbalancer rule type is stored
      * <pre>
-     *     key: 业务场景名称
-     *     value: 负载均衡类型
+     *     key: business scenario name
+     *     value: load balancing type
      * </pre>
      */
     private final Map<String, String> ruleCache = new HashMap<>();
 
     /**
-     * 服务缓存监听器, 当配置更新时, 同时需要刷新缓存
+     * The service cache listener needs to refresh the cache when the configuration is updated
      */
     private final List<CacheListener> cacheListeners = new ArrayList<>();
 
     /**
-     * 规则缓存 key: 业务场景名称 value: 负载均衡规则
+     * ruleCache key: business scenario name value: load balancing rule
      */
     private Map<String, LoadbalancerRule> rules = new ConcurrentHashMap<>();
 
     /**
-     * 规则构造器
+     * rule constructor
      */
     public LoadbalancerRuleResolver() {
         this.converter = PluginServiceManager.getPluginService(RuleConverter.class);
@@ -143,9 +143,9 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     }
 
     /**
-     * 组合matchGroup serviceName与loadbalancer rule,并返回变更的规则
+     * Combine matchGroup serviceName and loadbalancer rule,and return the changed rule
      *
-     * @return 负载均衡规则
+     * @return load balancing rule
      */
     private Optional<LoadbalancerRule> combine() {
         final Map<String, LoadbalancerRule> newRules = new ConcurrentHashMap<>(ruleCache.size());
@@ -164,32 +164,32 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     }
 
     /**
-     * 获取变更的规则:
+     * get the rules for the change:
      *
-     * <p>删除: 返回被删除的规则</p>
-     * <p>新增: 返回新增的规则</p>
-     * <p>更改: 返回更改前后的规则, 见{@link ChangedLoadbalancerRule}</p>
+     * <p>delete: returns the deleted rule</p>
+     * <p>new: return the new rule</p>
+     * <p>change: returns the rule before and after the change, see{@link ChangedLoadbalancerRule}</p>
      *
-     * @param oldRules 旧规则集合
-     * @param newRules 新规则集合
-     * @return 变更的规则
+     * @param oldRules old rule set
+     * @param newRules new rule set
+     * @return modified rule
      */
     private Optional<LoadbalancerRule> getChangedRule(Map<String, LoadbalancerRule> oldRules,
             Map<String, LoadbalancerRule> newRules) {
         for (Entry<String, LoadbalancerRule> entry : oldRules.entrySet()) {
             final LoadbalancerRule rule = newRules.get(entry.getKey());
             if (rule == null) {
-                // 已删除的规则
+                // deleted rule
                 return Optional.ofNullable(entry.getValue());
             }
             if (!StringUtils.equals(entry.getValue().getRule(), rule.getRule())
                     || !StringUtils.equals(entry.getValue().getServiceName(), rule.getServiceName())) {
-                // 变更后的规则
+                // the changed rules
                 return Optional.of(new ChangedLoadbalancerRule(entry.getValue(), rule));
             }
         }
 
-        // 新增规则
+        // new rule
         if (newRules.size() > oldRules.size()) {
             for (Entry<String, LoadbalancerRule> entry : newRules.entrySet()) {
                 if (oldRules.get(entry.getKey()) == null) {
@@ -251,9 +251,9 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     }
 
     /**
-     * 添加缓存监听器
+     * add a cache listener
      *
-     * @param cacheListener 监听器
+     * @param cacheListener listener
      */
     public void addListener(CacheListener cacheListener) {
         if (cacheListener == null) {
@@ -267,18 +267,18 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
     }
 
     /**
-     * 判断当前的缓存是否存在, 若存在配置内容则为已配置
+     * Check whether the current cache exists. If the configuration content exists, the cache is configured
      *
-     * @return true为已配置
+     * @return true the value is configured
      */
     public boolean isConfigured() {
         return !ruleCache.isEmpty() || !serviceCache.isEmpty();
     }
 
     /**
-     * 获取目标服务的负载均衡类型
+     * gets the load balancing type of the target service
      *
-     * @param serviceName 目标服务名
+     * @param serviceName target service name
      * @return LoadbalancerRule
      */
     public Optional<LoadbalancerRule> getTargetServiceRule(String serviceName) {
@@ -289,7 +289,8 @@ public class LoadbalancerRuleResolver implements RuleResolver<LoadbalancerRule> 
             return any;
         }
 
-        // 若没有则查看针对所有服务生效的负载均衡, 即serviceName为空的负载均衡规则
+        // If not, check the load balancing rules that are effective for all services,
+        // that is, the load balancing rules with empty serviceName.
         return rules.values().stream()
                 .filter(rule -> Objects.isNull(rule.getServiceName()) && Objects.nonNull(rule.getRule()))
                 .findAny();

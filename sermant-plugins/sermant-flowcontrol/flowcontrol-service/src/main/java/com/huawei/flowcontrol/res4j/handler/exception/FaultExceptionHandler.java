@@ -25,7 +25,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResponse;
 import com.huawei.flowcontrol.common.entity.FlowControlResult;
 
 /**
- * 错误注入异常处理
+ * error injection exception handling
  *
  * @author zhouss
  * @since 2022-08-05
@@ -39,7 +39,7 @@ public class FaultExceptionHandler extends AbstractExceptionHandler<FaultExcepti
             return new FlowControlResponse(ex.getMsg(), CommonConst.HTTP_OK, null);
         }
 
-        // 抛异常
+        // throw exception
         return new FlowControlResponse(ex.getMsg(), rule.getErrorCode());
     }
 

@@ -19,7 +19,7 @@ package com.huawei.discovery.service.lb.discovery.zk;
 import com.huawei.discovery.service.lb.discovery.ServiceDiscoveryClient;
 
 /**
- * zk服务
+ * ZK Services
  *
  * @author zhouss
  * @since 2022-10-08

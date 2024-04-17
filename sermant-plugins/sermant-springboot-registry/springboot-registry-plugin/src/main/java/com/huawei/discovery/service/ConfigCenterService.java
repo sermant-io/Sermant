@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 插件生效动态配置服务
+ * The plugin takes effect on the dynamic configuration service
  *
  * @author chengyouling
  * @since 2022-09-26
@@ -35,9 +35,9 @@ public class ConfigCenterService implements PluginService {
     private final AtomicBoolean isRun = new AtomicBoolean();
 
     /**
-     * 实例化动态配置监听
+     * Instantiate dynamic configuration listeners
      *
-     * @param serviceName 宿主服务名
+     * @param serviceName Host service name
      */
     public void init(String serviceName) {
         if (StringUtils.isBlank(serviceName)) {

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由配置处理器(全局维度)
+ * Route Configuration handler (Global Dimension)
  *
  * @author lilai
  * @since 2023-02-18
@@ -69,8 +69,8 @@ public class GlobalConfigHandler extends AbstractConfigHandler {
     }
 
     @Override
-    public boolean shouldHandle(String key, String content) {
-        return super.shouldHandle(key, content) && RouterConstant.GLOBAL_ROUTER_KEY.equals(key);
+    public boolean shouldHandle(String key) {
+        return super.shouldHandle(key) && RouterConstant.GLOBAL_ROUTER_KEY.equals(key);
     }
 
     private List<Map<String, Object>> getRule(DynamicConfigEvent event) {

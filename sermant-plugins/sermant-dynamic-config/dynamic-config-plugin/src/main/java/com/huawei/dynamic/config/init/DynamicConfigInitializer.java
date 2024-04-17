@@ -33,7 +33,7 @@ import com.huaweicloud.sermant.core.plugin.subscribe.DefaultGroupConfigSubscribe
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 配置中心初始化
+ * initialize the configuration center
  *
  * @author zhouss
  * @since 2022-04-13
@@ -42,7 +42,7 @@ public class DynamicConfigInitializer implements PluginService {
     private final AtomicBoolean isStarted = new AtomicBoolean();
 
     /**
-     * 启动初始化任务
+     * the initialization task is started
      */
     public void doStart() {
         if (isStarted.compareAndSet(false, true)) {

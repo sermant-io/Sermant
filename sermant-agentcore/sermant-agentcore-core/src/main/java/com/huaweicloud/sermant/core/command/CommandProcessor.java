@@ -26,14 +26,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 命令处理器
+ * CommandProcessor
  *
  * @author zhp
  * @since 2023-09-09
  */
 public class CommandProcessor {
     /**
-     * 命令执行器Map
+     * COMMAND_EXECUTOR_MAP
      */
     private static final Map<String, CommandExecutor> COMMAND_EXECUTOR_MAP = new HashMap<>();
 
@@ -47,15 +47,15 @@ public class CommandProcessor {
     }
 
     /**
-     * 构造函数
+     * constructor
      */
     private CommandProcessor() {
     }
 
     /**
-     * 处理指令
+     * process command
      *
-     * @param command 指令
+     * @param command command
      */
     public static void process(String command) {
         if (StringUtils.isEmpty(command)) {

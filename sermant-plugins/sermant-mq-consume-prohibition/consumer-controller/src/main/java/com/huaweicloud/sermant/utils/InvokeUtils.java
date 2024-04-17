@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.utils;
 
 /**
- * 是否是Sermant发起的调用判断类
+ * Call the judgment class to determine if it is a call initiated by Sermant
  *
  * @author lilai
  * @since 2023-12-18
@@ -38,20 +38,20 @@ public class InvokeUtils {
     }
 
     /**
-     * kafka禁消费判断是否Sermant发起的调用
+     * Kafka's prohibit on consumption determines whether the call was initiated by Sermant
      *
-     * @param stackTrace 当前线程调用栈
-     * @return 是否Sermant发起的调用
+     * @param stackTrace The current thread call stack
+     * @return Whether or not Sermant initiated the call
      */
     public static boolean isKafkaInvokeBySermant(StackTraceElement[] stackTrace) {
         return isInvokeBySermant(KAFKA_CONSUMER_CLASS_NAME, KAFKA_CONSUMER_CONTROLLER_CLASS_NAME, stackTrace);
     }
 
     /**
-     * rocketmq禁消费判断是否Sermant发起的调用
+     * Rocketmq prohibits consumption and determines whether the call is initiated by Sermant
      *
-     * @param stackTrace 当前线程调用栈
-     * @return 是否Sermant发起的调用
+     * @param stackTrace The current thread call stack
+     * @return Whether or not Sermant initiated the call
      */
     public static boolean isRocketMqInvokeBySermant(StackTraceElement[] stackTrace) {
         return isInvokeBySermant(ROCKETMQ_PULL_CONSUMER_CLASS_NAME, ROCKETMQ_CONSUMER_CONTROLLER_CLASS_NAME,

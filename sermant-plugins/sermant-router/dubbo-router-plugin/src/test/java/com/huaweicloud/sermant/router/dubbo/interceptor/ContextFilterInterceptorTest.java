@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试ContextFilterInterceptor
+ * Test ContextFilterInterceptor
  *
  * @author provenceee
  * @since 2022-10-10
@@ -54,7 +54,7 @@ public class ContextFilterInterceptorTest {
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     /**
-     * UT执行前进行mock
+     * Mock before UT execution
      */
     @BeforeClass
     public static void before() {
@@ -70,7 +70,7 @@ public class ContextFilterInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release all mock objects after UT execution
      */
     @AfterClass
     public static void after() {
@@ -90,7 +90,7 @@ public class ContextFilterInterceptorTest {
     }
 
     /**
-     * 重置测试数据
+     * reset the test data
      */
     @Before
     public void clear() {
@@ -98,11 +98,11 @@ public class ContextFilterInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test before method
      */
     @Test
     public void testBefore() {
-        // 测试before方法
+        // Test before method
         interceptor.before(context);
         RequestTag requestTag = ThreadLocalUtils.getRequestTag();
         Map<String, List<String>> header = requestTag.getTag();
@@ -113,27 +113,27 @@ public class ContextFilterInterceptorTest {
     }
 
     /**
-     * 测试after方法,验证是否释放线程变量
+     * Test the after method to verify if thread variables are released
      */
     @Test
     public void testAfter() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试after方法,验证是否释放线程变量
+        // Test the after method to verify if thread variables are released
         interceptor.after(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }
 
     /**
-     * 测试onThrow方法,验证是否释放线程变量
+     * Test the onThrow method to verify if thread variables are released
      */
     @Test
     public void testOnThrow() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // 测试onThrow方法,验证是否释放线程变量
+        // Test the onThrow method to verify if thread variables are released
         interceptor.onThrow(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
     }

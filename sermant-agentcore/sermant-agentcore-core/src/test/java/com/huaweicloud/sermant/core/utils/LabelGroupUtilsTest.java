@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 
 /**
- * 标签组测试类
+ * LabelGroup tests
  *
  * @author xzc
  * @since 2022-10-08

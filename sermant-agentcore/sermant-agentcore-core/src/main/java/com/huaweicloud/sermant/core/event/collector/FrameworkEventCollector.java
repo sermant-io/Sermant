@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.event.EventInfo;
 import com.huaweicloud.sermant.core.event.config.EventConfig;
 
 /**
- * 框架事件收集器
+ * Framework event collector
  *
  * @author luanwenfei
  * @since 2023-03-04
@@ -37,7 +37,7 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 获取框架事件采集器单例
+     * Get the framework event collector singleton instance
      *
      * @return FrameworkEventCollector
      */
@@ -49,7 +49,7 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集Agent启动事件
+     * Collect agent startup event
      */
     public void collectAgentStartEvent() {
         if (!eventConfig.isEnable()) {
@@ -63,7 +63,7 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集Agent停止事件
+     * Collect agent stop event
      */
     public void collectAgentStopEvent() {
         if (!eventConfig.isEnable()) {
@@ -77,9 +77,9 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集服务启动事件
+     * Collect service startup event
      *
-     * @param serviceName 服务名
+     * @param serviceName serviceName
      */
     public void collectServiceStartEvent(String serviceName) {
         if (!eventConfig.isEnable()) {
@@ -93,9 +93,9 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集服务关闭事件
+     * Collect service stop event
      *
-     * @param serviceName 服务名
+     * @param serviceName serviceName
      */
     public void collectServiceStopEvent(String serviceName) {
         if (!eventConfig.isEnable()) {
@@ -109,9 +109,9 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集插件加载事件
+     * Collect plugin loading event
      *
-     * @param plugin 插件名
+     * @param plugin plugin name
      */
     public void collectPluginsLoadEvent(String plugin) {
         if (!eventConfig.isEnable()) {
@@ -125,7 +125,7 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集字节码增强成功事件
+     * Collect bytecode enhancement success event
      *
      * @param transformDescription transformDescription
      */
@@ -140,7 +140,7 @@ public class FrameworkEventCollector extends EventCollector {
     }
 
     /**
-     * 采集字节码增强失败事件
+     * Collect bytecode enhancement failure event
      *
      * @param transformDescription transformDescription
      */

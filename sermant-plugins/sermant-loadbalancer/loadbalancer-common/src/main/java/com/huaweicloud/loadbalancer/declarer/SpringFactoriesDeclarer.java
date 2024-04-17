@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 拦截SpringFactoriesLoader注入自定配置源
+ * Block SpringFactoriesLoader for injecting custom configuration sources
  *
  * @author zhouss
  * @since 2022-04-08
@@ -41,9 +41,9 @@ public class SpringFactoriesDeclarer extends AbstractPluginDeclarer {
 
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
-        return new InterceptDeclarer[] {
-            InterceptDeclarer.build(MethodMatcher.nameContains("loadSpringFactories", "loadFactoryNames"),
-                    INTERCEPTOR_CLASS)
+        return new InterceptDeclarer[]{
+                InterceptDeclarer.build(MethodMatcher.nameContains("loadSpringFactories", "loadFactoryNames"),
+                        INTERCEPTOR_CLASS)
         };
     }
 }

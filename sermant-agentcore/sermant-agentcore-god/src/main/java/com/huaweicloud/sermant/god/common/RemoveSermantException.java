@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.god.common;
 
 /**
- * 移除sermant异常
+ * RemoveSermantException
  *
  * @author tangle
  * @since 2023-11-03
@@ -26,9 +26,9 @@ public class RemoveSermantException extends RuntimeException {
     private static final long serialVersionUID = -3051156765163094177L;
 
     /**
-     * 移除sermant异常
+     * Exception when removing Sermant
      *
-     * @param cause 抛出对象
+     * @param cause Throw object
      */
     public RemoveSermantException(Throwable cause) {
         super(cause);

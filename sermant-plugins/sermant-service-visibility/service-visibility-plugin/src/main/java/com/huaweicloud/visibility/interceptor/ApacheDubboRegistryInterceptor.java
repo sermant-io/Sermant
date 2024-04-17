@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Dubbo注册增强方法
+ * Dubbo Registration Enhancement Method
  *
  * @author zhp
  * @since 2022-11-30

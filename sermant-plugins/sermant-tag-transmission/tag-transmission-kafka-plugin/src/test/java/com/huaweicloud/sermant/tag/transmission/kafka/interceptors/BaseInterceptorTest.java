@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 流量标签透传UT基础测试类
+ * traffic label transparent ut basic test class
  *
  * @author tangle
  * @since 2023-07-27

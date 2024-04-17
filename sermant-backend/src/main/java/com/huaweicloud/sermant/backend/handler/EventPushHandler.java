@@ -38,7 +38,7 @@ import java.util.Locale;
 import java.util.ServiceLoader;
 
 /**
- * 事件推送
+ * Event Push Handler
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -57,14 +57,14 @@ public class EventPushHandler {
     private BackendConfig backendConfig;
 
     /**
-     * 构造函数
+     * Constructor
      */
     public EventPushHandler() {
         this.init();
     }
 
     /**
-     * 初始化webhook
+     * Initialize the webhook
      */
     private void init() {
         ServiceLoader<WebHookClient> loader = ServiceLoader.load(WebHookClient.class);
@@ -74,9 +74,9 @@ public class EventPushHandler {
     }
 
     /**
-     * 推送事件
+     * Push event
      *
-     * @param eventList 事件信息
+     * @param eventList event information
      */
     public void pushEvent(List<Event> eventList) {
         if (eventList.size() <= 0) {
@@ -93,7 +93,7 @@ public class EventPushHandler {
         for (WebHookClient webHookClient : webHookClients) {
             if (webHookClient.getConfig().getEnable()) {
                 if (!webHookClient.doNotify(needPushWebHook)) {
-                    // 推送失败
+                    // push failed
                     LOGGER.error(String.format(Locale.ROOT, "push event to webhook:{%s} failed!",
                             webHookClient.getConfig().getName()));
                 }
@@ -114,16 +114,16 @@ public class EventPushHandler {
     }
 
     /**
-     * 获取webhook客户端
+     * Get the webhook client
      *
-     * @return webhook客户端
+     * @return webhook client
      */
     public List<WebHookClient> getWebHookClients() {
         return webHookClients;
     }
 
     /**
-     * webhook 测试
+     * webhook test
      *
      * @param webhookId webhook id
      */

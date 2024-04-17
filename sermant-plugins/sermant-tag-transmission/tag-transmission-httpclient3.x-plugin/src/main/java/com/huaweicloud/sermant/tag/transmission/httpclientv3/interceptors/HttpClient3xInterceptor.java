@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * HttpClient 流量标签透传的拦截器, 仅针对3.x版本
+ * HttpClient Interceptor for transparent transmission of traffic tags, for 3.x version only
  *
  * @author lilai
  * @since 2023-08-08
@@ -55,9 +55,9 @@ public class HttpClient3xInterceptor extends AbstractClientInterceptor<HttpMetho
     }
 
     /**
-     * 向HttpMethod中添加流量标签
+     * add traffic tag to HttpMethod
      *
-     * @param httpMethod httpclient 3.x 标签传递载体
+     * @param httpMethod httpclient 3.x traffic tag carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(HttpMethod httpMethod) {
@@ -68,14 +68,15 @@ public class HttpClient3xInterceptor extends AbstractClientInterceptor<HttpMetho
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 httpMethod.setRequestHeader(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to httpclient.", entry);
                 continue;
             }
 
-            // HttpClient 3.x 不支持重复key值
+            // HttpClient 3.x does not support duplicate key
             httpMethod.setRequestHeader(key, values.get(0));
             LOGGER.log(Level.FINE, "Traffic tag {0}={1} have been injected to httpclient.", new Object[]{key,
                     values.get(0)});

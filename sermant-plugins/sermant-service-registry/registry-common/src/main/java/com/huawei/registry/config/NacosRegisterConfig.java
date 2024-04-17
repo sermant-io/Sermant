@@ -28,7 +28,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * nacos注册插件配置
+ * Nacos registration plugin configuration
  *
  * @author chengyouling
  * @since 2022-10-20
@@ -36,128 +36,129 @@ import java.util.Properties;
 @ConfigTypeKey(value = "nacos.service")
 public class NacosRegisterConfig implements PluginConfig {
     /**
-     * 默认拉取间隔时间
+     * Default pull interval
      */
     private static final long DEFAULT_NOTIFY_DELAY = 5000L;
 
     /**
-     * 默认监控时间
+     * The default monitoring time
      */
     private static final long DEFAULT_LOOKUP_INTERVAL = 30L;
 
     /**
-     * 默认数据页大小
+     * Default data page size
      */
     private static final int DEFAULT_PAGINATION_SIZE = 100;
 
     /**
      * spring cloud zone
-     * 若未配置默认使用系统环境变量的zone, 即spring.cloud.loadbalancer.zone
+     * If you do not configure a zone that uses system environment variables by default,
+     * that is, spring.cloud.loadbalancer.zone
      */
     private String zone;
 
     /**
-     * 是否加密
+     * Whether it is encrypted or not
      */
     private boolean secure = false;
 
     /**
-     * nacos认证账户
+     * Nacos authentication Account
      */
     private String username;
 
     /**
-     * nacos认证密码
+     * Nacos authentication password
      */
     private String password;
 
     /**
-     * 节点地址
+     * Node address
      */
     private String endpoint = "";
 
     /**
-     * 命名空间
+     * Namespace
      */
     private String namespace;
 
     /**
-     * nacos日志文件名
+     * The name of the nacos log file
      */
     private String logName;
 
     /**
-     * 服务实例权重
+     * The weight of the service instance
      */
     private float weight = 1f;
 
     /**
-     * 集群名称
+     * The name of the cluster
      */
     private String clusterName = "DEFAULT";
 
     /**
-     * 组
+     * Group
      */
     private String group = "DEFAULT_GROUP";
 
     /**
-     * 启动时是否加载缓存
+     * Whether to load the cache at startup
      */
     private String namingLoadCacheAtStart = "false";
 
     /**
-     * 命名空间AK
+     * Namespace AK
      */
     private String accessKey;
 
     /**
-     * 命名空间SK
+     * Namespace SK
      */
     private String secretKey;
 
     /**
-     * 实例是否可用
+     * Whether the instance is available
      */
     private boolean instanceEnabled = true;
 
     /**
-     * 是否临时节点
+     * Whether it is a temporary node
      */
     private boolean ephemeral = true;
 
     /**
-     * 实例元数据
+     * Instance metadata
      */
     private Map<String, String> metadata = new HashMap<>();
 
     /**
-     * 是否快速失败取缓存数据，false为不取，直接失败
+     * Whether it fails to retrieve cached data quickly, if false is not retrieved, it will fail directly
      */
     private boolean failureToleranceEnabled = false;
 
     /**
-     * 服务名分隔符
+     * Service name separator
      */
     private String serviceNameSeparator = ":";
 
     /**
-     * 数据页大小
+     * Data page size
      */
     private int paginationSize = DEFAULT_PAGINATION_SIZE;
 
     /**
-     * 监控时间
+     * Monitor time
      */
     private long lookupInterval = DEFAULT_LOOKUP_INTERVAL;
 
     /**
-     * 唤醒延时时间
+     * Wake-up delay time
      */
     private long notifyDelay = DEFAULT_NOTIFY_DELAY;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosRegisterConfig() {
         final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
@@ -337,7 +338,7 @@ public class NacosRegisterConfig implements PluginConfig {
     }
 
     /**
-     * 获取配置参数
+     * Obtain the configuration parameters
      *
      * @return 配置
      */

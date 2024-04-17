@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 通用的基础Adviser
+ * General basic Adviser
  *
  * @author HapThorin
  * @version 1.0.0
@@ -44,12 +44,14 @@ public class BaseAdviseHandler {
     }
 
     /**
-     * 方法入口的Adviser逻辑
+     * Adviser logic of method enter
      *
-     * @param context 执行上下文
-     * @param adviceKey advice的关键字，由类和方法描述、advice模板、被增强类的类加载器组成
-     * @param enterHandler onEnter的异常处理器
-     * @return 执行上下文
+     * @param context ExecuteContext
+     * @param adviceKey adviceKey, consists of the class and method description, the advice template, and the
+     * classLoader for the enhanced class
+     *
+     * @param enterHandler exception handler of onEnter
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     public static ExecuteContext handleMethodEnter(ExecuteContext context, String adviceKey,
@@ -63,13 +65,13 @@ public class BaseAdviseHandler {
     }
 
     /**
-     * onEnter处理逻辑
+     * logic of onEnter
      *
-     * @param context 执行上下文
-     * @param interceptorItr 拦截器双向迭代器
-     * @param enterHandler onEnter的异常处理器
-     * @return 执行上下文
-     * @throws Throwable 抛给宿主的异常
+     * @param context ExecuteContext
+     * @param interceptorItr Interceptor bidirectional iterator
+     * @param enterHandler exception handler of onEnter
+     * @return ExecuteContext
+     * @throws Throwable throws to the host instance
      */
     public static ExecuteContext handleMethodEnter(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
             ExceptionHandler enterHandler) throws Throwable {
@@ -99,7 +101,7 @@ public class BaseAdviseHandler {
                 return newContext;
             }
 
-            // 指定向宿主应用抛出异常
+            // Specifies that an exception is thrown to the host instance
             if (newContext.getThrowableOut() != null) {
                 throw newContext.getThrowableOut();
             }
@@ -108,13 +110,15 @@ public class BaseAdviseHandler {
     }
 
     /**
-     * 方法出口的Adviser逻辑
+     * Adviser logic of method exit
      *
-     * @param context 执行上下文
-     * @param adviceKey advice的关键字，由类和方法描述、advice模板、被增强类的类加载器组成
-     * @param throwHandler onThrow的异常处理器
-     * @param exitHandler onExit的异常处理器
-     * @return 执行上下文
+     * @param context ExecuteContext
+     * @param adviceKey adviceKey, consists of the class and method description, the advice template, and the
+     * classLoader for the enhanced class
+     *
+     * @param throwHandler exception handler of onThrow
+     * @param exitHandler exception handler of onExit
+     * @return ExecuteContext
      * @throws Throwable Throwable
      */
     public static ExecuteContext handleMethodExit(ExecuteContext context, String adviceKey,
@@ -127,14 +131,14 @@ public class BaseAdviseHandler {
     }
 
     /**
-     * onExit&onThrow的处理逻辑
+     * logic for onExit&onThrow
      *
-     * @param context 执行上下文
-     * @param interceptorItr 拦截器双向迭代器
-     * @param throwHandler onThrow的异常处理器
-     * @param exitHandler onExit的异常处理器
-     * @return 执行上下文
-     * @throws Throwable 抛给宿主的异常
+     * @param context ExecuteContext
+     * @param interceptorItr Interceptor bidirectional iterator
+     * @param throwHandler exception handler of onThrow
+     * @param exitHandler exception handler of onExit
+     * @return ExecuteContext
+     * @throws Throwable throws to the host instance
      */
     public static ExecuteContext handleMethodExit(ExecuteContext context, ListIterator<Interceptor> interceptorItr,
             ExceptionHandler throwHandler, ExceptionHandler exitHandler) throws Throwable {
@@ -185,17 +189,17 @@ public class BaseAdviseHandler {
     }
 
     /**
-     * 异常处理器接口
+     * Exception Handler Interface
      *
      * @since 2022-01-24
      */
     public interface ExceptionHandler {
         /**
-         * 异常处理逻辑
+         * Exception handling logic
          *
-         * @param context 执行上下文
-         * @param interceptor 拦截器
-         * @param throwable 抛出的异常
+         * @param context ExecuteContext
+         * @param interceptor Interceptor
+         * @param throwable Throwable
          */
         void handle(ExecuteContext context, Interceptor interceptor, Throwable throwable);
     }

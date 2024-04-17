@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.operation;
 
 /**
- * 操作类基础接口
+ * Base Operation
  *
  * @author luanwenfei
  * @since 2022-06-28

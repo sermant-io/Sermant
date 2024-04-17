@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * group生成工具
+ * group generator
  *
  * @author zhouss
  * @since 2021-11-23
@@ -44,22 +44,22 @@ public class LabelGroupUtils {
     private static final String KV_SEPARATOR = "=";
 
     /**
-     * 查询时使用的kv分隔符
+     * The kv separator used in the query
      */
     private static final String LABEL_QUERY_SEPARATOR = ":";
 
     /**
-     * 查询标签前缀
+     * Query label prefix
      */
     private static final String LABEL_PREFIX = "label=";
 
     /**
-     * 键值对长度
+     * Key-value pair length
      */
     private static final int KV_LEN = 2;
 
     /**
-     * 默认组
+     * Default group
      */
     private static final String DEFAULT_GROUP_KEY = "GROUP";
 
@@ -67,10 +67,10 @@ public class LabelGroupUtils {
     }
 
     /**
-     * 创建标签组
+     * Create Label Group
      *
-     * @param labels 标签组
-     * @return labelGroup 例如: app=sc&service=helloService
+     * @param labels labels
+     * @return labelGroup such as: app=sc&service=helloService
      */
     public static String createLabelGroup(Map<String, String> labels) {
         if (labels == null || labels.isEmpty()) {
@@ -79,7 +79,7 @@ public class LabelGroupUtils {
         final StringBuilder group = new StringBuilder();
         final List<String> keys = new ArrayList<>(labels.keySet());
 
-        // 防止相同map因排序不同而导致最后的label不一致
+        // Prevent the same map from having different labels in the end
         Collections.sort(keys);
         for (String key : keys) {
             String value = labels.get(key);
@@ -97,9 +97,9 @@ public class LabelGroupUtils {
     }
 
     /**
-     * 重组group, 防止因多个标签因顺序问题而导致group不同
+     * Reorganize groups to prevent groups from being different due to the order of multiple labels
      *
-     * @param group 标签组
+     * @param group group
      * @return group
      */
     public static String rebuildGroup(String group) {
@@ -110,20 +110,20 @@ public class LabelGroupUtils {
     }
 
     /**
-     * 是否为标签组key
+     * Whether it is a label group key
      *
-     * @param group 监听键
-     * @return 是否为标签组
+     * @param group group
+     * @return result
      */
     public static boolean isLabelGroup(String group) {
         return group != null && group.contains(KV_SEPARATOR);
     }
 
     /**
-     * 解析标签为map
+     * Parse the label as map
      *
-     * @param group 标签组  app=sc&service=helloService
-     * @return 标签键值对, 返回键值将会是有序的
+     * @param group group, such as: app=sc&service=helloService
+     * @return Tag key-value pairs, and the return key values will be ordered
      */
     public static Map<String, String> resolveGroupLabels(String group) {
         final Map<String, String> result = new LinkedHashMap<>();
@@ -132,7 +132,8 @@ public class LabelGroupUtils {
         }
         String curGroup = group;
         if (!isLabelGroup(curGroup)) {
-            // 如果非group标签（ZK配置中心场景适配），则为该group创建标签
+            // If the label is not a group (applicable to the ZK configuration center scenario), create a label for
+            // the group
             curGroup = LabelGroupUtils.createLabelGroup(Collections.singletonMap(DEFAULT_GROUP_KEY, curGroup));
         }
         try {
@@ -143,7 +144,7 @@ public class LabelGroupUtils {
                 if (labelKv.length == KV_LEN) {
                     result.put(labelKv[0], labelKv[1]);
                 } else if (labelKv.length == 1) {
-                    // 仅配置了KEY的情况, 使用空串代替
+                    // If only key is configured, use an empty string instead
                     result.put(labelKv[0], "");
                 } else {
                     LOGGER.warning(String.format(Locale.ENGLISH, "Invalid label [%s]", label));
@@ -156,10 +157,10 @@ public class LabelGroupUtils {
     }
 
     /**
-     * 获取标签信息
+     * get label condition
      *
-     * @param group 分组  app=sc&service=helloService转换label=app:sc&label=service:helloService
-     * @return 标签组条件
+     * @param group group, 'app=sc&service=helloService' is convert to 'label=app:sc&label=service:helloService'
+     * @return label condition
      */
     public static String getLabelCondition(String group) {
         if (StringUtils.isEmpty(group)) {

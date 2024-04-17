@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.utils.StringUtils;
 import org.apache.dubbo.common.URL;
 
 /**
- * 增强ClusterUtils类的mergeUrl方法
+ * Enhance the mergeUrl method of the ClusterUtils class
  *
  * @author zhp
  * @since 2023-02-17

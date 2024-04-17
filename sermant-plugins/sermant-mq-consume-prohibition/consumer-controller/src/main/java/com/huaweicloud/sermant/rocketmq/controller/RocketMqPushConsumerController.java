@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * push消费者控制类
+ * Push consumer control class
  *
  * @author daizhenyu
  * @since 2023-12-04
@@ -43,10 +43,10 @@ public class RocketMqPushConsumerController {
     }
 
     /**
-     * 禁止push消费者消费
+     * Prohibit pushing consumer consumption
      *
-     * @param wrapper push消费者wrapper
-     * @param topics 禁止消费的topic
+     * @param wrapper Push consumer wrapper
+     * @param topics Prohibited consumption topic
      */
     public static void disablePushConsumption(DefaultMqPushConsumerWrapper wrapper, Set<String> topics) {
         Set<String> subscribedTopic = wrapper.getSubscribedTopics();
@@ -68,7 +68,8 @@ public class RocketMqPushConsumerController {
         DefaultMQPushConsumerImpl pushConsumerImpl = wrapper.getPushConsumerImpl();
         String consumerGroup = wrapper.getConsumerGroup();
 
-        // 退出消费者前主动提交消费的offset，退出消费者组后立刻触发一次重平衡，重新分配队列
+        // Before exiting the consumer group, actively submit the offset for consumption, and immediately trigger
+        // a rebalancing and reassign the queue after exiting the consumer group
         pushConsumerImpl.persistConsumerOffset();
         wrapper.getClientFactory().unregisterConsumer(consumerGroup);
         pushConsumerImpl.doRebalance();
@@ -100,9 +101,9 @@ public class RocketMqPushConsumerController {
     }
 
     /**
-     * 添加PushConsumer包装类实例
+     * Add PushConsumer wrapper class instance
      *
-     * @param pushConsumer pushConsumer实例
+     * @param pushConsumer PushConsumer instance
      */
     public static void cachePushConsumer(DefaultMQPushConsumer pushConsumer) {
         Optional<DefaultMqPushConsumerWrapper> pushConsumerWrapperOptional = RocketMqWrapperUtils
@@ -120,9 +121,9 @@ public class RocketMqPushConsumerController {
     }
 
     /**
-     * 移除PushConsumer包装类实例
+     * Remove PushConsumer wrapper class instance
      *
-     * @param pushConsumer pushConsumer实例
+     * @param pushConsumer PushConsumer instance
      */
     public static void removePushConsumer(DefaultMQPushConsumer pushConsumer) {
         int hashCode = pushConsumer.hashCode();
@@ -137,19 +138,19 @@ public class RocketMqPushConsumerController {
     }
 
     /**
-     * 获取PushConsumer的包装类实例
+     * Get the packaging class instance of PushConsumer
      *
-     * @param pushConsumer 消费者实例
-     * @return PushConsumer包装类实例
+     * @param pushConsumer Consumer instance
+     * @return PushConsumer packaging class instance
      */
     public static DefaultMqPushConsumerWrapper getPushConsumerWrapper(DefaultMQPushConsumer pushConsumer) {
         return RocketMqConsumerCache.PUSH_CONSUMERS_CACHE.get(pushConsumer.hashCode());
     }
 
     /**
-     * 获取PushConsumer缓存
+     * Get PushConsumer cache
      *
-     * @return PushConsumer缓存
+     * @return PushConsumer cache
      */
     public static Map<Integer, DefaultMqPushConsumerWrapper> getPushConsumerCache() {
         return RocketMqConsumerCache.PUSH_CONSUMERS_CACHE;

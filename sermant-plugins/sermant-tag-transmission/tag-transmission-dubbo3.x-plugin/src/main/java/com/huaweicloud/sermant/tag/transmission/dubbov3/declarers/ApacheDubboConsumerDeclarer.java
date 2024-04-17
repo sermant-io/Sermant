@@ -23,15 +23,13 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.tag.transmission.dubbov3.interceptors.ApacheDubboConsumerInterceptor;
 
 /**
- * dubbo流量标签透传的consumer端增强声明，支持dubbo3.x版本
+ * Enhanced Declarer on the consumer side of dubbo traffic tag transparent transmission,
+ * supporting dubbo3.x
  *
  * @author daizhenyu
  * @since 2023-08-12
  **/
 public class ApacheDubboConsumerDeclarer extends AbstractPluginDeclarer {
-    /**
-     * 增强类的全限定名、拦截器、拦截方法
-     */
     private static final String ENHANCE_CLASS_APACHE_DUBBO_V3 =
             "org.apache.dubbo.rpc.cluster.filter.support.ConsumerContextFilter";
 

@@ -22,14 +22,14 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 拦截器开关抽象类
+ * Interceptor switch abstract class
  *
  * @author zhp
  * @since 2023-02-21
  */
 public abstract class AbstractSwitchInterceptor extends AbstractInterceptor {
     /**
-     * 离群实例摘除配置
+     * Outlier instance removal configuration
      */
     protected static final RemovalConfig REMOVAL_CONFIG = PluginConfigManager.getPluginConfig(RemovalConfig.class);
 
@@ -50,18 +50,18 @@ public abstract class AbstractSwitchInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 前置触发点
+     * Pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context);
 
     /**
-     * 后置触发点
+     * Rear trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context Execution context
+     * @return Execution context
      */
     protected abstract ExecuteContext doAfter(ExecuteContext context);
 }

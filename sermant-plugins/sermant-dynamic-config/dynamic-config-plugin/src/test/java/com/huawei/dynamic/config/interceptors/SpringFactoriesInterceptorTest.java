@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 注入测试
+ * injection test
  *
  * @author zhouss
  * @since 2022-04-16
@@ -87,7 +87,7 @@ public class SpringFactoriesInterceptorTest {
         hasMethodLoadSpringFactoriesFiled.set(interceptor, Boolean.TRUE);
         ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfterHighVersion"),
                 null, null, null);
-        // 高版本测试
+        // highVersionTesting
         final Map<String, List<String>> cache = new HashMap<>();
         cache.put(BOOTSTRAP_FACTORY_NAME, new ArrayList<>());
         cache.put(ENABLE_AUTO_CONFIGURATION_FACTORY_NAME, new ArrayList<>());
@@ -100,7 +100,7 @@ public class SpringFactoriesInterceptorTest {
 
     @Test
     public void doAfterLowVersion() throws NoSuchMethodException, IllegalAccessException {
-        // 低版本测试
+        // lowVersionTesting
         final SpringFactoriesInterceptor lowVersionInterceptor = new SpringFactoriesInterceptor();
         hasMethodLoadSpringFactoriesFiled.set(lowVersionInterceptor, Boolean.FALSE);
         ExecuteContext executeContext = ExecuteContext.forMemberMethod(this, this.getClass().getMethod("doAfterLowVersion"),

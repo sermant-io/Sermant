@@ -20,16 +20,16 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.utils.ParametersUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 增强ApplicationConfig类的setName方法，用来获取应用名
+ * Enhance the setName method of the ApplicationConfig class to obtain the application name
  *
  * @author provenceee
  * @since 2021-11-08
@@ -38,7 +38,7 @@ public class ApplicationConfigInterceptor extends AbstractInterceptor {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApplicationConfigInterceptor() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);

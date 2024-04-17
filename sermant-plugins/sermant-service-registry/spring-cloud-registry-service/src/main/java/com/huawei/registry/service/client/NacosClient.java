@@ -38,7 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * nacos注册实现客户端
+ * Nacos registers the implementation client
  *
  * @since 2022-11-10
  */
@@ -60,7 +60,7 @@ public class NacosClient {
     private Instance instance;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosClient() {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
@@ -69,7 +69,7 @@ public class NacosClient {
     }
 
     /**
-     * 微服务注册
+     * Microservice registration
      */
     public void register() {
         if (StringUtils.isEmpty(RegisterContext.INSTANCE.getClientInfo().getServiceId())) {
@@ -92,7 +92,7 @@ public class NacosClient {
     }
 
     /**
-     * 下线处理
+     * Offline processing
      */
     public void deregister() {
         if (StringUtils.isEmpty(RegisterContext.INSTANCE.getClientInfo().getServiceId())) {
@@ -111,9 +111,9 @@ public class NacosClient {
     }
 
     /**
-     * 获取nacos服务状态
+     * Obtain the NACOS service status
      *
-     * @return 服务状态
+     * @return Service status
      */
     public String getServerStatus() {
         try {
@@ -126,9 +126,9 @@ public class NacosClient {
     }
 
     /**
-     * 更新微服务实例状态
+     * Update the microservice instance status
      *
-     * @param status 服务状态
+     * @param status Service status
      */
     public void updateInstanceStatus(String status) {
         if (!STATUS_UP.equalsIgnoreCase(status) && !STATUS_DOWN.equalsIgnoreCase(status)) {
@@ -149,9 +149,9 @@ public class NacosClient {
     }
 
     /**
-     * 获取微服务实例状态
+     * Get the microservice instance status
      *
-     * @return 实例状态
+     * @return Instance status
      */
     public String getInstanceStatus() {
         String serviceId = RegisterContext.INSTANCE.getClientInfo().getServiceId();
@@ -173,10 +173,10 @@ public class NacosClient {
     }
 
     /**
-     * 根据服务id获取服务实例集合
+     * Obtain a collection of service instances based on the service ID
      *
-     * @param serviceId 服务id
-     * @return 服务实例列表
+     * @param serviceId Service ID
+     * @return List of service instances
      */
     public List<NacosServiceInstance> getInstances(String serviceId) {
         try {
@@ -197,9 +197,9 @@ public class NacosClient {
     }
 
     /**
-     * 获取服务名称
+     * Get the service name
      *
-     * @return 服务名称集合
+     * @return A collection of service names
      */
     public List<String> getServices() {
         try {

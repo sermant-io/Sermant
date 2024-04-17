@@ -20,26 +20,25 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * 选择策略
+ * Selection strategy
  *
  * @param <R> 泛型
  * @author zhouss
  * @since 2021-11-17
  */
 public interface SelectStrategy<R> {
-
     /**
-     * 选择
+     * select
      *
-     * @param list 目标集合
-     * @return 确定的目标
+     * @param list target list
+     * @return selected target
      */
     R select(List<R> list);
 
     /**
-     * 轮询策略
+     * Polling strategy
      *
-     * @param <R> 集合类型
+     * @param <R> collection type
      * @since 2021-11-17
      */
     class RoundStrategy<R> implements SelectStrategy<R> {
@@ -60,9 +59,9 @@ public interface SelectStrategy<R> {
     }
 
     /**
-     * 随机选择策略
+     * Random selection strategy
      *
-     * @param <R> 集合类型
+     * @param <R> collection type
      * @since 2021-11-17
      */
     class RandomStrategy<R> implements SelectStrategy<R> {

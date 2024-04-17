@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * servicecombRPC consumer端interceptor，支持servicecomb2.x版本
+ * servicecombRPC consumer interceptor, supports servicecomb2.x
  *
  * @author daizhenyu
  * @since 2023-08-26
@@ -58,9 +58,9 @@ public class ServiceCombRpcConsumerInterceptor extends AbstractClientInterceptor
     }
 
     /**
-     * 向Invocation中添加流量标签
+     * Add traffic tags to Invocation
      *
-     * @param invocation servicecomb rpc客服端 标签传递载体
+     * @param invocation servicecomb rpc consumer tag delivery carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(Invocation invocation) {
@@ -71,7 +71,9 @@ public class ServiceCombRpcConsumerInterceptor extends AbstractClientInterceptor
             }
             List<String> values = entry.getValue();
 
-            // provider端在标签值不为null的情况下转为list存储，为null时直接put null，因此在consumer端values为空必定是null
+            // If the tag value is not null on the provider side, it will be converted to list storage. If it is null,
+            // it will be put directly to null. Therefore, if the values on the consumer side are empty,
+            // they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 invocation.getContext().put(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to servicecomb rpc.", entry);

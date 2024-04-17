@@ -22,16 +22,17 @@ import com.huawei.dubbo.registry.utils.ReflectUtils;
 import com.huaweicloud.sermant.core.utils.StringUtils;
 
 /**
- * 应用配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * In the application configuration service, the reflection call class method is used in the code to be compatible with
+ * both Alibaba and Apache Dubbo
  *
  * @author provenceee
  * @since 2021-12-31
  */
 public class ApplicationConfigServiceImpl implements ApplicationConfigService {
     /**
-     * 设置注册时的服务名
+     * Set the name of the service at the time of registration
      *
-     * @param obj 增强的类
+     * @param obj Enhanced classes
      * @see com.alibaba.dubbo.config.ApplicationConfig
      * @see org.apache.dubbo.config.ApplicationConfig
      */

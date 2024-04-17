@@ -40,7 +40,7 @@ import com.alibaba.dubbo.rpc.RpcResult;
 import java.util.Locale;
 
 /**
- * alibaba dubbo拦截后的增强类 埋点定义sentinel资源
+ * Enhanced class after intercepting Alibaba Dubbo to define sentinel resources
  *
  * @author zhouss
  * @since 2022-02-10
@@ -49,10 +49,11 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
     private final String className = AlibabaDubboInterceptor.class.getName();
 
     /**
-     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * Convert alibaba dubbo. Note that this method is not extractable，Because host dependencies can only be loaded by
+     * this interceptor, pulling out results in classes not being found.
      *
-     * @param invoker 调用器
-     * @param invocation 调用信息
+     * @param invoker invoker
+     * @param invocation invoker information
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToAlibabaDubboEntity(Invocation invocation, Invoker<?> invoker) {
@@ -69,7 +70,8 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
             version = url.getParameter(CommonConst.URL_VERSION_KEY, ConvertUtils.ABSENT_VERSION);
         }
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
-            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            // For generalized interfaces, you can obtain the actual interface and version name from the url,
+            // The method name is obtained based on parameters and is the first parameter of the requested method
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
             if (arguments != null && arguments.length > 0 && arguments[0] instanceof String) {
@@ -78,7 +80,8 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
             isGeneric = true;
         }
 
-        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
+        // High version using API invocation.getTargetServiceUniqueName access path，
+        // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         final boolean isProvider = isProvider(curInvoker);
         return new DubboRequestEntity(apiPath, DubboAttachmentsHelper.resolveAttachments(invocation, false),
@@ -91,7 +94,7 @@ public class AlibabaDubboInterceptor extends InterceptorSupporter {
             return url.getParameter(CommonConst.DUBBO_APPLICATION);
         }
 
-        // 首先从缓存拿, 否则从url取remote.application
+        // Get it from the cache first, otherwise get remote.application from the url
         return DubboApplicationCache.INSTANCE.getApplicationCache().getOrDefault(interfaceName,
                 url.getParameter(CommonConst.DUBBO_REMOTE_APPLICATION));
     }

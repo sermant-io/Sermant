@@ -24,22 +24,22 @@ import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 
 /**
- * RocketMq pushConsumer启动拦截器
+ * RocketMq pushConsumer Start Interceptor
  *
  * @author daizhenyu
  * @since 2023-12-04
  **/
 public class RocketMqPushConsumerStartInterceptor extends AbstractPushConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPushConsumerStartInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 拦截点处理器
+     * @param handler Interception point handler
      */
     public RocketMqPushConsumerStartInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
@@ -70,7 +70,8 @@ public class RocketMqPushConsumerStartInterceptor extends AbstractPushConsumerIn
             return context;
         }
 
-        // 消费者启动会根据缓存的禁消费配置对消费者执行禁消费
+        // Consumer activation will execute Prohibition of consumption on consumers based on the cached prohibition of
+        // consumption configuration
         disablePushConsumption(pushConsumerWrapper);
         return context;
     }

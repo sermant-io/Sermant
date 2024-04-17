@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 /**
- * 测试RegistryConfigServiceImpl
+ * Test RegistryConfigServiceImpl
  *
  * @author provenceee
  * @since 2022-02-14
@@ -42,7 +42,7 @@ public class RegistryConfigServiceTest {
     private final RegisterConfig registerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryConfigServiceTest() throws IllegalAccessException, NoSuchFieldException {
         service = new RegistryConfigServiceImpl();
@@ -56,7 +56,7 @@ public class RegistryConfigServiceTest {
     }
 
     /**
-     * 测试Alibaba AbstractInterfaceConfig
+     * Test Alibaba AbstractInterfaceConfig
      *
      * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
      */
@@ -65,33 +65,33 @@ public class RegistryConfigServiceTest {
         AbstractInterfaceConfig interfaceConfig = new AbstractInterfaceConfig() {
         };
 
-        // 测试关闭迁移开关与注册开关
+        // Test turning off the migration switch and the registration switch
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(interfaceConfig);
         Assertions.assertNull(interfaceConfig.getRegistries());
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(interfaceConfig);
         Assertions.assertNull(interfaceConfig.getRegistries());
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(true);
         service.addRegistryConfig(interfaceConfig);
         Assertions.assertNull(interfaceConfig.getRegistries());
 
-        // 开启迁移开关与注册开关
+        // Enable migration and registration
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(true);
 
-        // 测试没有注册配置
+        // The test doesn't have a registered configuration
         service.addRegistryConfig(interfaceConfig);
         Assertions.assertNull(interfaceConfig.getRegistries());
 
-        // 测试存在sc注册配置
+        // The test has an SC registration configuration
         RegistryConfig registryConfig = new RegistryConfig("sc://localhost:30100");
         registryConfig.setId(Constant.SC_REGISTRY_PROTOCOL);
         interfaceConfig.setRegistry(registryConfig);
@@ -99,7 +99,7 @@ public class RegistryConfigServiceTest {
         Assertions.assertNotNull(interfaceConfig.getRegistries());
         Assertions.assertEquals(1, interfaceConfig.getRegistries().size());
 
-        // 测试存在非sc注册配置
+        // There is a non-SC registered configuration for the test
         interfaceConfig.setRegistry(new RegistryConfig("bar://localhost:8080"));
         service.addRegistryConfig(interfaceConfig);
         Assertions.assertNotNull(interfaceConfig.getRegistries());
@@ -107,7 +107,7 @@ public class RegistryConfigServiceTest {
     }
 
     /**
-     * 测试Apache AbstractInterfaceConfig
+     * Test Apache AbstractInterfaceConfig
      *
      * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
@@ -116,33 +116,33 @@ public class RegistryConfigServiceTest {
         org.apache.dubbo.config.AbstractInterfaceConfig config = new org.apache.dubbo.config.AbstractInterfaceConfig() {
         };
 
-        // 测试关闭迁移开关
+        // Test turning off the migration switch
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(config);
         Assertions.assertNull(config.getRegistries());
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(false);
         service.addRegistryConfig(config);
         Assertions.assertNull(config.getRegistries());
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         registerConfig.setOpenMigration(false);
         registerConfig.setEnableDubboRegister(true);
         service.addRegistryConfig(config);
         Assertions.assertNull(config.getRegistries());
 
-        // 开启迁移开关与注册开关
+        // Enable migration and registration
         registerConfig.setOpenMigration(true);
         registerConfig.setEnableDubboRegister(true);
 
-        // 测试没有注册配置
+        // The test doesn't have a registered configuration
         service.addRegistryConfig(config);
         Assertions.assertNull(config.getRegistries());
 
-        // 测试存在sc注册配置
+        // The test has an SC registration configuration
         org.apache.dubbo.config.RegistryConfig registryConfig = new org.apache.dubbo.config.RegistryConfig();
         registryConfig.setAddress("sc://localhost:30100");
         config.setRegistry(registryConfig);
@@ -150,7 +150,7 @@ public class RegistryConfigServiceTest {
         Assertions.assertNotNull(config.getRegistries());
         Assertions.assertEquals(1, config.getRegistries().size());
 
-        // 测试存在非sc注册配置
+        // There is a non-SC registered configuration for the test
         config.setRegistry(new org.apache.dubbo.config.RegistryConfig("bar://localhost:8080"));
         service.addRegistryConfig(config);
         Assertions.assertNotNull(config.getRegistries());

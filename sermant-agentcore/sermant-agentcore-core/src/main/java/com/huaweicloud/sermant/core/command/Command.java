@@ -17,27 +17,27 @@
 package com.huaweicloud.sermant.core.command;
 
 /**
- * 动态安装卸载的指令枚举
+ * Enumeration of instructions for dynamic installation and uninstallation
  *
  * @author zhp
  * @since 2023-09-09
  */
 public enum Command {
     /**
-     * 卸载agent指令
+     * Uninstall agent instruction
      */
     UNINSTALL_AGENT("UNINSTALL-AGENT"),
     /**
-     * 安装插件指令
+     * Install plugin instruction
      */
     INSTALL_PLUGINS("INSTALL-PLUGINS"),
     /**
-     * 卸载插件指令
+     * Uninstall plugin instruction
      */
     UNINSTALL_PLUGINS("UNINSTALL-PLUGINS"),
 
     /**
-     * 增强查询指令
+     * Enhancement query instruction
      */
     CHECK_ENHANCEMENT("CHECK-ENHANCEMENT");
 

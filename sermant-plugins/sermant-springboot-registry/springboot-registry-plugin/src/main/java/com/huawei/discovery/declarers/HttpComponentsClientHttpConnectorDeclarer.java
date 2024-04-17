@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * webclient httpclient5拦截点，springboot 2.4.0+
+ * Webclient httpclient5 interception point, springboot 2.4.0+
  *
  * @author provenceee
  * @since 2023-04-25
@@ -43,8 +43,8 @@ public class HttpComponentsClientHttpConnectorDeclarer extends BaseDeclarer {
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
                 InterceptDeclarer.build(MethodMatcher.nameEquals("execute").and(MethodMatcher.paramTypesEqual(
-                        "org.springframework.http.client.reactive.HttpComponentsClientHttpRequest",
-                        "org.apache.hc.client5.http.protocol.HttpClientContext")),
+                                "org.springframework.http.client.reactive.HttpComponentsClientHttpRequest",
+                                "org.apache.hc.client5.http.protocol.HttpClientContext")),
                         INTERCEPT_CLASS)
         };
     }

@@ -22,13 +22,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.powermock.reflect.Whitebox;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Nacos动态配置服务功能测试
+ * Nacos dynamic configuration service function testing
  *
  * @author tangle
  * @since 2023-09-08
@@ -37,7 +36,7 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
     @Test
     public void testNacosDynamicConfigService() throws Exception {
         try {
-            // 测试发布和获取配置：合法group名称
+            // Test publish and get configuration: valid group name
             Assert.assertTrue(
                     nacosDynamicConfigService.doPublishConfig("testTrueSingleConfigKey",
                             "test.True&Single:Config-Group",
@@ -47,21 +46,21 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
                     nacosDynamicConfigService.doGetConfig("testTrueSingleConfigKey",
                             "test.True_Single:Config-Group").orElse(""));
 
-            // 测试发布和获取配置：不合法group名称
+            // Test publish and get configuration: invalid group name
             Assert.assertFalse(
                     nacosDynamicConfigService.doPublishConfig("testErrorSingleConfigKey", "test+++Error&Single"
                             + ":Config-Group", "testErrorSingleConfigContent"));
             Assert.assertEquals(Optional.empty(), nacosDynamicConfigService.doGetConfig("testErrorSingleConfigKey",
                     "test+++.Error_Single:Config-Group"));
 
-            // 测试移除配置
+            // Test remove configuration
             Assert.assertTrue(nacosDynamicConfigService.doRemoveConfig("testTrueSingleConfigKey", "test.True_Single"
                     + ":Config-Group"));
             Assert.assertEquals("",
                     nacosDynamicConfigService.doGetConfig("testTrueSingleConfigKey",
                             "test.True_Single:Config-Group").orElse(""));
 
-            // 测试监听器的添加
+            // Test listener addition
             TestListener testListener = new TestListener();
             Assert.assertTrue(
                     nacosDynamicConfigService.doPublishConfig("testSingleListenerKey", "testSingleListenerGroup",
@@ -75,7 +74,7 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
                             "testSingleListenerContent-3"));
             checkChangeTrue(testListener, "testSingleListenerContent-3");
 
-            // 测试监听器的移除
+            // Test listener removal
             Assert.assertTrue(nacosDynamicConfigService.doRemoveConfigListener("testSingleListenerKey",
                     "testSingleListenerGroup"));
             Assert.assertTrue(
@@ -85,7 +84,7 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
             Assert.assertTrue(
                     nacosDynamicConfigService.doRemoveConfig("testSingleListenerKey", "testSingleListenerGroup"));
 
-            // 测试组监听器的添加、获取组内所有key
+            // Test the addition of group listeners and get all keys in the group
             TestListener testListenerGroup = new TestListener();
             Assert.assertTrue(
                     nacosDynamicConfigService.doPublishConfig("testGroupListenerKey-1", "testGroupListenerGroup",
@@ -102,7 +101,7 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
             Assert.assertEquals(2, nacosDynamicConfigService.doListKeysFromGroup("testGroupListenerGroup").size());
             checkChangeTrue(testListenerGroup, "testGroupListenerContent-2-2");
 
-            // 测试组监听器定时任务自动更新
+            // test the group listener automatically updates scheduled tasks
             Assert.assertTrue(
                     nacosDynamicConfigService.doPublishConfig("testGroupListenerKey-3", "testGroupListenerGroup",
                             "testGroupListenerContent-3"));
@@ -117,7 +116,7 @@ public class NacosDynamicConfigServiceTest extends NacosBaseTest {
                     ((List<NacosListener>) listeners.orElse(Collections.emptyList())).get(0).getKeyListener()
                             .size());
 
-            // 测试组监听器的移除
+            // Test removal of group listeners
             testListenerGroup.setChange(false);
             Assert.assertTrue(nacosDynamicConfigService.doRemoveGroupListener("testGroupListenerGroup"));
             Assert.assertTrue(

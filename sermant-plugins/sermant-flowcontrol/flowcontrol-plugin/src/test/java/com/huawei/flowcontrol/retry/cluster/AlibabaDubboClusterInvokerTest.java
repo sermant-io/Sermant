@@ -41,8 +41,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 
 /**
- * alibaba dubbo invoker 测试
- *
+ * alibaba dubbo invoker test
  * @author zhouss
  * @since 2022-09-14
  */
@@ -58,9 +57,9 @@ public class AlibabaDubboClusterInvokerTest {
     }
 
     /**
-     * 前置初始化
+     * Pre-initialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {
@@ -96,7 +95,7 @@ public class AlibabaDubboClusterInvokerTest {
         Mockito.when(invoker.invoke(invocation)).thenReturn(rpcResult);
         final Result result = clusterInvoker.doInvoke(invocation, Arrays.asList(invoker), roundRobinLoadBalance);
         Assert.assertEquals(result, rpcResult);
-        // 测试抛出异常
+        // test throw exception
         Mockito.when(invoker.invoke(invocation)).thenThrow(new RpcException("test error"));
         boolean isEx = false;
         try {

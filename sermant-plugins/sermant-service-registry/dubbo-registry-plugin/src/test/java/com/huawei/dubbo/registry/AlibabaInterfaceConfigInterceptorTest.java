@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 测试AlibabaInterfaceConfigInterceptor
+ * Test AlibabaInterfaceConfigInterceptor
  *
  * @author provenceee
  * @since 2022-11-25
@@ -66,7 +66,7 @@ public class AlibabaInterfaceConfigInterceptorTest {
     }
 
     /**
-     * 初始化
+     * Initialize
      */
     @Before
     public void init() {
@@ -76,7 +76,7 @@ public class AlibabaInterfaceConfigInterceptorTest {
     }
 
     /**
-     * 测试开关关闭时
+     * Test when the switch is off
      */
     @Test
     public void testDisabled() {
@@ -86,7 +86,7 @@ public class AlibabaInterfaceConfigInterceptorTest {
     }
 
     /**
-     * 测试开关关闭时
+     * Test when the switch is off
      */
     @Test
     public void testEnableDubboRegister() {
@@ -108,7 +108,7 @@ public class AlibabaInterfaceConfigInterceptorTest {
     }
 
     /**
-     * 测试开关关闭时
+     * Test when the switch is off
      */
     @Test
     public void testOpenMigration() {

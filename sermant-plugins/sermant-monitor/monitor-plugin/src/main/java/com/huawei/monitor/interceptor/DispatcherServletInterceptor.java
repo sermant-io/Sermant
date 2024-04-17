@@ -27,7 +27,7 @@ import com.huaweicloud.sermant.core.utils.LogUtils;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * HTTP拦截定义
+ * HTTP Interceptor
  *
  * @author zhp
  * @since 2022-11-01

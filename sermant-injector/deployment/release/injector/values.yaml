@@ -1,46 +1,51 @@
 namespace:
-  # injector部署的namespace
+  # namespace of injector
   name: default
 
 injector:
-  # 当宿主应用已存在JAVA_TOOL_OPTIONS变量时，injector的注入行为，before为在原变量前注入（默认），after为在原变量后注入，ignore为不注入
+  # When the host application already has JAVA_TOOL_OPTIONS variables, injector injection behavior: before indicates
+  # injection before the original variable (default), after indicates injection after the original variable, and
+  # ignore indicates that injection is not performed
   action: before
-  # 实例数
+  # Number of injector instances
   replicas: 2
   image:
-    # injector镜像地址(按真实场景配置)
+    # injector image address (Based on the actual scenario)
     addr:
-    # Always(总是拉取 pull) IfNotPresent(默认值,本地有则使用本地镜像,不拉取) Never(只使用本地镜像，从不拉取)
+    # Always(always pull), IfNotPresent(default value, local image is used if there is a local image, no pull is used)
+    # Never(only local image is used, never pull)
     pullPolicy: IfNotPresent
-    # 拉取镜像的密钥
+    # pull secrets
     pullSecrets: default-secret
 
 agent:
   image:
-    # agent镜像地址(按真实场景配置)
+    # agent image address (Based on the actual scenario)
     addr:
-    # Always(总是拉取 pull) IfNotPresent(默认值,本地有则使用本地镜像,不拉取) Never(只使用本地镜像，从不拉取)
+    # Always(always pull), IfNotPresent(default value, local image is used if there is a local image, no pull is used)
+    # Never(only local image is used, never pull)
     pullPolicy: IfNotPresent
 
 config:
-  # 配置中心类型: ZOOKEEPER/KIE
+  # Configuration center type: ZOOKEEPER/KIE/NACOS
   type: ZOOKEEPER
-  # 配置中心地址
+  # Configuration center address
   endpoints: http://localhost:2181
 
 registry:
-  # 注册中心类型：SERVICE_COMB/NACOS
+  # Registration center type: SERVICE_COMB/NACOS
   type: SERVICE_COMB
-  # 注册中心地址
+  # Registration center address
   endpoints: http://localhost:30100
 
-# 支持配置业务应用通用的环境变量(key相同的情况下该处配置的优先级低于yaml中env的配置)
+# Supports the configuration of common environment variables for service instances (this configuration takes
+# precedence below the configuration of env in yaml if the key is the same)
 configMap:
-  # 是否开启注入configMap
+  # Whether to enable configMap injection
   enabled: false
-  # 注入configMap的namespace，需要与业务应用的namespace保持一致
+  # The namespace to be injected with configMap, must be the same as that of the service instances
   namespaces: [default]
-  # 配置方式如下:
+  # The configuration is as follows:
   # env:
   #   TEST_ENV1: abc
   #   TEST_ENV2: 123456

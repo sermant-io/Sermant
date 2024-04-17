@@ -41,7 +41,7 @@ public class AlibabaDubboCluster implements Cluster {
         if (pluginConfig.isUseOriginInvoker()) {
             Object curCluster = ClusterInvokerCreator.INSTANCE.buildInvoker();
             if (curCluster instanceof Cluster) {
-                delegate = (AbstractClusterInvoker<T>)((Cluster)curCluster).join(directory);
+                delegate = (AbstractClusterInvoker<T>) ((Cluster) curCluster).join(directory);
             }
         }
         if (delegate != null) {

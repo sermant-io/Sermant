@@ -22,14 +22,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.router.spring.interceptor.HttpAsyncClient4xInterceptor;
 
 /**
- * 针对httpAsyncClient4.x处理拦截
+ * Interception is handled for httpAsyncClient 4.x
  *
  * @author yangrh
  * @since 2022-10-31
  */
 public class HttpAsyncClient4xDeclarer extends BaseRegistryPluginAdaptationDeclarer {
     /**
-     * 增强类的全限定名 http请求
+     * Fully qualified HTTP requests for enhanced classes
      */
     private static final String[] ENHANCE_CLASSES = {
             "org.apache.http.impl.nio.client.InternalHttpAsyncClient",
@@ -37,7 +37,7 @@ public class HttpAsyncClient4xDeclarer extends BaseRegistryPluginAdaptationDecla
     };
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = HttpAsyncClient4xInterceptor.class.getCanonicalName();
 

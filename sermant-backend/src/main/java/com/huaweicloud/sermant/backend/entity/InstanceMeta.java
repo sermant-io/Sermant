@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件元数据
+ * Instance Event Metadata
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -28,29 +28,28 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InstanceMeta {
-
     /**
-     * 实例原数据哈希
+     * Hash of instance raw data
      */
     private String metaHash;
 
     /**
-     * 实例ID
+     * Instance ID
      */
     private String instanceId;
 
     /**
-     * 应用
+     * Service name
      */
     private String service;
 
     /**
-     * 节点
+     * Node information
      */
     private NodeEntity node;
 
     /**
-     * 集群
+     * Cluster information
      */
     private ClusterEntity cluster;
 

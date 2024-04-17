@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * dubbo增强 apache dubbo alibaba dubbo
+ * dubbo enhance: apache dubbo alibaba dubbo
  *
  * @author zhouss
  * @since 2022-02-10
@@ -34,10 +34,10 @@ public abstract class DubboDeclarer extends AbstractPluginDeclarer {
     private final String interceptorClass;
 
     /**
-     * dubbo声明器
+     * dubbo Declarer
      *
-     * @param enhanceClass 增强方法
-     * @param interceptorClass 拦截器权限定名
+     * @param enhanceClass enhancement method
+     * @param interceptorClass interceptor fully qualified name
      */
     protected DubboDeclarer(String enhanceClass, String interceptorClass) {
         this.enhanceClass = enhanceClass;
@@ -52,7 +52,7 @@ public abstract class DubboDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("invoke"), interceptorClass)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("invoke"), interceptorClass)
         };
     }
 }

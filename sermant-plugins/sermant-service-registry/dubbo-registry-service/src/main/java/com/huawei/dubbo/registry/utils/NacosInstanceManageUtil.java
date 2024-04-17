@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * nacos实例管理工具
+ * Nacos instance management tool
  *
  * @since 2022-10-25
  */
@@ -39,30 +39,30 @@ public class NacosInstanceManageUtil {
     }
 
     /**
-     * 设置服务名
+     * Set the service name
      *
-     * @param serviceName 服务名
-     * @param serviceNames 服务名集合
+     * @param serviceName Service name
+     * @param serviceNames A collection of service names
      */
     public static void setCorrespondingServiceNames(String serviceName, Set<String> serviceNames) {
         CORRESPONDING_SERVICE_NAMES_MAP.put(serviceName, serviceNames);
     }
 
     /**
-     * 实例化、更新服务实例信息
+     * Instantiate and update service instance information
      *
-     * @param serviceName 服务名
-     * @param instances 实例集合
+     * @param serviceName Service name
+     * @param instances collection of instances
      */
     public static void initOrRefreshServiceInstanceList(String serviceName, List<Instance> instances) {
         SERVICE_INSTANCE_LIST_MAP.put(serviceName, instances);
     }
 
     /**
-     * 获取实例
+     * Get an instance
      *
-     * @param serviceName 服务名
-     * @return 实例集合
+     * @param serviceName Service name
+     * @return collection of instances
      */
     public static List<Instance> getAllCorrespondingServiceInstanceList(String serviceName) {
         if (!CORRESPONDING_SERVICE_NAMES_MAP.containsKey(serviceName)) {
@@ -79,9 +79,9 @@ public class NacosInstanceManageUtil {
     }
 
     /**
-     * 删除服务名对应实例
+     * Delete the instance that corresponds to the service name
      *
-     * @param serviceName 服务名
+     * @param serviceName Service name
      */
     public static void removeCorrespondingServiceNames(String serviceName) {
         CORRESPONDING_SERVICE_NAMES_MAP.remove(serviceName);

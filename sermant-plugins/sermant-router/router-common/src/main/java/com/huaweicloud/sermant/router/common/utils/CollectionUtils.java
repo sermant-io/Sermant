@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * 集合工具类
+ * Collection utility class
  *
  * @author provenceee
  * @since 2021-11-03
@@ -30,20 +30,20 @@ public class CollectionUtils {
     }
 
     /**
-     * 是否为空
+     * Whether it is empty or not
      *
-     * @param collection 集合
-     * @return 是否为空
+     * @param collection collect
+     * @return whether it is empty or not
      */
     public static boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 
     /**
-     * 是否为空
+     * whether it is empty or not
      *
      * @param map map
-     * @return 是否为空
+     * @return whether it is empty or not
      */
     public static boolean isEmpty(Map<?, ?> map) {
         return map == null || map.isEmpty();

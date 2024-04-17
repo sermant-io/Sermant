@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * client消息处理类
+ * Client message handler
  *
  * @author lilai
  * @version 0.0.1
@@ -37,7 +37,7 @@ public class ClientHandler extends BaseHandler {
     private final NettyClient client;
 
     /**
-     * 构造函数
+     * Constructor
      *
      * @param client client
      */

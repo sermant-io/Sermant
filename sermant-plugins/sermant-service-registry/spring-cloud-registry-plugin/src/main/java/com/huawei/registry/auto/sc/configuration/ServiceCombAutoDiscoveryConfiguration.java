@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * ServiceComb自动注册配置
+ * ServiceComb Automatic registration configuration
  *
  * @author zhouss
  * @since 2022-05-18
@@ -53,9 +53,9 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(name = "org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration")
 public class ServiceCombAutoDiscoveryConfiguration {
     /**
-     * 服务查询注入
+     * Service query injection
      *
-     * @return 服务查询client
+     * @return Service query client
      */
     @Bean
     public DiscoveryClient discoveryClient() {
@@ -63,11 +63,11 @@ public class ServiceCombAutoDiscoveryConfiguration {
     }
 
     /**
-     * 自动注册注入
+     * Automatic registration injection
      *
-     * @param autoServiceRegistrationProperties 自动注册配置
-     * @param registrationProperties 注册配置
-     * @return 自动注册
+     * @param autoServiceRegistrationProperties Automatic registration configuration
+     * @param registrationProperties Registration Configuration
+     * @return Automatic registration
      */
     @Bean
     public ServiceCombAutoRegistration serviceCombAutoRegistration(
@@ -81,7 +81,7 @@ public class ServiceCombAutoDiscoveryConfiguration {
     }
 
     /**
-     * 注入健康检查
+     * Inject health checks
      *
      * @return ServiceCombHealthIndicator
      */

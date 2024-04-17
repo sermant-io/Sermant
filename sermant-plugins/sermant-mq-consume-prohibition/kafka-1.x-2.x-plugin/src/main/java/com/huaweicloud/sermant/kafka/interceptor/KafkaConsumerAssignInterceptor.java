@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer assign方法的拦截器
+ * Interceptor for KafkaConsumer assign method
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#assign(Collection)}
  *
  * @author lilai
@@ -45,16 +45,16 @@ public class KafkaConsumerAssignInterceptor extends AbstractInterceptor {
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler assign方法拦截点处理器
+     * @param handler Assign method intercept point handler
      */
     public KafkaConsumerAssignInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参构造方法
+     * Non parametric construction method
      */
     public KafkaConsumerAssignInterceptor() {
     }
@@ -86,7 +86,8 @@ public class KafkaConsumerAssignInterceptor extends AbstractInterceptor {
         } else {
             LOGGER.info("Try to check if it is need to disable consumption after assignment...");
 
-            // 宿主应用每次订阅时都检查是否需要取消订阅其中的Topic
+            // The host application checks whether it is necessary to unsubscribe from the Topic every time it
+            // subscribes
             KafkaConsumerController.disableConsumption(kafkaConsumerWrapper,
                     ProhibitionConfigManager.getKafkaProhibitionTopics());
         }

@@ -26,7 +26,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试基类
+ * test BaseClass
  *
  * @author provenceee
  * @since 2023-06-08
@@ -43,7 +43,7 @@ public abstract class BaseTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after UT execution
      */
     @AfterClass
     public static void after() {

@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.entity;
 import java.util.Objects;
 
 /**
- * dubbo接口的key
+ * The key of the dubbo interface
  *
  * @author provenceee
  * @since 2022-04-06
@@ -30,16 +30,16 @@ public class InterfaceKey {
     private String version;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public InterfaceKey() {
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param group 组
-     * @param version 版本
+     * @param group Group
+     * @param version Version
      */
     public InterfaceKey(String group, String version) {
         this.group = group;

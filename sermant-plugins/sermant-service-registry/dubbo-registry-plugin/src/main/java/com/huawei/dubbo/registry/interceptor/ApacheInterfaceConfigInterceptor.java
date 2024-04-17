@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 
 /**
- * 增强AbstractInterfaceConfig类的setRegistries/loadRegistriesFromBackwardConfig方法
+ * Enhance the setRegisteries/loadRegisteriesFromBackwardConfig method of the AbstractInterfaceConfig class
  *
  * @author provenceee
  * @since 2021-11-08
@@ -32,7 +32,7 @@ public class ApacheInterfaceConfigInterceptor extends AbstractInterceptor {
     private final RegistryConfigService registryConfigService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ApacheInterfaceConfigInterceptor() {
         registryConfigService = PluginServiceManager.getPluginService(RegistryConfigService.class);

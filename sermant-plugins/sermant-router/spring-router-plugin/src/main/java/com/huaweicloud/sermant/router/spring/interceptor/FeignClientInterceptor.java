@@ -44,7 +44,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 /**
- * Client增强类，发起feign请求方法
+ * The client enhancement class， initiates the feign request method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -55,7 +55,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     private final boolean canLoadHystrix;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public FeignClientInterceptor() {
         canLoadHystrix = canLoadHystrix();
@@ -90,8 +90,10 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     }
 
     private String getPath(String url) {
-        // url形如：http://www.url.com/a/b?parameter=1，其中path为/a/b，?后面的参数非必须且不属于path
-        // 以/切分时，只需要切分为4份，即["http:", "", "www.url.com", "a/b?parameter=1"]，然后去掉arr[3]中参数即可
+        // The url is like http://www.url.com/a/b?parameter=1, where the path is /a/b,
+        // and the arguments after ?are not required and do not belong to the path
+        // When dividing by/, simply divide into 4 parts, namely ["http:", "", "www.url.com", "a/b?Parameter=1"],
+        // and then remove the parameter in arr [3]
         String[] arr = url.split("/", EXPECT_LENGTH);
         if (arr.length < EXPECT_LENGTH) {
             return "";
@@ -105,7 +107,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
     }
 
     private Map<String, List<String>> getHeaders(Map<String, Collection<String>> headers) {
-        // 传入的headers是一个unmodifiableMap，所以这里要new一个
+        // The incoming headers are an unmodifiable Map, so here is a new one
         Map<String, List<String>> newHeaders = new HashMap<>();
         if (headers != null) {
             headers.forEach((key, value) -> newHeaders.put(key, new ArrayList<>(value)));
@@ -113,7 +115,7 @@ public class FeignClientInterceptor extends AbstractInterceptor {
         getRequestHeader().ifPresent(requestHeader -> {
             Map<String, List<String>> header = requestHeader.getTag();
             for (Entry<String, List<String>> entry : header.entrySet()) {
-                // 使用上游传递的header
+                // Use the header passed upstream
                 newHeaders.putIfAbsent(entry.getKey(), entry.getValue());
             }
         });
@@ -164,7 +166,8 @@ public class FeignClientInterceptor extends AbstractInterceptor {
 
     private boolean canLoadHystrix() {
         if (PluginConfigManager.getPluginConfig(TransmitConfig.class).isEnabledThreadPool()) {
-            // 开启线程池异步路由时，透传标签不需要依赖HystrixRequestContext，所以直接返回false
+            // When asynchronous routing is enabled for thread pools, transparent transmission tags do not need to rely
+            // on the HystrixRequestContext, so false is returned
             return false;
         }
         try {

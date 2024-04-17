@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.agent.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 拦截器接口
+ * Interceptor interface
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,29 +27,29 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
  */
 public interface Interceptor {
     /**
-     * 前置触发点
+     * Pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     ExecuteContext before(ExecuteContext context) throws Exception;
 
     /**
-     * 后置触发点
+     * Post trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     ExecuteContext after(ExecuteContext context) throws Exception;
 
     /**
-     * 异常触发点
+     * Exception trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context Execution context
+     * @return Execution context
+     * @throws Exception Execution exception
      */
     ExecuteContext onThrow(ExecuteContext context) throws Exception;
 }

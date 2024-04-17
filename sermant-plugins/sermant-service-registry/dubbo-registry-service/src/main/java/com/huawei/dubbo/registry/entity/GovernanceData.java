@@ -19,7 +19,7 @@ package com.huawei.dubbo.registry.entity;
 import java.util.List;
 
 /**
- * governance数据
+ * Governance data
  *
  * @author provenceee
  * @since 2022-04-21

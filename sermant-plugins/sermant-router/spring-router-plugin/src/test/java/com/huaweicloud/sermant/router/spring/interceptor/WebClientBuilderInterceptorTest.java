@@ -28,7 +28,7 @@ import org.springframework.web.reactive.function.client.WebClient.Builder;
 import java.util.List;
 
 /**
- * 测试WebClientBuilderInterceptor
+ * Test WebClientBuilderInterceptor
  *
  * @author provenceee
  * @since 2024-01-16
@@ -48,24 +48,24 @@ public class WebClientBuilderInterceptorTest {
 
     @Test
     public void testBefore() {
-        // 不存在过滤器时
+        // When no filter exists
         interceptor.before(context);
         List<ExchangeFilterFunction> list = (List<ExchangeFilterFunction>) ReflectUtils
                 .getFieldValue(builder, "filters").orElse(null);
         Assert.assertNotNull(list);
         Assert.assertTrue(list.get(0) instanceof RouterExchangeFilterFunction);
 
-        // 已存在RouterExchangeFilterFunction时
+        // When the RouterExchangeFilterFunction already exists
         interceptor.before(context);
         list = (List<ExchangeFilterFunction>) ReflectUtils.getFieldValue(builder, "filters").orElse(null);
         Assert.assertNotNull(list);
         Assert.assertTrue(list.get(0) instanceof RouterExchangeFilterFunction);
         Assert.assertEquals(1, list.size());
 
-        // 清空数据
+        // Clear the data
         ReflectUtils.setFieldValue(builder, "filters", null);
 
-        // 测试已有过滤器的情况
+        // Test the case where you already have a filter
         ExchangeFilterFunction function = (clientRequest, exchangeFunction) -> exchangeFunction.exchange(clientRequest);
         builder.filter(function);
         interceptor.before(context);

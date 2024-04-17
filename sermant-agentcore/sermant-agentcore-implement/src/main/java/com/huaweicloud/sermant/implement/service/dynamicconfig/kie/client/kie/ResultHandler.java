@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Kie结果处理器
+ * Kie result handler
  *
  * @param <R> handle泛型
  * @author zhouss
@@ -34,15 +34,15 @@ import java.util.List;
  */
 public interface ResultHandler<R> {
     /**
-     * 处理响应结果
+     * process result
      *
-     * @param result 响应
+     * @param result HttpResult
      * @return R
      */
     R handle(HttpResult result);
 
     /**
-     * 默认结果处理器
+     * Default result handler
      *
      * @author zhouss
      * @since 2021-11-17
@@ -69,11 +69,11 @@ public interface ResultHandler<R> {
                 return null;
             }
             if (result.getCode() == HttpStatus.SC_NOT_MODIFIED) {
-                // KIE如果响应状态码为304，则表示没有相关键变更
+                // If the response status code is 304, there is no change for related key
                 kieResponse.setChanged(false);
             }
 
-            // 过滤掉disabled的kv配置
+            // Filter out the disabled kv configuration
             final List<KieConfigEntity> data = kieResponse.getData();
             if (data == null) {
                 return kieResponse;
@@ -85,9 +85,9 @@ public interface ResultHandler<R> {
         }
 
         /**
-         * 过滤未开启的kv
+         * Filter kv that is not turned on
          *
-         * @param data kv列表
+         * @param data kv list
          */
         private void filter(List<KieConfigEntity> data) {
             if (!onlyEnabled) {

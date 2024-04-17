@@ -42,26 +42,26 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 抽象转换器
+ * Abstract transformer
  *
  * @author luanwenfei
  * @since 2023-09-08
  */
 public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 拦截定义数组
+     * intercept declarer set
      */
     private final InterceptDeclarer[] interceptDeclarers;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param interceptDeclarers 拦截声明器数组
+     * @param interceptDeclarers intercept declarer set
      */
     public AbstractTransformer(InterceptDeclarer[] interceptDeclarers) {
         this.interceptDeclarers = interceptDeclarers;
@@ -77,12 +77,13 @@ public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     }
 
     /**
-     * 检查类定义的所有方法，并尝试增强，见{@link #enhanceMethod} 注意，native方法，抽象方法，及父类定义的方法不会被检查
+     * Check all methods defined by the class, and try to enhance，see{@link #enhanceMethod}. Native methods, abstract
+     * methods, and methods defined by parent classes, will not be checked
      *
-     * @param builder 构建器
-     * @param typeDesc 类定义
-     * @param classLoader 加载被增强类的类加载器
-     * @return 构建器
+     * @param builder builder
+     * @param typeDesc class definition
+     * @param classLoader classloader of the enhanced class
+     * @return DynamicType.Builder
      */
     private DynamicType.Builder<?> enhanceMethods(DynamicType.Builder<?> builder, TypeDescription typeDesc,
             ClassLoader classLoader) {
@@ -98,12 +99,12 @@ public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     }
 
     /**
-     * 对单个方法进行增强
+     * Enhance a single method
      *
-     * @param builder 构建器
-     * @param methodDesc 方法定义
-     * @param classLoader 加载被增强类的类加载器
-     * @return 构建器
+     * @param builder builder
+     * @param methodDesc method definition
+     * @param classLoader classloader of the enhanced class
+     * @return DynamicType.Builder
      */
     private DynamicType.Builder<?> enhanceMethod(DynamicType.Builder<?> builder,
             MethodDescription.InDefinedShape methodDesc, ClassLoader classLoader) {
@@ -127,11 +128,11 @@ public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     }
 
     /**
-     * 获取单个方法有关的拦截器列表
+     * Gets interceptor list related to a single method
      *
-     * @param methodDesc 方法定义
-     * @param classLoader 类加载器
-     * @return 拦截器列表
+     * @param methodDesc method definition
+     * @param classLoader classLoader
+     * @return interceptor list
      */
     private List<Interceptor> getInterceptors(MethodDescription.InDefinedShape methodDesc, ClassLoader classLoader) {
         final List<Interceptor> interceptors = new ArrayList<>();
@@ -149,35 +150,37 @@ public abstract class AbstractTransformer implements AgentBuilder.Transformer {
     }
 
     /**
-     * 处理方法增强
+     * Process method enhancement
      * <pre>
-     *     1.依模板类创建增强Adviser
-     *     2.使用被增强类的类加载器定义该Adviser
-     *     3.为该Adviser添加增强的拦截器
-     *     4.在构建器中定义增强逻辑
+     *     1.Create an enhancement Adviser based on the template class
+     *     2.Define the Adviser using the classloader of the enhanced class
+     *     3.Add interceptors to the Adviser
+     *     4.Define the enhancement logic in the builder
      * </pre>
      *
-     * @param builder 构建器
-     * @param methodDesc 方法定义
-     * @param interceptors 拦截器列表
-     * @param templateCls 增强模板类
-     * @param classLoader 类加载器
-     * @return 构建器
-     * @throws InvocationTargetException 调用方法错误
-     * @throws IllegalAccessException 无法访问属性或方法，正常不会报出
-     * @throws NoSuchMethodException 无法找到方法，正常不会报出
-     * @throws NoSuchFieldException 找不到属性
+     * @param builder builder
+     * @param methodDesc method definition
+     * @param interceptors interceptor list
+     * @param templateCls template class
+     * @param classLoader classLoader
+     * @return DynamicType.Builder
+     * @throws InvocationTargetException invoke method error
+     * @throws IllegalAccessException Unable to access a filed or method, normally will not be thrown
+     * @throws NoSuchMethodException Unable to find a method, normally will not be thrown
+     * @throws NoSuchFieldException Filed not found
      */
     abstract DynamicType.Builder<?> resolve(DynamicType.Builder<?> builder, MethodDescription.InDefinedShape methodDesc,
             List<Interceptor> interceptors, Class<?> templateCls, ClassLoader classLoader)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, NoSuchFieldException;
 
     /**
-     * 组成AdviceKey的格式为[模板类标准类名_被增强方法元信息的hash值_被增强类的类加载器]，被增强方法元信息，见于{@link MethodKeyCreator#getMethodDescKey}
+     * The format of the AdviceKey is [standard class name of template class_hash value of meta information of the
+     * enhanced method_classloader of the enhanced class]. Meta information of the enhanced method，see{@link
+     * MethodKeyCreator#getMethodDescKey}
      *
-     * @param templateCls 增强模板类
-     * @param classLoader 被增强类的类加载器
-     * @param methodDesc 方法描述
+     * @param templateCls template class
+     * @param classLoader classloader of the enhanced class
+     * @param methodDesc method definition
      * @return adviceKey
      */
     protected String getAdviceKey(Class<?> templateCls, ClassLoader classLoader,

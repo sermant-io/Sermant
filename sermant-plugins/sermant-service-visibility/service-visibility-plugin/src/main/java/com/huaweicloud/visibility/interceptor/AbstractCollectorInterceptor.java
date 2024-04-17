@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 信息采集服务
+ * Information Collection Services
  *
  * @author zhp
  * @since 2022-11-30
@@ -46,16 +46,16 @@ public abstract class AbstractCollectorInterceptor extends AbstractInterceptor {
     private static final String SEPARATOR = ",";
 
     /**
-     * 消息发送服务
+     * Messaging services
      */
     protected final CollectorService collectorService = PluginServiceManager.getPluginService(CollectorService.class);
 
     /**
-     * 保存方法信息
+     * Save method information
      *
-     * @param methodName 方法名称
-     * @param interfaceClass 接口信息
-     * @param contract 契约信息
+     * @param methodName The name of the method
+     * @param interfaceClass Interface information
+     * @param contract Contract Information
      */
     public void fillMethodInfo(String methodName, Class<?> interfaceClass, Contract contract) {
         List<String> methodNames = Arrays.asList(methodName.split(SEPARATOR));
@@ -72,10 +72,10 @@ public abstract class AbstractCollectorInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 保存参数信息
+     * Save the parameter information
      *
-     * @param method 方法
-     * @param methodInfo 方法信息存储类
+     * @param method method
+     * @param methodInfo Method information storage class
      */
     public void fillParamInfo(Method method, MethodInfo methodInfo) {
         if (method.getParameters() == null) {
@@ -92,10 +92,10 @@ public abstract class AbstractCollectorInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 保存返回值信息
+     * Save the return value information
      *
-     * @param method 方法
-     * @param methodInfo 方法信息存储类
+     * @param method method
+     * @param methodInfo Method information storage class
      */
     public void fillReturnInfo(Method method, MethodInfo methodInfo) {
         ParamInfo paramInfo = new ParamInfo();
@@ -104,10 +104,10 @@ public abstract class AbstractCollectorInterceptor extends AbstractInterceptor {
     }
 
     /**
-     * 获取服务提供者信息
+     * Get service provider information
      *
-     * @param serverList 服务提供者列表
-     * @return 服务提供者信息
+     * @param serverList List of service providers
+     * @return Service Provider Information
      */
     public static Consanguinity getConsanguinity(List<ServiceInstance> serverList) {
         Consanguinity consanguinity = new Consanguinity();

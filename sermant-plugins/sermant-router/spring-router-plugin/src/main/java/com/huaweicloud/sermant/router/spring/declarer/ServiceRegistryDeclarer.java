@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * AbstractAutoServiceRegistration增强类，spring cloud注册方法
+ * AbstractAutoServiceRegistration enhancement class, spring cloud registration method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -34,7 +34,7 @@ public class ServiceRegistryDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "register";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ServiceRegistryDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

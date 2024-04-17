@@ -53,7 +53,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 异步httpclient测试
+ * Asynchronous httpclient testing
  *
  * @author zhouss
  * @since 2022-10-12
@@ -101,7 +101,7 @@ public class HttpAsyncClient4xInterceptorTest {
         interceptor.onThrow(context);
         interceptor.after(context);
 
-        //第二次调用, 存在结果
+        // The second call, there is a result
         context.changeResult(buildResult());
         interceptor.before(context);
         interceptor.onThrow(context);

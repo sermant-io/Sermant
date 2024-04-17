@@ -49,7 +49,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * apache dubbo拦截后的增强类,埋点定义sentinel资源
+ * An enhanced class after the apache dubbo intercept, buried to define sentinel resources
  *
  * @author zhouss
  * @since 2022-02-11
@@ -62,15 +62,16 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     private final Retry retry = new ApacheDubboRetry();
 
     /**
-     * 黑名单，该名单内的类不拦截
+     * blacklist, classes in this list are not blocked
      */
     private final List<String> backList = Collections
             .singletonList("org.apache.dubbo.rpc.cluster.support.registry.ZoneAwareClusterInvoker");
 
     /**
-     * 转换apache dubbo 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * Convert apache dubbo. Note that this method is not extractable，Because host dependencies can only be loaded by
+     * this interceptor, pulling out results in classes not being found.
      *
-     * @param invocation 调用信息
+     * @param invocation invocation
      * @return DubboRequestEntity
      */
     private DubboRequestEntity convertToApacheDubboEntity(Invocation invocation) {
@@ -78,7 +79,8 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         String methodName = invocation.getMethodName();
         String version = invocation.getAttachment(ConvertUtils.DUBBO_ATTACHMENT_VERSION);
         if (ConvertUtils.isGenericService(interfaceName, methodName)) {
-            // 针对泛化接口, 实际接口、版本名通过url获取, 方法名基于参数获取, 为请求方法的第一个参数
+            // For generalized interfaces, you can obtain the actual interface and version name from the url,
+            // The method name is obtained based on parameters and is the first parameter of the requested method
             final URL url = invocation.getInvoker().getUrl();
             interfaceName = url.getParameter(CommonConst.GENERIC_INTERFACE_KEY, interfaceName);
             final Object[] arguments = invocation.getArguments();
@@ -88,7 +90,8 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             version = url.getParameter(CommonConst.URL_VERSION_KEY, version);
         }
 
-        // 高版本使用api invocation.getTargetServiceUniqueName获取路径，此处使用版本加接口，达到的最终结果一致
+        // High version using API invocation.getTargetServiceUniqueName access path，
+        // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
         return new DubboRequestEntity(apiPath, Collections.unmodifiableMap(invocation.getAttachments()),
                 RequestType.CLIENT,
@@ -96,16 +99,17 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * 此处重复代码与{@link com.huawei.flowcontrol.retry.AlibabaDubboInvokerInterceptor}相同之处
-     * <H2>不可抽出</H2>
-     * 由于两个框架类权限定名不同, 且仅当当前的拦截器才可加载宿主类
+     * The code repeated here is the same as{@link com.huawei.flowcontrol.retry.AlibabaDubboInvokerInterceptor}
+     * <H2>Cannot be withdrawn</H2>
+     * Because the permissions of the two framework classes are named differently, the host class can be loaded only if
+     * the current interceptor
      *
-     * @param obj 增强对象
-     * @param allArguments 方法参数
-     * @param ret 响应结果
-     * @param isNeedThrow 是否需抛出异常
-     * @param isRetry 是否需要重试
-     * @return 方法调用器
+     * @param obj enhanced object
+     * @param allArguments method parameter
+     * @param ret response result
+     * @param isNeedThrow whether to throw an exception
+     * @param isRetry need to retry
+     * @return methodInvoker
      */
     private Object invokeRetryMethod(Object obj, Object[] allArguments, Object ret, boolean isNeedThrow,
             boolean isRetry) {
@@ -124,15 +128,15 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
                     invocation.getAttachments().put(RETRY_KEY, RETRY_VALUE);
                 }
 
-                // 校验invokers
+                // check invokers
                 checkInvokersOption.get().invoke(obj, invokers, invocation);
                 LoadBalance loadBalance = (LoadBalance) allArguments[LOADER_BALANCE_INDEX];
 
-                // 选择invoker
+                // select invoker
                 final Invoker<?> invoke = (Invoker<?>) selectOption.get()
                         .invoke(obj, loadBalance, invocation, invokers, null);
 
-                // 执行调用
+                // execute call
                 final Result result = invoke.invoke(invocation);
                 if (result.hasException() && isNeedThrow) {
                     final Throwable exception = result.getException();
@@ -199,7 +203,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
         final Object[] allArguments = context.getArguments();
         final Invocation invocation = (Invocation) allArguments[0];
         try {
-            // 调用宿主方法
+            // callHostMethod
             RetryContext.INSTANCE.markRetry(retry);
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
@@ -234,14 +238,14 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * apache 重试
+     * apache retry
      *
      * @since 2022-02-23
      */
     public static class ApacheDubboRetry extends AbstractRetry {
         @Override
         public boolean needRetry(Set<String> statusList, Object result) {
-            // dubbo不支持状态码
+            // dubbo does not support status codes
             return false;
         }
 

@@ -24,19 +24,19 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * consul健康检测增强
+ * Consul health detection enhanced
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class ConsulHealthDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * nacos心跳发送类
+     * Nacos heartbeat sending class
      */
     private static final String ENHANCE_CLASS = "com.ecwid.consul.v1.ConsulClient";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = ConsulHealthInterceptor.class.getCanonicalName();
 

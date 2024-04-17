@@ -1,0 +1,74 @@
+name: "Opengauss Database Write Prohibition Plugin Test"
+description: "Auto test for opengauss database write prohibition"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/database-write-prohibition/opengauss
+    - name: install opengauss
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        sudo apt-get update
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        docker run --name opengauss -d --privileged=true  -e GS_PASSWORD=${{ env.datasourcePassword }} -p 5432:5432 enmotech/opengauss:3.0.0
+        sleep 20s
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Ddatabase.version=${{ matrix.opengaussVersion }} -Ddatabase.groupId=org.opengauss -Ddatabase.artifactId=opengauss-jdbc \
+        -DskipTests -Ppostgresql-opengauss-test --file sermant-integration-tests/database-write-prohibition-test/pom.xml
+    - name: start opengauss(org.opengauss) demo
+      if: matrix.opengaussVersion == '3.0.0' || matrix.opengaussVersion == '3.0.5-og'  || matrix.opengaussVersion == '3.1.0-og'  || matrix.opengaussVersion =='3.1.1-og'
+      shell: bash
+      env:
+        SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.opengauss.Driver
+        SPRING_DATASOURCE_URL: jdbc:opengauss://127.0.0.1:5432/postgres?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_USERNAME: gaussdb
+        SPRING_DATASOURCE_PASSWORD: ${{ env.datasourcePassword }}
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/opengauss \
+        sermant-integration-tests/database-write-prohibition-test/postgresql-opengauss-demo/target/postgresql-opengauss-demo.jar > ${{ env.logDir }}/opengauss.log 2>&1 &
+    - name: start opengauss(org.postgresql) demo
+      if: matrix.opengaussVersion == '3.1.0' || matrix.opengaussVersion =='3.1.1' || matrix.opengaussVersion == '3.0.5'
+      shell: bash
+      env:
+        SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+        SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1:5432/postgres?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+        SPRING_DATASOURCE_USERNAME: gaussdb
+        SPRING_DATASOURCE_PASSWORD: ${{ env.datasourcePassword }}
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/opengauss \
+        sermant-integration-tests/database-write-prohibition-test/postgresql-opengauss-demo/target/postgresql-opengauss-demo.jar > ${{ env.logDir }}/opengauss.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/checkStatus 120
+    - name: test opengauss
+      shell: bash
+      run: |
+        mvn test -Ddatabase.prohibition.integration.test.type=POSTGRESQL_OPENGAUSS --file \
+        sermant-integration-tests/database-write-prohibition-test/database-write-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: postgresql
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-database-write-prohibition-opengauss-${{ matrix.opengaussVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

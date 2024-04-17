@@ -22,7 +22,7 @@ import com.huawei.flowcontrol.service.DubboService;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * Dubbo 基于resilience4j的拦截实现
+ * Dubbo interception implementation based on resilience4j
  *
  * @author zhouss
  * @since 2022-01-25

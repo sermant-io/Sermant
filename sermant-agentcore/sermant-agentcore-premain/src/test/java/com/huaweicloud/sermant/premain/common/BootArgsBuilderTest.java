@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * BootArgsBuilder单元
+ * BootArgsBuilder Unit Test
  *
  * @author lilai
  * @since 2022-11-26
@@ -24,7 +24,7 @@ public class BootArgsBuilderTest {
     private static final Map<String, String> envMap = new HashMap<>();
 
     /**
-     * 单元测试前设置环境变量
+     * Set environment variables before unit tests
      *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
@@ -39,7 +39,7 @@ public class BootArgsBuilderTest {
     }
 
     /**
-     * 单元测试结束后清理环境变量
+     * Clean up environment variables after unit tests
      *
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
@@ -52,7 +52,7 @@ public class BootArgsBuilderTest {
     }
 
     /**
-     * 测试getActualValue方法
+     * Test the getActualValue method
      *
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
@@ -71,7 +71,7 @@ public class BootArgsBuilderTest {
     }
 
     /**
-     * 设置环境变量
+     * Set environment variables
      *
      * @param envMap
      * @throws NoSuchFieldException
@@ -79,14 +79,14 @@ public class BootArgsBuilderTest {
      */
     private static void setEnv(Map envMap) throws NoSuchFieldException, IllegalAccessException {
         try {
-            // win系统
+            // win
             Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
             Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
             theEnvironmentField.setAccessible(true);
             Map env1 = (Map) theEnvironmentField.get(null);
             env1.putAll(envMap);
 
-            // linux/macos系统
+            // linux/macos
             Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField(
                     "theCaseInsensitiveEnvironment");
             theCaseInsensitiveEnvironmentField.setAccessible(true);
@@ -109,7 +109,7 @@ public class BootArgsBuilderTest {
     }
 
     /**
-     * 测试参数解析
+     * Test parse augments
      */
     @Test
     public void testParseArgs() {

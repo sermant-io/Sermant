@@ -30,7 +30,7 @@ import java.util.Optional;
 import javax.crypto.Cipher;
 
 /**
- * 加解密工具类
+ * RsaUtil
  *
  * @author zhp
  * @since 2022-10-13
@@ -50,9 +50,9 @@ public class RsaUtil {
     }
 
     /**
-     * 生成密钥对
+     * Generate key pair
      *
-     * @return 密钥对
+     * @return key pair
      */
     public static Optional<String[]> generateKey() {
         try {
@@ -69,11 +69,11 @@ public class RsaUtil {
     }
 
     /**
-     * 加密
+     * encrypt
      *
-     * @param publicKey 公钥
-     * @param text 报文
-     * @return 密文
+     * @param publicKey publicKey
+     * @param text text
+     * @return encrypted text
      */
     public static Optional<String> encrypt(String publicKey, String text) {
         try {
@@ -90,11 +90,11 @@ public class RsaUtil {
     }
 
     /**
-     * 解密
+     * decrypt
      *
-     * @param privateKey 私钥
-     * @param text 报文
-     * @return 明文
+     * @param privateKey privateKey
+     * @param text text
+     * @return decrypted text
      */
     public static Optional<String> decrypt(String privateKey, String text) {
         try {

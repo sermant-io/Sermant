@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * webflux获取header拦截点
+ * Webflux obtains the header interception point
  *
  * @author provenceee
  * @since 2022-10-10
@@ -34,7 +34,7 @@ public class AbstractHandlerMappingDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "getHandler";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractHandlerMappingDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

@@ -1,10 +1,10 @@
-# premain启动会加载plugins下配置的插件目录, agentmain启动会加载dynamicPlugins下的active插件目录
-# 插件的加载顺序如下：
-#   1. 首先按照`plugins`中配置的插件顺序来加载默认插件。
-#   2. 然后再按照`profile`配置的场景顺序来加载场景插件列表, 各场景的插件加载顺序也和配置文件中的顺序一致。
-#   3. 如果`profiles`中的配置的插件已经在之前加载过, 则不再重复加载。
-#   4. 不同插件的相同拦截点的字节码增强的生效顺序与插件加载顺序是一致的。
-# plugins用于配置静态插件, premain启动时生效, 配置支持静态安装的插件, 不允许卸载
+# The premain loads the plugin directory configured under plugins, and the agentmain loads the active plugin directory under dynamicPlugins
+# Plugins are loaded in the following order:
+# 1. First load the default plugins in the order configured in 'plugins'.
+# 2. Then load the list of scene plugins according to the scene order configured in 'profile'. The loading order of scene plugins is the same as that in the configuration file.
+# 3. If the plugin configured in 'profiles' has been loaded before, it will not be loaded again.
+# 4. Bytecode enhancements at the same intercept point for different plugins take effect in the same order as the plugins load.
+# 'plugins' is used to configure static plugins. The plugins take effect when Sermant starts by premain. Plugins that support static installation are configured and cannot be uninstalled
 plugins:
   - flowcontrol
   - service-router
@@ -18,15 +18,15 @@ plugins:
   - service-visibility
   - tag-transmission
   - database-write-prohibition
-# dynamicPlugins用于配置支持动态安装的插件, agentmain启动时生效, 允许卸载:
-#  1. active类型插件将会主动启用
-#  2. passive类型插件需通过指令或接口调用启用
+# 'dynamicPlugins' is used to configure plugins that support dynamic installation. The plugins take effect when Sermant starts by agentmain. allows uninstallation:
+# 1. active plugins will be actively enabled
+# 2. passive plugins need to be enabled by commands
 dynamicPlugins:
   active:
 #    - active-plugin
   passive:
 #    - passive-plugin
-# profile用于按场景配置挂载的插件列表
+# 'profile' is used to configure the list plugins by scenario
 profiles:
   cse:
     - flowcontrol
@@ -36,5 +36,5 @@ profiles:
   apm:
     - flowcontrol
     - service-router
-# profile用于配置当前生效的场景
+# 'profile' is used to configure scenarios that take effect
 profile: cse,apm

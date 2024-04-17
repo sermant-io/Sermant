@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.TransmitConfig;
 
 /**
- * spring cloud loadbalancer拦截点
+ * Spring cloud loadbalancer interception point
  *
  * @author provenceee
  * @since 2024-01-16
@@ -36,7 +36,7 @@ public class LoadBalancerDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "getInstanceResponse";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LoadBalancerDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);

@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * grpc使用DynamicMessage调用服务端，拦截header参数注入流量标签
+ * grpc invokes the server using dynamic message, intercepts the header parameter injected traffic tag
  *
  * @author daizhenyu
  * @since 2023-08-21
@@ -43,7 +43,7 @@ public class ClientCallImplInterceptor extends AbstractClientInterceptor<Metadat
     protected ExecuteContext doBefore(ExecuteContext context) {
         Object[] arguments = context.getArguments();
 
-        // 被拦截方法的入参数量为2
+        // the number of entries for the blocked method is 2
         if (arguments == null || arguments.length <= 1) {
             return context;
         }
@@ -68,9 +68,10 @@ public class ClientCallImplInterceptor extends AbstractClientInterceptor<Metadat
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
-                // grpc 会对null校验，此处传递"null" 字符串
+                // grpc will check for null, pass the "null" string here
                 header.put(Metadata.Key.of(key, Metadata.ASCII_STRING_MARSHALLER), "null");
                 LOGGER.log(Level.FINE, "Traffic tag {0}=null have been injected to grpc.", key);
                 continue;

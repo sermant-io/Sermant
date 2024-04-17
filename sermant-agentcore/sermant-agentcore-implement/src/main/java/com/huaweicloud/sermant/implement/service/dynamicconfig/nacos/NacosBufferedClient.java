@@ -35,36 +35,37 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * {@link ConfigService}的包装，封装nacos原生api，提供更易用的api
+ * {@link ConfigService} wrapper, which wraps the Nacos native apis and provides easier apis to use
  *
  * @author tangle
  * @since 2023-08-17
  */
 public class NacosBufferedClient implements Closeable {
     /**
-     * configService连接状态type
+     * configService connection status type
      */
     public static final String KEY_CONNECTED = "UP";
 
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 动态配置信息
+     * Dynamic configuration information
      */
     private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
 
     private ConfigService configService;
 
     /**
-     * 新建NacosBufferedClient，初始化nacos客户端
+     * Create a NacosBufferedClient and initialize the Nacos client
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @param namespace 命名空间
-     * @throws NacosInitException 依赖动态配置情况下，nacos初始化失败，需要中断Sermant
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param namespace namespace
+     * @throws NacosInitException In the case of dependent dynamic configuration, if Nacos initialization fails then
+     * Sermant needs to be interrupted
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace) {
         Properties properties = createProperties(connectString, sessionTimeout, namespace);
@@ -72,14 +73,15 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 新建NacosBufferedClient，初始化nacos客户端
+     * Create a NacosBufferedClient and initialize the Nacos client
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @param namespace 命名空间
-     * @param userName 已加密的用户名
-     * @param password 已加密的密码
-     * @throws NacosInitException 依赖动态配置情况下，nacos初始化失败，需要中断Sermant
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param namespace namespace
+     * @param userName username
+     * @param password encrypted password
+     * @throws NacosInitException In the case of dependent dynamic configuration, if Nacos initialization fails then
+     * Sermant needs to be interrupted
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace, String userName,
             String password) {
@@ -88,11 +90,11 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 获取配置
+     * Get configuration
      *
-     * @param key 配置名称
-     * @param group 配置所在组
-     * @return 配置内容
+     * @param key configuration key
+     * @param group configuration group
+     * @return configuration content
      */
     public String getConfig(String key, String group) {
         try {
@@ -105,12 +107,12 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 发布配置
+     * Publish configuration
      *
-     * @param key 配置名称
-     * @param group 配置所在组
-     * @param content 配置内容
-     * @return 是否发布成功
+     * @param key configuration key
+     * @param group configuration group
+     * @param content configuration content
+     * @return publish result
      */
     public boolean publishConfig(String key, String group, String content) {
         try {
@@ -122,11 +124,11 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 删除配置
+     * Delete configuration
      *
-     * @param key 配置名称
-     * @param group 配置所在组
-     * @return 是否删除成功
+     * @param key configuration key
+     * @param group configuration group
+     * @return remove result
      */
     public boolean removeConfig(String key, String group) {
         try {
@@ -138,12 +140,12 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 添加监听
+     * Add listener
      *
-     * @param key 配置名称
-     * @param group 配置所在组
-     * @param listener 监听器
-     * @return 是否提那家成功
+     * @param key configuration key
+     * @param group configuration group
+     * @param listener listener
+     * @return add result
      */
     public boolean addListener(String key, String group, Listener listener) {
         try {
@@ -156,22 +158,22 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 移除监听
+     * Remove listener
      *
-     * @param key 配置名称
-     * @param group 配置所在组
-     * @param listener 监听器
+     * @param key configuration key
+     * @param group configuration group
+     * @param listener listener
      */
     public void removeListener(String key, String group, Listener listener) {
         this.configService.removeListener(key, group, listener);
     }
 
     /**
-     * 构建Properties
+     * Create properties
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @param namespace 命名空间
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param namespace namespace
      * @return Properties
      */
     private Properties createProperties(String connectString, int sessionTimeout, String namespace) {
@@ -183,13 +185,13 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 构建Properties
+     * Create properties
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param sessionTimeout 会话超时时间
-     * @param namespace 命名空间
-     * @param userName 已加密的用户名
-     * @param password 已加密的密码
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param sessionTimeout session timeout
+     * @param namespace namespace
+     * @param userName username
+     * @param password encrypted password
      * @return Properties
      */
     private Properties createProperties(String connectString, int sessionTimeout, String namespace, String userName,
@@ -212,11 +214,11 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 构建configService
+     * Create config service
      *
-     * @param connectString 连接字符串，必须形如：{@code host:port[(,host:port)...]}
-     * @param properties 构建需要的配置
-     * @throws NacosInitException nacos连接失败
+     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
+     * @param properties properties
+     * @throws NacosInitException Connect to Nacos failed
      */
     private void createConfigService(String connectString, Properties properties) {
         try {
@@ -231,16 +233,17 @@ public class NacosBufferedClient implements Closeable {
     }
 
     /**
-     * 连接nacos
+     * Connect to Nacos
      *
-     * @param properties nacosClient连接配置信息
-     * @return nacos连接状态
-     * @throws NacosException nacos初始化异常
+     * @param properties Nacos Client connection configuration
+     * @return Nacos connection status
+     * @throws NacosException Nacos initialization exception
      */
     private boolean connect(Properties properties) throws NacosException {
         int tryNum = 0;
         while (tryNum++ <= CONFIG.getConnectRetryTimes()) {
-            // nacos的客户端初始化时候会获取当前线程的类加载器，此处需要更改，并且随后改回原本类加载器
+            // Nacos client initialization gets the current thread's classloader, which needs to be changed and then
+            // changed back to the original classloader
             ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
             configService = NacosFactory.createConfigService(properties);

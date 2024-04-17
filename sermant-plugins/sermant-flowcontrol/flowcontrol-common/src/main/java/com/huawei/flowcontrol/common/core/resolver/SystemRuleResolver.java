@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.common.core.resolver;
 import com.huawei.flowcontrol.common.core.rule.SystemRule;
 
 /**
- * 系统流控解析类
+ * system flow control parsing class
  *
  * @author xuezechao1
  * @since 2022-12-05
@@ -28,12 +28,12 @@ import com.huawei.flowcontrol.common.core.rule.SystemRule;
 public class SystemRuleResolver extends AbstractResolver<SystemRule> {
 
     /**
-     * 系统规则流控配置键
+     * system rule flow control configuration key
      */
     public static final String CONFIG_KEY = "servicecomb.system";
 
     /**
-     * 系统流控解析构造器
+     * system flow control analytic constructor
      */
     public SystemRuleResolver() {
         super(CONFIG_KEY);

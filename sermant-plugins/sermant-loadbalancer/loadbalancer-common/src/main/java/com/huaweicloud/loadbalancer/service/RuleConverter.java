@@ -22,19 +22,19 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Optional;
 
 /**
- * 规则转换器
+ * rule converter
  *
  * @author zhouss
  * @since 2022-08-09
  */
 public interface RuleConverter extends PluginService {
     /**
-     * 转换字符串为负载均衡规则
+     * convert a string to a load balancing rule
      *
-     * @param rawContent 配置内容
-     * @param clazz 目标类型
-     * @param <T> 目标类型
-     * @return LoadbalancerRule
+     * @param rawContent configuration content
+     * @param clazz target type
+     * @param <T> target type
+     * @return Loadbalancer rule
      */
     <T> Optional<T> convert(String rawContent, Class<T> clazz);
 }

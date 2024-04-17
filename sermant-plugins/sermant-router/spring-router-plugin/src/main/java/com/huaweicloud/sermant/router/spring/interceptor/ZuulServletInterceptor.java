@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.netflix.zuul.context.RequestContext;
 
 /**
- * ZuulServletFilter增强类，设置请求头
+ * ZuulServletFilter enhancement class, setting request headers
  *
  * @author provenceee
  * @since 2023-02-21

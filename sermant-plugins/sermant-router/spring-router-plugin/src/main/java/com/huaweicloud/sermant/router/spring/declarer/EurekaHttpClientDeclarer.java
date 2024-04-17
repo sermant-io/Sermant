@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.declarer;
 
 /**
- * EurekaHttpClient增强类，eureka注册方法
+ * EurekaHttpClient Enhancement Class, EurekaRegistration Method
  *
  * @author provenceee
  * @since 2022-07-12
@@ -31,7 +31,7 @@ public class EurekaHttpClientDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "register";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public EurekaHttpClientDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

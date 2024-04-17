@@ -20,49 +20,49 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * 框架事件的事件定义
+ * Event definition for framework events
  *
  * @author luanwenfei
  * @since 2023-03-04
  */
 public enum FrameworkEventDefinitions {
     /**
-     * Sermant启动事件信息定义
+     * Sermant startup event definition
      */
     SERMANT_START("SERMANT_START", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant字节码转换成功事件信息定义
+     * Sermant transform success event definition
      */
     SERMANT_TRANSFORM_SUCCESS("SERMANT_TRANSFORM_SUCCESS", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant字节码转换失败事件信息定义
+     * Sermant transform failure event definition
      */
     SERMANT_TRANSFORM_FAILURE("SERMANT_TRANSFORM_FAILURE", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant服务启动事件信息定义
+     * Sermant service startup event definition
      */
     SERMANT_SERVICE_START("SERMANT_SERVICE_START", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant服务停止事件信息定义
+     * Sermant service stop event definition
      */
     SERMANT_SERVICE_STOP("SERMANT_SERVICE_STOP", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant插件加载事件信息定义
+     * Sermant plugin load event definition
      */
     SERMANT_PLUGIN_LOAD("SERMANT_PLUGIN_LOAD", EventType.OPERATION, EventLevel.NORMAL),
 
     /**
-     * Sermant停止事件信息定义
+     * Sermant stop event definition
      */
     SERMANT_STOP("SERMANT_STOP", EventType.OPERATION, EventLevel.NORMAL);
 
     /**
-     * 事件
+     * event name
      */
     private final String name;
 
@@ -89,7 +89,7 @@ public enum FrameworkEventDefinitions {
     }
 
     /**
-     * 获取范围
+     * get event scope
      *
      * @return framework
      */

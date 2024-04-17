@@ -27,21 +27,21 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * ContextFilter处理器
+ * ContextFilter handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public abstract class AbstractContextFilterHandler implements Handler {
     /**
-     * 获取透传标记
+     * obtain the transparent transmission marker
      *
      * @param invoker invoker
      * @param invocation invocation
      * @param attachments attachments
-     * @param matchKeys 透传请求头
-     * @param injectTags 染色标记
-     * @return 泳道标记
+     * @param matchKeys transparent transmission request header
+     * @param injectTags stain markers
+     * @return swimlane markers
      * @see com.alibaba.dubbo.rpc.Invoker
      * @see org.apache.dubbo.rpc.Invoker
      * @see com.alibaba.dubbo.rpc.Invocation
@@ -51,11 +51,11 @@ public abstract class AbstractContextFilterHandler implements Handler {
             Map<String, Object> attachments, Set<String> matchKeys, Set<String> injectTags);
 
     /**
-     * 从attachments中，获取需要透传的请求标记
+     * Obtain request tags that need to be passed through from attachments
      *
      * @param attachments attachments
-     * @param keys 需要获取的标记的key
-     * @return 请求标记
+     * @param keys the key of the tag to be obtained
+     * @return request tags
      */
     protected Map<String, List<String>> getRequestTag(Map<String, Object> attachments, Set<String> keys) {
         if (CollectionUtils.isEmpty(keys)) {

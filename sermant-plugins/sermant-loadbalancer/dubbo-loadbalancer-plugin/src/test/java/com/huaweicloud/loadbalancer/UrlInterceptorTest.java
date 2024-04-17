@@ -45,7 +45,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * 测试URL getMethodParameter方法的拦截点
+ * Test the intercept point for the URL getMethodParameter method
  *
  * @author provenceee
  * @see com.alibaba.dubbo.common.URL
@@ -60,7 +60,7 @@ public class UrlInterceptorTest {
     private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
     /**
-     * 配置转换器
+     * configuration converter
      */
     @Before
     public void setUp() {
@@ -79,48 +79,48 @@ public class UrlInterceptorTest {
     }
 
     /**
-     * 测试不合法的参数
+     * tests invalid parameters
      */
     @Test
     public void testInvalidArguments() throws NoSuchMethodException {
         ExecuteContext context = buildContext(null);
         final UrlInterceptor interceptor = new UrlInterceptor();
-        // 测试arguments为null
+        // test: arguments is null
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试参数数组大小小于2
+        // test: the parameter array size is less than 2
         context = buildContext(new Object[1]);
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试参数数组大小大于1
+        // test: the parameter array size is greater than 1
         Object[] arguments = new Object[2];
         context = buildContext(arguments);
 
-        // 测试arguments[1]为null
+        // test: arguments[1] is null
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
 
-        // 测试arguments[1]为bar
+        // test: arguments[1] is bar
         arguments[1] = "bar";
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
     }
 
     /**
-     * 测试加载核对规则
+     * test the load check rule
      */
     @Test
     public void testCheckRules() {
-        // 测试Apache分支
+        // test: Apache branch
         final UrlInterceptor interceptor = new UrlInterceptor();
         ReflectUtils.invokeMethod(interceptor, "checkRules", null, null);
         final Optional<Object> supportRules = ReflectUtils.getFieldValue(interceptor, "supportRules");
         Assert.assertTrue(supportRules.isPresent() && supportRules.get() instanceof Set);
         Assert.assertFalse(((Set<?>) supportRules.get()).isEmpty());
 
-        // 测试alibaba分支
+        // test: alibaba branch
         try (final MockedStatic<ClassUtils> classUtilsMockedStatic = Mockito.mockStatic(ClassUtils.class)){
             classUtilsMockedStatic.when(() -> ClassUtils.loadClass("com.alibaba.dubbo.common.extension.ExtensionLoader",
                     Thread.currentThread().getContextClassLoader(), false))
@@ -133,7 +133,7 @@ public class UrlInterceptorTest {
     }
 
     /**
-     * 测试规则支持
+     * test rule support
      */
     @Test
     public void testSupport() {
@@ -144,7 +144,7 @@ public class UrlInterceptorTest {
         Assert.assertTrue(isSupport.isPresent() && isSupport.get() instanceof Boolean);
         Assert.assertTrue((Boolean) isSupport.get());
 
-        // 测试已加载相关规则
+        // test: related rules have been loaded
         final UrlInterceptor loadedInterceptor = new UrlInterceptor();
         ReflectUtils.invokeMethod(loadedInterceptor, "checkRules", null, null);
         final Optional<Object> isSupportForInit = ReflectUtils.invokeMethod(loadedInterceptor, "isSupport", new Class[] {String.class},
@@ -152,7 +152,7 @@ public class UrlInterceptorTest {
         Assert.assertTrue(isSupportForInit.isPresent() && isSupportForInit.get() instanceof Boolean);
         Assert.assertTrue((Boolean) isSupportForInit.get());
 
-        // 测试不支持
+        // test: nonsupport
         final Optional<Object> notSupport = ReflectUtils.invokeMethod(loadedInterceptor, "isSupport", new Class[] {String.class},
                 new Object[] {"test"});
         Assert.assertTrue(notSupport.isPresent() && notSupport.get() instanceof Boolean);
@@ -160,16 +160,16 @@ public class UrlInterceptorTest {
     }
 
     /**
-     * 测试合法的参数
+     * test valid parameters
      */
     @Test
     public void test() throws NoSuchMethodException {
-        // 测试参数数组大小大于1
+        // test: the parameter array is greater than 1
         Object[] arguments = new Object[2];
         ExecuteContext context = buildContext(arguments);
         arguments[1] = "loadbalance";
 
-        // 测试配置为null
+        // test: configure to null
         UrlInterceptor nullConfigInterceptor = new UrlInterceptor();
         nullConfigInterceptor.before(context);
         Assert.assertFalse(context.isSkip());
@@ -178,12 +178,12 @@ public class UrlInterceptorTest {
         final UrlInterceptor interceptor = new UrlInterceptor();
         configSupports(interceptor);
 
-        // 测试负载均衡策略为null
+        // test: the load balancing policy is null
         interceptor.before(context);
         Assert.assertFalse(context.isSkip());
         Assert.assertNull(context.getResult());
 
-        // 测试正常情况
+        // test: normal condition
         final DubboLoadbalancerCache instance = DubboLoadbalancerCache.INSTANCE;
         RuleManagerHelper.publishRule(SERVICE_NAME, DubboLoadbalancerType.SHORTESTRESPONSE.getMapperName());
         interceptor.before(context);

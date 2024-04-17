@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
- * KafkaConsumer subscribe方法的拦截器
+ * Interceptor for KafkaConsumer subscribe method
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#subscribe(Pattern, ConsumerRebalanceListener)}
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#subscribe(Collection, ConsumerRebalanceListener)}
  *
@@ -45,16 +45,16 @@ public class KafkaConsumerSubscribeInterceptor extends AbstractInterceptor {
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler subscribe方法拦截点处理器
+     * @param handler The subscribe method intercepts point handler
      */
     public KafkaConsumerSubscribeInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参构造方法
+     * Non parametric construction method
      */
     public KafkaConsumerSubscribeInterceptor() {
     }
@@ -87,7 +87,8 @@ public class KafkaConsumerSubscribeInterceptor extends AbstractInterceptor {
         } else {
             LOGGER.info("Try to check if it is need to disable consumption after assignment...");
 
-            // 宿主应用每次订阅时都检查是否需要取消订阅其中的Topic
+            // The host application checks whether it is necessary to unsubscribe from the Topic every time it
+            // subscribes
             KafkaConsumerController.disableConsumption(kafkaConsumerWrapper,
                     ProhibitionConfigManager.getKafkaProhibitionTopics());
         }

@@ -46,7 +46,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * pull消费者控制类
+ * pull consumer control class
  *
  * @author daizhenyu
  * @since 2023-12-15
@@ -70,7 +70,7 @@ public class RocketMqPullConsumerController {
     }
 
     /**
-     * 禁止pull消费者消费
+     * Prohibit pull consumer consumption
      *
      * @param wrapper pull消费者wrapper
      * @param topics 禁止消费的topic
@@ -105,7 +105,8 @@ public class RocketMqPullConsumerController {
             return;
         }
 
-        // 退出消费者前主动提交消费的offset，退出消费者组后立刻触发一次重平衡，重新分配队列
+        // Before exiting the consumer group, actively submit the offset for consumption, and immediately trigger a
+        // rebalancing and reassign the queue after exiting the consumer group
         wrapper.getPullConsumerImpl().persistConsumerOffset();
         wrapper.getClientFactory().unregisterConsumer(wrapper.getConsumerGroup());
         doRebalance(wrapper);
@@ -136,10 +137,11 @@ public class RocketMqPullConsumerController {
     private static void doRebalance(DefaultLitePullConsumerWrapper wrapper) {
         initExecutor();
 
-        // 退出消费者组后立刻清理消费者目前消费的消息队列
+        // Immediately clear the message queue currently consumed by consumers after exiting the consumer group
         messageQueueChanged(wrapper);
 
-        // 延时五秒后，确认是否退出消费者组，并在此清理消费者目前消费的消息队列，确保禁消费成功
+        // After a delay of five seconds, confirm whether to exit the consumer group and clear the message queue
+        // currently consumed by the consumer to ensure successful prohibition of consumption
         executor.submit(() -> doDelayRebalance(wrapper));
     }
 
@@ -152,7 +154,8 @@ public class RocketMqPullConsumerController {
         MQClientInstance clientFactory = wrapper.getClientFactory();
         String clientId = clientFactory.getClientId();
 
-        // 每间隔一秒，判断消费者是否退出消费者组，如果退出清空消费者消费的消息队列，最大重试次数为五次
+        // Every second, check if the consumer has exited the consumer group. If they have exited, clear the message
+        // queue for consumer consumption, and the maximum number of retries is five
         int retryCount = 0;
         boolean isConsumerGroupExited = false;
         while ((retryCount < MAXIMUM_RETRY) && !isConsumerGroupExited) {
@@ -202,7 +205,7 @@ public class RocketMqPullConsumerController {
     }
 
     private static void messageQueueChanged(RebalanceImpl rebalance, String topic) {
-        // 清空消费者的processQunues、assignedMessageQueues和pullTask，从而停止消费
+        // Clear consumers' processQunues, assignedMessage Queues, and pullTasks to stop consumption
         ReflectUtils.invokeMethod(rebalance, "updateProcessQueueTableInRebalance",
                 new Class[]{String.class, Set.class, boolean.class},
                 new Object[]{topic, new HashSet<MessageQueue>(), false});
@@ -250,9 +253,9 @@ public class RocketMqPullConsumerController {
     }
 
     /**
-     * 添加PullConsumer包装类实例
+     * Add PullConsumer wrapper class instance
      *
-     * @param pullConsumer pullConsumer实例
+     * @param pullConsumer pullConsumer instance
      */
     public static void cachePullConsumer(DefaultLitePullConsumer pullConsumer) {
         Optional<DefaultLitePullConsumerWrapper> pullConsumerWrapperOptional = RocketMqWrapperUtils
@@ -270,9 +273,9 @@ public class RocketMqPullConsumerController {
     }
 
     /**
-     * 移除PullConsumer包装类实例
+     * Remove PullConsumer wrapper class instance
      *
-     * @param pullConsumer pullConsumer实例
+     * @param pullConsumer PullConsumer instance
      */
     public static void removePullConsumer(DefaultLitePullConsumer pullConsumer) {
         int hashCode = pullConsumer.hashCode();
@@ -288,10 +291,10 @@ public class RocketMqPullConsumerController {
     }
 
     /**
-     * 获取PullConsumer的包装类实例缓存
+     * Get the wrapper class instance cache for PullConsumer
      *
-     * @param pullConsumer pull消费者实例
-     * @return PullConsumer包装类实例
+     * @param pullConsumer Pull consumer instance
+     * @return PullConsumer packaging class instance
      */
     public static DefaultLitePullConsumerWrapper getPullConsumerWrapper(
             DefaultLitePullConsumer pullConsumer) {
@@ -299,9 +302,9 @@ public class RocketMqPullConsumerController {
     }
 
     /**
-     * 获取PullConsumer缓存
+     * Get PullConsumer cache
      *
-     * @return PullConsumer缓存
+     * @return PullConsumer cache
      */
     public static Map<Integer, DefaultLitePullConsumerWrapper> getPullConsumerCache() {
         return RocketMqConsumerCache.PULL_CONSUMERS_CACHE;

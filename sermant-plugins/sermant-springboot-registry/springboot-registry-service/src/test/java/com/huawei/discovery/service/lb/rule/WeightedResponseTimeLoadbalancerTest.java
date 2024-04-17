@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 响应时间
+ * Response time
  *
  * @author zhouss
  * @since 2022-10-09
@@ -48,12 +48,12 @@ public class WeightedResponseTimeLoadbalancerTest extends BaseLoadbalancerTest {
         final ServiceStats serviceStats = ServiceStatsManager.INSTANCE.getServiceStats(serviceName);
         final InstanceStats stats1 = serviceStats.getStats(serviceInstance1);
         for (int i =0; i < 10; i ++) {
-            // 模拟第一个实例响应时间很长
+            // The first instance of the simulation has a long response time
             stats1.beforeRequest();
             stats1.afterRequest(1000L);
         }
         final List<ServiceInstance> serviceInstances = Arrays.asList(serviceInstance1, serviceInstance2);
-        // 模拟100次请求, 并发度低的实例将更容易被选中
+        // Simulate 100 requests, and instances with low concurrency will be more likely to be selected
         int count1 = 0, count2 = 0;
         for (int i = 0; i < 100; i++) {
             final Optional<ServiceInstance> choose = weightedResponseTimeLoadbalancer

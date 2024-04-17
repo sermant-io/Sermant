@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigLi
 import java.util.List;
 
 /**
- * 对同组下所有键做操作
+ * Perform operations on all keys in the same group
  *
  * @author HapThorin
  * @version 1.0.0
@@ -29,27 +29,27 @@ import java.util.List;
  */
 public interface GroupService {
     /**
-     * 获取组中所有键
+     * Gets all keys in the group
      *
-     * @param group 组名
-     * @return 键集合
+     * @param group group
+     * @return key list
      */
     List<String> listKeysFromGroup(String group);
 
     /**
-     * 为组下所有的键添加监听器
+     * Add listeners for all keys under the group
      *
-     * @param group    组名
-     * @param listener 监听器
-     * @return 是否添加成功
+     * @param group group
+     * @param listener listener
+     * @return add result
      */
     boolean addGroupListener(String group, DynamicConfigListener listener);
 
     /**
-     * 移除组下所有键的监听器
+     * Removes listeners for all keys under the group
      *
-     * @param group 组名
-     * @return 是否全部移除成功
+     * @param group group
+     * @return remove result
      */
     boolean removeGroupListener(String group);
 }

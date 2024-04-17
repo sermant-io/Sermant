@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 延迟错误注入
+ * delayed error injection
  *
  * @author zhouss
  * @since 2022-08-08
@@ -32,15 +32,15 @@ public class DelayFault extends AbstractFault {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 延迟时间
+     * delay time
      */
     private final long delayTimeMs;
 
     /**
-     * 创建错误注入
+     * create error injection
      *
-     * @param rule 错误注入规则
-     * @throws IllegalArgumentException rule为空抛出
+     * @param rule error injection rule
+     * @throws IllegalArgumentException thrown if rule is null
      */
     public DelayFault(FaultRule rule) {
         super(rule);

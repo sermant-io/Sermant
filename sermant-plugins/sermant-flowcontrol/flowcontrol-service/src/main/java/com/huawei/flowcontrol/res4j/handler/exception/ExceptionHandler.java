@@ -22,17 +22,17 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import java.util.function.BiConsumer;
 
 /**
- * 流控异常处理器
+ * flow control exception handler
  *
+ * @param <E> exception type
  * @author zhouss
  * @since 2022-08-05
- * @param <E> 异常类型
  */
 public interface ExceptionHandler<E extends Throwable> extends BiConsumer<E, FlowControlResult> {
     /**
-     * 目标异常处理
+     * object exception handling
      *
-     * @return 异常类型
+     * @return exception type
      */
     Class<E> targetException();
 }

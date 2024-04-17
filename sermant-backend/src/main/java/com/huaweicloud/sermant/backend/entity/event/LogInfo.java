@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 日志信息
+ * Log information
  *
  * @author luanwenfei
  * @since 2023-03-08

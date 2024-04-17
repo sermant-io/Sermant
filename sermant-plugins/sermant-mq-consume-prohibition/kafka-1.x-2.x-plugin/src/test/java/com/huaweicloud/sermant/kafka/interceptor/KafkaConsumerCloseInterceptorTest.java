@@ -30,7 +30,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * KafkaConsumerCloseInterceptor单元测试
+ * KafkaConsumerCloseInterceptor unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -59,7 +59,7 @@ public class KafkaConsumerCloseInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test after method
      */
     @Test
     public void testAfter() {

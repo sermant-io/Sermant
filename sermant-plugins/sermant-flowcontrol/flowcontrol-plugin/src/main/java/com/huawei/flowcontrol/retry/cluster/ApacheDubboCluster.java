@@ -30,7 +30,7 @@ import org.apache.dubbo.rpc.cluster.Directory;
 import java.util.Optional;
 
 /**
- * apache dubbo调用实现
+ * apache dubbo call implementation
  *
  * @author zhouss
  * @since 2022-03-04
@@ -42,13 +42,13 @@ public class ApacheDubboCluster implements Cluster {
     }
 
     /**
-     * 该方法在dubbo3.x.x版本之后需实现
+     * This method needs to be implemented after the dubbo 3.x.x version
      *
-     * @param directory 服务信息
-     * @param buildFilterChain 是否构建过滤链
-     * @param <T> 响应类型
+     * @param directory service information
+     * @param buildFilterChain whether to build a filter chain
+     * @param <T> response type
      * @return Invoker
-     * @throws RpcException 调用异常抛出
+     * @throws RpcException call exception throwing
      */
     public <T> Invoker<T> join(Directory<T> directory, boolean buildFilterChain) throws RpcException {
         final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
@@ -66,7 +66,7 @@ public class ApacheDubboCluster implements Cluster {
                     delegate = (Invoker<T>) join.get();
                 }
             } else {
-                delegate = ((Cluster)curCluster).join(directory);
+                delegate = ((Cluster) curCluster).join(directory);
             }
         }
         if (delegate != null) {
@@ -76,7 +76,7 @@ public class ApacheDubboCluster implements Cluster {
     }
 
     private boolean isDubbo3x(Object curCluster) {
-        return !ReflectUtils.findMethod(curCluster.getClass(), "join", new Class[] {Directory.class})
+        return !ReflectUtils.findMethod(curCluster.getClass(), "join", new Class[]{Directory.class})
                 .isPresent();
     }
 }

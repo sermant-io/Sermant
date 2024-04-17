@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 服务发现测试
+ * Service discovery testing
  *
  * @author zhouss
  * @since 2022-10-10
@@ -68,7 +68,7 @@ public class DiscoveryManagerTest extends BaseTest {
     @Override
     public void tearDown() {
         super.tearDown();
-        // 重置状态
+        // Reset the state
         final Optional<Object> isStarted = ReflectUtils.getFieldValue(DiscoveryManager.INSTANCE, "isStarted");
         Assert.assertTrue(isStarted.isPresent() && isStarted.get() instanceof AtomicBoolean);
         ((AtomicBoolean) isStarted.get()).set(false);

@@ -18,19 +18,19 @@
 package com.huaweicloud.visibility.common;
 
 /**
- * 服务的框架类型
+ * The framework type of the service
  *
  * @author zhp
  * @since 2022-12-06
  */
 public enum ServiceType {
     /**
-     * DUBBO服务
+     * DUBBO services
      */
     DUBBO("dubbo"),
 
     /**
-     * SpringCloud服务
+     * SpringCloud service
      */
     SPRING_CLOUD("springCloud");
 

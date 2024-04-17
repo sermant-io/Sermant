@@ -50,7 +50,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截HttpUrlConnection#getInputSteam方法, 该拦截主要使之可检测到readTimeOut异常, connect timed out 见connect方法拦截点
+ * Intercept the HttpUrlConnection#getInputSteam method, which mainly enables it to detect readTimeOut exceptions. The
+ * connect timed out can be found at the intercept point of the connect method
  *
  * @author zhouss
  * @since 2022-10-20
@@ -61,7 +62,7 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
     private final LbConfig lbConfig;
 
     /**
-     * 构造器, 初始化配置
+     * constructor, initializing configuration
      */
     public HttpUrlConnectionResponseStreamInterceptor() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
@@ -106,7 +107,7 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
 
     private void tryCloseOldInputStream(Object rawInputStream) {
         if (rawInputStream instanceof Closeable) {
-            // 针对旧的输入流进行关闭处理
+            // Shut down processing for old input streams
             try {
                 ((Closeable) rawInputStream).close();
             } catch (IOException e) {
@@ -117,7 +118,7 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
 
     private boolean isNeedRetry(Throwable ex) {
         if (ex instanceof SocketTimeoutException) {
-            // 此处仅SocketTimeoutException: Read timed out进行重试
+            // Only SocketTimeoutException: Read timed out for retry here
             final String message = ex.getMessage();
             return "Read timed out".equalsIgnoreCase(message) && isEnableRetry();
         }
@@ -159,7 +160,7 @@ public class HttpUrlConnectionResponseStreamInterceptor implements Interceptor {
     private void resetHttpClient(Object target, URL url) {
         final Optional<Object> http = ReflectUtils.getFieldValue(target, "http");
         if (http.isPresent() && http.get() instanceof HttpClient) {
-            // 关闭原始的httpclient
+            // Close the original httpclient
             ((HttpClient) http.get()).closeServer();
         }
         final Optional<Object> connectTimeout = ReflectUtils.getFieldValue(target, "connectTimeout");

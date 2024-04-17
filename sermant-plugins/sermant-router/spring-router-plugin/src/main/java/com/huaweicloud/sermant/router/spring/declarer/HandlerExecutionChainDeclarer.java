@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * 通过拦截增加注入拦截器，注入spring web拦截器
+ * Add an injection interceptor by intercepting and inject a spring web interceptor
  *
  * @author provenceee
  * @since 2022-07-12
@@ -33,7 +33,7 @@ public class HandlerExecutionChainDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "applyPreHandle";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public HandlerExecutionChainDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 /**
- * 注册插件拦截点
+ * Register a plugin intercept point
  *
  * @author provenceee
  * @since 2022-10-08
@@ -37,7 +37,7 @@ public class NopInstanceFilterDeclarer extends AbstractDeclarer {
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NopInstanceFilterDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

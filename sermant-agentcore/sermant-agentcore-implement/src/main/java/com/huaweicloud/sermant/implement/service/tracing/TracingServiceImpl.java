@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 链路追踪接口的实现
+ * Implementation of tracing service
  *
  * @author luanwenfei
  * @since 2022-03-01
@@ -42,12 +42,12 @@ public class TracingServiceImpl implements TracingService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 每级最大span event个数
+     * Maximum number of span events per level
      */
     private static final int MAX_SPAN_EVENT_COUNT = 500;
 
     /**
-     * 采样深度
+     * Sampling depth
      */
     private static final int MAX_SPAN_EVENT_DEPTH = 100;
 
@@ -56,7 +56,7 @@ public class TracingServiceImpl implements TracingService {
     private final ThreadLocal<SpanEventContext> threadLocal = new ThreadLocal<>();
 
     /**
-     * 链路采集开关标志位
+     * Tracing service switch
      */
     private boolean isTracing;
 
@@ -90,7 +90,7 @@ public class TracingServiceImpl implements TracingService {
             return Optional.empty();
         }
 
-        // 从协议载体中获取TraceId、SpanId等数据
+        // Obtain TraceId, SpanId and other data from the protocol carrier
         extractService.getFromCarrier(tracingRequest, carrier);
         if (!filterSpanDepth(tracingRequest)) {
             return Optional.empty();
@@ -136,7 +136,8 @@ public class TracingServiceImpl implements TracingService {
     private Optional<SpanEvent> configureSpanEvent(TracingRequest tracingRequest) {
         SpanEventContext spanEventContext = threadLocal.get();
 
-        // 当前Span个数已经超过当前层能采集的最大值，需要清空ThreadLocal不再采集，防止内存泄露
+        // The current Span number exceeds the maximum number that can be collected at the current layer. Therefore,
+        // clear Thread Local to prevent memory leakage
         if (spanEventContext == null || spanEventContext.getSpanIdCount().get() > MAX_SPAN_EVENT_COUNT) {
             threadLocal.remove();
             return Optional.empty();
@@ -162,7 +163,8 @@ public class TracingServiceImpl implements TracingService {
         spanEvent.setEndTime(System.currentTimeMillis());
         sendSpanEvent(spanEvent);
 
-        // 发送完SpanEvent数据后，需要将当前上下文中存放的SpanEvent置为当前Span的父Span
+        // After sending the SpanEvent data, set the SpanEvent stored in the current context as the parent Span of
+        // the current Span
         if (spanEvent.getParentSpan() != null) {
             spanEventContext.setSpanEvent(spanEvent.getParentSpan());
         }
@@ -184,13 +186,13 @@ public class TracingServiceImpl implements TracingService {
     }
 
     /**
-     * 通过SpanId来限制采样深度
+     * The sampling depth is limited by the SpanId
      *
-     * @param tracingRequest 调用链路追踪生命周期时需要传入的参数
-     * @return tracingRequest长度是否合法
+     * @param tracingRequest request information during tracing
+     * @return is valid length
      */
     private boolean filterSpanDepth(TracingRequest tracingRequest) {
-        // 检查spanId长度 大于100忽略
+        // Check whether spanId length is greater than 100
         String spanIdPrefix = tracingRequest.getSpanIdPrefix();
         if (spanIdPrefix != null && spanIdPrefix.length() > MAX_SPAN_EVENT_DEPTH) {
             LOGGER.info(String.format(Locale.ROOT, "SpanId is too long, discard this span : [%s]",

@@ -47,7 +47,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 /**
- * 网关服务端handler
+ * Netty Server Handler
  *
  * @author lilai
  * @version 0.0.1
@@ -58,7 +58,7 @@ public class ServerHandler extends BaseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerHandler.class);
 
     /**
-     * 网关服务端handler
+     * Netty Server Handler
      */
     private static ServerHandler serverHandler;
 
@@ -71,7 +71,7 @@ public class ServerHandler extends BaseHandler {
     private EventServer eventServer;
 
     /**
-     * 初始化事件推送服务
+     * Initializes the event notify server
      */
     @PostConstruct
     public void init() {
@@ -122,11 +122,11 @@ public class ServerHandler extends BaseHandler {
     }
 
     private void handleHeartBeat(byte[] message) {
-        // 缓存心跳数据
+        // Cache heartbeat data
         HeartbeatMessage heartbeatMessage =
                 JSON.parseObject(new String(message, StandardCharsets.UTF_8), HeartbeatMessage.class);
 
-        // agent信息写入数据库
+        // agent information is written to the database
         writeInstanceMeta(heartbeatMessage);
 
         List<String> ips = heartbeatMessage.getIp();
@@ -139,9 +139,9 @@ public class ServerHandler extends BaseHandler {
     }
 
     /**
-     * 存储实例元数据
+     * Store instance metadata
      *
-     * @param heartbeatMessage 心跳信息
+     * @param heartbeatMessage heartbeat message
      */
     private void writeInstanceMeta(HeartbeatMessage heartbeatMessage) {
         InstanceMeta instanceMeta = new InstanceMeta();
@@ -158,9 +158,9 @@ public class ServerHandler extends BaseHandler {
     }
 
     /**
-     * 配置服务可见性数据有效时间
+     * Configure the validity period of service visibility data
      *
-     * @param instanceId 实例ID
+     * @param instanceId instance id
      */
     private void setServiceValidityPeriod(String instanceId) {
         ServerInfo serverInfo = new ServerInfo();
@@ -169,9 +169,9 @@ public class ServerHandler extends BaseHandler {
     }
 
     /**
-     * 处理服务可见性信息
+     * Process service visibility information
      *
-     * @param message 消息内容
+     * @param message message content
      */
     private void handleServiceVisibility(byte[] message) {
         String messageStr = new String(message, StandardCharsets.UTF_8);
@@ -184,9 +184,9 @@ public class ServerHandler extends BaseHandler {
     }
 
     /**
-     * 处理事件数据
+     * Process event data
      *
-     * @param message 消息内容
+     * @param message message content
      */
     private void handleEvent(byte[] message) {
         String messageStr = new String(message, StandardCharsets.UTF_8);

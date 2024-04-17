@@ -25,7 +25,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 增强SpringApplication类的run方法
+ * Enhance the run method of the SpringApplication class
  *
  * @author provenceee
  * @since 2022-01-24
@@ -36,7 +36,7 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
     private final RegistryService registryService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringApplicationInterceptor() {
         registryService = PluginServiceManager.getPluginService(RegistryService.class);

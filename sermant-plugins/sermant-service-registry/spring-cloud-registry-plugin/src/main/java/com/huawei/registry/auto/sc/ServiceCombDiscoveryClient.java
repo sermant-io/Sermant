@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ServiceComb服务实例查询
+ * ServiceComb Service instance query
  *
  * @author zhouss
  * @since 2022-05-18

@@ -56,7 +56,7 @@ import java.nio.ByteBuffer;
 import java.util.Optional;
 
 /**
- * 测试HttpComponentsClientHttpConnectorInterceptor
+ * Test HttpComponentsClientHttpConnectorInterceptor
  *
  * @author provenceee
  * @since 2023-05-17
@@ -79,7 +79,7 @@ public class HttpComponentsClientHttpConnectorInterceptorTest {
     private final java.lang.reflect.Method method;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -105,7 +105,7 @@ public class HttpComponentsClientHttpConnectorInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -123,7 +123,7 @@ public class HttpComponentsClientHttpConnectorInterceptorTest {
 
     @Test
     public void test() {
-        // 测试正常情况
+        // Test for normal conditions
         AbstractClientHttpRequest request = new HttpComponentsClientHttpRequest(HttpMethod.GET, HELLO_URI,
                 HttpClientContext.create(), new DefaultDataBufferFactory());
         arguments[0] = request;
@@ -136,7 +136,7 @@ public class HttpComponentsClientHttpConnectorInterceptorTest {
 
     @Test
     public void testException() {
-        // 测试异常情况
+        // Test for anomalies
         AbstractClientHttpRequest request = new HttpComponentsClientHttpRequest(HttpMethod.GET, THROW_URI,
                 HttpClientContext.create(), new DefaultDataBufferFactory());
         arguments[0] = request;

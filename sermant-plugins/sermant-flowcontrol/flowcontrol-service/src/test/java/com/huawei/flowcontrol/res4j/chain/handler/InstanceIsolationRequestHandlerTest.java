@@ -27,7 +27,7 @@ import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import org.junit.Assert;
 
 /**
- * 实例隔离测试
+ * instance isolation test
  *
  * @author zhouss
  * @since 2022-08-30

@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 注册配置服务，代码中使用反射调用类方法是为了同时兼容alibaba和apache dubbo
+ * To register a configuration service, the code uses reflection to call class methods to be compatible with both
+ * Alibaba and Apache Dubbo
  *
  * @author provenceee
  * @since 2021-12-31
@@ -38,16 +39,16 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
     private final RegisterConfig config;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public RegistryConfigServiceImpl() {
         config = PluginConfigManager.getPluginConfig(RegisterConfig.class);
     }
 
     /**
-     * 多注册中心注册到sc
+     * Multi-registry registration to SC
      *
-     * @param obj 增强的类
+     * @param obj Enhanced classes
      * @see com.alibaba.dubbo.config.AbstractInterfaceConfig
      * @see org.apache.dubbo.config.AbstractInterfaceConfig
      */
@@ -71,7 +72,7 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
     }
 
     private boolean isInValid(List<?> registries) {
-        // 是否所有的配置都是无效的
+        // Whether all configurations are invalid
         boolean isInvalid = true;
         for (Object registry : registries) {
             if (registry == null) {
@@ -81,13 +82,13 @@ public class RegistryConfigServiceImpl implements RegistryConfigService {
                 isInvalid = false;
             }
             if (Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getId(registry))
-                || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
-                // 如果存在sc的配置，直接return，不注册到sc
+                    || Constant.SC_REGISTRY_PROTOCOL.equals(ReflectUtils.getProtocol(registry))) {
+                // If there is an SC configuration, return directly and do not register with the SC
                 return true;
             }
         }
 
-        // 如果所有的配置都是无效的，则为无效配置，不注册到sc
+        // If all configurations are invalid, they are invalid and are not registered with the SC
         return isInvalid;
     }
 }

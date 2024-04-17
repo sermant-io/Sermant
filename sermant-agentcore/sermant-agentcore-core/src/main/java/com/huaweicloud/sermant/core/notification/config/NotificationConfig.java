@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.config.common.BaseConfig;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * 通知配置
+ * Notification configuration
  *
  * @author zhp
  * @since 2023-06-16

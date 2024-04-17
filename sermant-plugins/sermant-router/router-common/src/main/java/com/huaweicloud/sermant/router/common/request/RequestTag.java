@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 请求
+ * Request
  *
  * @author provenceee
  * @since 2022-07-12
@@ -32,9 +32,9 @@ public class RequestTag {
     private final Map<String, List<String>> tag;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param tag 请求标记 header/attachment
+     * @param tag request tags(header/attachment)
      */
     public RequestTag(Map<String, List<String>> tag) {
         this.tag = CollectionUtils.isEmpty(tag) ? new HashMap<>() : tag;
@@ -45,9 +45,9 @@ public class RequestTag {
     }
 
     /**
-     * 增加请求标记
+     * Add request tags
      *
-     * @param map 请求标记
+     * @param map request tags
      */
     public void addTag(Map<String, List<String>> map) {
         this.tag.putAll(map);

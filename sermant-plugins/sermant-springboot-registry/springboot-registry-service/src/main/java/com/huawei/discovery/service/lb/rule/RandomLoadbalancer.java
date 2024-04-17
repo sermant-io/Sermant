@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 随机负载均衡
+ * Random load balancing
  *
  * @author zhouss
  * @since 2022-09-28

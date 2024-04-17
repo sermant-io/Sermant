@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 监控插件配置服务接口实现
+ * Implementation of monitoring plugin configuration service interface
  *
  * @author luanwenfei
  * @since 2022-09-15

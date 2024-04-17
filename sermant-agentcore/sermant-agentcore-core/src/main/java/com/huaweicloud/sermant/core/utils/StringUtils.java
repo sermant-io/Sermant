@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.utils;
 
 /**
- * 字符串工具类
+ * StringUtils
  *
  * @author luanwenfei
  * @since 2022-03-24
@@ -129,19 +129,19 @@ public class StringUtils {
     }
 
     /**
-     * 是否通配符匹配，支持'*'和'?'，'*'匹配任意字符，'?'匹配一个字符
+     * Wildcard matching, support '*' and '?', '*' matches any character, '?'matches one character
      *
-     * @param str 字符串
-     * @param wc  通配符匹配格式
-     * @return 是否匹配成功
+     * @param str string
+     * @param wc wildcard format
+     * @return match result
      */
     public static boolean isWildcardMatch(String str, String wc) {
         final char[] strArr = str.toCharArray();
         final char[] wcArr = wc.toCharArray();
         int wcCursor = 0;
-        for (int strCursor = 0, starIdx = FLAG, starCursor = 0; strCursor < strArr.length;) {
+        for (int strCursor = 0, starIdx = FLAG, starCursor = 0; strCursor < strArr.length; ) {
             if (wcCursor < wcArr.length && wcArr[wcCursor] != '*'
-                && (wcArr[wcCursor] == '?' || strArr[strCursor] == wcArr[wcCursor])) {
+                    && (wcArr[wcCursor] == '?' || strArr[strCursor] == wcArr[wcCursor])) {
                 strCursor++;
                 wcCursor++;
             } else if (wcCursor < wcArr.length && wcArr[wcCursor] == '*') {
@@ -165,10 +165,10 @@ public class StringUtils {
     }
 
     /**
-     * 获取对象的toString信息
+     * Get the object's toString information
      *
-     * @param object 对象信息
-     * @return 字符串信息
+     * @param object object
+     * @return string
      */
     public static String getString(Object object) {
         return object == null ? "" : object.toString();

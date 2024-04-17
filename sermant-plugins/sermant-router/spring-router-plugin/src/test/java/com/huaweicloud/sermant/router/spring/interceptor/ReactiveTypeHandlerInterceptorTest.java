@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 测试ReactiveTypeHandlerInterceptor
+ * Test ReactiveTypeHandlerInterceptor
  *
  * @author provenceee
  * @since 2023-06-13

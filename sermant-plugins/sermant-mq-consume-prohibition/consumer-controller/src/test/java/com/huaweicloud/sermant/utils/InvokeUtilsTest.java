@@ -20,14 +20,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * InvokeUtils的单元测试
+ * InvokeUtils Unit test
  *
  * @author lilai
  * @since 2023-12-23
  */
 public class InvokeUtilsTest {
     /**
-     * 测试是Sermant的KafkaConsumerController发起的调用
+     * The test was initiated by Sermant's KafkaConsumerController
      */
     @Test
     public void testInvokeBySermant() {
@@ -42,7 +42,7 @@ public class InvokeUtilsTest {
     }
 
     /**
-     * 测试是Sermant的KafkaConsumerController发起的调用，KafkaConsumer嵌套多次调用
+     * The test is initiated by Sermant's KafkaConsumerController, which nested multiple calls within KafkaConsumer
      */
     @Test
     public void testInvokeBySermantWithNestedInvoke() {
@@ -59,7 +59,7 @@ public class InvokeUtilsTest {
     }
 
     /**
-     * 测试不是Sermant的KafkaConsumerController发起的调用
+     * The test was not initiated by Sermant's KafkaConsumerController
      */
     @Test
     public void testNotInvokeBySermant() {
@@ -73,7 +73,7 @@ public class InvokeUtilsTest {
     }
 
     /**
-     * 测试不是Sermant的KafkaConsumerController发起的调用，KafkaConsumer嵌套多次调用
+     * The test was not initiated by Sermant's KafkaConsumerController, and KafkaConsumer nested multiple calls
      */
     @Test
     public void testNotInvokeBySermantWithNestedInvoke() {
@@ -89,7 +89,7 @@ public class InvokeUtilsTest {
     }
 
     /**
-     * 测试不是Sermant的KafkaConsumerController发起的调用，KafkaConsumer无上层调用栈
+     * The test was not initiated by Sermant's KafkaConsumerController, as KafkaConsumer has no upper level call stack
      */
     @Test
     public void testNotInvokeBySermantWithoutInvoker() {
@@ -102,7 +102,7 @@ public class InvokeUtilsTest {
     }
 
     /**
-     * 测试不是Sermant的KafkaConsumerController发起的调用，没有KafkaConsumer的调用栈
+     * The test was not initiated by Sermant's KafkaConsumerController, and there is no call stack for KafkaConsumer
      */
     @Test
     public void testNotInvokeBySermantWithoutKafkaInvocation() {

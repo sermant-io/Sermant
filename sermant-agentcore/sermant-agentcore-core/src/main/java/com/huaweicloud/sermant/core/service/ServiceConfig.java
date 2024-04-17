@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigFieldKey;
 import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * Agent核心服务的通用配置
+ * General configuration of Agent core services
  *
  * @author luanwenfei
  * @since 2023-04-01

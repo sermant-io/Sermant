@@ -37,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 针对ribbon serverList拦截, 替换DynamicServerListLoadBalancer定时更新服务的逻辑
+ * For ribbon serverList interception, replace the logic of DynamicServerListLoadBalancer to update the service
+ * periodically
  *
  * @author zhouss
  * @since 2021-12-31

@@ -27,14 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试一些hashcode
+ * test hashcode
  *
  * @author zhouss
  * @since 2022-08-29
  */
 public class RequestEntityTest {
     /**
-     * 测试hash
+     * test hash
      */
     @Test
     public void test() {

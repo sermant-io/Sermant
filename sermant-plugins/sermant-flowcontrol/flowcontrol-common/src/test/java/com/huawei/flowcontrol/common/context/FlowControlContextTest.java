@@ -16,20 +16,18 @@
 
 package com.huawei.flowcontrol.common.context;
 
-import static org.junit.Assert.*;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 流控上下文测试
+ * Flow control context testing
  *
  * @author zhouss
  * @since 2022-09-13
  */
 public class FlowControlContextTest {
     /**
-     * 流控上下文测试
+     * Flow control context testing
      */
     @Test
     public void test() {

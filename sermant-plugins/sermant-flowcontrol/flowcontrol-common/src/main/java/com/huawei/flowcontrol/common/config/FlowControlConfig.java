@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 流控配置类
+ * flow control configuration class
  *
  * @author zhouss
  * @since 2022-01-28
@@ -32,122 +32,126 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("flow.control.plugin")
 public class FlowControlConfig implements PluginConfig {
     /**
-     * 流控插件kafka地址
+     * kafka address of the flow control plugin
      */
     private String kafkaBootstrapServers = "127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094";
 
     /**
-     * 心跳发送默认间隔时间，单位毫秒
+     * Default interval for sending heartbeat messages, in milliseconds
      */
     private long heartbeatInterval = CommonConst.FLOW_CONTROL_HEARTBEAT_INTERVAL;
 
     /**
-     * 流控信息数据发送默认间隔时间，单位毫秒
+     * The default interval for sending flow control information, in milliseconds
      */
     private long metricInterval = CommonConst.FLOW_CONTROL_METRIC_INTERVAL;
 
     /**
-     * 启动后初始加载流控信息数据的时间段时长
+     * Specifies the period during which flow control information data is initially loaded after startup
      */
     private long metricInitialDuration = CommonConst.METRIC_INITIAL_DURATION;
 
     /**
-     * 未提供查询流控信息数据结束时间的默认加载数据条数
+     * The default number of data loaded at the end time of querying flow control information is not provided
      */
     private long metricMaxLine = CommonConst.METRIC_MAX_LINE;
 
     /**
-     * 查询流控数据时,睡眠一段时间，等待限流数据写入文件再查询
+     * When querying flow control data, sleep for a period of time and wait until
+     * the flow limiting data is written into the file
      */
     private long metricSleepTime = CommonConst.METRIC_SLEEP_TIME;
 
     /**
-     * kafka配置参数 key序列化
+     * kafka configuration parameter: keySerialization
      */
     private String kafkaKeySerializer = "org.apache.kafka.common.serialization.StringSerializer";
 
     /**
-     * kafka配置参数 value序列化
+     * kafka configuration parameter: valueSerialization
      */
     private String kafkaValueSerializer = "org.apache.kafka.common.serialization.StringSerializer";
 
     /**
-     * kafka配置参数 流控信息数据发送topic名称
+     * kafka configuration parameter: The name of the topic to which flow control information is sent
      */
     private String kafkaMetricTopic = "topic-metric";
 
     /**
-     * kafka配置参数 心跳数据发送topic名称
+     * kafka configuration parameter: name of the topic for sending heartbeat data
      */
     private String kafkaHeartbeatTopic = "topic-heartbeat";
 
     /**
-     * kafka配置参数 producer需要server接收到数据之后发出的确认接收的信号 ack 0,1,all
+     * kafka configuration parameter: The producer requires a signal from the server acknowledging receipt of the data
+     * ack 0,1,all
      */
     private long kafkaAcks = 1L;
 
     /**
-     * kafka配置参数 控制生产者发送请求最大大小,默认1M （这个参数和Kafka主机的message.max.bytes 参数有关系）
+     * kafka configuration parameter: Control the maximum size of requests sent by the producer. The default is 1 M
+     * （This parameter is related to the message.max.bytes parameter of the Kafka host）
      */
     private long kafkaMaxRequestSize = CommonConst.KAFKA_MAX_REQUEST_SIZE;
 
     /**
-     * kafka配置参数 生产者内存缓冲区大小 32M
+     * kafka configuration parameter: producer memory buffer size 32m
      */
     private long kafkaBufferMemory = CommonConst.KAFKA_BUFFER_MEMORY;
 
     /**
-     * kafka配置参数 重发消息次数
+     * kafka configuration parameter: the number of times the message was resold
      */
     private long kafkaRetries = 0L;
 
     /**
-     * kafka配置参数 客户端将等待请求的响应的最大时间
+     * kafka configuration parameter: The maximum time the client will wait for a response to the request
      */
     private long kafkaRequestTimeoutMs = CommonConst.KAFKA_REQUEST_TIMEOUT_MS;
 
     /**
-     * kafka配置参数 最大阻塞时间，超过则抛出异常
+     * kafka configuration parameter: Maximum blocking time, beyond which an exception is thrown
      */
     private long kafkaMaxBlockMs = CommonConst.KAFKA_MAX_BLOCK_MS;
 
     /**
-     * 配置jaas前缀
+     * configure jaas prefixes
      */
     private String kafkaJaasConfig = ConfigConst.KAFKA_JAAS_CONFIG;
 
     /**
-     * SASL鉴权机制
+     * sasl authentication mechanism
      */
     private String kafkaSaslMechanism = ConfigConst.KAFKA_SASL_MECHANISM;
 
     /**
-     * 加密协议，目前支持SASL_SSL协议
+     * The encryption protocol supports the SASL_SSL protocol
      */
     private String kafkaSecurityProtocol = ConfigConst.KAFKA_SECURITY_PROTOCOL;
 
     /**
-     * ssl truststore文件存放位置
+     * ssl truststore file Location
      */
     private String kafkaSslTruststoreLocation = ConfigConst.KAFKA_SSL_TRUSTSTORE_LOCATION;
 
     /**
-     * ssl truststore密码配置
+     * ssl truststore password configuration
      */
     private String kafkaSslTruststorePassword = ConfigConst.KAFKA_SSL_TRUSTSTORE_PASSWORD;
 
     /**
-     * 域名不校验
+     * domain uncheck
      */
     private String kafkaIdentificationAlgorithm = ConfigConst.KAFKA_IDENTIFICATION_ALGORITHM;
 
     /**
-     * 是否通过ssl认证
+     * whether to pass the ssl authentication
      */
     private boolean isKafkaSsl = ConfigConst.IS_KAFKA_SSL;
 
     /**
-     * servicecomb-kie地址，当配置中心配为servicecomb-kie时需填写正确的kie服务地址
+     * servicecomb-kie address. If the configuration center is configured as a servicecomb-kie,
+     * enter the correct kie service address
      */
     private String configKieAddress = "localhost:30110";
 
@@ -157,141 +161,146 @@ public class FlowControlConfig implements PluginConfig {
     private String configServiceName = "sermantService";
 
     /**
-     * 是否开启数据采集 包含心跳、指标
+     * Whether to enable data collection, including heartbeat and indicators
      */
     private boolean openMetricCollector = false;
 
     /**
-     * 是否使用线上cse配置规则
+     * whether to use online cse configuration rules
      */
     private boolean useCseRule = false;
 
     /**
-     * 是否适配源泛PAAS的UI以及前后端zookeeper
+     * Whether to match the UI of the source Pan-PaaS and the front and rear zookeeper
      */
     private boolean adaptPass = false;
 
     /**
-     * 是否抛出业务异常 默认 false
+     * Whether to throw a service exception The default is false
      */
     private boolean needThrowBizException = false;
 
     /**
-     * 等待指标数据写入文件的等待时间 单位MS
+     * Wait time unit (MS) for indicator data to be written to a file
      */
     private long metricSleepTimeMs = CommonConst.DEFAULT_METRIC_SEND_INTERVAL_MS;
 
     /**
-     * 流控框架类型
+     * type of flow control framework
      */
     private FlowFramework flowFramework = FlowFramework.RESILIENCE;
 
     /**
-     * 针对apache dubbo重试异常
+     * apache dubbo retry exception
      */
     private String[] apacheDubboRetryExceptions = {"org.apache.dubbo.rpc.RpcException"};
 
     /**
-     * 针对alibaba dubbo重试异常
+     * retry exception for alibaba dubbo
      */
     private String[] alibabaDubboRetryExceptions = {"com.alibaba.dubbo.rpc.RpcException"};
 
     /**
-     * 针对spring默认重试异常
+     * default retry exception for spring
      */
     private String[] springRetryExceptions = {"org.springframework.web.client.HttpServerErrorException"};
 
     /**
-     * 是否使用agent自身配置中心 该配置主要在适配cse时，可能需要使用cse的配置中心，而非使用agent自身配置中心
+     * Whether to use the agent configuration center. The configuration center of the cse may be used instead of the
+     * agent configuration center
      */
     private boolean useAgentConfigCenter = true;
 
     /**
-     * kie命名空间
+     * kie namespace
      */
     private String project = "default";
 
     /**
-     * sc app配置
+     * sc app configuration
      */
     private String application = "sermant";
 
     /**
-     * sc 环境配置
+     * sc environment configuration
      */
     private String environment = "production";
 
     /**
-     * 默认sc版本
+     * default sc version
      */
     private String version = "1.0.0";
 
     /**
-     * 是否开启sc的加密
+     * whether to enable sc encryption
      */
     private boolean isSslEnabled = false;
 
     /**
-     * 是否是基于servicecomb sdk开发 通过此确定是否需要采用拦截方式获取服务信息
+     * Whether the development is based on the servicecomb sdk.
+     * You can determine whether you need to intercept service information
      */
     private boolean isBaseSdk = false;
 
     /**
-     * dubbo注入的cluster invoker执行器 若该配置为“close”则不适用agent的执行器
+     * cluster invoker actuator for dubbo injection. If this configuration is set to "close",
+     * the agent's actuator is not applicable
      */
     private String retryClusterInvoker = "sermant";
 
     /**
-     * 最大缓存数
+     * maximum cache number
      */
     private int maxCacheSize = ConfigConst.DEFAULT_MAX_CACHE_SIZE;
 
     /**
-     * 缓存定时器检查间隔, 单位秒
+     * cache timer check interval in seconds
      */
     private long timedCheckInterval = ConfigConst.DEFAULT_TIME_CACHE_CHECK_INTERVAL;
 
     /**
-     * 是否开启重试
+     * whether to enable retry
      */
     private boolean enableRetry = true;
 
     /**
-     * 连接超时时间-restTemplate
+     * connection timeout-restTemplate
      */
     private long restTemplateConnectTimeoutMs = ConfigConst.CONNECT_TIMEOUT_MS;
 
     /**
-     * 响应超时时间-restTemplate
+     * response timeout-restTemplate
      */
     private long restTemplateReadTimeoutMs = ConfigConst.SOCKET_READ_TIMEOUT_MS;
 
     /**
-     * rest template-请求协议, 默认okHttp， 若宿主没有则使用Connection模式
+     * rest template request protocol default okhttp， if the host does not the connection mode is used
      */
     private String restTemplateRequestFactory = "okHttp";
 
     /**
-     * 是否替换原生的ClusterInvoker, 只针对dubbo应用;
-     * <p>若为true, 则在调用时, 调用逻辑依然会走原dubbo cluster invoker逻辑, 重试仅最外层包装</p>
-     * <p>若为false, 则在调用时, 则直接其cluster invoker替换为由插件重试的自定义重试Invoker, 默认为false</p>
+     * Whether to replace the native ClusterInvoker for dubbo applications only;
+     * <p>If true, the call logic will still follow the original dubbo cluster invoker logic when called,
+     * retry only the outermost packaging</p>
+     * <p>If false, when called, its cluster invoker is replaced by a custom retry Invoker retried by the plugin,
+     * which defaults to false</p>
      */
     private boolean useOriginInvoker = false;
 
     /**
-     * 监控启动开关
+     * monitor start switch
      */
     @ConfigFieldKey("enable-start-monitor")
     private boolean enableStartMonitor;
 
     /**
-     * 系统自适应流控开关
+     * system adaptive flow control switch
      */
     @ConfigFieldKey("enable-system-adaptive")
     private boolean enableSystemAdaptive;
 
     /**
-     * 系统规则流控开关
+     * system rule flow control switch
      */
     @ConfigFieldKey("enable-system-rule")
     private boolean enableSystemRule;

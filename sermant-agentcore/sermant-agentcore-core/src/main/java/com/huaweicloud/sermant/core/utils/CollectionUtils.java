@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.utils;
 import java.util.Collection;
 
 /**
- * 集合工具类
+ * Collection utility class
  *
  * @author lilai
  * @since 2023-07-17
@@ -29,10 +29,10 @@ public class CollectionUtils {
     }
 
     /**
-     * 判断集合是否为null或没有元素
+     * Determines whether the collection is null or has no elements
      *
-     * @param collection 集合
-     * @return 是否为空
+     * @param collection collection
+     * @return result
      */
     public static boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();

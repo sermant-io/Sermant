@@ -51,14 +51,14 @@ public class GraceHttpServer implements PluginService {
     private HttpServer httpserver;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public GraceHttpServer() {
         pluginConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
     }
 
     /**
-     * 服务启动方法
+     * Service startup method
      */
     @Override
     public void start() {
@@ -78,7 +78,7 @@ public class GraceHttpServer implements PluginService {
     }
 
     /**
-     * 服务关闭方法
+     * Service shutdown method
      */
     @Override
     public void stop() {

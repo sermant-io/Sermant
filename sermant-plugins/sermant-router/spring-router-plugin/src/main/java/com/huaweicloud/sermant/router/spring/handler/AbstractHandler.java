@@ -26,18 +26,18 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 抽象处理器
+ * Abstract Handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public abstract class AbstractHandler implements Handler {
     /**
-     * 从headers中，获取需要透传的请求标记
+     * From the headers, obtain the request token that needs to be transparently transmitted
      *
-     * @param headers http请求头
-     * @param keys 需要获取的标记的key
-     * @return 请求标记
+     * @param headers HTTP request headers
+     * @param keys The key of the tag to be obtained
+     * @return Request tags
      */
     protected Map<String, List<String>> getRequestTag(Map<String, List<String>> headers, Set<String> keys) {
         if (CollectionUtils.isEmpty(keys)) {

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.dao;
 
 /**
- * 数据库类型
+ * Database type
  *
  * @since 2023-03-02
  * @author xuezechao
@@ -25,12 +25,12 @@ package com.huaweicloud.sermant.backend.dao;
 public enum DatabaseType {
 
     /**
-     * redis 数据库
+     * Redis database
      */
     REDIS,
 
     /**
-     * 内存
+     * Memory
      */
     MEMORY,
 }

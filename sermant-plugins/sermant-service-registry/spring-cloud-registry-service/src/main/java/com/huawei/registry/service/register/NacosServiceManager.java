@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * nacos注册服务管理器
+ * NACOS Registration Service Manager
  *
  * @since 2022-10-20
  */
@@ -51,7 +51,7 @@ public class NacosServiceManager {
     private final RegisterServiceCommonConfig commonConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosServiceManager() {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
@@ -59,10 +59,10 @@ public class NacosServiceManager {
     }
 
     /**
-     * 获取注册服务
+     * Get registration services
      *
-     * @return NamingService服务
-     * @throws NacosException nacos异常
+     * @return Naming Service
+     * @throws NacosException nacos exception
      */
     public NamingService getNamingService() throws NacosException {
         if (Objects.isNull(this.namingService)) {
@@ -72,10 +72,10 @@ public class NacosServiceManager {
     }
 
     /**
-     * 获取namingMaintain服务
+     * Obtain the namingMaintain service
      *
-     * @return namingMaintain服务
-     * @throws NacosException nacos异常
+     * @return namingMaintain service
+     * @throws NacosException nacos exception
      */
     public NamingMaintainService getNamingMaintainService() throws NacosException {
         if (Objects.isNull(namingMaintainService)) {
@@ -113,7 +113,7 @@ public class NacosServiceManager {
     }
 
     /**
-     * 构建nacos注册实例
+     * Build a Nacos registration instance
      *
      * @return 实例
      */

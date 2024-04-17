@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 流量标签是否需要透传的匹配器
+ * matcher for transparent transmission of traffic tags
  *
  * @author lilai
  * @since 2023-09-07
@@ -50,10 +50,10 @@ public class TagKeyMatcher {
     }
 
     /**
-     * 是否匹配配置中需要透传的key的规则
+     * Whether the key in the request or thread variable matches the rule to be transmitted in the configuration
      *
-     * @param key 被匹配的key
-     * @return 匹配结果
+     * @param key the matched key
+     * @return matching result
      */
     public static boolean isMatch(String key) {
         for (String rule : CONFIG.getMatchRule().keySet()) {

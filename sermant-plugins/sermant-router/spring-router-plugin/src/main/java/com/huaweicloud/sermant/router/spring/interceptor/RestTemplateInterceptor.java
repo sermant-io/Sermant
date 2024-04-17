@@ -31,9 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * org.springframework.web.client.RestTemplate的增强拦截器<br>
+ * Enhanced interceptor for org.springframework.web.client.RestTemplate<br>
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-27
  */
 public class RestTemplateInterceptor extends MarkInterceptor {

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.dubbo.declarer;
 
 /**
- * 增强ContextFilter类的invoke方法
+ * Enhance the Invoke Method of ContextFilter Class
  *
  * @author provenceee
  * @since 2022-09-26
@@ -32,7 +32,7 @@ public class ContextFilterDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "invoke";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ContextFilterDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

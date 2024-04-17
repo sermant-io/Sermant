@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 实例简单测试
+ * Simple instance test
  *
  * @author zhouss
  * @since 2022-10-12

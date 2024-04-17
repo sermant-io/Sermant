@@ -23,7 +23,8 @@ import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import reactor.netty.ConnectionObserver.State;
 
 /**
- * 拦截HttpServerHandle，只引入spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * When intercepting the HttpServerHandle and only introducing spring-boot-starter-webflux for reactive programming,
+ * you need to remove the thread variable in the post-method
  * <p>spring cloud Greenwich.RELEASE+
  *
  * @author provenceee

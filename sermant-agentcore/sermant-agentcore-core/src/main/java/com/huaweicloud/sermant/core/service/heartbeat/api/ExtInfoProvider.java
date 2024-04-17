@@ -19,7 +19,8 @@ package com.huaweicloud.sermant.core.service.heartbeat.api;
 import java.util.Map;
 
 /**
- * 信息额外信息提供者，当心跳发送的内容会发生改变时，需要定制信息提供方式
+ * Information Specifies the additional information provider. If the content sent by the heartbeat is changed,
+ * need to customize the information provision mode
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,9 +28,9 @@ import java.util.Map;
  */
 public interface ExtInfoProvider {
     /**
-     * 提供额外信息集合
+     * Provides a collection of additional information
      *
-     * @return 额外信息集合
+     * @return additional information
      */
     Map<String, String> getExtInfo();
 }

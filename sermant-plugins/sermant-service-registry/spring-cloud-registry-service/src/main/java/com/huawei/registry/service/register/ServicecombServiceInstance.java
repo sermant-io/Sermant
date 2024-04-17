@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * service comb服务信息
+ * service COMB Service Information
  *
  * @author zhouss
  * @since 2022-02-17
@@ -45,9 +45,9 @@ public class ServicecombServiceInstance implements MicroServiceInstance {
     private int port;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param instance 实例信息
+     * @param instance Instance information
      */
     public ServicecombServiceInstance(MicroserviceInstance instance) {
         this.microserviceInstance = instance;

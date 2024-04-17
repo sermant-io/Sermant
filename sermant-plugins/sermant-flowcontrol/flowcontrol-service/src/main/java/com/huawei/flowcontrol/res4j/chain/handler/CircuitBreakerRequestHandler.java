@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 熔断处理
+ * Circuit Breaker handler
  *
  * @author zhouss
  * @since 2022-07-05

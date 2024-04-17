@@ -26,22 +26,22 @@ import com.huaweicloud.sermant.rocketmq.wrapper.DefaultLitePullConsumerWrapper;
 import org.apache.rocketmq.client.consumer.DefaultLitePullConsumer;
 
 /**
- * RocketMq pullConsumer订阅拦截器
+ * RocketMq pullConsumer subscription interceptor
  *
  * @author daizhenyu
  * @since 2023-12-15
  **/
 public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPullConsumerSubscribeInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 处理器
+     * @param handler handler
      */
     public RocketMqPullConsumerSubscribeInterceptor(RocketMqConsumerHandler handler) {
         super(handler);
@@ -58,7 +58,7 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
     @Override
     public ExecuteContext after(ExecuteContext context) {
         DefaultLitePullConsumerWrapper wrapper = RocketMqPullConsumerController
-                .getPullConsumerWrapper((DefaultLitePullConsumer)context.getObject());
+                .getPullConsumerWrapper((DefaultLitePullConsumer) context.getObject());
         if (wrapper == null) {
             PullConsumerLocalInfoUtils.setSubscriptionType(SubscriptionType.SUBSCRIBE);
         } else {
@@ -70,7 +70,8 @@ public class RocketMqPullConsumerSubscribeInterceptor extends AbstractPullConsum
             return context;
         }
 
-        // 增加topic订阅后，消费者订阅信息发生变化，需根据禁消费的topic配置对消费者开启或禁止消费
+        // After adding topic subscriptions, consumer subscription information changes, and consumers need to be enabled
+        // or prohibited from consuming according to the prohibited topic configuration
         disablePullConsumption(wrapper);
         return context;
     }

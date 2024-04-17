@@ -34,7 +34,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 /**
- * 测试注册逻辑
+ * Test the registration logic
  *
  * @author chengyouling
  * @since 2022-11-10

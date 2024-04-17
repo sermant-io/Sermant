@@ -20,26 +20,26 @@ package com.huawei.monitor.declarer;
 import com.huawei.monitor.interceptor.DispatcherServletInterceptor;
 
 /**
- * HTTP拦截定义
+ * HTTP Declarer
  *
  * @author zhp
  * @since 2022-11-01
  */
 public class DispatcherServletDeclarer extends AbstractDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String[] ENHANCE_CLASS = {"org.springframework.web.servlet.DispatcherServlet"};
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = DispatcherServletInterceptor.class.getCanonicalName();
 
     private static final String METHOD_NAME = "doService";
 
     /**
-     * 构造方法
+     * construction method
      */
     public DispatcherServletDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

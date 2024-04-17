@@ -29,7 +29,7 @@ import java.time.Duration;
 import java.util.Optional;
 
 /**
- * 流控处理器
+ * Flow control handler
  *
  * @author zhouss
  * @since 2022-01-22
@@ -38,10 +38,10 @@ public class RateLimitingHandler extends AbstractRequestHandler<RateLimiter, Rat
     @Override
     protected final Optional<RateLimiter> createProcessor(String businessName, RateLimitingRule rule) {
         RateLimiterConfig config = RateLimiterConfig.custom()
-            .limitForPeriod(rule.getRate())
-            .limitRefreshPeriod(Duration.ofMillis(rule.getParsedLimitRefreshPeriod()))
-            .timeoutDuration(Duration.ofMillis(rule.getParsedTimeoutDuration()))
-            .build();
+                .limitForPeriod(rule.getRate())
+                .limitRefreshPeriod(Duration.ofMillis(rule.getParsedLimitRefreshPeriod()))
+                .timeoutDuration(Duration.ofMillis(rule.getParsedTimeoutDuration()))
+                .build();
         RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
         return Optional.of(rateLimiterRegistry.rateLimiter(businessName));
     }

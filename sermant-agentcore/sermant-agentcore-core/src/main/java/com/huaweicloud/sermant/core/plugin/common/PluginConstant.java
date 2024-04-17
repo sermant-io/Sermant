@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.common;
 import java.io.File;
 
 /**
- * 插件管理系统常量
+ * Plugin Constant
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,45 +27,48 @@ import java.io.File;
  */
 public class PluginConstant {
     /**
-     * 插件配置文件目录
+     * Plugin configuration file directory
      */
     public static final String CONFIG_DIR_NAME = "config";
 
     /**
-     * 插件包目录
+     * Plugin package directory
      */
     public static final String PLUGIN_DIR_NAME = "plugin";
 
     /**
-     * 插件服务包目录
+     * Plugin service package directory
      */
     public static final String SERVICE_DIR_NAME = "service";
 
     /**
-     * 插件配置文件名
+     * Plugin configuration file name
      */
     public static final String CONFIG_FILE_NAME = "config.yaml";
 
     /**
-     * sermant插件名称配置键，于manifest中获取
+     * sermant plugin name configuration key, obtained in the manifest
      */
     public static final String PLUGIN_NAME_KEY = "Sermant-Plugin-Name";
 
     /**
-     * sermant插件版本配置键，于manifest中获取
+     * sermant plugin version configuration key, obtained in the manifest
      */
     public static final String PLUGIN_VERSION_KEY = "Sermant-Plugin-Version";
 
     /**
-     * sermant插件默认版本
+     * sermant plugin default version
      */
     public static final String PLUGIN_DEFAULT_VERSION = "unknown";
 
+    private PluginConstant() {
+    }
+
     /**
-     * 获取插件配置文件
+     * Get the plugin configuration file
      *
-     * @param pluginPath 插件根目录
-     * @return 插件配置文件
+     * @param pluginPath Plugin root directory
+     * @return Plugin configuration file
      */
     public static File getPluginConfigFile(String pluginPath) {
         return new File(pluginPath + File.separatorChar + CONFIG_DIR_NAME + File.separatorChar + CONFIG_FILE_NAME);

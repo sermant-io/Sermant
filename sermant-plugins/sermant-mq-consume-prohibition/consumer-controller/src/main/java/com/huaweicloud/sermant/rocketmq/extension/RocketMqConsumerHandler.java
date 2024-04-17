@@ -19,30 +19,31 @@ package com.huaweicloud.sermant.rocketmq.extension;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * RocketmqConsumer处理器接口，供外部实现在rocketmq消费者拦截点执行扩展操作
+ * Rocketmq Consumer handler interface for external implementations to perform extended operations
+ * at rocketmq consumer intercept points
  *
  * @author daizhenyu
  * @since 2023-12-13
  **/
 public interface RocketMqConsumerHandler {
     /**
-     * 拦截点前置处理
+     * Intercept point pre-processing
      *
-     * @param context 上下文信息
+     * @param context Contextual information
      */
     void doBefore(ExecuteContext context);
 
     /**
-     * 拦截点后置处理
+     * Intercept points post-processed
      *
-     * @param context 上下文信息
+     * @param context Contextual information
      */
     void doAfter(ExecuteContext context);
 
     /**
-     * 拦截点异常处理
+     * Exception handling at intercept points
      *
-     * @param context 上下文信息
+     * @param context Contextual information
      */
     void doOnThrow(ExecuteContext context);
 }

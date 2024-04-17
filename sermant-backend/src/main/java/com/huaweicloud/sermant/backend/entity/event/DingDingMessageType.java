@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.backend.entity.event;
 
 /**
- * 钉钉推送支持的数据类型
+ * Message type supported by DingDing
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -25,12 +25,12 @@ package com.huaweicloud.sermant.backend.entity.event;
 public enum DingDingMessageType {
 
     /**
-     * 文本
+     * text
      */
     TEXT("text"),
 
     /**
-     * 富文本
+     * link
      */
     LINK("link"),
 

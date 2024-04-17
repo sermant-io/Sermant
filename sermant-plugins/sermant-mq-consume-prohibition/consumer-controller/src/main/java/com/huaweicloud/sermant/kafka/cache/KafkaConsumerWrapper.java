@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Kafka实例包装类
+ * Kafka instance wrapper
  *
  * @author lilai
  * @since 2023-12-05
@@ -38,59 +38,59 @@ public class KafkaConsumerWrapper {
     private KafkaConsumer<?, ?> kafkaConsumer;
 
     /**
-     * 宿主应用自身订阅的Topic
+     * The topic to which the host application subscribes
      */
     private Set<String> originalTopics;
 
     /**
-     * 是否使用assign方法指定订阅
+     * Whether to use the assign method to specify the subscription
      */
     private boolean isAssign;
 
     /**
-     * 使用assign方法指定的Topic和分区
+     * Use the assign method to specify the topic and partition
      */
     private Collection<TopicPartition> originalPartitions;
 
     /**
-     * 禁止消费的动态配置是否已更新
+     * Whether the dynamic configuration for which consumption is prohibited has been updated
      */
     private AtomicBoolean isConfigChanged;
 
     /**
-     * 当前消费者的服务所在可用区
+     * The zone in which the consumer's service is located
      */
     private String zone;
 
     /**
-     * 当前消费者的服务所在可用区命名空间
+     * The namespace of the AZ where the consumer's service is located
      */
     private String project;
 
     /**
-     * 当前消费者的服务所在的环境
+     * The environment in which the current consumer's services are located
      */
     private String environment;
 
     /**
-     * 当前消费者的服务所在的应用
+     * The application in which the service of the current consumer resides
      */
     private String application;
 
     /**
-     * 当前消费者的所在服务的名称
+     * The name of the service on which the current consumer is located
      */
     private String service;
 
     /**
-     * 当前消费者的所在服务的IP
+     * The IP address of the service where the current consumer is located
      */
     private String serverAddress;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param consumer 消费者原始实例
+     * @param consumer Consumer origin instance
      */
     public KafkaConsumerWrapper(KafkaConsumer<?, ?> consumer) {
         ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);

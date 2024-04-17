@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * nacos注册实现客户端
+ * Nacos registers the implementation client
  *
  * @since 2022-10-20
  */
@@ -47,9 +47,9 @@ public class NacosServiceDiscovery {
     private final NacosServiceManager nacosServiceManager;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param nacosServiceManager naming服务管理
+     * @param nacosServiceManager Naming Service Management
      */
     public NacosServiceDiscovery(NacosServiceManager nacosServiceManager) {
         this.nacosServiceManager = nacosServiceManager;
@@ -57,11 +57,11 @@ public class NacosServiceDiscovery {
     }
 
     /**
-     * 获取对应服务名微服务实例信息
+     * Obtain the microservice instance information of the corresponding service name
      *
-     * @param serviceId 服务id
-     * @return 服务信息
-     * @throws NacosException nacos异常
+     * @param serviceId Service ID
+     * @return Service Information
+     * @throws NacosException nacos exception
      */
     public List<NacosServiceInstance> getInstances(String serviceId) throws NacosException {
         String group = nacosRegisterConfig.getGroup();
@@ -71,11 +71,11 @@ public class NacosServiceDiscovery {
     }
 
     /**
-     * 实例集合信息转换
+     * Instance collection information conversion
      *
-     * @param instances 实例集合
-     * @param serviceId 服务id
-     * @return 转换后实例集合信息
+     * @param instances A collection of instances
+     * @param serviceId Service ID
+     * @return Information about the collection of converted instances
      */
     public List<NacosServiceInstance> convertServiceInstanceList(List<Instance> instances, String serviceId) {
         List<NacosServiceInstance> result = new ArrayList<>(instances.size());
@@ -87,11 +87,11 @@ public class NacosServiceDiscovery {
     }
 
     /**
-     * 实例信息转换
+     * Instance information conversion
      *
-     * @param instance 服务实例
-     * @param serviceId 服务id
-     * @return 转换后实例信息
+     * @param instance Service instances
+     * @param serviceId Service ID
+     * @return Information about the converted instance
      */
     public Optional<NacosServiceInstance> convertServiceInstance(Instance instance, String serviceId) {
         if (instance == null || !instance.isEnabled() || !instance.isHealthy()) {
@@ -122,10 +122,10 @@ public class NacosServiceDiscovery {
     }
 
     /**
-     * 获取所有服务名称
+     * Get all service names
      *
-     * @return 服务名称集合
-     * @throws NacosException nacos异常
+     * @return A collection of service names
+     * @throws NacosException NACOS abnormality
      */
     public List<String> getServices() throws NacosException {
         String group = nacosRegisterConfig.getGroup();

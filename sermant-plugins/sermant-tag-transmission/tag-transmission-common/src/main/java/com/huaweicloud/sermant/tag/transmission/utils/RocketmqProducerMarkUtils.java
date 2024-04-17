@@ -17,14 +17,14 @@
 package com.huaweicloud.sermant.tag.transmission.utils;
 
 /**
- * RocketMQ的生产者线程标记工具类
+ * RocketMQ's producer thread marking tool class
  *
  * @author lilai
  * @since 2023-09-16
  */
 public class RocketmqProducerMarkUtils {
     /**
-     * 生产者线程标记
+     * producer thread mark
      */
     private static final ThreadLocal<Boolean> PRODUCER_MARK = new ThreadLocal<>();
 
@@ -32,16 +32,16 @@ public class RocketmqProducerMarkUtils {
     }
 
     /**
-     * 标记当前线程为生产者线程
+     * mark the current thread as a producer thread
      */
     public static void setProducerMark() {
         PRODUCER_MARK.set(true);
     }
 
     /**
-     * 判断是否当前线程是否是生产者线程
+     * Determines whether the current thread is a producer thread
      *
-     * @return 是否是生产者线程
+     * @return whether the current thread is a producer thread
      */
     public static boolean isProducer() {
         return PRODUCER_MARK.get() != null;

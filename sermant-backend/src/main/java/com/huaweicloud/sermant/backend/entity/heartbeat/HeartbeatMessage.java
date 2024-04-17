@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 心跳消息
+ * Heartbeat message
  *
  * @author luanwenfei
  * @since 2022-03-19
@@ -139,7 +139,7 @@ public class HeartbeatMessage {
     }
 
     /**
-     * 设置健康状态
+     * Set health status
      *
      * @param health health
      */

@@ -17,84 +17,87 @@
 package com.huawei.discovery.config;
 
 /**
- * 负载均衡相关常量
+ * Load-balancing-related constants
  *
  * @author zhouss
  * @since 2022-09-29
  */
 public class LbConstants {
     /**
-     * ZK连接超时时间
+     * The timeout period of the ZK connection
      */
     public static final int DEFAULT_CONNECTION_TIMEOUT_MS = 2000;
 
     /**
-     * ZK响应超时时间
+     * The timeout period for the ZK response
      */
     public static final int DEFAULT_READ_TIMEOUT_MS = 10000;
 
     /**
-     * ZK连接重试时间
+     * ZK connection retry time
      */
     public static final int DEFAULT_RETRY_INTERVAL_MS = 3000;
 
     /**
-     * 缓存获取时间, 单位秒, 默认0, 表示永远不过期
+     * The cache fetch time, in seconds, is 0 by default, which means that it will never expire
      */
     public static final long DEFAULT_CACHE_EXPIRE_SEC = 0L;
 
     /**
-     * 定时器执行间隔, 默认5秒
+     * The timer execution interval is 5 seconds by default
      */
     public static final long DEFAULT_REFRESH_TIMER_INTERVAL_SEC = 5L;
 
     /**
-     * 缓存并发度, 影响从缓存获取实例的效率
+     * Cache concurrency, which affects the efficiency of getting instances from the cache
      */
     public static final int DEFAULT_CACHE_CONCURRENCY_LEVEL = 16;
 
     /**
-     * 服务指标数据缓存, 默认60分钟
+     * Service metric data cache, 60 minutes by default
      */
     public static final long DEFAULT_STATS_CACHE_EXPIRE_TIME = 60L;
 
     /**
-     * 统计数据定时聚合统计刷新时间, 若设置<=0, 则不会开启聚合统计, 关联聚合统计的负载均衡将会失效
+     * If the refresh time of statistics is set to <=0, the aggregation statistics will not be enabled, and the load
+     * balancer associated with the aggregation statistics will become invalid
      */
     public static final long DEFAULT_LB_STATS_REFRESH_INTERVAL_MS = 30000L;
 
     /**
-     * 实例状态统计时间窗口, 默认10分钟, 每一个时间窗口的开始, 统计都会清0
+     * The default time window for instance status statistics is 10 minutes, and the statistics will be cleared to 0 at
+     * the beginning of each time window
      */
     public static final long DEFAULT_INSTANCE_STATE_TIME_WINDOW_MS = 600000L;
 
     /**
-     * 服务超时后最大重试次数
+     * The maximum number of retries after the service times out
      */
     public static final int DEFAULT_MAX_RETRY = 3;
 
     /**
-     * 最大相同实例的重试次数
+     * The maximum number of retries for the same instance
      */
     public static final int DEFAULT_MAX_SAME_RETRY = 3;
 
     /**
-     * 重试等待时间, 默认一秒
+     * Retry wait time, default of one second
      */
     public static final long DEFAULT_RETRY_WAIT_MS = 1000L;
 
     /**
-     * 最大的重试配置缓存数
+     * The maximum number of retry configuration caches
      */
     public static final int DEFAULT_MAX_RETRY_CONFIG_CACHE = 9999;
 
     /**
-     * 当zk状态存在问题时, 使用异步尝试重试, 此处为重试时间间隔
+     * When there is a problem with the zk state, use an asynchronous attempt to retry, in this case the retry interval
      */
     public static final long DEFAULT_WAIT_REGISTRY_INTERVAL_MS = 1000L;
 
     /**
-     * 当zk状态存在问题时, 使用异步尝试重试, 此处为最大从事次数
+     * When there is a problem with the zk state, use an asynchronous attempt to retry, here is the maximum number of
+     * engagements
      */
     public static final int DEFAULT_REGISTRY_MAX_RETRY_NUM = 60;
 

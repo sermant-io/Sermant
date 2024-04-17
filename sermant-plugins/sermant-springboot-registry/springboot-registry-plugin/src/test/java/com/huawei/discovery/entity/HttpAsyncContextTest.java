@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * http async client上下文测试
+ * http async Client context test
  *
  * @author zhouss
  * @since 2022-10-12

@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.tag.transmission.utils.RocketmqProducerMarkUtils;
 
 /**
- * RocketMQ流量标签透传的生产者启动时的拦截器，支持RocketMQ4.x+
+ * An interceptor for RocketMQ traffic tag transparent transmission when the producer starts, supporting RocketMQ4.x+
  *
  * @author lilai
  * @since 2023-09-16
@@ -34,7 +34,7 @@ public class RocketmqProducerStartInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        // 标记生产者线程，防止进入consumer的拦截点
+        // Mark the producer thread to prevent access to the consumer intercept point
         RocketmqProducerMarkUtils.setProducerMark();
         return context;
     }

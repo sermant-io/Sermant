@@ -40,7 +40,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Ribbon BaseLoadBalancer负载均衡增强类，筛选下游实例
+ * The Ribbon BaseLoadBalancer enhanced load balancer class filters downstream instances
  *
  * @author provenceee
  * @since 2022-07-12
@@ -51,7 +51,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
     private final boolean canLoadZuul;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public BaseLoadBalancerInterceptor() {
         loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);

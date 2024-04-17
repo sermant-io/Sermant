@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,28 +25,28 @@ package com.huawei.flowcontrol.common.core.match.operator;
 import com.huawei.flowcontrol.common.core.match.RawOperator;
 
 /**
- * 基于{@link RawOperator} 进行匹配
+ * Based {@link RawOperator} match
  *
  * @author zhouss
  * @since 2021-11-22
  */
 public interface Operator {
     /**
-     * 键值匹配
+     * key value matching
      *
-     * @param targetValue 目标匹配串
-     * @param patternValue 匹配匹配串
-     * @return 是否匹配成功
+     * @param targetValue target matching string
+     * @param patternValue matching string
+     * @return whether the match is successful
      */
     boolean match(String targetValue, String patternValue);
 
     /**
-     * 匹配器ID
-     * 用于与线上CSE适配， 例如
-     * exact  相等
-     * prefix 前缀
-     * suffix 后缀
-     * contain 包含
+     * matcherID
+     * used to adapt to the online cse for example
+     * exact
+     * prefix
+     * suffix
+     * contain
      *
      * @return id
      */

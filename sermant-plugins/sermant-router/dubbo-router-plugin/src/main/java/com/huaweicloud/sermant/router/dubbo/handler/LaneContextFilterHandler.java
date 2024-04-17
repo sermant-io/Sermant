@@ -20,8 +20,8 @@ import com.huaweicloud.sermant.core.common.LoggerFactory;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.dubbo.service.LaneContextFilterService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 泳道处理器
+ * Swimming lane handler
  *
  * @author provenceee
  * @since 2023-02-21
@@ -42,7 +42,7 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
     private final LaneContextFilterService laneContextFilterService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public LaneContextFilterHandler() {
         laneContextFilterService = PluginServiceManager.getPluginService(LaneContextFilterService.class);
@@ -57,10 +57,10 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
             return Collections.emptyMap();
         }
 
-        // 上游透传的标记
+        // markers for upstream transparent transmissions
         Map<String, List<String>> requestTag = getRequestTag(attachments, injectTags);
 
-        // 本次染色标记
+        // this staining marker
         String interfaceName = DubboReflectUtils.getServiceKey(DubboReflectUtils.getUrl(invoker));
         String methodName = DubboReflectUtils.getMethodName(invocation);
         Object[] args = DubboReflectUtils.getArguments(invocation);
@@ -71,7 +71,8 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
             return requestTag;
         }
 
-        // 如果上游传来的标记中，存在与本次染色相同的标记，以上游传递的为准
+        // If there is a marker in the upstream transmission that is the same as the one in this staining,
+        // the upstream transmission shall prevail
         laneTag.forEach(requestTag::putIfAbsent);
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Lane is " + requestTag);

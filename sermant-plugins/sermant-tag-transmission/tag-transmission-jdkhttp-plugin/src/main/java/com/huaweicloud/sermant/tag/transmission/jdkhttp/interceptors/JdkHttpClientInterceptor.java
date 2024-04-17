@@ -31,14 +31,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * JDK HttpClient 流量标签透传的拦截器
+ * JDK HttpClient Interceptor for transparent transmission of traffic tag
  *
  * @author lilai
  * @since 2023-08-08
  */
 public class JdkHttpClientInterceptor extends AbstractClientInterceptor<MessageHeader> {
     /**
-     * 过滤一次处理过程中拦截器的多次调用
+     * Filter multiple calls of interceptors during a single processing
      */
     protected static final ThreadLocal<Boolean> LOCK_MARK = new ThreadLocal<>();
 
@@ -73,9 +73,9 @@ public class JdkHttpClientInterceptor extends AbstractClientInterceptor<MessageH
     }
 
     /**
-     * 向MessageHeader中添加流量标签
+     * adds a traffic tag to MessageHeader
      *
-     * @param messageHeader Jdk HttpClient 标签传递载体
+     * @param messageHeader Jdk HttpClient tag transfer carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(MessageHeader messageHeader) {
@@ -86,7 +86,8 @@ public class JdkHttpClientInterceptor extends AbstractClientInterceptor<MessageH
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 messageHeader.add(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to jdkhttp.", entry);

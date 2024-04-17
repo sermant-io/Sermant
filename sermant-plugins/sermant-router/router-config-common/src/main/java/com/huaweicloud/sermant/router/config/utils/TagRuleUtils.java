@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * tag匹配方式的路由工具类
+ * Routing tools for the tag matching method
  *
  * @author lilai
  * @since 2023-02-21
@@ -38,12 +38,12 @@ public class TagRuleUtils {
     }
 
     /**
-     * 获取目标规则
+     * Get the target rule
      *
-     * @param configuration 路由配置
-     * @param targetService 目标服务
-     * @param serviceName 本服务服务名
-     * @return 目标规则
+     * @param configuration Route configuration
+     * @param targetService Target service
+     * @param serviceName The name of the service
+     * @return Target rules
      */
     public static List<Rule> getTagRules(RouterConfiguration configuration, String targetService,
             String serviceName) {
@@ -67,11 +67,11 @@ public class TagRuleUtils {
     }
 
     /**
-     * 获取目标规则
+     * Get the target rule
      *
-     * @param rule 路由规则
-     * @param serviceName 本服务服务名
-     * @return 是否是目标规则
+     * @param rule Routing rules
+     * @param serviceName The name of the service
+     * @return Whether it is a target rule
      */
     private static boolean isTargetTagRule(Rule rule, String serviceName) {
         if (rule == null) {

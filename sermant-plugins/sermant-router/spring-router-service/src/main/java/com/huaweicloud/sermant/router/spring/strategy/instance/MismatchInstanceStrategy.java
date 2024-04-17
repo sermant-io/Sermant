@@ -25,31 +25,32 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * 匹配不在mismatch中的实例
+ * Match instances that are not in mismatch
  *
- * @param <I> 实例泛型
+ * @param <I> Instance generics
  * @author provenceee
  * @since 2021-12-08
  */
 public class MismatchInstanceStrategy<I> extends AbstractInstanceStrategy<I, List<Map<String, String>>> {
     /**
-     * 匹配不在mismatch中的实例
+     * Match instances that are not in mismatch
      *
-     * @param instance 实例
-     * @param tags 没有匹配上的标签
-     * @param mapper 获取metadata的方法
-     * @return 是否匹配
+     * @param instance Instance
+     * @param tags There is no tag on the match
+     * @param mapper Methods to obtain metadata
+     * @return Whether it matches or not
      */
     @Override
     public boolean isMatch(I instance, List<Map<String, String>> tags, Function<I, Map<String, String>> mapper) {
-        // 由于mismatch里面的标签已经匹配过了且没有匹配上，所以要剔除掉，不能参与负载均衡，否则会导致流量比例不正确（会偏高）
+        // Since the tags in mismatch have been matched and have not been matched, they must be eliminated and cannot
+        // participate in load balancing, otherwise the traffic ratio will be incorrect (it will be high)
         Map<String, String> metadata = getMetadata(instance, mapper);
         for (Map<String, String> mismatchTag : tags) {
             for (Entry<String, String> entry : mismatchTag.entrySet()) {
                 String value = entry.getValue();
                 String key = entry.getKey();
 
-                // value为null时，要把含有该标签的全都过滤掉
+                // If the value is null, filter out all tags that contain the tag
                 if (value == null) {
                     if (metadata.containsKey(key)) {
                         return false;

@@ -22,20 +22,20 @@ import com.huaweicloud.sermant.router.common.request.RequestTag;
 import java.util.concurrent.Callable;
 
 /**
- * Callable包装类
+ * Callable packaging class
  *
- * @param <T> 泛型
+ * @param <T> Generics
  * @author provenceee
  * @since 2024-01-16
  */
 public class CallableWrapper<T> extends AbstractThreadWrapper<T> implements Callable<T> {
     /**
-     * 构造方法
+     * Constructor
      *
      * @param callable callable
-     * @param requestTag 请求标记
-     * @param requestData 请求数据
-     * @param cannotTransmit 执行方法之前是否需要删除线程变量
+     * @param requestTag Request tags
+     * @param requestData Request data
+     * @param cannotTransmit Whether the thread variable needs to be deleted before the method can be executed
      */
     public CallableWrapper(Callable<T> callable, RequestTag requestTag, RequestData requestData,
             boolean cannotTransmit) {

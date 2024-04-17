@@ -17,7 +17,7 @@
 package com.huawei.discovery.retry;
 
 /**
- * 重试异常
+ * Retry exceptions
  *
  * @author zhouss
  * @since 2022-09-28
@@ -26,9 +26,9 @@ public class RetryException extends Exception {
     private final Throwable realEx;
 
     /**
-     * 重试异常
+     * Retry exceptions
      *
-     * @param realEx 实际需抛出的异常
+     * @param realEx Exceptions that actually need to be thrown
      */
     public RetryException(Throwable realEx) {
         super(realEx.getMessage());

@@ -31,7 +31,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * eureka健康测试
+ * Eureka Health Test
  *
  * @author zhouss
  * @since 2022-09-07

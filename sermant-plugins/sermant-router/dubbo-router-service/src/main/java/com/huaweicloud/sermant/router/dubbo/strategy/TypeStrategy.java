@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 规则策略
+ * Rule strategy
  *
  * @author provenceee
  * @since 2021-10-13
@@ -32,19 +32,19 @@ public abstract class TypeStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 获取参数值
+     * get the parameter value
      *
-     * @param arg 参数
-     * @param type 获取参数的方式
-     * @return 参数值
+     * @param arg parameter
+     * @param type how to get the parameters
+     * @return parameter value
      */
     public abstract Optional<String> getValue(Object arg, String type);
 
     /**
-     * 是否匹配规则
+     * whether the rule is matched
      *
-     * @param type 规则表达式
-     * @return 是否匹配
+     * @param type rule expressions
+     * @return whether it matches or not
      */
     public boolean isMatch(String type) {
         if (!checkType(type)) {
@@ -60,34 +60,34 @@ public abstract class TypeStrategy {
     }
 
     /**
-     * 开始字符串
+     * start string
      *
-     * @return 开始字符串
+     * @return start string
      */
     public abstract String getBeginFlag();
 
     /**
-     * 结束字符串
+     * end string
      *
-     * @return 结束字符串
+     * @return end string
      */
     public abstract String getEndFlag();
 
     /**
-     * 检查获取参数的类型
+     * check the type of the obtained parameter
      *
-     * @param type 类型
-     * @return 是否合法
+     * @param type type
+     * @return whether it is legal or not
      */
     public boolean checkType(String type) {
         return StringUtils.isExist(type) && type.startsWith(getBeginFlag()) && type.endsWith(getEndFlag());
     }
 
     /**
-     * 获取参数的key值
+     * obtain the key value of the parameter
      *
-     * @param type 获取参数类型
-     * @return key值
+     * @param type obtain the parameter type
+     * @return Key value
      */
     public String getKey(String type) {
         return type.substring(getBeginFlag().length(), type.length() - getEndFlag().length());

@@ -22,37 +22,37 @@ import java.io.Reader;
 import java.util.Optional;
 
 /**
- * Yaml转换器接口
+ * Yaml Converter Interface
  *
  * @author luanwenfei
  * @since 2022-06-21
  */
 public interface YamlConverter extends BaseOperation {
     /**
-     * 将Yaml转换为目标数据类型
+     * Convert Yaml to the target data type
      *
-     * @param source 源数据
-     * @param type 目标数据类型
-     * @param <T> 目标数据类型
-     * @return 目标数据
+     * @param source data source
+     * @param type target type
+     * @param <T> data type class
+     * @return target data object
      */
     <T> Optional<T> convert(String source, Class<? super T> type);
 
     /**
-     * 将Yaml转换为目标数据类型
+     * Convert Yaml to the target data type
      *
-     * @param reader 源数据
-     * @param type 目标数据类型
-     * @param <T> 目标数据类型
-     * @return 目标数据
+     * @param reader data source
+     * @param type target type
+     * @param <T> data type class
+     * @return target data object
      */
     <T> Optional<T> convert(Reader reader,Class<? super T> type);
 
     /**
-     * 将数据转换为Yaml
+     * Convert Yaml to the target data type
      *
-     * @param data 源数据
-     * @return 转换后的数据
+     * @param data data source
+     * @return target data string
      */
     String dump(Object data);
 }

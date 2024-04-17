@@ -25,14 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 列表匹配策略测试
+ * list match strategy test
  *
  * @author provenceee
  * @since 2021-12-01
  */
 public class ListTypeStrategyTest {
     /**
-     * 测试列表策略
+     * test the list strategy
      */
     @Test
     public void testValue() {
@@ -41,19 +41,19 @@ public class ListTypeStrategyTest {
         list.add("foo");
         list.add(null);
 
-        // 正常情况
+        // normal
         Assert.assertEquals("foo", strategy.getValue(list, ".get(0)").orElse(null));
 
-        // 测试null
+        // test null
         Assert.assertNotEquals("foo", strategy.getValue(list, ".get(1)").orElse(null));
 
-        // 测试越界
+        // test out of bounds
         Assert.assertNotEquals("foo", strategy.getValue(list, ".get(2)").orElse(null));
 
-        // 测试非数组
+        // test non arrays
         Assert.assertNotEquals("foo", strategy.getValue("bar", ".get(0)").orElse(null));
 
-        // 测试不等于
+        // the test is not equal
         Assert.assertNotEquals("bar", strategy.getValue(list, ".get(0)").orElse(null));
     }
 }

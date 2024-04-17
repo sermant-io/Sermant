@@ -25,7 +25,7 @@ import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * 注入请求拦截器
+ * Inject the request interceptor
  *
  * @author zhouss
  * @since 2022-05-23

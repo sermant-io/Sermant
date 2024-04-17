@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * RoundRobinLoadBalancer增强类
+ * RoundRobinLoadBalancer enhancement class
  *
  * @author provenceee
  * @since 2022-01-20
@@ -35,7 +35,7 @@ public class RoundRobinDeclarer extends AbstractDeclarer {
     private static final int ARGS_LENGTH = 3;
 
     /**
-     * 构造方法
+     * construction method
      */
     public RoundRobinDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, null);

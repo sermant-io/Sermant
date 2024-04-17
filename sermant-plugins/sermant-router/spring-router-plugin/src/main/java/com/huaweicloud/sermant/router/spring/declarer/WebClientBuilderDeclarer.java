@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.router.spring.declarer;
 
 /**
- * webclient拦截点，springboot 2.0.0.RELEASE+，注入请求过滤器
+ * Webclient interception point, springboot 2.0.0. RELEASE+, injection request filter
  *
  * @author provenceee
  * @since 2024-01-16
@@ -31,7 +31,7 @@ public class WebClientBuilderDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "build";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public WebClientBuilderDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);

@@ -3,11 +3,12 @@
         "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
         "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 <suppressions>
-    <suppress files=".+Application\.java" checks="HideUtilityClassConstructor" />
-    <!-- AgentLoader测试脚本不进行UncommentedMain检查  -->
+    <suppress files=".+Application\.java" checks="HideUtilityClassConstructor"/>
+    <!-- The AgentLoader test script does not check the UncommentedMain  -->
     <suppress files="sermant-integration-tests/scripts/AgentLoader.java" checks="UncommentedMain"/>
-    <suppress files="com.huaweicloud.sermant.premain.AgentLauncher.java" checks="IllegalCatch" />
-    <suppress files="com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector.java" checks="IllegalCatch" />
-    <!-- 切面返回null跳过HttpInvokerServiceExporter.handleRequest方法执行，可以避免CVE-2016-1000027漏洞反序列化执行恶意代码-->
+    <suppress files="com.huaweicloud.sermant.premain.AgentLauncher.java" checks="IllegalCatch"/>
+    <suppress files="com.huaweicloud.sermant.core.plugin.agent.collector.PluginCollector.java" checks="IllegalCatch"/>
+    <!-- The section returns null and skips the execution of the HttpInvokerServiceExporter.handleRequest method
+    to prevent the CVE-2016-1000027 vulnerability deserialization from executing malicious code-->
     <suppress files="com.huaweicloud.sermant.backend.aop.HttpInvokerServiceAspect.java" checks="RegexpSingleline"/>
 </suppressions>

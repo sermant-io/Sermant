@@ -19,34 +19,34 @@ package com.huawei.monitor.command;
 import java.io.InputStream;
 
 /**
- * Linux监控命令处理接口
+ * linux monitoring command processing interface
  *
  * @author zhp
  * @version 1.0.0
  * @since 2022-08-02
- * @param <T> 解析结果
+ * @param <T> analysis result
  */
 public interface MonitorCommand<T> {
 
     /**
-     * 返回Linux指令
+     * get linux command
      *
-     * @return linux指令
+     * @return linux command
      */
     String getCommand();
 
     /**
-     * 结果解析，解析外部进程的输出流
+     * Result parsing, parsing the output stream of external processes
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after analysis
      */
     T parseResult(InputStream inputStream);
 
     /**
-     * 错误处理，处理外部进程的错误流
+     * Error handling, handling error streams from external processes
      *
-     * @param errorStream 外部进程错误流
+     * @param errorStream external process error stream
      */
     void handleError(InputStream errorStream);
 }

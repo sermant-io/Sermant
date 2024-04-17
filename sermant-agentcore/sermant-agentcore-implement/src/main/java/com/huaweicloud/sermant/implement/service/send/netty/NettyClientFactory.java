@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * netty客户端工厂
+ * Netty client factory
  *
  * @author lilai
  * @version 0.0.1
@@ -35,9 +35,9 @@ public class NettyClientFactory {
     private static final Map<String, NettyClient> CLIENT_MAP = new HashMap<>();
 
     /**
-     * 获取netty客户端工厂单例
+     * Get the netty client factory singleton
      *
-     * @return netty客户端工厂单例
+     * @return singleton
      */
     public static NettyClientFactory getInstance() {
         return FACTORY;
@@ -48,7 +48,7 @@ public class NettyClientFactory {
     }
 
     /**
-     * 通过核心配置获取默认端口和IP的NettyClient
+     * Get default netty client with default port and IP through the core configuration
      *
      * @return NettyClient
      */
@@ -76,7 +76,7 @@ public class NettyClientFactory {
     }
 
     /**
-     * 关闭工厂，清空Client示例
+     * Close the factory and clear the client
      */
     public static void stop() {
         for (Map.Entry<String, NettyClient> entry : CLIENT_MAP.entrySet()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,19 @@ import com.huawei.flowcontrol.common.entity.RequestEntity;
 import java.util.List;
 
 /**
- * 业务场景匹配
+ * business scenario matching
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class BusinessMatcher extends Configurable implements Matcher {
     /**
-     * 配置名
+     * configuration name
      */
     private String name;
 
     /**
-     * 该业务场景的所有匹配器
+     * all matchers for the service scenario
      */
     private List<RequestMatcher> matches;
 
@@ -68,12 +68,12 @@ public class BusinessMatcher extends Configurable implements Matcher {
     }
 
     /**
-     * 是否匹配
+     * if it matches
      *
-     * 匹配规则如下: 有一个业务场景匹配，即匹配成功
+     * The matching rules are as follows: If a service scenario is matched, the match is successful
      *
-     * @param requestEntity 请求体
-     * @return 是否匹配
+     * @param requestEntity request body
+     * @return if it matches
      */
     @Override
     public boolean match(RequestEntity requestEntity) {
@@ -84,7 +84,7 @@ public class BusinessMatcher extends Configurable implements Matcher {
             return false;
         }
         for (RequestMatcher matcher : matches) {
-            // 有一个场景匹配成功，则满足要求
+            // If one scenario is successfully matched, the requirement is met
             if (matcher.match(requestEntity)) {
                 return true;
             }

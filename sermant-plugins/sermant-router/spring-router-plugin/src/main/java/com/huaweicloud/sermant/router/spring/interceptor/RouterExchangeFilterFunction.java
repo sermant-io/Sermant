@@ -30,7 +30,7 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 
 /**
- * webclient拦截器，获取&注入请求头
+ * webclient interceptor, get & inject request headers
  *
  * @author provenceee
  * @since 2024-01-16

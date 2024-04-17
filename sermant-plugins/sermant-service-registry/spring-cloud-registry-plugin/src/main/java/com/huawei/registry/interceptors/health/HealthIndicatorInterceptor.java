@@ -24,7 +24,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import org.springframework.boot.actuate.health.Health;
 
 /**
- * 若采用单注册或者已下发关闭原注册中心, 则不需再进行健康检查
+ * If a single registration is used or the original registration center has been closed, no health check is required
  *
  * @author zhouss
  * @since 2022-05-22

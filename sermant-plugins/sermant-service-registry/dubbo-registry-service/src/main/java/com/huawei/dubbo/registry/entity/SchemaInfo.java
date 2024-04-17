@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 契约
+ * Indenture
  *
  * @author provenceee
  * @since 2022-04-21
@@ -35,17 +35,17 @@ public class SchemaInfo {
     private Map<String, String> parameters;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SchemaInfo() {
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param schemaId 契约
-     * @param group 组
-     * @param version 版本
+     * @param schemaId Indenture
+     * @param group Group
+     * @param version Version
      */
     public SchemaInfo(String schemaId, String group, String version) {
         this();

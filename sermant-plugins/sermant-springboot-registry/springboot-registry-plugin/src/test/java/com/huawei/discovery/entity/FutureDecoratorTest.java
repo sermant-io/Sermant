@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * future修饰器测试
+ * Future decorator test
  *
  * @author zhouss
  * @since 2022-10-12
@@ -104,7 +104,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = InterruptedException.class)
     public void errGet() throws ExecutionException, InterruptedException, TimeoutException {
@@ -112,7 +112,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = InterruptedException.class)
     public void errGetTimeout() throws ExecutionException, InterruptedException, TimeoutException {
@@ -120,7 +120,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = TimeoutException.class)
     public void errGetTimeoutEx() throws ExecutionException, InterruptedException, TimeoutException {
@@ -128,7 +128,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = ExecutionException.class)
     public void errGetTimeoutExecution() throws ExecutionException, InterruptedException, TimeoutException {
@@ -136,7 +136,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = ExecutionException.class)
     public void errGetExecution() throws ExecutionException, InterruptedException, TimeoutException {
@@ -144,7 +144,7 @@ public class FutureDecoratorTest {
     }
 
     /**
-     * 模拟异常场景
+     * Simulate anomalous scenarios
      */
     @Test(expected = ExecutionException.class)
     public void errGetThrowable() throws ExecutionException, InterruptedException, TimeoutException {

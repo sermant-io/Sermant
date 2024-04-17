@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 剔除spring容器中bean相关配置
+ * Remove the bean-related configuration in the spring container
  *
  * @author chengyouling
  * @since 2023-03-27
@@ -29,17 +29,17 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfig;
 @ConfigTypeKey("spring.beans.plugin")
 public class SpringBeansDealConfig implements PluginConfig {
     /**
-     * 是否开启适配
+     * Whether to enable adaptation
      */
     private boolean enabled;
 
     /**
-     * 自动装配的bean全路径名称
+     * The name of the bean full path for the auto-assembly
      */
     private String excludeAutoConfigurations;
 
     /**
-     * Component注解装配的bean全路径名称
+     * The full path name of the bean assembled by Component annotation
      */
     private String excludeBeans;
 

@@ -17,7 +17,7 @@
 package com.huaweicloud.sermant.core.exception;
 
 /**
- * 文件检查异常
+ * File Check Exception
  *
  * @author tangle
  * @since 2023-11-07
@@ -26,9 +26,9 @@ public class FileCheckException extends RuntimeException {
     private static final long serialVersionUID = 1339575470808108623L;
 
     /**
-     * 文件检查异常
+     * constructor
      *
-     * @param message 异常信息
+     * @param message message
      */
     public FileCheckException(String message) {
         super(message);

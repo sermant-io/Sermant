@@ -19,7 +19,7 @@ package com.huawei.discovery.entity;
 import java.util.Map;
 
 /**
- * 服务实例默认实现
+ * The service instance is implemented by default
  *
  * @author zhouss
  * @since 2022-09-26
@@ -40,19 +40,19 @@ public class DefaultServiceInstance extends HashedServiceInstance {
     private String status;
 
     /**
-     * 默认构造器
+     * Default constructor
      */
     public DefaultServiceInstance() {
     }
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param host 域名
+     * @param host domain name
      * @param ip ip
-     * @param port 端口
-     * @param metadata 元数据
-     * @param serviceName 服务名
+     * @param port Port
+     * @param metadata Metadata
+     * @param serviceName service name
      */
     public DefaultServiceInstance(String host, String ip, int port,
             Map<String, String> metadata, String serviceName) {

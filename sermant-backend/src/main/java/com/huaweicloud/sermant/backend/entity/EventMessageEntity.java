@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件信息
+ * Event Information
  *
  * @author xuezechao
  * @since 2023-03-02

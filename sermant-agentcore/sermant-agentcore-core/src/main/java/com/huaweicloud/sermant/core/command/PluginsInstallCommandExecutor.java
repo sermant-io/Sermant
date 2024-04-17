@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
- * 插件安装命令执行器
+ * The command executor of plugin installation
  *
  * @author zhp
  * @since 2023-09-09

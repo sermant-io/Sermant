@@ -21,7 +21,7 @@ import com.huawei.flowcontrol.common.core.rule.SystemRule;
 import org.junit.Assert;
 
 /**
- * 系统规则解析测试
+ * system rule parsing test
  *
  * @author xuezechao1
  * @since 2022-12-13

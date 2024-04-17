@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 类描述
+ * Class description
  *
  * @author lilai
  * @since 2023-02-27
@@ -131,7 +131,7 @@ public class RuleInitializationUtils {
         entireRule1.setRules(ruleList1);
         entireRule1.setKind(RouterConstant.FLOW_MATCH_KIND);
 
-        // 构造tag匹配路由规则
+        // construct a tag matching routing rule
         ValueMatch valueMatch2 = new ValueMatch();
         valueMatch2.setMatchStrategy(MatchStrategy.EXACT);
         valueMatch2.setValues(Collections.singletonList("red"));

@@ -19,7 +19,8 @@ package com.huaweicloud.sermant.router.spring.declarer;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * HttpServerOperations拦截点，只引入spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * When the HttpServerOperations interception point only introduces spring-boot-starter-webflux for reactive
+ * programming, you need to remove the thread variable in the post-method
  * <p>spring cloud Finchley.x
  *
  * @author provenceee
@@ -34,7 +35,7 @@ public class HttpServerOperationsDeclarer extends AbstractDeclarer {
     private static final String METHOD_NAME = "onHandlerStart";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public HttpServerOperationsDeclarer() {
         super(null, INTERCEPT_CLASS, METHOD_NAME);

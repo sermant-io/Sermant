@@ -46,7 +46,7 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * {@link HeartbeatService}的实现
+ * Implementation class of {@link HeartbeatService}
  *
  * @author HapThorin
  * @version 1.0.0
@@ -54,17 +54,17 @@ import java.util.logging.Logger;
  */
 public class HeartbeatServiceImpl implements HeartbeatService {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 心跳额外参数
+     * Heartbeat extra parameter
      */
     private static final Map<String, ExtInfoProvider> EXT_INFO_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 心跳定时任务
+     * Heartbeat timing task
      */
     private ScheduledExecutorService executorService;
 
@@ -73,7 +73,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
      */
     private NettyClient nettyClient;
 
-    // 初始化心跳数据常量
+    // Initialize the heartbeat data message
     private final HeartbeatMessage heartbeatMessage = new HeartbeatMessage();
 
     @Override
@@ -97,13 +97,13 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     /**
-     * 执行循环
+     * execute task
      */
     private void execute() {
-        // 获取插件名和版本集合
+        // Gets the plugin name and version Map
         final Map<String, String> pluginVersionMap = PluginSchemaValidator.getPluginVersionMap();
 
-        // 清空插件信息缓存
+        // Clear the plugin information cache
         heartbeatMessage.getPluginInfoMap().clear();
         for (Map.Entry<String, String> entry : pluginVersionMap.entrySet()) {
             heartbeatMessage.getPluginInfoMap().putIfAbsent(entry.getKey(),
@@ -120,10 +120,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     /**
-     * 添加心跳额外信息
+     * Add additional heartbeat information
      *
-     * @param pluginName 插件名称
-     * @param pluginInfo 插件信息
+     * @param pluginName plugin name
+     * @param pluginInfo plugin information
      */
     private void addExtInfo(String pluginName, PluginInfo pluginInfo) {
         final ExtInfoProvider provider = EXT_INFO_MAP.get(pluginName);

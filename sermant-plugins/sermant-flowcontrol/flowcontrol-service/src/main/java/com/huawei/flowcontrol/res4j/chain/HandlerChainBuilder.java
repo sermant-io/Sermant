@@ -26,14 +26,14 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 
 /**
- * 链构建器, 将所有spi加载的processor按照优先级串起来
+ * ChainBuilder, String all spi loaded handlers in order of priority
  *
  * @author zhouss
  * @since 2022-07-05
  */
 public enum HandlerChainBuilder {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
@@ -49,9 +49,9 @@ public enum HandlerChainBuilder {
     }
 
     /**
-     * 构建链
+     * build chain
      *
-     * @return ProcessorChain 执行链
+     * @return ProcessorChain execution chain
      */
     public HandlerChain build() {
         final HandlerChain processorChain = new HandlerChain();
@@ -61,10 +61,10 @@ public enum HandlerChainBuilder {
     }
 
     /**
-     * 获取处理链
+     * get handler chain
      *
-     * @param name 名称
-     * @return 处理链
+     * @param name name
+     * @return ChainHandler
      */
     public static Optional<AbstractChainHandler> getHandler(String name) {
         for (AbstractChainHandler abstractChainHandler : HANDLERS) {

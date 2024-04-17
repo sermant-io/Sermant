@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * 事件信息 Controller
+ * Event Controller
  *
  * @author xuezechao
  * @since 2023-03-13
@@ -69,11 +69,11 @@ public class EventController {
     private EventPushHandler eventPushHandler;
 
     /**
-     * 查询某页数据
+     * Query data with specific page
      *
-     * @param request 请求
-     * @param page 页码
-     * @return 查询结果
+     * @param request request
+     * @param page page
+     * @return query result
      */
     @GetMapping("/event/events/page")
     public HashMap<String, List<QueryResultEventInfoEntity>> queryEventPage(
@@ -86,11 +86,11 @@ public class EventController {
     }
 
     /**
-     * 事件查询
+     * Event query
      *
-     * @param request 请求
-     * @param eventsRequestEntity 请求参数
-     * @return 查询结果
+     * @param request request
+     * @param eventsRequestEntity Event query request entity
+     * @return query result
      */
     @GetMapping("/event/events")
     public EventsResponseEntity queryEvent(
@@ -105,9 +105,9 @@ public class EventController {
     }
 
     /**
-     * 查询webhook
+     * Query webhook
      *
-     * @return webhook信息
+     * @return webhook information
      */
     @GetMapping("/event/webhooks")
     public WebhooksResponseEntity getWebhooks() {
@@ -123,11 +123,11 @@ public class EventController {
     }
 
     /**
-     * 配置webhook
+     * Configure webhook
      *
-     * @param webhooksIdRequestEntity webhook配置请求实体
+     * @param webhooksIdRequestEntity Webhook request entity
      * @param id webhook id
-     * @return 配置结果
+     * @return configure result
      */
     @PutMapping("/event/webhooks/{id}")
     public boolean setWebhook(@RequestBody(required = false) WebhooksIdRequestEntity webhooksIdRequestEntity,
@@ -144,7 +144,7 @@ public class EventController {
     }
 
     /**
-     * webhook 测试接口
+     * webhook test function
      *
      * @param param webhook id
      */
@@ -154,10 +154,10 @@ public class EventController {
     }
 
     /**
-     * 设置查询事件数量信息
+     * Set the number of events to be queried
      *
-     * @param eventsResponseEntity 事件查询结果
-     * @param queryCacheSize 查询缓存
+     * @param eventsResponseEntity Event query response entity
+     * @param queryCacheSize Event query cache size
      */
     private void setQuerySize(EventsResponseEntity eventsResponseEntity, QueryCacheSizeEntity queryCacheSize) {
         HashMap<String, Integer> eventCount = new HashMap<>();

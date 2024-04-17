@@ -20,34 +20,34 @@ package com.huaweicloud.visibility.entity;
 import java.util.List;
 
 /**
- * 契约信息
+ * Contract Information
  *
  * @author zhp
  * @since 2022-11-30
  */
 public class Contract extends BaseInfo {
     /**
-     * 接口名称
+     * The name of the interface
      */
     private String interfaceName;
 
     /**
-     * 服务注册的key
+     * The key of the service registration
      */
     private String serviceKey;
 
     /**
-     * 请求路径
+     * The path of the request
      */
     private String url;
 
     /**
-     * 服务ID
+     * Service ID
      */
     private String serviceId;
 
     /**
-     * 方法集合
+     * Method set
      */
     private List<MethodInfo> methodInfoList;
 

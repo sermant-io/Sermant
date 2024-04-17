@@ -18,9 +18,9 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * 启动时加载一些必要的类
+ * Load some of the necessary classes at startup
  *
- * @author yuzl 俞真龙
+ * @author yuzl Yu Zhenlong
  * @since 2022-10-26
  */
 public class SpringBootLoadClassInterceptor extends AbstractInterceptor {

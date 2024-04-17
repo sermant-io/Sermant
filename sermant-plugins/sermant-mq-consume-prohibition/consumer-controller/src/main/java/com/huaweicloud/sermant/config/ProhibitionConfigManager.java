@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 消息队列禁止消费配置管理类
+ * Message queue prohibition consumption configuration management class
  *
  * @author lilai
  * @since 2023-12-07
@@ -35,9 +35,9 @@ public class ProhibitionConfigManager {
     }
 
     /**
-     * 获取kafka要禁止消费的Topic集合
+     * Obtain the collection of topics that you want to prohibit consumption by Kafka
      *
-     * @return kafka要禁止消费的Topic集合
+     * @return The collection of topics that Kafka wants to prohibit from consuming
      */
     public static Set<String> getKafkaProhibitionTopics() {
         if (globalConfig.isEnableKafkaProhibition()) {
@@ -50,9 +50,9 @@ public class ProhibitionConfigManager {
     }
 
     /**
-     * 获取rocketmq要禁止消费的Topic集合
+     * Obtain the collection of topics that rocketmq is to prohibit consumption
      *
-     * @return rocketmq要禁止消费的Topic集合
+     * @return The collection of topics that rocketmq wants to prohibit from consuming
      */
     public static Set<String> getRocketMqProhibitionTopics() {
         if (globalConfig.isEnableRocketMqProhibition()) {
@@ -65,27 +65,27 @@ public class ProhibitionConfigManager {
     }
 
     /**
-     * 获取全局配置
+     * Get the global configuration
      *
-     * @return 全局配置
+     * @return Global configuration
      */
     public static ProhibitionConfig getGlobalConfig() {
         return globalConfig;
     }
 
     /**
-     * 获取局部配置
+     * Get the local configuration
      *
-     * @return 局部配置
+     * @return Local configuration
      */
     public static ProhibitionConfig getLocalConfig() {
         return localConfig;
     }
 
     /**
-     * 更新全局配置
+     * Update the global configuration
      *
-     * @param config 禁止消费配置
+     * @param config prohibition consumption configuration
      */
     public static void updateGlobalConfig(ProhibitionConfig config) {
         if (config == null) {
@@ -96,9 +96,9 @@ public class ProhibitionConfigManager {
     }
 
     /**
-     * 更新局部配置
+     * Update local configurations
      *
-     * @param config 禁止消费配置
+     * @param config prohibition consumption configuration
      */
     public static void updateLocalConfig(ProhibitionConfig config) {
         if (config == null) {
@@ -109,9 +109,9 @@ public class ProhibitionConfigManager {
     }
 
     /**
-     * 打印配置信息
+     * Print the configuration information
      *
-     * @return 配置信息
+     * @return Configuration information
      */
     public static String printConfig() {
         return "Global ProhibitionConfig: " + globalConfig.toString() + "; Local ProhibitionConfig: "

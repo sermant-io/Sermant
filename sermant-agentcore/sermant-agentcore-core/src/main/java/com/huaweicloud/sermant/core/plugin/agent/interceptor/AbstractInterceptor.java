@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.agent.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 
 /**
- * 抽象拦截器，提供默认的异常触发点
+ * AbstractInterceptor, provides a default onThrow implementation
  *
  * @author HapThorin
  * @version 1.0.0

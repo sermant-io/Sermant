@@ -34,7 +34,7 @@ import com.huawei.registry.service.register.NacosServiceInstance;
 import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 
 /**
- * 服务缓存测试
+ * Service caching tests
  *
  * @author chengyouling
  * @since 2022-11-17
@@ -45,7 +45,7 @@ public class ServiceCacheTest {
     private static final int INSTANCES_SIZE = 1;
 
     /**
-     * 测试地址缓存
+     * Test address caching
      */
     @Test
     public void testAddress() {

@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.utils.ReflectUtils;
 import java.util.logging.Logger;
 
 /**
- * 注册中心健康状态变更, 针对nacos2.x, Grpc协议
+ * Registry health status changes, for NACOS2.x, GRPC protocol
  *
  * @author zhouss
  * @since 2022-12-20
@@ -36,7 +36,7 @@ public class NacosRpcClientHealthInterceptor extends SingleStateCloseHandler {
 
     @Override
     protected void close() {
-        // 关闭nacos心跳发送
+        // Turn off nacos heartbeat transmission
         ReflectUtils.invokeMethod(target, "shutdown", null, null);
         LOGGER.warning("Nacos heartbeat has been closed by user.");
     }

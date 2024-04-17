@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 /**
- * 采集信息处理服务
+ * Collection information processing service
  *
  * @author zhp
  * @since 2022-12-05
@@ -89,10 +89,10 @@ public class CollectorServiceImpl implements CollectorService {
     }
 
     /**
-     * 发送采集信息
+     * Send collection information
      *
-     * @param operateType 操作类型
-     * @param serverInfo 采集信息
+     * @param operateType The type of operation
+     * @param serverInfo Collect information
      */
     private void sendMessage(String operateType, ServerInfo serverInfo) {
         serverInfo.setApplicationName(BootArgsIndexer.getAppName());

@@ -30,7 +30,7 @@ import org.mockito.Mockito;
 import org.springframework.cloud.zookeeper.discovery.ZookeeperServiceWatch;
 
 /**
- * zookeeper健康检查
+ * zookeeper health checks
  *
  * @author zhouss
  * @since 2022-09-07

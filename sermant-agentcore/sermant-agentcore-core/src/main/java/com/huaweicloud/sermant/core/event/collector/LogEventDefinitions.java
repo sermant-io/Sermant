@@ -20,24 +20,24 @@ import com.huaweicloud.sermant.core.event.EventLevel;
 import com.huaweicloud.sermant.core.event.EventType;
 
 /**
- * 日志事件定义
+ * Log event definition
  *
  * @author luanwenfei
  * @since 2023-03-04
  */
 public enum LogEventDefinitions {
     /**
-     * 错误日志事件信息定义
+     * Error log event information definition
      */
     ERROR_LOG("ERROR_LOG", EventType.LOG, EventLevel.EMERGENCY),
 
     /**
-     * 警告日志事件信息定义
+     * Warning log event information definition
      */
     WARN_LOG("WARN_LOG", EventType.LOG, EventLevel.IMPORTANT);
 
     /**
-     * 事件
+     * event name
      */
     private final String name;
 

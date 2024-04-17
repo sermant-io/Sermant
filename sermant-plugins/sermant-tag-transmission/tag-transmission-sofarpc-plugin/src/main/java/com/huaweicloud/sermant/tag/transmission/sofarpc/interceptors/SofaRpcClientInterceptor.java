@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * sofarpc client端interceptor，支持5.0+版本
+ * sofarpc client interceptor, supports 5.0+
  *
  * @author daizhenyu
  * @since 2023-08-22
@@ -58,9 +58,9 @@ public class SofaRpcClientInterceptor extends AbstractClientInterceptor<SofaRequ
     }
 
     /**
-     * 向SofaRequest中添加流量标签
+     * Add traffic tags to SofaRequest
      *
-     * @param sofaRequest sofarpc客服端 标签传递载体
+     * @param sofaRequest sofarpc client tag delivery carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(SofaRequest sofaRequest) {
@@ -71,9 +71,10 @@ public class SofaRpcClientInterceptor extends AbstractClientInterceptor<SofaRequ
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
-                // sofa 无法添加value为null的键值对
+                // sofa cannot add a key-value pair with null value
                 sofaRequest.addRequestProp(key, "null");
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to sofarpc.", entry);
                 continue;

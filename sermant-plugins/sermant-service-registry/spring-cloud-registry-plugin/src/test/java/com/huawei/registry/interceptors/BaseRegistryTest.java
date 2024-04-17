@@ -33,7 +33,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试基础配置
+ * Test the basic configuration
  *
  * @author zhouss
  * @since 2022-09-07
@@ -78,27 +78,27 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
     }
 
     /**
-     * @return 测试拦截器
+     * @return Test the interceptor
      */
     protected abstract T getInterceptor();
 
     /**
-     * 构建基本的context
+     * Build a basic context
      *
      * @return context
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     protected ExecuteContext buildContext() throws NoSuchMethodException {
         return buildContext(this, null);
     }
 
     /**
-     * 构建基本的context
+     * Build a basic context
      *
-     * @param arguments 参数
-     * @param target 对象
+     * @param arguments Parameter
+     * @param target Object
      * @return context
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     protected ExecuteContext buildContext(Object target, Object[] arguments) throws NoSuchMethodException {
         return ExecuteContext.forMemberMethod(target, String.class.getDeclaredMethod("trim"),
@@ -106,13 +106,13 @@ public abstract class BaseRegistryTest<T extends Interceptor> {
     }
 
     /**
-     * 构建基本的context
+     * build a basic context
      *
-     * @param arguments 参数
-     * @param target 对象
-     * @param result ExecuteContext的result
+     * @param arguments Parameter
+     * @param target Object
+     * @param result The result of ExecuteContext
      * @return context
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException Won't be thrown
      */
     protected ExecuteContext buildContext(Object target, Object[] arguments, Object result)
             throws NoSuchMethodException {

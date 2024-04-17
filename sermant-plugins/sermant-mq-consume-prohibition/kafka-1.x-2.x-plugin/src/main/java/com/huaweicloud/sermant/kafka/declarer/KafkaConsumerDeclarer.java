@@ -19,7 +19,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.kafka.utils.KafkaEnhancementHelper;
 
 /**
- * KafkaConsumer拦截点声明
+ * KafkaConsumer Interception Point Declaration
  *
  * @author lilai
  * @since 2023-12-05

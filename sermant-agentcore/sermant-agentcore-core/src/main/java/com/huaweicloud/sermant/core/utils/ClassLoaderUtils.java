@@ -31,7 +31,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * {@link ClassLoader}相关的工具类
+ * {@link ClassLoader} related tool class
  *
  * @author HapThorin
  * @version 1.0.0
@@ -39,12 +39,12 @@ import java.util.jar.JarFile;
  */
 public class ClassLoaderUtils {
     /**
-     * 缓冲区大小
+     * buffer size
      */
     private static final int BUFFER_SIZE = 1024 * 16;
 
     /**
-     * class文件后缀名
+     * class file suffix
      */
     private static final String CLASSFILE_SUFFIX = ".class";
 
@@ -52,16 +52,22 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * 加载额外jar包至类加载器中
-     * <p>先尝试使用{@link URLClassLoader}#{@code addURL}方法加载，可通过{@link ClassLoader#getResource(String)}获取资源
-     * <p>若类加载不是{@link URLClassLoader}，则调用{@link #loadJarFile(ClassLoader, JarFile)}方法加载
+     * Load additional jar packages into the classloader
+     * <p>Try using {@link URLClassLoader}#{@code addURL} method to load, obtain the resource by
+     * {@link ClassLoader#getResource(String)}
+     * <p>If the classloader is not {@link URLClassLoader}, the {@link #loadJarFile(ClassLoader, JarFile)} method is
+     * called to load it
      *
-     * @param classLoader 类加载器
-     * @param jarUrl jar包URL
-     * @throws NoSuchMethodException 无法找到addURL方法或defineClass方法，正常不会报出
-     * @throws InvocationTargetException 调用addURL方法或defineClass方法错误
-     * @throws IllegalAccessException 无法访问addURL方法或defineClass方法，正常不会报出
-     * @throws IOException 从jar包中加载class文件失败
+     * @param classLoader classLoader
+     * @param jarUrl jar URL
+     * @throws NoSuchMethodException The addURL method or defineClass method could not be found and would not be thrown
+     * normally
+     *
+     * @throws InvocationTargetException Error calling addURL method or defineClass method
+     * @throws IllegalAccessException The addURL method or defineClass method cannot be accessed, and will not be thrown
+     * normally
+     *
+     * @throws IOException Failed to load the class file from the jar package
      */
     public static void loadJarFile(ClassLoader classLoader, URL jarUrl)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, IOException {
@@ -89,15 +95,16 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * 拆解jar包并将其中所有class文件加入到类加载器中
-     * <p>注意，该方法不会加载任何resource，无法通过{@link ClassLoader#getResource(String)}获取本方法加载的内容
+     * Unpack the jar package and add all the class files in it to the classloader
+     * <p>Note that this method does not load any resources and cannot get the contents loaded by this method via
+     * {@link ClassLoader#getResource(String)}
      *
-     * @param classLoader 类加载器
-     * @param jarFile jar包
-     * @throws IOException 从jar包中加载class文件失败
-     * @throws InvocationTargetException 调用defineClass方法错误
-     * @throws IllegalAccessException 无法访问defineClass方法，正常不会报出
-     * @throws NoSuchMethodException 无法找到defineClass方法，正常不会报出
+     * @param classLoader classLoader
+     * @param jarFile jar file
+     * @throws IOException Failed to load the class file from the jar package
+     * @throws InvocationTargetException Error calling defineClass method
+     * @throws IllegalAccessException The defineClass method cannot be accessed, will not be thrown normally
+     * @throws NoSuchMethodException The defineClass method could not be found, will not be thrown normally
      */
     public static void loadJarFile(ClassLoader classLoader, JarFile jarFile)
             throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -125,11 +132,11 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * 读取输入流中所有字节
+     * Reads all bytes in the input stream
      *
-     * @param inputStream 输入流
-     * @return 输入流中所有字节
-     * @throws IOException 读取失败
+     * @param inputStream input stream
+     * @return all bytes in input stream
+     * @throws IOException read exception
      */
     private static byte[] readBytes(InputStream inputStream) throws IOException {
         int count = inputStream.available();
@@ -155,12 +162,12 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * 从类加载器中获取类的字节码
+     * Gets the bytecode of the class from the classloader
      *
-     * @param classLoader 类加载器
-     * @param clsName 类全限定名
-     * @return 类的字节码
-     * @throws IOException 读取类失败
+     * @param classLoader classLoader
+     * @param clsName Class fully qualified name
+     * @return The bytecode of the class
+     * @throws IOException Read class failure
      */
     public static byte[] getClassResource(ClassLoader classLoader, String clsName) throws IOException {
         InputStream inputStream = null;
@@ -175,15 +182,15 @@ public class ClassLoaderUtils {
     }
 
     /**
-     * 定义类到类加载器中
+     * Define the class to the classloader
      *
-     * @param className 定义类的全限定名
-     * @param classLoader 类加载器
-     * @param bytes 类字节码
-     * @return 类对象
-     * @throws InvocationTargetException 调用defineClass方法错误
-     * @throws IllegalAccessException 无法访问defineClass方法，正常不会报出
-     * @throws NoSuchMethodException 无法找到defineClass方法，正常不会报出
+     * @param className fully qualified name of the defined class
+     * @param classLoader classLoader
+     * @param bytes bytes
+     * @return class object
+     * @throws InvocationTargetException Error calling defineClass method
+     * @throws IllegalAccessException The defineClass method cannot be accessed, will not be thrown normally
+     * @throws NoSuchMethodException The defineClass method could not be found, will not be thrown normally
      */
     public static Class<?> defineClass(String className, ClassLoader classLoader, byte[] bytes)
             throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {

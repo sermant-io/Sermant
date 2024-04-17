@@ -18,34 +18,34 @@ package com.huawei.monitor.common;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 指标计算实体类
+ * metric computes entity class
  *
  * @author zhp
  * @since 2022-09-15
  */
 public class MetricCalEntity {
     /**
-     * 服务端累计请求数
+     * total requests on the server
      */
     private AtomicLong reqNum;
 
     /**
-     * 服务端累计成功请求数
+     * total successful requests on the server
      */
     private AtomicLong successFulReqNum;
 
     /**
-     * 服务端累计请求时间
+     * total request time on the server
      */
     private AtomicLong consumeReqTimeNum;
 
     /**
-     * 服务端累计失败请求数
+     * total number of failed requests on the server
      */
     private AtomicLong failedReqNum;
 
     /**
-     * 初始化
+     * initialize
      */
     public MetricCalEntity() {
         this.reqNum = new AtomicLong();

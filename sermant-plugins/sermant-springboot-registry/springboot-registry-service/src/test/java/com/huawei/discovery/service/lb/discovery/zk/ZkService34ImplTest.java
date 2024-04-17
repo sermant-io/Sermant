@@ -19,7 +19,7 @@ package com.huawei.discovery.service.lb.discovery.zk;
 import static org.junit.Assert.*;
 
 /**
- * zkService34测试
+ * zkService34 Test
  *
  * @author zhouss
  * @since 2022-10-09

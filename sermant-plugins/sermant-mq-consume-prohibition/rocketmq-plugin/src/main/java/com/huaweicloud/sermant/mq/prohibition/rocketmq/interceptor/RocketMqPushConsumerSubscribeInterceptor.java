@@ -24,22 +24,22 @@ import com.huaweicloud.sermant.rocketmq.wrapper.DefaultMqPushConsumerWrapper;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 
 /**
- * RocketMq pushConsumer订阅拦截器
+ * RocketMq pushConsumer subscription interceptor
  *
  * @author daizhenyu
  * @since 2023-12-15
  **/
 public class RocketMqPushConsumerSubscribeInterceptor extends AbstractPushConsumerInterceptor {
     /**
-     * 无参构造方法
+     * Non-parametric construction method
      */
     public RocketMqPushConsumerSubscribeInterceptor() {
     }
 
     /**
-     * 有参构造方法
+     * Parameterized construction method
      *
-     * @param handler 处理器
+     * @param handler handler
      */
     public RocketMqPushConsumerSubscribeInterceptor(RocketMqConsumerHandler handler) {
         super(handler);

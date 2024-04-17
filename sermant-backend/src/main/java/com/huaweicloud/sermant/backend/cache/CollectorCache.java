@@ -35,19 +35,19 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 采集信息缓存
+ * Collect information cache
  *
  * @author zhp
  * @since 2022-12-05
  */
 public class CollectorCache {
     /**
-     * 服务信息
+     * Service information
      */
     public static final Map<String, ServerInfo> SERVER_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 服务有消息
+     * Service validity period
      */
     public static final Map<String, ServerInfo> SERVER_VALIDITY_PERIOD_MAP = new ConcurrentHashMap<>();
 
@@ -57,9 +57,9 @@ public class CollectorCache {
     }
 
     /**
-     * 保存契约信息
+     * Save contract information
      *
-     * @param serverInfo 服务采集信息
+     * @param serverInfo Service information
      */
     public static void saveInfo(ServerInfo serverInfo) {
         if (LOGGER.isDebugEnabled()) {
@@ -94,10 +94,10 @@ public class CollectorCache {
     }
 
     /**
-     * 保存契约信息
+     * Save contract information
      *
-     * @param serverInfo    服务信息
-     * @param oldServerInfo 更新前的服务信息
+     * @param serverInfo Service information
+     * @param oldServerInfo Old service information
      */
     private static void saveContractor(ServerInfo serverInfo, ServerInfo oldServerInfo) {
         if (oldServerInfo.getContractList() == null) {
@@ -124,10 +124,10 @@ public class CollectorCache {
     }
 
     /**
-     * 保存血缘关系信息
+     * Save consanguinity
      *
-     * @param serverInfo    服务信息
-     * @param oldServerInfo 旧服务信息
+     * @param serverInfo Service information
+     * @param oldServerInfo Old service information
      */
     private static void saveConsanguinityList(ServerInfo serverInfo, ServerInfo oldServerInfo) {
         if (oldServerInfo.getConsanguinityList() == null) {
@@ -149,9 +149,9 @@ public class CollectorCache {
     }
 
     /**
-     * 移除服务
+     * Removal service
      *
-     * @param serverInfo 服务信息
+     * @param serverInfo Service information
      */
     public static void removeServer(ServerInfo serverInfo) {
         LOGGER.info("need clean collector server info is {}", JSONObject.toJSONString(serverInfo));

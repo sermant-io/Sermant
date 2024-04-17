@@ -48,7 +48,7 @@ import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
- * DispatcherServlet 的 API接口增强 埋点定义sentinel资源
+ * enhanced DispatcherServlet api interface, buried to define sentinel resources
  *
  * @author zhouss
  * @since 2022-02-11
@@ -63,9 +63,11 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     private final com.huawei.flowcontrol.common.handler.retry.Retry retry = new HttpRetry();
 
     /**
-     * http请求数据转换 适应plugin -> service数据传递 注意，该方法不可抽出，由于宿主依赖仅可由该拦截器加载，因此抽出会导致找不到类
+     * http request data conversion: adapts plugin to service data passing Note that this method is not
+     * extractable，Because host dependencies can only be loaded by this interceptor, pulling out results in classes not
+     * being found.
      *
-     * @param request 请求
+     * @param request request
      * @return HttpRequestEntity
      */
     private Optional<HttpRequestEntity> convertToHttpEntity(HttpRequest request) {
@@ -109,7 +111,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
                 context.getMethod(), allArguments, context.getResult());
         RetryContext.INSTANCE.markRetry(retry);
         try {
-            // 第一次执行, 接管宿主逻辑
+            // first execution taking over the host logic
             result = retryFunc.get();
         } catch (Throwable throwable) {
             ex = getRealCause(throwable);
@@ -125,7 +127,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
             RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity.get());
             final List<Retry> handlers = getRetryHandler().getHandlers(httpRequestEntity.get());
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
-                // 重试仅有一个策略
+                // retry only one policy
                 request.getHeaders().add(RETRY_KEY, RETRY_VALUE);
                 result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
                 request.getHeaders().remove(RETRY_KEY);
@@ -149,7 +151,9 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) throws IOException {
         if (hasError(context.getResult())) {
-            // 由于基于当前方法拦截，即使有异常也不会抛出, 只会采用错误码方式返回, 也就不会调用doThrow方法, 因此此处通过手动调用触发
+            // Since the interception is based on the current method, even if there is an exception,
+            // it will not be thrown, and will only be returned in the form of an error code,
+            // so the doThrow method will not be called, so it is triggered by manual calling here.
             chooseHttpService().onThrow(className, defaultException);
         }
         chooseHttpService().onAfter(className, context.getResult());
@@ -165,7 +169,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     }
 
     /**
-     * Http请求重试
+     * Http request retry
      *
      * @since 2022-02-21
      */

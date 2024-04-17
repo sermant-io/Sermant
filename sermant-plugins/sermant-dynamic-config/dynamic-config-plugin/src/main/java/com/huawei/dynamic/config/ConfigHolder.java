@@ -35,14 +35,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
- * 配置持有，存储动态配置
+ * Configuration holding, storage dynamic configuration
  *
  * @author zhouss
  * @since 2022-04-08
  */
 public enum ConfigHolder {
     /**
-     * 单例
+     * singleton
      */
     INSTANCE;
 
@@ -72,10 +72,10 @@ public enum ConfigHolder {
     }
 
     /**
-     * 解析事件，判断是否需要通知更新配置
-     * <p>全量更新</p>
+     * Parse the event to determine if you need to be notified to update the configuration
+     * <p>full renewal</p>
      *
-     * @param event 事件
+     * @param event event
      */
     public void resolve(DynamicConfigEvent event) {
         executorService.submit(() -> {
@@ -95,9 +95,9 @@ public enum ConfigHolder {
     }
 
     /**
-     * 添加监听器
+     * addListener
      *
-     * @param listener 监听器
+     * @param listener listener
      */
     public void addListener(DynamicConfigListener listener) {
         if (listener == null) {
@@ -108,10 +108,10 @@ public enum ConfigHolder {
     }
 
     /**
-     * 获取单个配置
+     * get a single configuration
      *
-     * @param key 配置键
-     * @return 配置项
+     * @param key configuration key
+     * @return configuration value
      */
     public Object getConfig(String key) {
         for (ConfigSource configSource : configSources) {
@@ -124,9 +124,9 @@ public enum ConfigHolder {
     }
 
     /**
-     * 获取所有配置名
+     * gets all configuration names
      *
-     * @return 所有配置名
+     * @return all configuration names
      */
     public Set<String> getConfigNames() {
         final Set<String> configNames = new HashSet<>();
@@ -137,9 +137,9 @@ public enum ConfigHolder {
     }
 
     /**
-     * 获取所有配置源
+     * gets all configuration sources
      *
-     * @return 配置源
+     * @return configurationSource
      */
     public List<ConfigSource> getConfigSources() {
         return configSources;

@@ -28,7 +28,13 @@
             <modules>
                 <module>database-controller</module>
                 <module>database-config-service</module>
-                <module>mongodb-3.x-4.x-plugin</module>
+                <module>mongodb-4.x-plugin</module>
+                <module>mongodb-3.x-plugin</module>
+                <module>mysql-mariadb-2.x-plugin</module>
+                <module>mysql-mariadb-3.x-plugin</module>
+                <module>opengauss-3.0.x-plugin</module>
+                <module>postgresql-9.4.x-plugin</module>
+                <module>postgresql-42.x-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -36,7 +42,13 @@
             <modules>
                 <module>database-controller</module>
                 <module>database-config-service</module>
-                <module>mongodb-3.x-4.x-plugin</module>
+                <module>mongodb-4.x-plugin</module>
+                <module>mongodb-3.x-plugin</module>
+                <module>mysql-mariadb-2.x-plugin</module>
+                <module>mysql-mariadb-3.x-plugin</module>
+                <module>opengauss-3.0.x-plugin</module>
+                <module>postgresql-9.4.x-plugin</module>
+                <module>postgresql-42.x-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -44,7 +56,13 @@
             <modules>
                 <module>database-controller</module>
                 <module>database-config-service</module>
-                <module>mongodb-3.x-4.x-plugin</module>
+                <module>mongodb-4.x-plugin</module>
+                <module>mongodb-3.x-plugin</module>
+                <module>mysql-mariadb-2.x-plugin</module>
+                <module>mysql-mariadb-3.x-plugin</module>
+                <module>opengauss-3.0.x-plugin</module>
+                <module>postgresql-9.4.x-plugin</module>
+                <module>postgresql-42.x-plugin</module>
             </modules>
         </profile>
     </profiles>

@@ -21,12 +21,12 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import com.huaweicloud.sermant.router.common.handler.Handler;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
+import com.huaweicloud.sermant.router.common.utils.DubboReflectUtils;
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 import com.huaweicloud.sermant.router.dubbo.handler.AbstractContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.LaneContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.handler.RouteContextFilterHandler;
 import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
-import com.huaweicloud.sermant.router.dubbo.utils.DubboReflectUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 增强ContextFilter类的invoke方法
+ * Enhance the Invoke Method of ContextFilter Class
  *
  * @author provenceee
  * @since 2022-09-26
@@ -45,7 +45,7 @@ public class ContextFilterInterceptor extends AbstractInterceptor {
     private final DubboConfigService configService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public ContextFilterInterceptor() {
         handlers = new ArrayList<>();
@@ -60,7 +60,7 @@ public class ContextFilterInterceptor extends AbstractInterceptor {
         Set<String> matchKeys = configService.getMatchKeys();
         Set<String> injectTags = configService.getInjectTags();
         if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(injectTags)) {
-            // 染色标记为空，代表没有染色规则，直接return
+            // The staining mark is empty, which means that there are no staining rules, and it is returned directly
             return context;
         }
 

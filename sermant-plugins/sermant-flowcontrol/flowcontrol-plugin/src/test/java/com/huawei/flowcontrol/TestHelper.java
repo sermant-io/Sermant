@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import java.util.Collections;
 
 /**
- * 测试帮助类
+ * test help class
  *
  * @author zhouss
  * @since 2022-08-30
@@ -32,10 +32,10 @@ public class TestHelper {
     }
 
     /**
-     * 构建默认的context
+     * build the default context
      *
      * @return context
-     * @throws NoSuchMethodException 不会抛出
+     * @throws NoSuchMethodException will not throw
      */
     public static ExecuteContext buildDefaultContext() throws NoSuchMethodException {
         return ExecuteContext.forMemberMethod(

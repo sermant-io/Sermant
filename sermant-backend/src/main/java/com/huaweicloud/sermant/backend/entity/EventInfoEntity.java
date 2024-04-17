@@ -20,41 +20,41 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件实体
+ * Event Information Entity
  *
- * @since 2023-03-02
  * @author xuezechao
+ * @since 2023-03-02
  */
 @Getter
 @Setter
 public class EventInfoEntity {
     /**
-     * 实例元数据hash
+     * Hash of instance metadata
      */
     private String meta;
 
     /**
-     * 触发时间
+     * Trigger time
      */
     private long time;
 
     /**
-     * 事件区域
+     * Event scope
      */
     private String scope;
 
     /**
-     * 事件等级
+     * Event level
      */
     private EventLevel level;
 
     /**
-     * 事件类型
+     * Event type
      */
     private EventType type;
 
     /**
-     * 事件信息
+     * Event information
      */
     private EventMessageEntity info;
 }

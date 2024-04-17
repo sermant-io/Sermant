@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 增强信息查询命令执行器
+ * The command executor for enhancement query
  *
  * @author tangle
  * @since 2023-11-02

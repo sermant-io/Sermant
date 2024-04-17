@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试RocketmqConsumerInterceptor
+ * RocketmqConsumerInterceptorTest
  *
  * @author tangle
  * @since 2023-07-27
@@ -57,7 +57,7 @@ public class RocketmqConsumerInterceptorTest extends BaseInterceptorTest {
         StackTraceElement[] stackTraceElements = new StackTraceElement[2];
         RocketmqConsumerInterceptor interceptorBase = new RocketmqConsumerInterceptor();
 
-        // 测试可通过
+        // test passable
         stackTraceElements[0] = new StackTraceElement("org.apache.rocketmq.common.message.Message", "xxxMethod",
                 "xxxFile", 1);
         stackTraceElements[1] = new StackTraceElement("org.apache.xxx", "xxxMethod",
@@ -66,7 +66,7 @@ public class RocketmqConsumerInterceptorTest extends BaseInterceptorTest {
                 (Object) stackTraceElements);
         Assert.assertTrue(resultAccess);
 
-        // 测试不可通过
+        // test failed
         stackTraceElements[0] = new StackTraceElement("org.apache.rocketmq.common.message.Message", "xxxMethod",
                 "xxxFile", 1);
         stackTraceElements[1] = new StackTraceElement("org.apache.rocketmq", "xxxMethod",
@@ -83,27 +83,27 @@ public class RocketmqConsumerInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> tags = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // 无Headers无Tags
+        // no headers no tags
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
-        // 有Headers无Tags
+        // there are headers but no tags
         addHeaders.put("defaultKey", Collections.singletonList("defaultValue"));
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
-        // 有Headers有Tags
+        // there are headers and tags
         tags.put("id", Collections.singletonList("testId001"));
         context = buildContext(addHeaders, tags);
         interceptor.before(context);
         Assert.assertEquals("testId001", TrafficUtils.getTrafficTag().getTag().get("id").get(0));
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("name"));
 
-        // 第二次消费，测试tags是否污染其他消费
+        // The second consumption tests whether tags pollute other consumption
         tags.clear();
         List<String> names = new ArrayList<>();
         names.add("testName001");
@@ -113,7 +113,7 @@ public class RocketmqConsumerInterceptorTest extends BaseInterceptorTest {
         Assert.assertNull(TrafficUtils.getTrafficTag().getTag().get("id"));
         Assert.assertEquals("testName001", TrafficUtils.getTrafficTag().getTag().get("name").get(0));
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         TrafficUtils.removeTrafficTag();
         tagTransmissionConfig.setEnabled(false);
         interceptor.before(context);

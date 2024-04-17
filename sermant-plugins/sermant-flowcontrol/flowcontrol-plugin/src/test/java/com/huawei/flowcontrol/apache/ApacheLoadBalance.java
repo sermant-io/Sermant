@@ -26,7 +26,7 @@ import org.apache.dubbo.rpc.cluster.LoadBalance;
 import java.util.List;
 
 /**
- * alibaba 负载均衡类
+ * apache load balance class
  *
  * @author zhouss
  * @since 2022-03-03

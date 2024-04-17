@@ -60,7 +60,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 
 /**
- * HTTP客户端
+ * HTTP client
  *
  * @author zhouss
  * @since 2021-11-17
@@ -70,21 +70,22 @@ public class DefaultHttpClient
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 最大的连接数 该值建议 > {@link SubscriberManager}最大线程数MAX_THREAD_SIZE
+     * Maximum number of connections. The value is recommended to be greater than maximum number of threads
+     * MAX_THREAD_SIZE in {@link SubscriberManager}
      */
     private static final int MAX_TOTAL = SubscriberManager.MAX_THREAD_SIZE * 2;
 
     /**
-     * 没分支最大连接数
+     * Maximum number of connections per route
      */
     private static final int DEFAULT_MAX_PER_ROUTE = 10;
 
     private final HttpClient httpClient;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param timeout 超时时间
+     * @param timeout timeout
      */
     public DefaultHttpClient(int timeout) {
         httpClient = HttpClientBuilder.create().setDefaultRequestConfig(
@@ -96,9 +97,9 @@ public class DefaultHttpClient
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param requestConfig 配置
+     * @param requestConfig request config
      */
     public DefaultHttpClient(RequestConfig requestConfig) {
         this.httpClient = HttpClientBuilder.create()
@@ -108,7 +109,8 @@ public class DefaultHttpClient
     }
 
     /**
-     * 配置连接池的主要目的是防止在发送请求时连接不够导致无法请求 特别是针对订阅者
+     * The primary purpose of configuring connection pools is to prevent requests from being sent without enough
+     * connections, especially for subscribers
      *
      * @return PoolingHttpClientConnectionManager
      */
@@ -117,7 +119,7 @@ public class DefaultHttpClient
         builder.register("http", PlainConnectionSocketFactory.INSTANCE);
         registerHttps(builder);
 
-        // 如果需配置SSL 在此处注册https
+        // if need to configure SSL, register https here
         Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = builder.build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
                 connectionSocketFactoryRegistry);
@@ -137,9 +139,9 @@ public class DefaultHttpClient
     }
 
     /**
-     * get请求
+     * get request
      *
-     * @param url 请求地址
+     * @param url request address
      * @return HttpResult
      */
     @Override
@@ -153,11 +155,11 @@ public class DefaultHttpClient
     }
 
     /**
-     * get请求
+     * get request
      *
-     * @param url 请求地址
-     * @param headers 请求头
-     * @param requestConfig 请求配置
+     * @param url request address
+     * @param headers request headers
+     * @param requestConfig request config
      * @return HttpResult
      */
     @Override
@@ -202,9 +204,9 @@ public class DefaultHttpClient
     }
 
     /**
-     * 执行请求
+     * Execute request
      *
-     * @param request 请求参数
+     * @param request HttpUriRequest
      * @return HttpResult
      */
     private HttpResult execute(HttpUriRequest request) {
@@ -264,9 +266,9 @@ public class DefaultHttpClient
     }
 
     /**
-     * 添加默认的请求头
+     * Add default request headers
      *
-     * @param base http请求base
+     * @param base HttpRequestBase
      */
     private void addDefaultHeaders(HttpRequestBase base) {
         base.addHeader(HttpHeaders.CONTENT_TYPE, "application/json; charset=utf-8");
@@ -274,7 +276,7 @@ public class DefaultHttpClient
     }
 
     /**
-     * SSL信任策略
+     * SSL trust strategy
      *
      * @author zhouss
      * @since 2021-11-17

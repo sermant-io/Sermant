@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 可重试异常
+ * retry exception
  *
  * @author zhouss
  * @since 2022-07-23
@@ -36,10 +36,10 @@ public class RetryClientHttpResponse extends AbstractClientHttpResponse {
     private final int code;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param msg 错误信息
-     * @param code 错误码
+     * @param msg errorMessage
+     * @param code errorCode
      */
     public RetryClientHttpResponse(String msg, int code) {
         this.msg = msg;

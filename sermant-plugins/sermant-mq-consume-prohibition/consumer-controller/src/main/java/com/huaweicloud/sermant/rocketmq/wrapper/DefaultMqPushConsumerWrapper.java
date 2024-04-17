@@ -22,7 +22,7 @@ import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
 
 /**
- * DefaultMQPushConsumer包装类
+ * DefaultMQPushConsumer packaging class
  *
  * @author daizhenyu
  * @since 2023-12-04
@@ -33,11 +33,11 @@ public class DefaultMqPushConsumerWrapper extends AbstractConsumerWrapper {
     private final DefaultMQPushConsumerImpl pushConsumerImpl;
 
     /**
-     * 有参构造方法
+     * parameter construction method
      *
-     * @param consumer push消费者
-     * @param pushConsumerImpl 内部push消费者
-     * @param clientFactory rocketmq客户端工厂类
+     * @param consumer push consumers
+     * @param pushConsumerImpl Push consumers internally
+     * @param clientFactory rocketmq client factory class
      */
     public DefaultMqPushConsumerWrapper(DefaultMQPushConsumer consumer, DefaultMQPushConsumerImpl pushConsumerImpl,
             MQClientInstance clientFactory) {

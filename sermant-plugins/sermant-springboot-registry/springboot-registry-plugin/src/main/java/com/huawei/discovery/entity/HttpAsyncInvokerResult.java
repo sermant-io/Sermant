@@ -17,7 +17,8 @@
 package com.huawei.discovery.entity;
 
 /**
- * HttpAsyncClient调用结果, 仅针对{@link com.huawei.discovery.interceptors.httpclient.HttpAsyncClient4xInterceptor}
+ * HttpAsyncClient call result, only
+ * for{@link com.huawei.discovery.interceptors.httpclient.HttpAsyncClient4xInterceptor}
  *
  * @author zhouss
  * @since 2022-11-03
@@ -28,16 +29,16 @@ public class HttpAsyncInvokerResult {
     private Object result;
 
     /**
-     * 调用结果
+     * Invoke the result
      */
     public HttpAsyncInvokerResult() {
     }
 
     /**
-     * 异步调用结果
+     * Asynchronous call results
      *
      * @param future future
-     * @param result 调用结果, 可能为异常
+     * @param result The result of the call, which may be an exception
      */
     public HttpAsyncInvokerResult(Object future, Object result) {
         this.future = future;

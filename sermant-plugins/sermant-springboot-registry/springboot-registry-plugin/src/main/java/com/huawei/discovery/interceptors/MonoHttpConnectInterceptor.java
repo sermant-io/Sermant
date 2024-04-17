@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * webclient拦截点
+ * Webclient interception point
  *
  * @author provenceee
  * @since 2023-04-25
@@ -53,7 +53,7 @@ public class MonoHttpConnectInterceptor extends MarkInterceptor {
     private final InvokerService invokerService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public MonoHttpConnectInterceptor() {
         invokerService = PluginServiceManager.getPluginService(InvokerService.class);
@@ -92,7 +92,7 @@ public class MonoHttpConnectInterceptor extends MarkInterceptor {
             }
         }
 
-        // 方法返回值为void
+        // The method returns void
         context.skip(null);
         return context;
     }
@@ -124,7 +124,9 @@ public class MonoHttpConnectInterceptor extends MarkInterceptor {
         return context;
     }
 
-    // 前置方法将原对象的uri替换成了实际的ip，所以在后缀方法与异常方法需要把uri还原，否则，如果使用了相同对象再次进行请求，将不会进行负载均衡
+    // The prefix method replaces the URI of the original object with the actual IP, so the URI needs to be restored in
+    // the suffix method and the exception method, otherwise, if the same object is used to request again, the load
+    // balancing will not be performed
     private void resetUri(ExecuteContext context) {
         Object originUri = context.getLocalFieldValue(ORIGIN_URI_FIELD_NAME);
         if (originUri == null) {

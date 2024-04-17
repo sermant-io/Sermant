@@ -23,20 +23,20 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 获取查询原注册中心查询实例列表客户端
+ * Obtain the client that queries the instance list in the original registry
  *
  * @author zhouss
  * @since 2021-12-17
  */
 public class DiscoveryClientConfigurationDeclarer extends AbstractDoubleRegistryDeclarer {
     /**
-     * 增强类的全限定名 该client注入优先级最高，因此只需拦截该client即可
+     * Fully qualified name of the enhanced class This client injection priority is the highest, so just intercept it
      */
     private static final String ENHANCE_CLASS =
-        "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration";
+            "org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration";
 
     /**
-     * 拦截类的全限定名
+     * The fully qualified name of the interception class
      */
     private static final String INTERCEPT_CLASS = ClientConfigurationInterceptor.class.getCanonicalName();
 
@@ -48,7 +48,7 @@ public class DiscoveryClientConfigurationDeclarer extends AbstractDoubleRegistry
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("compositeDiscoveryClient"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("compositeDiscoveryClient"), INTERCEPT_CLASS)
         };
     }
 }

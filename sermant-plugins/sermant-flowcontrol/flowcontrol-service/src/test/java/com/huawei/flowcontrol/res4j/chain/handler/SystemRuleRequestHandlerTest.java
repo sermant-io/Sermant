@@ -23,6 +23,7 @@ import com.huawei.flowcontrol.common.entity.FlowControlResult;
 import com.huawei.flowcontrol.common.entity.RequestEntity;
 import com.huawei.flowcontrol.res4j.chain.HandlerChainEntry;
 import com.huawei.flowcontrol.res4j.windows.SystemStatus;
+
 import org.junit.Assert;
 
 public class SystemRuleRequestHandlerTest extends BaseEntityTest implements RequestTest {
@@ -31,7 +32,7 @@ public class SystemRuleRequestHandlerTest extends BaseEntityTest implements Requ
     private String sourceName;
 
     /**
-     * 测试限流
+     * test rate limiting
      *
      * @author xuezechao1
      * @since 2022-12-12

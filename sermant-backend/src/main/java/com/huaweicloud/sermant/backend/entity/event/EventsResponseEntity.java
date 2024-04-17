@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 事件查询响应实体
+ * Event query response entity
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -31,8 +31,9 @@ import java.util.List;
 @Getter
 @Setter
 public class EventsResponseEntity {
-
     private int totalPage;
+
     private List<QueryResultEventInfoEntity> events;
+
     private HashMap<String, Integer> eventCount;
 }

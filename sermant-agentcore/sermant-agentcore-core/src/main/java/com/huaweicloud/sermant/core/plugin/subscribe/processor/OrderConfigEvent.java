@@ -23,7 +23,7 @@ import com.huaweicloud.sermant.core.service.dynamicconfig.common.DynamicConfigEv
 import java.util.Map;
 
 /**
- * 优先级排序事件, 附带全量数据
+ * Order sort event with all data
  *
  * @author zhouss
  * @since 2022-04-21
@@ -34,13 +34,13 @@ public class OrderConfigEvent extends DynamicConfigEvent {
     private final Map<String, Object> allData;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param key 配置键
-     * @param group 组
-     * @param content 配置内容
-     * @param eventType 事件类型
-     * @param allData 所有数据
+     * @param key Configuration key
+     * @param group Configuration group
+     * @param content Configuration content
+     * @param eventType Event type
+     * @param allData All data
      */
     public OrderConfigEvent(String key, String group, String content, DynamicConfigEventType eventType, Map<String,
             Object> allData) {
@@ -49,9 +49,9 @@ public class OrderConfigEvent extends DynamicConfigEvent {
     }
 
     /**
-     * 全量数据
+     * all data
      *
-     * @return 全量接收的数据, 已按照优先级进行数据覆盖
+     * @return all data, overwritten by order
      */
     public Map<String, Object> getAllData() {
         return this.allData;

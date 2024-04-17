@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * HttpClient 流量标签透传的拦截器, 仅针对4.x版本
+ * HttpClient Interceptor for transparent transmission of traffic tags, for 4.x version only
  *
  * @author lilai
  * @since 2023-07-17
@@ -55,9 +55,9 @@ public class HttpClient4xInterceptor extends AbstractClientInterceptor<HttpReque
     }
 
     /**
-     * 向HttpRequest中添加流量标签
+     * add traffic tag to HttpRequest
      *
-     * @param httpRequest httpclient 4.x 标签传递载体
+     * @param httpRequest httpclient 4.x traffic tag carrier
      */
     @Override
     protected void injectTrafficTag2Carrier(HttpRequest httpRequest) {
@@ -68,7 +68,8 @@ public class HttpClient4xInterceptor extends AbstractClientInterceptor<HttpReque
             }
             List<String> values = entry.getValue();
 
-            // server端在标签值不为null的情况下转为list存储，为null时直接put null，因此在client端values为空必定是null
+            // The server side converts the label value to list storage when it is not null. If it is null, it directly
+            // puts null. Therefore, if the client side values are empty, they must be null.
             if (CollectionUtils.isEmpty(values)) {
                 httpRequest.addHeader(key, null);
                 LOGGER.log(Level.FINE, "Traffic tag {0} have been injected to httpclient.", entry);

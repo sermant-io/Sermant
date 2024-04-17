@@ -46,7 +46,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * alibaba dubbo重试逻辑测试
+ * alibaba dubbo retry logic test
  *
  * @author zhouss
  * @since 2022-08-31
@@ -66,9 +66,9 @@ public class AlibabaDubboInvokerInterceptorTest {
     }
 
     /**
-     * 前置初始化
+     * preinitialization
      *
-     * @throws Exception 初始化失败抛出
+     * @throws Exception initialization failure thrown
      */
     @Before
     public void before() throws Exception {

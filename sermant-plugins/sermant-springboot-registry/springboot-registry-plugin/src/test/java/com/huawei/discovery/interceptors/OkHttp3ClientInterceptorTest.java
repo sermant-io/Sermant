@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * OkHttp3调用测试
+ * OkHttp3 call test
  *
  * @author chengyouling
  * @since 2022-10-10
@@ -70,7 +70,7 @@ public class OkHttp3ClientInterceptorTest extends BaseTest {
     private final static String convertUrl = "http://127.0.0.1:8010/sayHello?name=123";
 
     /**
-     * 构造方法
+     * Constructor
      */
     public OkHttp3ClientInterceptorTest() {
         arguments = new Object[2];

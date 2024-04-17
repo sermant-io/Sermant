@@ -20,39 +20,39 @@ package com.huaweicloud.loadbalancer.config;
 import java.util.Optional;
 
 /**
- * ribbon负载均衡策略
+ * ribbon load balance strategy
  *
  * @author provenceee
  * @since 2022-01-21
  */
 public enum RibbonLoadbalancerType {
     /**
-     * 随机
+     * Random
      */
     RANDOM("Random", "com.netflix.loadbalancer.RandomRule"),
 
     /**
-     * 轮询
+     * Round Robin
      */
     ROUND_ROBIN("RoundRobin", "com.netflix.loadbalancer.RoundRobinRule"),
 
     /**
-     * 重试策略
+     * Retry
      */
     RETRY("Retry", "com.netflix.loadbalancer.RetryRule"),
 
     /**
-     * 最低并发策略
+     * Best Available
      */
     BEST_AVAILABLE("BestAvailable", "com.netflix.loadbalancer.BestAvailableRule"),
 
     /**
-     * 可用过滤策略
+     * Availability Filtering
      */
     AVAILABILITY_FILTERING("AvailabilityFiltering", "com.netflix.loadbalancer.AvailabilityFilteringRule"),
 
     /**
-     * 响应时间加权重策略
+     * Response Time Weighted
      *
      * @deprecated Use {@link #WEIGHTED_RESPONSE_TIME} instead.
      */
@@ -60,22 +60,22 @@ public enum RibbonLoadbalancerType {
     RESPONSE_TIME_WEIGHTED("ResponseTimeWeighted", "com.netflix.loadbalancer.ResponseTimeWeightedRule"),
 
     /**
-     * 区域权重策略
+     * Zone Avoidance
      */
     ZONE_AVOIDANCE("ZoneAvoidance", "com.netflix.loadbalancer.ZoneAvoidanceRule"),
 
     /**
-     * 响应时间加权重策略
+     * Weighted Response Time
      */
     WEIGHTED_RESPONSE_TIME("WeightedResponseTime", "com.netflix.loadbalancer.WeightedResponseTimeRule");
 
     /**
-     * 实际配置映射名称
+     * name of the actual mapping
      */
     private final String mapperName;
 
     /**
-     * 规则类名
+     * rule class name
      */
     private final String clazzName;
 
@@ -85,10 +85,10 @@ public enum RibbonLoadbalancerType {
     }
 
     /**
-     * 匹配负载均衡类型
+     * match the load balancing type
      *
-     * @param loadbalancerType 负载均衡
-     * @return 负载均衡类型
+     * @param loadbalancerType loadbalancer type
+     * @return loadbalancer type
      */
     public static Optional<RibbonLoadbalancerType> matchLoadbalancer(String loadbalancerType) {
         if (loadbalancerType == null) {
@@ -103,10 +103,10 @@ public enum RibbonLoadbalancerType {
     }
 
     /**
-     * 匹配负载均衡类型
+     * match the load balancing type
      *
-     * @param clazzName 负载均衡规则类名
-     * @return 负载均衡类型
+     * @param clazzName load balancing rule class name
+     * @return loadbalancer type
      */
     public static Optional<RibbonLoadbalancerType> matchLoadbalancerByClazz(String clazzName) {
         if (clazzName == null) {

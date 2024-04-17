@@ -30,34 +30,34 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 单个请求匹配
+ * single request matching
  *
  * @author zhouss
  * @since 2021-11-16
  */
 public class RequestMatcher implements Matcher {
     /**
-     * 场景名
+     * scenario name
      */
     private String name;
 
     /**
-     * 请求头匹配
+     * request header matching
      */
     private Map<String, RawOperator> headers;
 
     /**
-     * 请求路径
+     * request path
      */
     private RawOperator apiPath;
 
     /**
-     * 方法类型 GET, POST, PUT, DELETE, HEAD, PATCH, OPTIONS;
+     * methodType： GET, POST, PUT, DELETE, HEAD, PATCH, OPTIONS;
      */
     private List<String> method;
 
     /**
-     * 匹配的目标服务名
+     * matching target service name
      */
     private String serviceName;
 
@@ -102,12 +102,15 @@ public class RequestMatcher implements Matcher {
     }
 
     /**
-     * 是否匹配
+     * if it matches
      *
-     * 匹配规则如下: 1.请求的方法未被包含在内，则不通过 2.请求的路劲必须匹配 3.请求头完全匹配
+     * the matching rules are as follows:
+     * 1.If the requested method is not included, it will not pass
+     * 2.the path of the request must match
+     * 3.the request headers match exactly
      *
-     * @param requestEntity 请求体
-     * @return 是否匹配
+     * @param requestEntity requestBody
+     * @return if it matches
      */
     @Override
     public boolean match(RequestEntity requestEntity) {
@@ -135,7 +138,7 @@ public class RequestMatcher implements Matcher {
             return true;
         }
 
-        // 匹配请求头
+        // matching request header
         for (Map.Entry<String, RawOperator> entry : this.headers.entrySet()) {
             final String headerValue = requestHeaders.get(entry.getKey());
             if (StringUtils.isEmpty(headerValue)) {
@@ -169,11 +172,11 @@ public class RequestMatcher implements Matcher {
         for (Map.Entry<String, String> entry : operator.entrySet()) {
             final Operator matchOperator = OperatorManager.INSTANCE.getOperator(entry.getKey());
             if (matchOperator == null) {
-                // 无相关匹配器，数据错误！
+                // no relevant matcher, data error！
                 return false;
             }
             if (!matchOperator.match(target, String.valueOf(entry.getValue()))) {
-                // 条件全部匹配
+                // condition all match
                 return false;
             }
         }

@@ -32,7 +32,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * spring负载测试
+ * spring load test
  *
  * @author zhouss
  * @since 2022-08-31
@@ -50,7 +50,7 @@ public class SpringLbChooseServerInterceptorTest {
         RetryContext.INSTANCE.buildRetryPolicy(retryRule);
         final Object instance = new Object();
 
-        // 模拟更新实例
+        // simulated update instance
         RetryContext.INSTANCE.updateServiceInstance(instance);
         interceptor.before(context);
         assertNull(context.getResult());
@@ -76,9 +76,9 @@ public class SpringLbChooseServerInterceptorTest {
     }
 
     /**
-     * 获取测试拦截器
+     * get the test interceptor
      *
-     * @return 拦截器
+     * @return interceptor
      */
     protected Interceptor getInterceptor() {
         return new SpringLbChooseServerInterceptor();

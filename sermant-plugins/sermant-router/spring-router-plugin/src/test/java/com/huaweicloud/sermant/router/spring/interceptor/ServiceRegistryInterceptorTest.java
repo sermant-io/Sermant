@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试ServiceRegistryInterceptor
+ * Test ServiceRegistryInterceptor
  *
  * @author provenceee
  * @since 2022-09-06
@@ -57,7 +57,7 @@ public class ServiceRegistryInterceptorTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -67,7 +67,7 @@ public class ServiceRegistryInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -94,7 +94,7 @@ public class ServiceRegistryInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
@@ -108,7 +108,7 @@ public class ServiceRegistryInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {

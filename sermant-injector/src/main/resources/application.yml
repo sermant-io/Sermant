@@ -6,36 +6,38 @@ server:
   port: 8443
   ssl:
     enabled: true
-    # ssl证书
+    # ssl certificate
     certificate: /home/config/sermant-injector.pem
-    # ssl证书私钥
+    # private key of ssl certificate
     certificate-private-key: /home/config/sermant-injector.key
     key-store-password: default
     key-alias: sermant-injector
 
 sermant-agent:
   image:
-    # agent镜像地址
+    # agent image address
     addr: xxx.huawei.com/sermant-agent:0.0.1
-    # agent镜像拉取策略
+    # pulling policy of agent image
     pullPolicy: IfNotPresent
   mount:
-    # agent挂载磁盘
+    # disk that agent mounts
     path: /home/sermant-agent
   config:
-    # agent配置中心类型: ZOOKEEPER/KIE
+    # Configuration center type of Sermant: ZOOKEEPER/KIE/NACOS
     type: ZOOKEEPER
-    # agent配置中心地址
+    # Configuration center address of Sermant
     address: http://localhost:2181
   service:
-    # agent注册中心类型: SERVICE_COMB/NACOS
+    # Registration center type of Sermant: SERVICE_COMB/NACOS
     type: SERVICE_COMB
-    # agent注册中心地址
+    # Registration center address
     address: http://localhost:30100
-  # sermant-agent 配置环境变量的configMap的名字
+  # The name of the configMap that configures the environment variable in sermant-agent
   configMap: sermant-agent-env
   inject:
-    # 当宿主应用已存在JAVA_TOOL_OPTIONS变量时，sermant的注入行为，before为在原变量前注入（默认），after为在原变量后注入，ignore为不注入
+    # When the host application already has JAVA_TOOL_OPTIONS variables, injector injection behavior: before indicates
+    # injection before the original variable (default), after indicates injection after the original variable, and
+    # ignore indicates that injection is not performed
     action: before
 
 management:

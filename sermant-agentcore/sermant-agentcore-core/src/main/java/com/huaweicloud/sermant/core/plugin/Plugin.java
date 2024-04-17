@@ -28,74 +28,75 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 用于维护插件信息 插件名，插件包目录，插件服务，插件配置，插件主模块的类加载器，插件服务类加载器，插件的ResetTransformer
+ * Used to maintain plugin information: plugin name, plugin package directory, plugin service, plugin configuration,
+ * main plugin-module classloader, plugin service classloader, plugin ResetTransformer
  *
  * @author luanwenfei
  * @since 2023-05-30
  */
 public class Plugin {
     /**
-     * 插件名
+     * plugin name
      */
     private String name;
 
     /**
-     * 插件版本
+     * plugin version
      */
     private String version;
 
     /**
-     * 插件所在路径
+     * plugin path
      */
     private String path;
 
     /**
-     * 动态插件, true 则可动态安装 false 则不可动态安装
+     * Dynamic plugin: true means it can be installed dynamically, and false means it cannot be installed dynamically
      */
     private boolean isDynamic;
 
     /**
-     * 插件服务列表
+     * List of plugin services
      */
     private List<String> services = new ArrayList<>();
 
     /**
-     * 插件配置列表
+     * Plugin configuration list
      */
     private List<String> configs = new ArrayList<>();
 
     /**
-     * 插件拦截器列表，需要通过adviceKey进行索引
+     * List of plugin interceptors, indexed by adviceKey
      */
     private HashMap<String, Set<String>> interceptors = new HashMap<>();
 
     /**
-     * 持有advice锁的adviceKey集合
+     * Set of adviceKey that hold advice lock
      */
     private Set<String> adviceLocks = new HashSet<>();
 
     /**
-     * 用于加载插件主模块的类加载器
+     * The classloader used to load the main plugin-module of the plugin
      */
     private PluginClassLoader pluginClassLoader;
 
     /**
-     * 用于加载插件服务模块的类加载器
+     * The classloader used to load the plugin service module
      */
     private ServiceClassLoader serviceClassLoader;
 
     /**
-     * 可重置的类文件转换器
+     * Resettable class file transformer
      */
     private ResettableClassFileTransformer classFileTransformer;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param name 插件名
-     * @param path 插件路径
-     * @param isDynamic 插件是否为动态安装时加载
-     * @param pluginClassLoader 插件类加载器
+     * @param name plugin name
+     * @param path plugin path
+     * @param isDynamic Whether the plugin is loaded via dynamic installation
+     * @param pluginClassLoader PluginClassLoader
      */
     public Plugin(String name, String path, boolean isDynamic, PluginClassLoader pluginClassLoader) {
         this.name = name;

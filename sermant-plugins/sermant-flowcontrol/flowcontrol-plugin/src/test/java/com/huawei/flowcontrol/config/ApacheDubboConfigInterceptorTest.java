@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.config;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * apache dubbo适配sdk测试
+ * apache dubbo adaptive sdk test
  *
  * @author zhouss
  * @since 2022-08-30

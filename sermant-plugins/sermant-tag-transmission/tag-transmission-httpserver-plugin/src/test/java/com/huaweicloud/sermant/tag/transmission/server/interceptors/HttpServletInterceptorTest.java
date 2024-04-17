@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试HttpServletInterceptor
+ * HttpServletInterceptorTest
  *
  * @author tangle
  * @since 2023-07-27
@@ -66,7 +66,7 @@ public class HttpServletInterceptorTest extends BaseInterceptorTest {
         Map<String, List<String>> addHeaders = new HashMap<>();
         TrafficUtils.removeTrafficTag();
 
-        // Headers包含tag的请求
+        // headers include tag
         List<String> ids = new ArrayList<>();
         ids.add("testId001");
         ids.add("testId002");
@@ -78,7 +78,7 @@ public class HttpServletInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), tags1);
         interceptor.after(context);
 
-        // 第二次请求（不同tag）,测试tag数据不会污染其他请求
+        // Second request (different tag), testing that tag data does not contaminate other requests
         addHeaders.remove("id");
         List<String> names = new ArrayList<>();
         names.add("testName001");
@@ -91,7 +91,7 @@ public class HttpServletInterceptorTest extends BaseInterceptorTest {
         Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), tags2);
         interceptor.after(context);
 
-        // 测试TagTransmissionConfig开关关闭时
+        // Test when the Tag Transmission Config switch is off
         tagTransmissionConfig.setEnabled(false);
         interceptor.before(context);
         Assert.assertNull(TrafficUtils.getTrafficTag());

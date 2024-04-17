@@ -17,24 +17,24 @@
 package com.huaweicloud.sermant.entity;
 
 /**
- * 请求统计数据
+ * Request statistics
  *
  * @author zhp
  * @since 2023-02-24
  */
 public class RequestCountData {
     /**
-     * 请求数量
+     * Number of requests
      */
     private int requestNum;
 
     /**
-     * 请求失败数量
+     * The number of failed requests
      */
     private int requestFailNum;
 
     /**
-     * 错误率
+     * Error rate
      */
     private float errorRate;
 

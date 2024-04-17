@@ -33,7 +33,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /**
- * 测试RegistryConfigInterceptor
+ * Test RegistryConfigInterceptor
  *
  * @author provenceee
  * @since 2022-04-14
@@ -59,80 +59,80 @@ public class RegistryConfigInterceptorTest {
     }
 
     /**
-     * 测试Alibaba RegistryConfig
+     * Test Alibaba RegistryConfig
      *
      * @throws NoSuchMethodException 找不到方法
      * @see com.alibaba.dubbo.config.RegistryConfig
      */
     @Test
     public void testAlibabaRegistryConfig() throws NoSuchMethodException {
-        // 测试setProtocol方法
+        // Test the setProtocol method
         Method setProtocolMethod = RegistryConfig.class.getMethod("setProtocol", String.class);
 
-        // 测试关闭迁移开关与注册开关
+        // Test turning off the migration switch and the registration switch
         test(setProtocolMethod, false, false, TestConstant.BAR);
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         test(setProtocolMethod, true, false, TestConstant.BAR);
 
-        // 测试开启迁移开关与注册开关
+        // Test enabling the migration switch and registration switch
         test(setProtocolMethod, true, true, TestConstant.BAR);
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         test(setProtocolMethod, false, true, Constant.SC_REGISTRY_PROTOCOL);
 
-        // 测试setAddress方法
+        // Test the setAddress method
         Method setAddressMethod = RegistryConfig.class.getMethod("setAddress", String.class);
 
-        // 测试关闭迁移开关与注册开关
+        // Test turning off the migration switch and the registration switch
         test(setAddressMethod, false, false, TestConstant.BAR);
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         test(setAddressMethod, true, false, TestConstant.BAR);
 
-        // 测试开启迁移开关与注册开关
+        // Test enabling the migration switch and registration switch
         test(setAddressMethod, true, true, TestConstant.BAR);
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         test(setAddressMethod, false, true, Constant.SC_REGISTRY_ADDRESS);
     }
 
     /**
-     * 测试Apache RegistryConfig
+     * Test Apache RegistryConfig
      *
-     * @throws NoSuchMethodException 找不到方法
+     * @throws NoSuchMethodException Can't find method
      * @see org.apache.dubbo.config.RegistryConfig
      */
     @Test
     public void testApacheRegistryConfig() throws NoSuchMethodException {
-        // 测试setProtocol方法
+        // Test the setProtocol method
         Method setProtocolMethod = org.apache.dubbo.config.RegistryConfig.class.getMethod("setProtocol", String.class);
 
-        // 测试关闭迁移开关与注册开关
+        // Test turning off the migration switch and the registration switch
         test(setProtocolMethod, false, false, TestConstant.BAR);
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         test(setProtocolMethod, true, false, TestConstant.BAR);
 
-        // 测试开启迁移开关与注册开关
+        // Test enabling the migration switch and registration switch
         test(setProtocolMethod, true, true, TestConstant.BAR);
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         test(setProtocolMethod, false, true, Constant.SC_REGISTRY_PROTOCOL);
 
-        // 测试setAddress方法
+        // Test the setAddress method
         Method setAddressMethod = org.apache.dubbo.config.RegistryConfig.class.getMethod("setAddress", String.class);
 
-        // 测试关闭迁移开关与注册开关
+        // Test turning off the migration switch and the registration switch
         test(setAddressMethod, false, false, TestConstant.BAR);
 
-        // 测试开启迁移开关，关闭注册开关
+        // Test enabling the migration switch and disabling the registration switch
         test(setAddressMethod, true, false, TestConstant.BAR);
 
-        // 测试开启迁移开关与注册开关
+        // Test enabling the migration switch and registration switch
         test(setAddressMethod, true, true, TestConstant.BAR);
 
-        // 测试关闭迁移开关，开启注册开关
+        // Test disabling the migration switch and enabling the registration switch
         test(setAddressMethod, false, true, Constant.SC_REGISTRY_ADDRESS);
     }
 

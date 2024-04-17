@@ -21,7 +21,8 @@ import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor
 import com.huaweicloud.sermant.router.common.utils.ThreadLocalUtils;
 
 /**
- * 拦截HttpServerOperations，只引入spring-boot-starter-webflux进行响应式编程时，需要在后置方法移除线程变量
+ * When intercepting HttpServerOperations and only introducing spring-boot-starter-webflux for reactive programming,
+ * you need to remove thread variables from the post-method
  * <p>spring cloud Finchley.x
  *
  * @author provenceee

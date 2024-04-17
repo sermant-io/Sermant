@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 管理服务中已安装的Sermant
+ * Manage the Sermant installed in the host instance
  *
  * @author luanwenfei
  * @since 2023-05-24
@@ -38,10 +38,10 @@ public class SermantManager {
     }
 
     /**
-     * 创建Sermant
+     * Create Sermant
      *
-     * @param artifact 标识Sermant
-     * @param urls Sermant资源路径
+     * @param artifact artifact that identities Sermant
+     * @param urls Sermant resource path
      * @return SermantClassLoader
      */
     public static SermantClassLoader createSermant(String artifact, URL[] urls) {
@@ -60,9 +60,9 @@ public class SermantManager {
     }
 
     /**
-     * 获取Sermant
+     * Get Sermant
      *
-     * @param artifact 标识Sermant
+     * @param artifact artifact that identities Sermant
      * @return SermantClassLoader
      */
     public static SermantClassLoader getSermant(String artifact) {
@@ -70,9 +70,9 @@ public class SermantManager {
     }
 
     /**
-     * 移除Sermant
+     * Remove Sermant
      *
-     * @param artifact 需要移除的Sermant的命名空间
+     * @param artifact artifact of the Sermant that needs to be removed
      * @throws RemoveSermantException RemoveSermantException
      */
     public static void removeSermant(String artifact) {
@@ -86,9 +86,9 @@ public class SermantManager {
     }
 
     /**
-     * 检查Sermant产品状态
+     * Check Sermant product status
      *
-     * @param artifact 产品名
+     * @param artifact artifact that identities Sermant
      * @return boolean
      */
     public static boolean checkSermantStatus(String artifact) {
@@ -100,19 +100,19 @@ public class SermantManager {
     }
 
     /**
-     * 更新Sermant产品状态
+     * Update Sermant product status
      *
-     * @param artifact 产品名
-     * @param status 状态
+     * @param artifact artifact that identities Sermant
+     * @param status status
      */
     public static void updateSermantStatus(String artifact, boolean status) {
         SERMANT_STATUS.put(artifact, status);
     }
 
     /**
-     * 当前产品是否安装过Sermant
+     * Whether the current instance has installed Sermant
      *
-     * @param artifact 标识基于Sermant的产品
+     * @param artifact artifact that identities Sermant
      * @return boolean
      */
     private static boolean hasSermant(String artifact) {

@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * KafkaConsumer消费控制器
+ * The consumption controller of a Kafka consumer
  *
  * @author lilai
  * @since 2023-12-05
@@ -39,15 +39,15 @@ public class KafkaConsumerController {
     }
 
     /**
-     * 执行禁止消费
+     * Enforcement of prohibited consumption
      *
-     * @param kafkaConsumerWrapper 消费者包装实例
-     * @param prohibitionTopics 禁止消费的主题
+     * @param kafkaConsumerWrapper instance of consumer packaging
+     * @param prohibitionTopics Topics that are prohibited for consumption
      */
     public static void disableConsumption(KafkaConsumerWrapper kafkaConsumerWrapper, Set<String> prohibitionTopics) {
         Set<String> originalTopics = kafkaConsumerWrapper.getOriginalTopics();
 
-        // 未订阅任何Topic，无需操作
+        // Not subscribed to any Topic, so no action is required
         if (originalTopics.size() == 0) {
             return;
         }
@@ -63,27 +63,27 @@ public class KafkaConsumerController {
     }
 
     /**
-     * 新增消费者缓存
+     * Added consumer cache
      *
-     * @param kafkaConsumer 消费者实例
+     * @param kafkaConsumer Consumer instance
      */
     public static void addKafkaConsumerCache(KafkaConsumer<?, ?> kafkaConsumer) {
         KafkaConsumerCache.INSTANCE.addKafkaConsumer(kafkaConsumer);
     }
 
     /**
-     * 获取消费者缓存
+     * Get the consumer cache
      *
-     * @return 消费者缓存
+     * @return consumer cache
      */
     public static Map<Integer, KafkaConsumerWrapper> getKafkaConsumerCache() {
         return KafkaConsumerCache.INSTANCE.getCache();
     }
 
     /**
-     * 移除消费者缓存
+     * Remove the consumer cache
      *
-     * @param kafkaConsumer 消费者实例
+     * @param kafkaConsumer consumer cache
      */
     public static void removeKafkaConsumeCache(KafkaConsumer<?, ?> kafkaConsumer) {
         KafkaConsumerCache.INSTANCE.getCache().remove(kafkaConsumer.hashCode());

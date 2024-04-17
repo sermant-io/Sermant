@@ -29,7 +29,7 @@ import org.apache.rocketmq.common.message.MessageQueue;
 import java.util.Collection;
 
 /**
- * DefaultLitePullConsumer包装类
+ * DefaultLitePullConsumer packaging class
  *
  * @author daizhenyu
  * @since 2023-12-04
@@ -48,12 +48,12 @@ public class DefaultLitePullConsumerWrapper extends AbstractConsumerWrapper {
     private AssignedMessageQueue assignedMessageQueue;
 
     /**
-     * 有参构造方法
+     * parameter construction method
      *
-     * @param pullConsumer pull消费者
-     * @param pullConsumerImpl 内部pull消费者
-     * @param rebalanceImpl 重平衡实现类
-     * @param clientFactory rocketmq客户端工厂类
+     * @param pullConsumer pull consumers
+     * @param pullConsumerImpl Pull consumers internally
+     * @param rebalanceImpl rebalance the implementation class
+     * @param clientFactory rocketmq client factory class
      */
     public DefaultLitePullConsumerWrapper(DefaultLitePullConsumer pullConsumer,
             DefaultLitePullConsumerImpl pullConsumerImpl, RebalanceImpl rebalanceImpl,

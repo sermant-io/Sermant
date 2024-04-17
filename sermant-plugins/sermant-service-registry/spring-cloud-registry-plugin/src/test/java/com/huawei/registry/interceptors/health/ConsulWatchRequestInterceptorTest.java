@@ -29,7 +29,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 定时请求拦截
+ * Intercept requests on a regular basis
  *
  * @author zhouss
  * @since 2022-09-07

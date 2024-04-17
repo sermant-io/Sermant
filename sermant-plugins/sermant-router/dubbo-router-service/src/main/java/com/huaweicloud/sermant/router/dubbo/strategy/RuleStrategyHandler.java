@@ -16,6 +16,8 @@
 
 package com.huaweicloud.sermant.router.dubbo.strategy;
 
+import com.huaweicloud.sermant.router.common.mapper.AbstractMetadataMapper;
+import com.huaweicloud.sermant.router.common.mapper.DefaultMapper;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.strategy.RuleStrategy;
 import com.huaweicloud.sermant.router.dubbo.strategy.rule.InvokerRuleStrategy;
@@ -24,54 +26,59 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 路由策略处理器
+ * routing policy handler
  *
  * @author provenceee
  * @since 2021-10-14
  */
 public enum RuleStrategyHandler {
     /**
-     * 实例
+     * instance
      */
     INSTANCE;
 
-    private final RuleStrategy<Object> ruleStrategy;
+    private RuleStrategy<Object> ruleStrategy = new InvokerRuleStrategy(new DefaultMapper());
 
-    RuleStrategyHandler() {
-        this.ruleStrategy = new InvokerRuleStrategy();
+    /**
+     * Building metadata processing classes for Dubbo3.x application registration
+     *
+     * @param mapper Meta processing of metadata mapper
+     */
+    public void builedDubbo3Mapper(AbstractMetadataMapper<Object> mapper) {
+        ruleStrategy = new InvokerRuleStrategy(mapper);
     }
 
     /**
-     * 选取标签应用的invokers
+     * Select invoker for tag application
      *
-     * @param serviceName 服务名
+     * @param serviceName service name
      * @param invokers dubbo invokers
-     * @param rule 路由规则
-     * @return 标签应用的invokers
+     * @param rule routing rules
+     * @return invokers for tag applications
      */
     public List<Object> getFlowMatchInvokers(String serviceName, List<Object> invokers, Rule rule) {
         return ruleStrategy.getFlowMatchInstances(serviceName, invokers, rule);
     }
 
     /**
-     * 根据rule选取标签应用的invokers
+     * Select the invoker for label application based on the rule
      *
-     * @param serviceName 服务名
+     * @param serviceName service name
      * @param invokers dubbo invokers
-     * @param rule 规则
-     * @return 标签应用的invokers
+     * @param rule rule
+     * @return invokers for tag applications
      */
     public List<Object> getMatchInvokers(String serviceName, List<Object> invokers, Rule rule) {
         return ruleStrategy.getMatchInstances(serviceName, invokers, rule);
     }
 
     /**
-     * 选取路由匹配的实例
+     * select the instance of route matching
      *
-     * @param serviceName 服务名
-     * @param instances 实例列表
-     * @param tags 标签
-     * @return 路由匹配的实例
+     * @param serviceName service name
+     * @param instances list of instances
+     * @param tags Label
+     * @return instances of route matching
      */
     public List<Object> getMatchInvokersByRequest(String serviceName, List<Object> instances,
             Map<String, String> tags) {
@@ -79,13 +86,13 @@ public enum RuleStrategyHandler {
     }
 
     /**
-     * 选取不匹配标签的实例
+     * select instances of mismatched labels
      *
-     * @param serviceName 服务名
-     * @param invokers 实例列表
-     * @param tags 标签
-     * @param isReturnAllInstancesWhenMismatch 无匹配时，是否返回全部实例
-     * @return 路由过滤后的实例
+     * @param serviceName service name
+     * @param invokers list of instances
+     * @param tags Label
+     * @param isReturnAllInstancesWhenMismatch If there is no match, whether to return all instances
+     * @return instances that are route filtered
      */
     public List<Object> getMismatchInvokers(String serviceName, List<Object> invokers, List<Map<String, String>> tags,
             boolean isReturnAllInstancesWhenMismatch) {

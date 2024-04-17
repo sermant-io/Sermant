@@ -28,7 +28,7 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 结束阶段开始注册微服务
+ * The end phase starts registering microservices
  *
  * @author chengyouling
  * @since 2022-10-10
@@ -41,7 +41,7 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
     private final ConfigCenterService configCenterService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringApplicationInterceptor() {
         registryService = PluginServiceManager.getPluginService(RegistryService.class);

@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.service.tracing.api;
 import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
 
 /**
- * 将Span上下文注入载体的函数式接口
+ * Functional interface for injecting Span to a carrier
  *
  * @param <T>
  * @author luanwenfei
@@ -28,11 +28,11 @@ import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
 @FunctionalInterface
 public interface InjectService<T> {
     /**
-     * 跨进程链路追踪，需要将SpanContext内容放入协议载体，
-     * TraceId->TRACE_ID、ParentSpanId->PARENT_SPAN_ID、NextSpanIdPrefix->SPAN_ID_PREFIX为必选项
+     * For cross-process tracing, the SpanContext needs to be put into the protocol carrier.
+     * TraceId->TRACE_ID、ParentSpanId->PARENT_SPAN_ID、NextSpanIdPrefix->SPAN_ID_PREFIX required
      *
-     * @param spanEvent span信息
-     * @param carrier SpanContext携带载体
+     * @param spanEvent span information
+     * @param carrier protocol carrier
      */
     void addToCarrier(SpanEvent spanEvent, T carrier);
 }

@@ -44,7 +44,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 
 /**
- * 测试alibaba dubbo拦截器
+ * testing the alibaba dubbo interceptor
  *
  * @author zhouss
  * @since 2022-03-02

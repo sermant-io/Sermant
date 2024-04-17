@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * 构造器测试
+ * constructor test
  *
  * @author zhouss
  * @since 2022-08-31

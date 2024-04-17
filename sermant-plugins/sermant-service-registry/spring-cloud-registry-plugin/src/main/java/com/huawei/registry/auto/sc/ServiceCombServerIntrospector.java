@@ -26,7 +26,7 @@ import org.springframework.cloud.netflix.ribbon.DefaultServerIntrospector;
 import java.util.Map;
 
 /**
- * meta处理
+ * meta processing
  *
  * @author zhouss
  * @since 2022-05-19

@@ -17,20 +17,18 @@
 
 package com.huaweicloud.loadbalancer.config;
 
-import static org.junit.Assert.*;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * 测试负载均衡
+ * test load balancing
  *
  * @author zhouss
  * @since 2022-08-16
  */
 public class LbContextTest {
     /**
-     * 测试负载均衡
+     * test load balancing
      */
     @Test
     public void isTargetLb() {

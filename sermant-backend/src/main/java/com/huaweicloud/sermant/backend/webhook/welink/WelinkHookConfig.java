@@ -20,22 +20,21 @@ import com.huaweicloud.sermant.backend.webhook.WebHookConfig;
 import com.huaweicloud.sermant.backend.webhook.WebhookConfigImpl;
 
 /**
- * welink webhook 配置
+ * Welink webhook configuration
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 public class WelinkHookConfig extends WebhookConfigImpl {
-
     private static final WebHookConfig CONFIG = new WelinkHookConfig();
 
     private WelinkHookConfig() {
     }
 
     /**
-     * 获取Welink的webhook配置
+     * Get webhook configuration of Welink
      *
-     * @return Welink的webhook配置
+     * @return webhook configuration of Welink
      */
     public static WebHookConfig getInstance() {
         return CONFIG;

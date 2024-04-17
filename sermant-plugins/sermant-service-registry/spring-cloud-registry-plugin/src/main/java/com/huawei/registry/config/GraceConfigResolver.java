@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 优雅上下线配置解析
+ * Analysis of Elegant Online and Offline Configuration
  *
  * @author zhouss
  * @since 2022-05-24
@@ -34,12 +34,12 @@ public class GraceConfigResolver extends RegistryConfigResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 优雅上下线配置前缀
+     * Elegant online and offline configuration prefixes
      */
     private static final String GRACE_CONFIG_PREFIX = "rule.";
 
     /**
-     * 优雅上下线配置KEY
+     * Configure KEY for online and offline applications
      */
     private static final String GRACE_CONFIG_KEY_NAME = "sermant.agent.grace";
 

@@ -17,14 +17,14 @@
 package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.constants;
 
 /**
- * Kie配置常量
+ * Kie constant
  *
  * @author zhouss
  * @since 2021-11-23
  */
 public class KieConstants {
     /**
-     * 默认groupKey
+     * Default groupKey
      */
     public static final String DEFAULT_GROUP_KEY = "_DEFAULT_GROUP_KEY";
 

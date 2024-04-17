@@ -68,7 +68,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 测试RegistryServiceImpl
+ * Test RegistryServiceImpl
  *
  * @author provenceee
  * @since 2022-09-19
@@ -83,7 +83,7 @@ public class RegistryServiceTest {
     private static final Set<MockedStatic<?>> MOCKED_STATICS = new HashSet<>();
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeAll
     public static void mock() {
@@ -118,7 +118,7 @@ public class RegistryServiceTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterAll
     public static void close() {
@@ -128,48 +128,48 @@ public class RegistryServiceTest {
     }
 
     /**
-     * 测试注册主要方法
+     * Test the main method of registration
      */
     @Test
     public void testRegistration() {
         RegistryServiceImpl service = new RegistryServiceImpl();
 
-        // 测试没有加载sc时
+        // When the test does not load SC
         service.startRegistration();
         Assertions.assertNull(getFieldValue(service, "serviceCenterRegistration", Object.class));
 
-        // 加载sc
+        // Load the sc
         DubboCache.INSTANCE.loadSc();
         Assertions.assertTrue(DubboCache.INSTANCE.isLoadSc());
 
-        // url是消费者时
+        // When the URL is a consumer
         service.addRegistryUrls(CONSUMER_URL);
         List<?> registryUrls = getFieldValue(service, "registryUrls", List.class);
         Assertions.assertNotNull(registryUrls);
         Assertions.assertEquals(0, registryUrls.size());
 
-        // url是生产者时
+        // URL is the producer
         service.addRegistryUrls(PROVIDER_URL);
         Assertions.assertNotNull(registryUrls);
         Assertions.assertEquals(1, registryUrls.size());
 
-        // 测试加载sc时
+        // Test when SC is loaded
         DubboCache.INSTANCE.setServiceName("dubbo-provider");
         service.startRegistration();
 
-        // 取消注册等待时间
+        // Wait time to cancel registration
         mockServiceCenterClient(service);
         service.onMicroserviceInstanceRegistrationEvent(new MicroserviceInstanceRegistrationEvent(true));
         Assertions.assertTrue((Boolean) ReflectUtils.getFieldValue(service, "isRegistrationInProgress").orElse(false));
 
-        // 测试onMicroserviceRegistrationEvent方法
+        // Test the onMicroserviceRegistrationEvent method
         service.onMicroserviceRegistrationEvent(new MicroserviceRegistrationEvent(true));
         ServiceCenterDiscovery serviceCenterDiscovery = getFieldValue(service, "serviceCenterDiscovery",
             ServiceCenterDiscovery.class);
         Assertions.assertTrue((Boolean) ReflectUtils.getFieldValue(service, "isRegistrationInProgress").orElse(false));
         Assertions.assertNotNull(serviceCenterDiscovery);
 
-        // 测试再次调用onMicroserviceRegistrationEvent方法
+        // Test calling the onMicroserviceRegistrationEvent method again
         service.onMicroserviceRegistrationEvent(new MicroserviceRegistrationEvent(true));
         Assertions.assertTrue((Boolean) ReflectUtils.getFieldValue(service, "isRegistrationInProgress").orElse(false));
         Assertions.assertNotNull(serviceCenterDiscovery);
@@ -178,38 +178,38 @@ public class RegistryServiceTest {
             ServiceCenterRegistration.class);
         Assertions.assertNotNull(serviceCenterRegistration);
 
-        // 测试shutdown
+        // Test shutdown
         Assertions.assertDoesNotThrow(service::shutdown);
 
-        // 测试再次shutdown
+        // The test shutdown again
         Assertions.assertDoesNotThrow(service::shutdown);
     }
 
     /**
-     * 测试订阅主要方法
+     * Test the main method of subscription
      */
     @Test
     public void testSubscribe() {
         TestNotifyListener notifyListener = new TestNotifyListener();
         RegistryService service = new RegistryServiceImpl();
-        // url是生产者时
+        // URL is the producer
         service.doSubscribe(PROVIDER_URL, notifyListener);
         List<?> events = getFieldValue(service, "PENDING_SUBSCRIBE_EVENT", List.class);
         Assertions.assertNotNull(events);
         Assertions.assertEquals(0, events.size());
 
-        // url是消费者时
+        // When the URL is a consumer
         service.doSubscribe(CONSUMER_URL, notifyListener);
         Assertions.assertNotNull(events);
         Assertions.assertEquals(1, events.size());
 
-        // 初始化
+        // Initialize
         init(service);
         ReflectUtils.setFieldValue(service, "config", new RegisterConfig());
         DubboCache.INSTANCE.setServiceName(null);
         ReflectUtils.setFieldValue(service, "isRegistrationInProgress", false);
 
-        // 订阅
+        // Subscribe
         service.doSubscribe(CONSUMER_URL, notifyListener);
         List<URL> list = notifyListener.getList();
         Assertions.assertNotNull(list);
@@ -220,7 +220,7 @@ public class RegistryServiceTest {
         Assertions.assertEquals("tag1", url.getParameter("service.meta.parameters.tag"));
         Assertions.assertEquals("1.0.0", url.getParameter("service.meta.version"));
 
-        // 测试GovernanceConfigListener
+        // Test GovernanceConfigListener
         GovernanceConfigListener listener = new GovernanceConfigListener();
         ReflectUtils.setFieldValue(listener, "registryService", service);
         String content = "{\"providerInfos\":[{\"serviceName\":\"dubbo-provider\",\"schemaInfos\":[{\"schemaId\":\"com.huaweicloud.foo.BarTest\",\"parameters\":{\"timeout\":5000}}]}]}";
@@ -239,35 +239,35 @@ public class RegistryServiceTest {
     }
 
     /**
-     * 测试onHeartBeatEvent方法
+     * Test the onHeartBeatEvent method
      */
     @Test
     public void testOnHeartBeatEvent() throws NoSuchFieldException, IllegalAccessException {
-        // 清除数据
+        // Clear data
         Field field = RegistryServiceImpl.class.getDeclaredField("PENDING_SUBSCRIBE_EVENT");
         field.setAccessible(true);
         List<?> list = (List<?>) field.get(null);
         list.clear();
 
-        // 测试
+        // Test
         RegistryServiceImpl service = new RegistryServiceImpl();
         service.onHeartBeatEvent(new HeartBeatEvent(true));
         Assertions.assertFalse((Boolean) ReflectUtils.getFieldValue(service, "isRegistrationInProgress").orElse(false));
     }
 
     /**
-     * 测试onInstanceChangedEvent方法
+     * Test the onInstanceChangedEvent method
      */
     @Test
     public void testOnInstanceChangedEvent() throws IllegalAccessException, NoSuchFieldException {
-        // 清除数据
+        // Clear data
         Field initField = GovernanceService.class.getDeclaredField("INIT");
         initField.setAccessible(true);
         AtomicBoolean INIT = (AtomicBoolean) initField.get(null);
         INIT.set(false);
         DubboCache.INSTANCE.setServiceName(null);
 
-        // 测试
+        // Test
         RegistryServiceImpl service = new RegistryServiceImpl();
         initGovernanceService(service);
         service.onInstanceChangedEvent(new InstanceChangedEvent("app", "default", Collections.emptyList()));
@@ -337,7 +337,7 @@ public class RegistryServiceTest {
     }
 
     /**
-     * NotifyListener测试类
+     * NotifyListener Test class
      *
      * @since 2022-02-09
      */

@@ -20,7 +20,7 @@ import com.huaweicloud.sermant.core.operation.BaseOperation;
 import com.huaweicloud.sermant.core.service.dynamicconfig.DynamicConfigService;
 
 /**
- * 动态配置服务初始化器
+ * Dynamic configuration service initializer
  *
  * @author luanwenfei
  * @since 2022-06-29
@@ -30,7 +30,7 @@ public interface DynamicConfigServiceInitializer extends BaseOperation {
      * Init kie dynamic config service.
      *
      * @param serverAddress serverAddress
-     * @param project project
+     * @param project namespace
      * @return A KieDynamicConfigService instance
      */
     DynamicConfigService initKieDynamicConfigService(String serverAddress, String project);

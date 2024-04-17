@@ -1,10 +1,10 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * the License. You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -53,81 +53,83 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
- * 监听器管理
+ * Subscriber Manager
  *
  * @author zhouss
  * @since 2021-11-17
  */
 public class SubscriberManager {
     /**
-     * 最大线程数
+     * Maximum number of threads
      */
     public static final int MAX_THREAD_SIZE = 100;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 线程数
+     * Thread size
      */
     private static final int THREAD_SIZE = 5;
 
     /**
-     * 秒转换为毫秒
+     * Seconds are converted to milliseconds
      */
     private static final int SECONDS_UNIT = 1000;
 
     /**
-     * 定时请求间隔
+     * request interval
      */
     private static final int SCHEDULE_REQUEST_INTERVAL_MS = 5000;
 
     /**
-     * 等待时间
+     * Wait time
      */
     private static final String WAIT = "20";
 
     /**
-     * 长连接拉取间隔
+     * Long connection pull interval
      */
     private static final long LONG_CONNECTION_REQUEST_INTERVAL_MS = 2000L;
 
     /**
-     * 当前长连接请求数 要求最大连接数必须小于 MAX_THREAD_SIZE
+     * Number of current long connection requests. The maximum number of connections must be smaller than
+     * MAX_THREAD_SIZE
      */
     private final AtomicInteger curLongConnectionRequestCount = new AtomicInteger(0);
 
     /**
-     * map< 监听键, 监听该键的监听器列表 >  一个group，仅有一个KieListenerWrapper
+     * map< listener key, list of listeners listening for the key >. A group has only one KieListenerWrapper
      */
     private final Map<KieRequest, KieListenerWrapper> listenerMap =
             new ConcurrentHashMap<>();
 
     /**
-     * kie客户端
+     * Kie client
      */
     private final KieClient kieClient;
 
     /**
-     * 接收所有数据，不过滤disabled的数据
+     * Receive all data without filtering disabled data
      */
     private final ResultHandler<KieResponse> receiveAllDataHandler = new ResultHandler.DefaultResultHandler(false);
 
     /**
-     * 订阅执行器 最大支持MAX_THREAD_SIZE个任务 由于是长连接请求，必然会占用线程，因此这里不考虑将任务存在队列中
+     * LongRequestExecutor for subscription. A maximum of MAX_THREAD_SIZE tasks are supported. Because it is a long
+     * connection request, it will inevitably occupy threads, so the task is not considered to be stored in the queue
      */
     private final ThreadPoolExecutor longRequestExecutor = new ThreadPoolExecutor(THREAD_SIZE, MAX_THREAD_SIZE, 0,
             TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadFactoryUtils("kie-subscribe-long-task"));
 
     /**
-     * 快速返回的请求
+     * Used for quick return requests
      */
     private volatile ScheduledExecutorService scheduledExecutorService;
 
     /**
-     * 构造函数
+     * consortruct
      *
      * @param serverAddress serverAddress
-     * @param timeout 超时时间
+     * @param timeout timeout
      */
     public SubscriberManager(String serverAddress, int timeout) {
         kieClient = new KieClient(new ClientUrlManager(serverAddress), timeout);
@@ -137,20 +139,20 @@ public class SubscriberManager {
      * SubscriberManager
      *
      * @param serverAddress serverAddress
-     * @param project project
-     * @param timeout 超时时间
+     * @param project namespace
+     * @param timeout timeout
      */
     public SubscriberManager(String serverAddress, String project, int timeout) {
         kieClient = new KieClient(new ClientUrlManager(serverAddress), project, timeout);
     }
 
     /**
-     * 添加组监听
+     * Add group listener
      *
-     * @param group 标签组
-     * @param listener 监听器
-     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
-     * @return 是否添加成功
+     * @param group label group
+     * @param listener listener
+     * @param ifNotify Whether to return all queried data to the caller on the first addition
+     * @return add result
      */
     public boolean addGroupListener(String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
@@ -165,13 +167,13 @@ public class SubscriberManager {
     }
 
     /**
-     * 添加单个key监听器
+     * Add listener for single key
      *
-     * @param key 键
-     * @param group 标签组
-     * @param listener 监听器
-     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
-     * @return 是否添加成功
+     * @param key key
+     * @param group label group
+     * @param listener listener
+     * @param ifNotify Whether to return all queried data to the caller on the first addition
+     * @return add result
      */
     public boolean addConfigListener(String key, String group, DynamicConfigListener listener, boolean ifNotify) {
         try {
@@ -186,11 +188,11 @@ public class SubscriberManager {
     }
 
     /**
-     * 移除组监听
+     * Remove group listener
      *
-     * @param group 标签组
-     * @param listener 监听器
-     * @return 是否添加成功
+     * @param group label group
+     * @param listener listener
+     * @return remove result
      */
     public boolean removeGroupListener(String group, DynamicConfigListener listener) {
         try {
@@ -204,17 +206,17 @@ public class SubscriberManager {
     }
 
     /**
-     * 发布配置, 若配置已存在则转为更新配置
+     * Publish the configuration. If the configuration already exists, then update the configuration
      *
-     * @param key 配置键
-     * @param group 分组
-     * @param content 配置内容
-     * @return 是否发布成功
+     * @param key configuration key
+     * @param group configuration group
+     * @param content configuration content
+     * @return publish result
      */
     public boolean publishConfig(String key, String group, String content) {
         final Optional<String> keyIdOptional = getKeyId(key, group);
         if (!keyIdOptional.isPresent()) {
-            // 无该配置 执行新增操作
+            // If not exists, then publish
             final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
             return kieClient.publishConfig(key, labels, content, true);
         } else {
@@ -223,11 +225,11 @@ public class SubscriberManager {
     }
 
     /**
-     * 移除配置
+     * Remove configuration
      *
-     * @param key 键名称
-     * @param group 分组
-     * @return 是否删除成功
+     * @param key configuration key
+     * @param group configuration group
+     * @return remove result
      */
     public boolean removeConfig(String key, String group) {
         final Optional<String> keyIdOptional = getKeyId(key, group);
@@ -235,11 +237,11 @@ public class SubscriberManager {
     }
 
     /**
-     * 获取key_id
+     * Get key_id
      *
-     * @param key 键
-     * @param group 组
-     * @return key_id, 若不存在则返回null
+     * @param key configuration key
+     * @param group configuration group
+     * @return key_id, return null if not exists
      */
     private Optional<String> getKeyId(String key, String group) {
         final KieResponse kieResponse = queryConfigurations(null, LabelGroupUtils.getLabelCondition(group), false);
@@ -260,7 +262,7 @@ public class SubscriberManager {
             return false;
         }
 
-        // 比较标签是否相同
+        // Compare labels to see if they are the same
         final Map<String, String> sourceLabels = entity.getLabels();
         if (sourceLabels == null || (sourceLabels.size() != targetLabels.size())) {
             return false;
@@ -275,13 +277,13 @@ public class SubscriberManager {
     }
 
     /**
-     * 注册监听器
+     * Register listener
      *
      * @param key key
-     * @param kieRequest 请求
-     * @param dynamicConfigListener 监听器
-     * @param ifNotify 是否在第一次添加时，将所有数据查询返回给调用者
-     * @return boolean
+     * @param kieRequest kie request
+     * @param dynamicConfigListener dynamic config listener
+     * @param ifNotify Whether to return all queried data to the caller on the first addition
+     * @return subscribe result
      */
     public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener,
             boolean ifNotify) {
@@ -327,7 +329,7 @@ public class SubscriberManager {
     }
 
     /**
-     * 是否超过最大限制长连接任务数
+     * Whether the number of long connection tasks exceeded the upper limit
      *
      * @return boolean
      */
@@ -336,10 +338,10 @@ public class SubscriberManager {
     }
 
     /**
-     * 针对长请求的场景需要做第一次拉取，获取已有的数据
+     * In the scenario of long requests, need to perform the first pull to obtain existing data
      *
-     * @param kieRequest 请求体
-     * @param kieListenerWrapper 监听器
+     * @param kieRequest kie request
+     * @param kieListenerWrapper listener
      */
     public void firstRequest(KieRequest kieRequest, KieListenerWrapper kieListenerWrapper) {
         try {
@@ -354,23 +356,23 @@ public class SubscriberManager {
     }
 
     /**
-     * 单独查询配置
+     * Query configurations
      *
-     * @param revision 版本
-     * @param label 关联标签组
-     * @return kv配置
+     * @param revision revision
+     * @param label associated label group
+     * @return kv configuration
      */
     public KieResponse queryConfigurations(String revision, String label) {
         return queryConfigurations(revision, label, true);
     }
 
     /**
-     * 单独查询配置
+     * Query configurations
      *
-     * @param revision 版本
-     * @param label 关联标签组
-     * @param onlyEnabled 是否仅可用status=enabled
-     * @return kv配置
+     * @param revision revision
+     * @param label associated label group
+     * @param onlyEnabled Whether only status=enabled is available
+     * @return kv configuration
      */
     public KieResponse queryConfigurations(String revision, String label, boolean onlyEnabled) {
         final KieRequest cloneRequest = new KieRequest().setRevision(revision).setLabelCondition(label);
@@ -381,7 +383,7 @@ public class SubscriberManager {
     }
 
     /**
-     * 取消订阅
+     * UnSubscribe
      *
      * @param key key
      * @param kieRequest kieRequest
@@ -400,7 +402,7 @@ public class SubscriberManager {
                 final KieListenerWrapper wrapper = next.getValue();
                 if (wrapper.removeKeyListener(key, dynamicConfigListener)) {
                     if (wrapper.isEmpty()) {
-                        // 若监听器均已清空，则停止改标签组的任务
+                        // If all listeners are cleared, stop the task of changing the label group
                         wrapper.getTask().stop();
                     }
                     return true;
@@ -479,19 +481,19 @@ public class SubscriberManager {
      */
     public interface Task {
         /**
-         * 任务执行
+         * execute task
          */
         void execute();
 
         /**
-         * 是否为长时间保持连接的请求
+         * Whether it is a request to maintain a connection for a long time
          *
          * @return boolean
          */
         boolean isLongConnectionRequest();
 
         /**
-         * 任务终止
+         * stop task
          */
         void stop();
     }
@@ -518,13 +520,13 @@ public class SubscriberManager {
         }
 
         /**
-         * 子类执行方法
+         * subclass executive method
          */
         public abstract void executeInner();
     }
 
     /**
-     * 定时短期任务
+     * Scheduled short-term task
      *
      * @since 2021-11-17
      */
@@ -579,7 +581,9 @@ public class SubscriberManager {
                     kieSubscriber.getKieRequest().setRevision(kieResponse.getRevision());
                 }
 
-                // 间隔一段时间拉取，减轻服务压力;如果在间隔时间段内有键变更，服务可以通过传入的revision判断是否需要将最新的数据立刻返回，不会存在键监听不到的问题
+                // Pull at intervals to reduce service pressure; If there are key changes in the interval, the
+                // service can judge whether the latest data needs to be returned immediately through the input
+                // revision, and there is no problem that the key cannot be listened to
                 this.failCount = 0;
                 SubscriberManager.this.executeTask(new SleepCallBackTask(this, LONG_CONNECTION_REQUEST_INTERVAL_MS));
             } catch (Exception ex) {

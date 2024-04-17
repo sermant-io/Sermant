@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试DiscoveryManagerInterceptor
+ * Test DiscoveryManagerInterceptor
  *
  * @author provenceee
  * @since 2022-10-13
@@ -55,7 +55,7 @@ public class DiscoveryManagerInterceptorTest {
     private static RouterConfig routerConfig;
 
     /**
-     * UT执行前进行mock
+     * Perform mock before the UT is executed
      */
     @BeforeClass
     public static void before() {
@@ -74,7 +74,7 @@ public class DiscoveryManagerInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -90,7 +90,7 @@ public class DiscoveryManagerInterceptorTest {
     }
 
     /**
-     * 测试before方法
+     * Test the before method
      */
     @Test
     public void testBefore() {
@@ -107,7 +107,7 @@ public class DiscoveryManagerInterceptorTest {
     }
 
     /**
-     * 测试after方法
+     * Test the after method
      */
     @Test
     public void testAfter() {
@@ -123,9 +123,9 @@ public class DiscoveryManagerInterceptorTest {
         private final Map<String, String> metadata;
 
         /**
-         * 构造方法
+         * Constructor
          *
-         * @param serviceName 服务名
+         * @param serviceName Service name
          */
         public TestObject(String serviceName) {
             this.serviceName = serviceName;

@@ -24,14 +24,14 @@ import com.huaweicloud.sermant.core.service.inject.ClassInjectDefine;
 import com.huaweicloud.sermant.core.utils.ClassUtils;
 
 /**
- * 动态配置类注入
+ * dynamically configure class injection
  *
  * @author zhouss
  * @since 2022-06-28
  */
 public abstract class DynamicClassInjectDefine implements ClassInjectDefine {
     /**
-     * 仅当宿主存在该类时, 动态配置才生效
+     * Dynamic configuration takes effect only when the class exists in the host
      */
     private static final String REFRESH_CLASS = "org.springframework.cloud.endpoint.event.RefreshEventListener";
 

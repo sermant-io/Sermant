@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试类
+ * Test class
  *
  * @since 2022-03-18
  */
@@ -39,19 +39,19 @@ public class ApacheInvoker<T> implements Invoker<T> {
     private final URL url;
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param version 版本
+     * @param version Version
      */
     public ApacheInvoker(String version) {
         this(version, (String) null);
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param version 版本
-     * @param zone 区域
+     * @param version Version
+     * @param zone Region
      */
     public ApacheInvoker(String version, String zone) {
         Map<String, String> map = new HashMap<>();
@@ -61,9 +61,9 @@ public class ApacheInvoker<T> implements Invoker<T> {
     }
 
     /**
-     * 构造方法
+     * Constructor
      *
-     * @param version 版本
+     * @param version Version
      * @param map map
      */
     public ApacheInvoker(String version, Map<String, String> map) {

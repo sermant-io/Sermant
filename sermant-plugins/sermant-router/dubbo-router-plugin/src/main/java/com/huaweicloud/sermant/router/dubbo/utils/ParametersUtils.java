@@ -17,10 +17,10 @@
 package com.huaweicloud.sermant.router.dubbo.utils;
 
 import com.huaweicloud.sermant.core.utils.StringUtils;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.common.utils.CollectionUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * URL中parameters参数操作
+ * Parameters parameter operation in URL
  *
  * @author chengyouling
  * @since 2022-12-29
@@ -38,11 +38,11 @@ public class ParametersUtils {
     }
 
     /**
-     * parameters中增加版本号、路由标签
+     * Add version number and routing label to parameters
      *
-     * @param parameters 参数集合
-     * @param routerConfig sermant参数
-     * @return 参数集合
+     * @param parameters participation set
+     * @param routerConfig Sermant parameter
+     * @return Parameter set
      */
     public static Map<String, String> putParameters(Map<String, String> parameters, RouterConfig routerConfig) {
         Map<String, String> map = Optional.ofNullable(parameters).orElseGet(HashMap::new);
@@ -57,10 +57,10 @@ public class ParametersUtils {
         if (!CollectionUtils.isEmpty(metaParameters)) {
             metaParameters.forEach(
                     (key, value) -> {
-                        // 请求头在http请求中，会统一转成小写
+                        // The request header will be uniformly converted to lowercase in HTTP requests
                         String lowerCaseKey = key.toLowerCase(Locale.ROOT);
 
-                        // "-"替换成"."是为了流量路由兼容2.5.0 - 2.5.6
+                        // Replacing "-" with "." is for traffic routing compatibility between 2.5.0 and 2.5.6
                         map.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey
                                 .replace(RouterConstant.DASH, RouterConstant.POINT), value);
                         cacheMap.put(RouterConstant.PARAMETERS_KEY_PREFIX + lowerCaseKey, value);

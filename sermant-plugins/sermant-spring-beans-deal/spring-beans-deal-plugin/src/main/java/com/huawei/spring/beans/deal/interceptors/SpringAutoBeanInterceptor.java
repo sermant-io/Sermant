@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * 自动装配bean拦截具体实现内容
+ * Automatically assemble beans to intercept specific implementations
  *
  * @author chengyouling
  * @since 2023-03-27

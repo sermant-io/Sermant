@@ -24,7 +24,7 @@ import com.netflix.loadbalancer.Server;
 import java.util.Map;
 
 /**
- * ServiceComb服务实例
+ * ServiceComb service instance
  *
  * @author zhouss
  * @since 2022-05-19
@@ -35,9 +35,9 @@ public class ServiceCombServer extends Server {
     private MetaInfo metaInfo;
 
     /**
-     * 构造器
+     * Constructor
      *
-     * @param microServiceInstance 实例信息
+     * @param microServiceInstance Instance information
      */
     public ServiceCombServer(MicroServiceInstance microServiceInstance) {
         super(microServiceInstance.isSecure() ? "https" : "http", microServiceInstance.getIp(),
@@ -55,9 +55,9 @@ public class ServiceCombServer extends Server {
     }
 
     /**
-     * 获取服务元数据
+     * Get service metadata
      *
-     * @return 元数据
+     * @return Metadata
      */
     public Map<String, String> getMetadata() {
         return microServiceInstance.getMetadata();

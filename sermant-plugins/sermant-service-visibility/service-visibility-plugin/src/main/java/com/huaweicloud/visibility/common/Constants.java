@@ -18,39 +18,39 @@
 package com.huaweicloud.visibility.common;
 
 /**
- * 常量类
+ * Constant classes
  *
  * @author zhp
  * @since 2022-12-01
  */
 public class Constants {
     /**
-     * 应用名称
+     * The name of the app
      */
     public static final String APPLICATION_FIELD_NAME = "application";
 
     /**
-     * 方法名
+     * Method Name
      */
     public static final String METHOD_FIELD_NAME = "methods";
 
     /**
-     * 接口名称
+     * The name of the interface
      */
     public static final String INTERFACE_FIELD_NAME = "interface";
 
     /**
-     * 服务器IP
+     * Server IP
      */
     public static final String IP_FIELD_NAME = "bind.ip";
 
     /**
-     * 服务器端口
+     * Server port
      */
     public static final String PORT_FIELD_NAME = "bind.port";
 
     /**
-     * 请求地址
+     * The address of the request
      */
     public static final String PATH_FIELD_NAME = "path";
 

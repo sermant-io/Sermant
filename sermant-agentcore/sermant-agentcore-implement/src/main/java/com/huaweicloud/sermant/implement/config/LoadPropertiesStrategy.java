@@ -42,9 +42,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 加载配置对象策略{@link LoadConfigStrategy}的通用properties文件实现，其中主要配置信息承载对象为{@link Properties}
- * <p>该策略通过文件流获取配置文件信息，并要求配置文件必须存放在当前jar包的上级目录中
- * <p>属性支持int、short、long、float、double、枚举、String和Object类型，以及他们构成的数组、List和Map
+ * General implementation for properties files of {@link LoadConfigStrategy}, where main carrier of configuration
+ * information is {@link Properties}
+ * <p>The strategy obtains configuration file information through file flow and requires that the configuration file
+ * must be stored in the upper-level directory of the current jar package
+ * <p>Support int、short、long、float、double、enumeration、String and Object. Also support arrays, lists, and maps
+ * they make up
  *
  * @author HapThorin
  * @version 1.0.0
@@ -52,22 +55,22 @@ import java.util.logging.Logger;
  */
 public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     /**
-     * 日志
+     * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * Collection参数类型长度
+     * Collection parameter type length
      */
     private static final int COLLECTION_ARGUMENT_TYPE_LEN = 1;
 
     /**
-     * MAP参数类型长度
+     * MAP parameter type length
      */
     private static final int MAP_ARGUMENT_TYPE_LEN = 2;
 
     /**
-     * 启动参数
+     * argsMap
      */
     private Map<String, Object> argsMap;
 
@@ -78,12 +81,13 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 通过配置文件名获取配置文件的配置信息，并存放在{@link Properties}中
-     * <p>要求配置文件必须存放在当前jar包的同级目录中
-     * <p>最终的配置信息将被{@code argsMap}覆盖，{@code argsMap}拥有最高优先级
+     * Obtain the configuration information of the configuration file by using the configuration file name and save it
+     * in {@link Properties}
+     * <p>The configuration file is required to reside in the sibling directory of the current jar package
+     * <p>The final configuration information will be overwritten by {@code argsMap}, which has the highest priority
      *
-     * @param config 配置文件
-     * @param bootArgsMap 启动时设定的参数
+     * @param config configuration file
+     * @param bootArgsMap parameters set at startup
      * @return 配置信息承载对象
      */
     @Override
@@ -93,15 +97,17 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 加载配置对象
-     * <p>通过ConfigTypeKey和ConfigFieldKey注解定位到properties的配置信息
-     * <p>如果ConfigFieldKey不存在，则直接使用配置对象的属性名拼接
-     * <p>设置配置对象属性值时，优先查找{@code setter}调用，不存在时尝试直接赋值
-     * <p>因此，要求配置对象的属性值需要拥有相应的{@code setter}，或者要求改属性值是公有的
+     * Load configuration object
+     * <p>Use the ConfigTypeKey and ConfigFieldKey annotations to locate the configuration information for properties
+     * <p>If the ConfigFieldKey does not exist, concatenate the field name of the configuration object directly
+     * <p>When setting a configuration object field value, first look for {@code setter} calls, and try direct
+     * assignment if none exists
+     * <p>Therefore, the field value of the configuration object is required to have the corresponding {@code
+     * setter}, or the field value is required to be public
      *
-     * @param holder 配置信息主要承载对象
-     * @param config 配置对象
-     * @return 配置对象泛型
+     * @param holder The main carrier of the configuration information
+     * @param config Configuration object
+     * @return Configure object generics
      */
     @Override
     public <R extends BaseConfig> R loadConfig(Properties holder, R config) {
@@ -128,10 +134,10 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 读取配置文件
+     * Read configuration file
      *
-     * @param config 配置文件对象
-     * @return 配置内容
+     * @param config configuration file
+     * @return configuration content
      */
     private Properties readConfig(File config) {
         final Properties properties = new Properties();
@@ -155,12 +161,12 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 获取配置信息内容
+     * Obtain the configuration information
      *
-     * @param config 配置主要承载对象{@link Properties}
-     * @param key 配置键
-     * @param field 属性
-     * @return 配置信息
+     * @param config The main carrier of the configuration information {@link Properties}
+     * @param key Configuration key
+     * @param field Field
+     * @return Configuration information
      */
     private Object getConfig(Properties config, String key, Field field) {
         final String configStr = getConfigStr(config, key);
@@ -168,11 +174,12 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 获取配置值，通过{@link ConfigValueUtil#fixValue}方法，修正形如"${}"的配置
+     * Get the configuration value and fix the configuration in the shape of ${} using the {@link
+     * ConfigValueUtil#fixValue} method
      *
-     * @param config 配置
-     * @param key 配置键
-     * @return 配置值
+     * @param config Properties
+     * @param key Configuration key
+     * @return Configuration value
      */
     private String getConfigStr(Properties config, String key) {
         Object arg = argsMap.get(key);
@@ -195,24 +202,25 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 匹配Map/List/Set (1) 支持xxx.mapName.key1=value1配置Map (2) 支持xxx.xxx.listName[0]=elem1配置List或Set
+     * Match Map/List/Set, also support: (1) xxx.mapName.key1=value1 for Map (2) xxx.xxx.listName[0]=elem1 for List or
+     * Set
      *
-     * @param configVal 配置值
-     * @param config 配置
-     * @param key 配置键
-     * @return 配置值
+     * @param configVal Configuration value
+     * @param config Configuration
+     * @param key Configuration key
+     * @return Configuration value
      */
     public String readMapOrCollection(String configVal, Properties config, String key) {
         String result = configVal;
         StringBuilder sb = new StringBuilder();
         for (String propertyName : config.stringPropertyNames()) {
             if (propertyName.startsWith(key)) {
-                // 匹配List和Set
+                // Match List and Set
                 if (propertyName.matches("(.*)\\[[0-9]*]$")) {
                     sb.append(config.getProperty(propertyName))
                             .append(CommonConstant.COMMA);
                 } else {
-                    // 匹配Map
+                    // Match Map
                     sb.append(propertyName.replace(key + CommonConstant.DOT, ""))
                             .append(CommonConstant.COLON)
                             .append(config.getProperty(propertyName))
@@ -227,12 +235,14 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     }
 
     /**
-     * 类型转换，通过{@link ConfigValueUtil#toBaseType}等方法，将配置信息字符串进行类型转换
-     * <p>支持int、short、long、float、double、枚举、String和Object类型，以及他们构成的数组、List和Map
+     * Type conversion: Converts the configuration information string by using methods such as {@link
+     * ConfigValueUtil#toBaseType}
+     * <p> * <p>Support int、short、long、float、double、enumeration、String and Object. Also support arrays, lists, and maps
+     * they make upp
      *
-     * @param configStr 配置值
-     * @param field 属性字段
-     * @return 转换后的类型
+     * @param configStr Configuration value
+     * @param field field
+     * @return Converted type
      */
     private Object transType(String configStr, Field field) {
         final Class<?> fieldType = field.getType();

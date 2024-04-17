@@ -26,7 +26,7 @@ import com.huaweicloud.sermant.core.plugin.subscribe.ConfigSubscriber;
 import java.util.logging.Logger;
 
 /**
- * 数据层中间件禁写的动态配置服务
+ * Data layer middleware writing-prohibition dynamic configuration services
  *
  * @author daizhenyu
  * @since 2024-01-27

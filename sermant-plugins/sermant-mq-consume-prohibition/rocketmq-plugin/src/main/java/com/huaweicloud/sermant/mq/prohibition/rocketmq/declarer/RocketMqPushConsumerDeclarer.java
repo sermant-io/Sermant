@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.mq.prohibition.rocketmq.utils.RocketMqEnhancementHelper;
 
 /**
- * pushConsumer拦截声明器，支持rocketmq4.8+版本
+ * PushConsumer interceptor declarer, supports RocketMQ 4.8+version
  *
  * @author daizhenyu
  * @since 2023-12-04

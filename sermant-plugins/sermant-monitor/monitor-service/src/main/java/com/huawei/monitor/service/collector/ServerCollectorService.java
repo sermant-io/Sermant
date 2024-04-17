@@ -39,7 +39,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 服务器性能指标采集器
+ * Server performance metric collector
  *
  * @author zhp
  * @version 1.0.0
@@ -157,10 +157,10 @@ public class ServerCollectorService extends SwitchService implements PluginServi
     }
 
     /**
-     * 收集CPU指标信息 两次指标取差值
+     * Collect CPU metric information and take the difference between the two metrics
      *
-     * @param metricFamilySamplesList 指标信息集合
-     * @param cpuStatOptional cpu信息
+     * @param metricFamilySamplesList metric information collection
+     * @param cpuStatOptional cpu information
      */
     private void collectCpuMetric(List<MetricFamilySamples> metricFamilySamplesList,
             Optional<CpuCommand.CpuStat> cpuStatOptional) {

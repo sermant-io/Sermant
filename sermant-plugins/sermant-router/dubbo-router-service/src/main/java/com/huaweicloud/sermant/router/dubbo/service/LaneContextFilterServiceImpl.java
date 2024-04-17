@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.Protocol;
@@ -23,7 +24,6 @@ import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.utils.RuleUtils;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.utils.RouteUtils;
 
 import java.util.Collections;
@@ -31,20 +31,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ContextFilter的service
+ * The service of ContextFilter
  *
  * @author provenceee
  * @since 2023-02-16
  */
 public class LaneContextFilterServiceImpl implements LaneContextFilterService {
     /**
-     * 获取泳道标记
+     * get swimlane markers
      *
-     * @param interfaceName 接口名
-     * @param methodName 方法名
+     * @param interfaceName the name of the interface
+     * @param methodName method name
      * @param attachments attachments
-     * @param args 接口参数
-     * @return 泳道标记
+     * @param args interface parameters
+     * @return swimlane markers
      */
     @Override
     public Map<String, List<String>> getLane(String interfaceName, String methodName, Map<String, Object> attachments,

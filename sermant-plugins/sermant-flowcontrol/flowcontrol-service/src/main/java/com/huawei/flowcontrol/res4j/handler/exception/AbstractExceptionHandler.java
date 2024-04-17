@@ -25,11 +25,11 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * 抽象公共异常处理
+ * abstract public exception handling
  *
+ * @param <E> exceptionType
  * @author zhouss
  * @since 2022-08-08
- * @param <E> 异常类型
  */
 public abstract class AbstractExceptionHandler<E extends Throwable> implements ExceptionHandler<E> {
     @Override
@@ -49,11 +49,11 @@ public abstract class AbstractExceptionHandler<E extends Throwable> implements E
     }
 
     /**
-     * 获取流控响应
+     * get the flow control response
      *
-     * @param flowControlResult 流控结果
-     * @param ex 触发异常
-     * @return 流控响应
+     * @param flowControlResult flowControlResult
+     * @param ex triggerException
+     * @return flow control response
      */
     protected abstract FlowControlResponse getFlowControlResponse(E ex, FlowControlResult flowControlResult);
 }

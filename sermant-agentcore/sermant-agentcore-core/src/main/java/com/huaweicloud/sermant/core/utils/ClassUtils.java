@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 类工具类
+ * ClassUtils
  *
  * @author zhouss
  * @since 2022-04-08
@@ -39,11 +39,11 @@ public class ClassUtils {
     }
 
     /**
-     * 通过指定类加载器加载类
+     * Load the class by specifying the classloader
      *
-     * @param className 类全限定名
-     * @param classLoader 被增强类的类加载器
-     * @return 重定义后的类
+     * @param className Class fully qualified name
+     * @param classLoader The classloader of the enhanced class
+     * @return defined class
      */
     public static Optional<Class<?>> defineClass(String className, ClassLoader classLoader) {
         if (classLoader == null || className == null) {
@@ -60,28 +60,28 @@ public class ClassUtils {
                     ex.getMessage()));
         }
 
-        // 有可能已经加载过了，直接用contextClassLoader.loadClass加载
+        // It may have already been loaded. Use contextClassLoader.loadClass to load it
         return loadClass(className, classLoader);
     }
 
     /**
-     * 加载类
+     * load class
      *
-     * @param className 类全限定名
-     * @param classLoader 类加载器
-     * @return 已加载的类
+     * @param className Class fully qualified name
+     * @param classLoader classLoader
+     * @return loaded class
      */
     public static Optional<Class<?>> loadClass(String className, ClassLoader classLoader) {
         return loadClass(className, classLoader, true);
     }
 
     /**
-     * 加载类
+     * load class
      *
-     * @param className 类全限定名
-     * @param classLoader 类加载器
-     * @param isNeedWarn 是否需要提示
-     * @return 已加载的类
+     * @param className Class fully qualified name
+     * @param classLoader classLoader
+     * @param isNeedWarn is need warn
+     * @return loaded class
      */
     public static Optional<Class<?>> loadClass(String className, ClassLoader classLoader, boolean isNeedWarn) {
         if (classLoader == null || className == null) {
@@ -101,12 +101,12 @@ public class ClassUtils {
     }
 
     /**
-     * 反射创建实例
+     * Reflection creation instance
      *
-     * @param className 目标权限定名
-     * @param classLoader 类加载器
-     * @param paramTypes 参数类型
-     * @return 创建的对象
+     * @param className Class fully qualified name
+     * @param classLoader classLoader
+     * @param paramTypes param types
+     * @return Created object
      */
     public static Optional<Object> createInstance(String className, ClassLoader classLoader, Class<?>[] paramTypes) {
         ClassLoader curClassLoader = classLoader;

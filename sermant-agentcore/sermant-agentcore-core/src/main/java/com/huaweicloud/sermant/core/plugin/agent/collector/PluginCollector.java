@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 插件收集器，用于从所有插件中获取插件描述器
+ * Plugin collector, which gets plugin descriptors from all plugins
  *
  * @author HapThorin
  * @version 1.0.0
@@ -56,27 +56,28 @@ public class PluginCollector {
     }
 
     /**
-     * 从插件收集器中解析出所有的插件描述器，对插件声明器采用配置的合并策略
+     * Resolve all plugin descriptions from the plugin collector and apply the configured merge policy to the
+     * plugin declarers
      *
-     * @param plugin 需要解析插件描述的插件
-     * @return 插件描述器列表
+     * @param plugin plugin
+     * @return list of PluginDescription
      */
     public static List<PluginDescription> getDescriptions(Plugin plugin) {
         final List<PluginDescription> descriptions = new ArrayList<>();
 
-        // 通过加载插件Declarer并合并创建插件描述器
+        // Create a plugin description by loading the plugin declarer and merging
         descriptions.add(combinePluginDeclarers(plugin));
 
-        // 直接加载插件描述器
+        // Load the plugin description directly
         descriptions.addAll(getDescriptions(plugin.getPluginClassLoader()));
         return descriptions;
     }
 
     /**
-     * 从插件收集器中获取所有插件描述器
+     * Gets all plugin descriptions from the plugin collector
      *
-     * @param classLoader 类加载器
-     * @return 插件描述器集
+     * @param classLoader classLoader
+     * @return list of PluginDescription
      */
     private static List<? extends PluginDescription> getDescriptions(ClassLoader classLoader) {
         final List<PluginDescription> descriptions = new ArrayList<>();
@@ -87,10 +88,10 @@ public class PluginCollector {
     }
 
     /**
-     * 合并插件中的插件声明器为一个插件描述器
+     * Merge the plugin declarers in a plugin into a plugin description
      *
-     * @param plugin 需要合并的插件
-     * @return 插件描述器
+     * @param plugin plugin
+     * @return PluginDescription
      */
     private static PluginDescription combinePluginDeclarers(Plugin plugin) {
         final Map<String, List<PluginDeclarer>> nameCombinedMap = new HashMap<>();
@@ -154,10 +155,10 @@ public class PluginCollector {
     }
 
     /**
-     * 从插件收集器中获取所有插件声明器
+     * Gets all plugin declarers from the plugin collectors
      *
-     * @param classLoader 类加载器
-     * @return 插件声明器集
+     * @param classLoader classLoader
+     * @return list of PluginDeclarer
      */
     private static List<? extends PluginDeclarer> getDeclarers(ClassLoader classLoader) {
         final List<PluginDeclarer> declares = new ArrayList<>();

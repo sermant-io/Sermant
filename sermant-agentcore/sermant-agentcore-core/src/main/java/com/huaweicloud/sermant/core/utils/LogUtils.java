@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * 日志工具类
+ * LogUtils
  *
  * @author lilai
  * @since 2023-03-24
@@ -35,9 +35,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印Dubbo请求拦截Before切面日志
+     * print Dubbo request on Before point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printDubboRequestBeforePoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][Before] Dubbo request: %s",
@@ -45,9 +45,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印Dubbo请求拦截After切面日志
+     * print Dubbo request on After point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printDubboRequestAfterPoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][After] Dubbo request: %s",
@@ -55,9 +55,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印Dubbo请求拦截OnThrow切面日志
+     * print Dubbo request on onThrow point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printDubboRequestOnThrowPoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][OnThrow] Dubbo request: %s",
@@ -65,9 +65,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印HTTP请求拦截Before切面日志
+     * print HTTP request on Before point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printHttpRequestBeforePoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][Before] HTTP request: %s",
@@ -75,9 +75,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印HTTP请求拦截After切面日志
+     * print HTTP request on After point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printHttpRequestAfterPoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][After] HTTP request: %s",
@@ -85,9 +85,9 @@ public class LogUtils {
     }
 
     /**
-     * 打印HTTP请求拦截OnThrow切面日志
+     * print HTTP request on onThrow point
      *
-     * @param context 拦截上下文
+     * @param context ExecuteContext
      */
     public static void printHttpRequestOnThrowPoint(ExecuteContext context) {
         LOGGER.finest(() -> String.format(Locale.ROOT, "[Request Intercepted by Sermant][OnThrow] HTTP request: %s",

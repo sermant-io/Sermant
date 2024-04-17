@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.config.entity;
 import java.util.List;
 
 /**
- * 整体规则实体
+ * Overall rule entity
  *
  * @author lilai
  * @since 2023-02-18

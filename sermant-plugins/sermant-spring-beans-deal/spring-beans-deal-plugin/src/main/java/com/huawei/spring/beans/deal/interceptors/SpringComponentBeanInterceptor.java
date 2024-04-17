@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * Component装配bean拦截具体实现类
+ * Component assembly bean interception specific implementation class
  *
  * @author chengyouling
  * @since 2023-03-27

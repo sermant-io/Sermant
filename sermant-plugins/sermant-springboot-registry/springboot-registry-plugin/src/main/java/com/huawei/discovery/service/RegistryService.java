@@ -21,21 +21,21 @@ import com.huawei.discovery.entity.ServiceInstance;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 注册
+ * register
  *
  * @author zhouss
  * @since 2022-09-27
  */
 public interface RegistryService extends PluginService {
     /**
-     * 注册
+     * register
      *
-     * @param serviceInstance 实例信息
+     * @param serviceInstance Instance information
      */
     void registry(ServiceInstance serviceInstance);
 
     /**
-     * 关闭服务发现, 从注册中心下线
+     * Turn off service discovery and take it offline from the registry
      */
     void shutdown();
 }

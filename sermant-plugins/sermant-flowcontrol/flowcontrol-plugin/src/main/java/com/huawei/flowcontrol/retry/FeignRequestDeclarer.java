@@ -23,14 +23,14 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.ClassMatcher;
 import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * spring http请求拦截
+ * spring http request interception
  *
  * @author zhouss
  * @since 2022-01-27
  */
 public class FeignRequestDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String ENHANCE_CLASS = "org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient";
 
@@ -38,13 +38,13 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
             "org.springframework.cloud.netflix.feign.ribbon.LoadBalancerFeignClient";
 
     private static final String BLOCKING_ENHANCE_CLASS =
-        "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient";
+            "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient";
 
     private static final String RETRY_BLOCKING_ENHANCE_CLASS =
-        "org.springframework.cloud.openfeign.loadbalancer.RetryableFeignBlockingLoadBalancerClient";
+            "org.springframework.cloud.openfeign.loadbalancer.RetryableFeignBlockingLoadBalancerClient";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = FeignRequestInterceptor.class.getCanonicalName();
 
@@ -57,7 +57,7 @@ public class FeignRequestDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("execute"), INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("execute"), INTERCEPT_CLASS)
         };
     }
 }

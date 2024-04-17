@@ -45,29 +45,29 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 拦截器功能支持
+ * interceptor function supported
  *
  * @author zhouss
  * @since 2022-01-25
  */
 public abstract class InterceptorSupporter extends ReflectMethodCacheSupport implements Interceptor {
     /**
-     * 标记当前请求重试中
+     * flag that the current request is in retry
      */
     protected static final String RETRY_KEY = "$$$$RETRY$$$";
 
     /**
-     * 标记当前请求重试中
+     * flag that the current request is in retry
      */
     protected static final String RETRY_VALUE = "$$$$RETRY_VALUE$$$";
 
     /**
-     * Apache Dubbo的Cluster类名
+     * apache dubbo Cluster class name
      */
     protected static final String APACHE_DUBBO_CLUSTER_CLASS_NAME = "org.apache.dubbo.rpc.cluster.Cluster";
 
     /**
-     * Alibaba Dubbo的Cluster类名
+     * alibaba dubbo Cluster class name
      */
     protected static final String ALIBABA_DUBBO_CLUSTER_CLASS_NAME = "com.alibaba.dubbo.rpc.cluster.Cluster";
 
@@ -76,7 +76,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 流控配置
+     * flow control configuration
      */
     protected final FlowControlConfig flowControlConfig;
 
@@ -89,14 +89,14 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     private HttpService httpService;
 
     /**
-     * 构造器
+     * constructor
      */
     protected InterceptorSupporter() {
         flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
     }
 
     /**
-     * 获取重试处理器
+     * get retry handler
      *
      * @return RetryHandlerV2
      */
@@ -113,7 +113,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 获取选择后的DUBBO服务
+     * get the selected dubbo service
      *
      * @return DubboService
      */
@@ -134,7 +134,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 获取选择后的HTTP服务
+     * gets the selected http service
      *
      * @return HttpService
      */
@@ -155,14 +155,14 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 创建重试方法
+     * create retry method
      *
-     * @param obj 增强类
-     * @param method 目标方法
-     * @param allArguments 方法参数
-     * @param result 默认结果
-     * @return 方法
-     * @throws InvokerWrapperException 调用包装异常
+     * @param obj enhancement class
+     * @param method target method
+     * @param allArguments method parameter
+     * @param result default result
+     * @return Method
+     * @throws InvokerWrapperException InvokerWrapperException
      */
     protected final Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
         return () -> {
@@ -179,12 +179,13 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 进行重试前的判断，若不满足条件直接返回， 防止多调用一次宿主应用接口
+     * Judgment before retrying: If the conditions are not met, the host application interface is returned directly to
+     * prevent multiple calls
      *
-     * @param retry 重试执行器
-     * @param result 结果
-     * @param throwable 第一次执行异常信息
-     * @return 是否核对通过
+     * @param retry Retry executor
+     * @param result result
+     * @param throwable Exception information for the first execution
+     * @return check through
      */
     protected final boolean needRetry(io.github.resilience4j.retry.Retry retry, Object result, Throwable throwable) {
         final long interval = retry.getRetryConfig().getIntervalBiFunction().apply(1, null);
@@ -193,7 +194,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
                 retryConfig.getExceptionPredicate());
         if (isNeedRetry) {
             try {
-                // 按照第一次等待时间等待
+                // wait according to the first wait time
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.WARNING, "Interruption error:", e);
@@ -203,9 +204,9 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 打印错误日志
+     * print error log
      *
-     * @param throwable 异常
+     * @param throwable throwable
      */
     protected void log(Throwable throwable) {
         LOGGER.log(Level.INFO, "Failed to invoke target", getExMsg(throwable));
@@ -246,10 +247,10 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 是否可注入dubbo cluster 加载器
+     * whether the dubbo cluster loader can be injected
      *
-     * @param className 加载器类型
-     * @return 是否可注入
+     * @param className loader type
+     * @return injectable or not
      */
     protected final boolean canInjectClusterInvoker(String className) {
         boolean isClusterLoader =
@@ -258,9 +259,9 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 解析异常信息
+     * parse exception message
      *
-     * @param throwable 异常
+     * @param throwable throwable
      * @return msg
      */
     protected String getExMsg(Throwable throwable) {
@@ -268,10 +269,10 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 获取真正异常
+     * get true exception
      *
-     * @param throwable 异常信息
-     * @return 真正异常
+     * @param throwable exception message
+     * @return true exception
      */
     protected Throwable getRealCause(Throwable throwable) {
         if (throwable instanceof InvokerWrapperException) {
@@ -282,38 +283,38 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
-     * 前置触发点
+     * pre-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context execution context
+     * @return execution context
+     * @throws Exception execute exception
      */
     protected abstract ExecuteContext doBefore(ExecuteContext context) throws Exception;
 
     /**
-     * 后置触发点
+     * post-trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
-     * @throws Exception 执行异常
+     * @param context execution context
+     * @return execution context
+     * @throws Exception execute exception
      */
     protected abstract ExecuteContext doAfter(ExecuteContext context) throws Exception;
 
     /**
-     * 异常触发点
+     * exception trigger point
      *
-     * @param context 执行上下文
-     * @return 执行上下文
+     * @param context execution context
+     * @return execution context
      */
     protected ExecuteContext doThrow(ExecuteContext context) {
         return context;
     }
 
     /**
-     * 是否可调用内部方法逻辑
+     * whether internal method logic can be invoked
      *
-     * @param context 上下文
-     * @return 是否可调用
+     * @param context context
+     * @return whether internal method logic can be invoked
      */
     protected boolean canInvoke(ExecuteContext context) {
         return !RetryContext.INSTANCE.isMarkedRetry();

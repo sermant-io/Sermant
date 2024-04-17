@@ -40,7 +40,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * 配置配置
+ * configuration
  *
  * @author zhouss
  * @since 2022-04-16
@@ -90,7 +90,7 @@ public class ConfigHolderTest {
     public void testResolveAndListener() throws InterruptedException {
         ConfigHolder.INSTANCE.addListener(event -> LOGGER.info("refresh success"));
         ConfigHolder.INSTANCE.resolve(event);
-        // 由于此处为异步执行, 因此这里等待异步执行完成
+        // Because this is an asynchronous execution, it waits for the asynchronous execution to complete
         Thread.sleep(1000);
         final int test = (Integer) ConfigHolder.INSTANCE.getConfig(KEY);
         Assert.assertEquals(TestConfigSources.ORDER, test);

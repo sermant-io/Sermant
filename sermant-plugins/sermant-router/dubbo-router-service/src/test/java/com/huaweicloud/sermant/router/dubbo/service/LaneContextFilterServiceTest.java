@@ -16,6 +16,7 @@
 
 package com.huaweicloud.sermant.router.dubbo.service;
 
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
 import com.huaweicloud.sermant.router.config.cache.ConfigCache;
 import com.huaweicloud.sermant.router.config.entity.EntireRule;
@@ -27,7 +28,6 @@ import com.huaweicloud.sermant.router.config.entity.Route;
 import com.huaweicloud.sermant.router.config.entity.RouterConfiguration;
 import com.huaweicloud.sermant.router.config.entity.Rule;
 import com.huaweicloud.sermant.router.config.entity.ValueMatch;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 测试LaneContextFilterServiceImpl
+ * Test LaneContextFilterServiceImpl
  *
  * @author provenceee
  * @since 2023-02-27
@@ -59,7 +59,7 @@ public class LaneContextFilterServiceTest {
     }
 
     /**
-     * 测试规则无效时
+     * testing rule is invalid
      */
     @Test
     public void testWithInvalidConfiguration() {
@@ -68,7 +68,7 @@ public class LaneContextFilterServiceTest {
     }
 
     /**
-     * 测试没有命中的规则时
+     * testing rules that did not hit
      */
     @Test
     public void testWithEmptyRules() {
@@ -78,7 +78,7 @@ public class LaneContextFilterServiceTest {
     }
 
     /**
-     * 测试规则不匹配时
+     * testing rules do not match
      */
     @Test
     public void testWithEmptyRoutes() {
@@ -88,7 +88,7 @@ public class LaneContextFilterServiceTest {
     }
 
     /**
-     * 测试getLane方法
+     * Test the getLane method
      */
     @Test
     public void testGetLane() {

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * 发送数据类
+ * Data sender
  *
  * @author lilai
  * @version 0.0.1
@@ -42,7 +42,7 @@ public class Sender implements Runnable {
     private final Channel channel;
 
     /**
-     * 构造函数
+     * Constructor
      *
      * @param channel channel
      * @param queue queue
@@ -56,7 +56,7 @@ public class Sender implements Runnable {
     public void run() {
         List<Message.ServiceData> list;
 
-        // 消息队列不为空时，发送消息
+        // Send a message when the message queue is not empty
         if (queue.size() > 0) {
             list = new ArrayList<>();
             queue.drainTo(list);

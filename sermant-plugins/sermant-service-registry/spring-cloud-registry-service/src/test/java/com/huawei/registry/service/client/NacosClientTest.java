@@ -42,7 +42,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.core.utils.ReflectUtils;
 
 /**
- * 测试nacos服务
+ * Test the NACOS service
  *
  * @author chengyouling
  * @since 2022-11-10
@@ -84,7 +84,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试注册
+     * Test registration
      */
     @Test
     public void testRegister() throws NacosException {
@@ -94,7 +94,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试取消注册
+     * Test unregistration
      */
     @Test
     public void testDeregister() throws NacosException {
@@ -104,7 +104,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试获取服务状态
+     * Test to get the service status
      */
     @Test
     public void testGetServerStatus() throws NacosException {
@@ -113,7 +113,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试更新状态
+     * Test the update status
      */
     @Test
     public void testUpdateInstanceStatus() throws NacosException {
@@ -123,7 +123,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试获取实例状态
+     * Test to obtain the instance status
      */
     @Test
     public void testGetInstanceStatus() throws NacosException {
@@ -132,7 +132,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试获取实例集合
+     * Test to get a collection of instances
      */
     @Test
     public void testGetInstances() throws NacosException {
@@ -141,7 +141,7 @@ public class NacosClientTest {
     }
 
     /**
-     * 测试获取服务集合
+     * Test to get a collection of services
      */
     @Test
     public void testGetServices() throws NacosException {

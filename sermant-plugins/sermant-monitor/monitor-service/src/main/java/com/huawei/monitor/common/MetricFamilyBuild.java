@@ -21,7 +21,7 @@ import io.prometheus.client.GaugeMetricFamily;
 import java.util.Collections;
 
 /**
- * MetricFamily 构造类
+ * MetricFamily builder
  *
  * @author zhp
  * @version 1.0.0
@@ -29,30 +29,30 @@ import java.util.Collections;
  */
 public class MetricFamilyBuild {
     /**
-     * 构造方法
+     * construction method
      */
     private MetricFamilyBuild() {
     }
 
     /**
-     * 构造 GaugeMetric
+     * build GaugeMetric
      *
-     * @param metricEnum 指标枚举信息
-     * @param value 指标值
-     * @return 创建的收集指标
+     * @param metricEnum metric enumeration information
+     * @param value metric value
+     * @return created a collection metric
      */
     public static GaugeMetricFamily buildGaugeMetric(MetricEnum metricEnum, double value) {
         return new GaugeMetricFamily(metricEnum.getName(), metricEnum.getDisc(), value);
     }
 
     /**
-     * 构造 GaugeMetric
+     * build GaugeMetric
      *
-     * @param metricEnum 指标枚举信息
-     * @param value 指标值
-     * @param labelName 标签名称
-     * @param labelValue 标签值
-     * @return 创建的收集指标
+     * @param metricEnum metric enumeration information
+     * @param value metric value
+     * @param labelName label name
+     * @param labelValue label value
+     * @return created a collection metric
      */
     public static GaugeMetricFamily buildGaugeMetric(MetricEnum metricEnum, double value, String labelName,
             String labelValue) {

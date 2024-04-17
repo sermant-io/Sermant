@@ -47,7 +47,7 @@ import java.net.URI;
 import java.util.Optional;
 
 /**
- * 测试JettyRequestInterceptor
+ * Test JettyRequestInterceptor
  *
  * @author provenceee
  * @since 2023-05-17
@@ -66,7 +66,7 @@ public class JettyRequestInterceptorTest {
     private final Method method;
 
     /**
-     * UT执行前进行mock
+     * Perform the mock before the UT is executed
      */
     @BeforeClass
     public static void before() throws ClassNotFoundException, IllegalAccessException, NoSuchFieldException {
@@ -92,7 +92,7 @@ public class JettyRequestInterceptorTest {
     }
 
     /**
-     * UT执行后释放mock对象
+     * Release the mock object after the UT is executed
      */
     @AfterClass
     public static void after() {
@@ -113,7 +113,7 @@ public class JettyRequestInterceptorTest {
 
     @Test
     public void test() {
-        // 测试正常情况
+        // Test for normal conditions
         JettyClientWrapper wrapper = Mockito.spy(new JettyClientWrapper(Mockito.mock(HttpClient.class),
                 new HttpConversation(), HELLO_URI));
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_HOST, "www.domain.com");
@@ -127,7 +127,7 @@ public class JettyRequestInterceptorTest {
 
     @Test
     public void testException() {
-        // 测试正常情况
+        // Test for anomalies
         JettyClientWrapper wrapper = Mockito.spy(new JettyClientWrapper(Mockito.mock(HttpClient.class),
                 new HttpConversation(), HELLO_URI));
         ReflectUtils.setFieldValue(wrapper, HttpConstants.HTTP_URI_HOST, "www.domain.com");

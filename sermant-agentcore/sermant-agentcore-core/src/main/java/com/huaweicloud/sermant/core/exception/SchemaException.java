@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.exception;
 import java.util.Locale;
 
 /**
- * 元数据错误异常
+ * Schema Exception
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 public class SchemaException extends RuntimeException {
     /**
-     * 无法找到版本
+     * Version not found
      */
     public static final MsgParser MISSING_VERSION = new MsgParser() {
         @Override
@@ -37,7 +37,7 @@ public class SchemaException extends RuntimeException {
     };
 
     /**
-     * 查找到的名称和希望的不一致
+     * The name found does not match what was expected
      */
     public static final MsgParser UNEXPECTED_NAME = new MsgParser() {
         @Override
@@ -47,7 +47,7 @@ public class SchemaException extends RuntimeException {
     };
 
     /**
-     * 查找到的版本和希望的不一致
+     * The version found does not match what was expected
      */
     public static final MsgParser UNEXPECTED_VERSION = new MsgParser() {
         @Override
@@ -57,7 +57,7 @@ public class SchemaException extends RuntimeException {
     };
 
     /**
-     * 不接受外部依赖包
+     * External dependency packages are not accepted
      */
     public static final MsgParser UNEXPECTED_EXT_JAR = new MsgParser() {
         @Override
@@ -69,7 +69,7 @@ public class SchemaException extends RuntimeException {
     private static final long serialVersionUID = 3875379572570581867L;
 
     /**
-     * 构造方法
+     * constructor
      *
      * @param parser parser
      * @param args args
@@ -79,7 +79,7 @@ public class SchemaException extends RuntimeException {
     }
 
     /**
-     * 信息转换器
+     * message parser
      *
      * @since 2021-11-04
      */

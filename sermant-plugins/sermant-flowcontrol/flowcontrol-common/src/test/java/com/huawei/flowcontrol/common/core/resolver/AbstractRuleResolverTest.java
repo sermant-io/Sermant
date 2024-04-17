@@ -33,7 +33,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * 规则解析测试
+ * rule parsing test
  *
  * @author zhouss
  * @since 2022-08-29
@@ -64,48 +64,48 @@ public abstract class AbstractRuleResolverTest<T extends AbstractRule> {
     }
 
     /**
-     * 下发配置键
+     * deliver configuration key
      *
-     * @return 配置键
+     * @return key
      */
     public String getKey() {
         return getConfigKey() + "." + getBusinessKey();
     }
 
     /**
-     * 获取业务场景名
+     * obtain the service scenario name
      *
-     * @return 业务场景名
+     * @return service scenario name
      */
     public String getBusinessKey() {
         return "test";
     }
 
     /**
-     * 获取解析器
+     * get resolver
      *
-     * @return 解析器
+     * @return Resolver
      */
     public abstract AbstractResolver<T> getResolver();
 
     /**
-     * 获取配置键
+     * get configuration key
      *
-     * @return 配置键
+     * @return key
      */
     public abstract String getConfigKey();
 
     /**
-     * 获取配置值
+     * get configuration value
      *
-     * @return 配置
+     * @return value
      */
     public abstract String getValue();
 
     /**
-     * 判断属性是否正确
+     * determine whether the property is correct
      *
-     * @param rule 解析的对象
+     * @param rule parsed object
      */
     public abstract void checkAttrs(T rule);
 }

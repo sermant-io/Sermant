@@ -18,29 +18,29 @@
 package com.huawei.flowcontrol.common.core.constants;
 
 /**
- * 规则常量
+ * regular constant
  *
  * @author zhouss
  * @since 2022-08-05
  */
 public class RuleConstants {
     /**
-     * 错误注入规则类型-延迟
+     * error injection rule type-delay
      */
     public static final String FAULT_RULE_DELAY_TYPE = "delay";
 
     /**
-     * 错误注入规则类型-丢弃
+     * error injection rule type-discard
      */
     public static final String FAULT_RULE_ABORT_TYPE = "abort";
 
     /**
-     * 错误注入回调类型-抛出异常
+     * error injection callback type-throwException
      */
     public static final String FAULT_RULE_FALLBACK_THROW_TYPE = "ThrowException";
 
     /**
-     * 错误注入回调类型-返回空
+     * error injection callback type-returnNull
      */
     public static final String FAULT_RULE_FALLBACK_NULL_TYPE = "ReturnNull";
 

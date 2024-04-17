@@ -19,21 +19,21 @@ package com.huawei.registry.services;
 import com.huaweicloud.sermant.core.plugin.service.PluginService;
 
 /**
- * 下线通知服务
+ * Offline notification service
  *
  * @author provenceee
  * @since 2022-05-26
  */
 public interface GraceService extends PluginService {
     /**
-     * 下线
+     * Offline
      */
     void shutdown();
 
     /**
-     * 增加下线通知的地址
+     * Add the address of the offline notification
      *
-     * @param address 地址
+     * @param address Address
      */
     void addAddress(String address);
 }

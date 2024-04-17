@@ -50,7 +50,7 @@ import org.mockito.Mockito;
 import java.util.Map;
 
 /**
- * 规则工具类测试
+ * rule tool class testing
  *
  * @author zhouss
  * @since 2022-08-29
@@ -82,7 +82,7 @@ public class RuleUtilsTest {
     }
 
     /**
-     * 测试工具类获取规则
+     * test tool class acquisition rules
      */
     @Test
     public void testGetRule() {

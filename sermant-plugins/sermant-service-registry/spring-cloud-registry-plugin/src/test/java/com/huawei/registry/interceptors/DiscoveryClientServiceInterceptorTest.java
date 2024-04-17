@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 服务发现测试service
+ * Service discovery test service
  *
  * @author zhouss
  * @since 2022-09-07
@@ -81,7 +81,7 @@ public class DiscoveryClientServiceInterceptorTest extends BaseRegistryTest<Disc
 
     @Test
     public void doBefore() throws NoSuchMethodException {
-        // isAvailable为true的普通场景
+        // Normal scenarios where isAvailable is true
         RegisterContext.INSTANCE.setAvailable(true);
         REGISTER_CONFIG.setEnableSpringRegister(true);
         REGISTER_CONFIG.setOpenMigration(true);
@@ -89,7 +89,7 @@ public class DiscoveryClientServiceInterceptorTest extends BaseRegistryTest<Disc
         Assert.assertTrue(context.getResult() instanceof List);
         Assert.assertEquals(((List<?>) context.getResult()).size(), originServices.size() + services.size());
 
-        // isAvailable为true的isWebfLux场景
+        // IsWebfLux scenario where isAvailable is true
         final ExecuteContext fluxContext = interceptor.doAfter(
                 buildContext(reactiveCompositeDiscoveryClient, null, Flux.fromIterable(originServices)));
         Assert.assertTrue(fluxContext.getResult() instanceof Flux);
@@ -97,7 +97,7 @@ public class DiscoveryClientServiceInterceptorTest extends BaseRegistryTest<Disc
         Assert.assertNotNull(block);
         Assert.assertEquals(block.size(), originServices.size() + services.size());
 
-        // isAvailable为false的普通场景
+        // A normal scenario where isAvailable is false
         RegisterContext.INSTANCE.setAvailable(false);
         final ExecuteContext NotAvailableContext = interceptor.doBefore(
                 buildContext(client, null));

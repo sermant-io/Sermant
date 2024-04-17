@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Sermant类加载器,每一个Sermant有一个独立的类加载器
+ * SermantClassLoader, each Sermant has a separate classloader
  *
  * @author luanwenfei
  * @since 2023-05-22
@@ -38,12 +38,12 @@ public class SermantClassLoader extends URLClassLoader {
                     "com.huaweicloud.sermant.core.plugin.agent.adviser.AdviserScheduler"));
 
     /**
-     * 对FrameClassLoader已经加载的类进行管理
+     * Manages classes that have been loaded by the FrameworkClassLoader
      */
     private final Map<String, Class<?>> sermantClassMap = new HashMap<>();
 
     /**
-     * parent 不可为 null，有利于服务治理场景
+     * parent cannot be null, which facilitates service governance scenarios
      *
      * @param urls urls
      */
@@ -77,7 +77,8 @@ public class SermantClassLoader extends URLClassLoader {
             if (clazz == null) {
                 clazz = super.loadClass(name, resolve);
 
-                // 通过SermantClassLoader的super.loadClass方法把从自身加载的类放入缓存
+                // The classes loaded from itself are placed in the cache using the super.loadClass method of the
+                // SermantClassLoader
                 if (clazz != null && clazz.getClassLoader() == this) {
                     sermantClassMap.put(name, clazz);
                 }
@@ -90,7 +91,7 @@ public class SermantClassLoader extends URLClassLoader {
     }
 
     /**
-     * 向SermantClassLoader添加一个URL
+     * Add a URL to SermantClassLoader
      *
      * @param url url
      */
@@ -99,7 +100,7 @@ public class SermantClassLoader extends URLClassLoader {
     }
 
     /**
-     * 向SermantClassLoader添加多个URL
+     * Add URLs to SermantClassLoader
      *
      * @param urls urls
      */

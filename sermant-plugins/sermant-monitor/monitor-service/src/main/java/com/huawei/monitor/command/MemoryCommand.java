@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- * 内存命令结果解析类
+ * memory command result parsing class
  *
  * @author zhp
  * @version 1.0.0
@@ -44,10 +44,10 @@ public class MemoryCommand extends CommonMonitorCommand<MemoryCommand.MemInfo> {
     }
 
     /**
-     * 原泛PaaS类：com.huawei.sermant.plugin.collection.util.MemoryParser parse方法
+     * Refactor the pan-PaaS class: com.huawei.sermant.plugin.collection.util.MemoryParser parse method
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after analysis
      */
     @Override
     public MemInfo parseResult(InputStream inputStream) {
@@ -88,19 +88,19 @@ public class MemoryCommand extends CommonMonitorCommand<MemoryCommand.MemInfo> {
     }
 
     /**
-     * 内存信息
+     * memory information
      *
      * @since 2022-08-02
      */
     public static class MemInfo {
 
         /**
-         * 总内存
+         * total memory
          */
         private final long memoryTotal;
 
         /**
-         * 空闲内存
+         * free memory
          */
         private final long memoryFree;
 
@@ -110,23 +110,23 @@ public class MemoryCommand extends CommonMonitorCommand<MemoryCommand.MemInfo> {
         private final long buffers;
 
         /**
-         * 缓存
+         * cache
          */
         private final long cached;
 
         /**
-         * 虚拟缓存
+         * swap cached
          */
         private final long swapCached;
 
         /**
-         * 构造器
+         * constructor
          *
-         * @param memoryTotal 总内存
-         * @param memoryFree 空闲内存
-         * @param buffers buffer缓存
-         * @param cached 缓存
-         * @param swapCached 虚拟缓存
+         * @param memoryTotal total memory
+         * @param memoryFree free memory
+         * @param buffers buffer
+         * @param cached cache
+         * @param swapCached swap cached
          */
         public MemInfo(long memoryTotal, long memoryFree, long buffers, long cached, long swapCached) {
             this.memoryTotal = memoryTotal;

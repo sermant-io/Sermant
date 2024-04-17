@@ -24,22 +24,22 @@ package com.huaweicloud.sermant.core.service.dynamicconfig.common;
  */
 public enum DynamicConfigServiceType {
     /**
-     * zookeeper 配置中心
+     * zookeeper configuration center
      */
     ZOOKEEPER,
 
     /**
-     * servicecomb-kie 配置中心
+     * servicecomb-kie configuration center
      */
     KIE,
 
     /**
-     * Nacos 配置中心
+     * Nacos configuration center
      */
     NACOS,
 
     /**
-     * 配置中心无实现
+     * no configuration center implementation
      */
     NOP;
 }

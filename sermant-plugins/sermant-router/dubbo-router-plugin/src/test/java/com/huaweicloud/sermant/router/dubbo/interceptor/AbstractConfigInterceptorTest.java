@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试AbstractConfigInterceptor
+ * Test AbstractConfigInterceptor
  *
  * @author chengyouling
  * @since 2022-12-28
@@ -41,7 +41,7 @@ public class AbstractConfigInterceptorTest {
     private final AbstractConfigInterceptor interceptor;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractConfigInterceptorTest() throws IllegalAccessException, NoSuchFieldException {
         interceptor = new AbstractConfigInterceptor();
@@ -60,7 +60,7 @@ public class AbstractConfigInterceptorTest {
     }
 
     /**
-     * 测试putParameters方法
+     * Test the putParameters method
      */
     @Test
     public void testBefore() throws NoSuchMethodException {

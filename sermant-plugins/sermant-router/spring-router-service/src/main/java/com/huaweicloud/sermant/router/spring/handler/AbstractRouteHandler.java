@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.router.common.request.RequestData;
 import java.util.List;
 
 /**
- * 抽象处理器链
+ * Abstract handler chain
  *
  * @author lilai
  * @since 2023-02-21
@@ -47,7 +47,7 @@ public abstract class AbstractRouteHandler implements RouteHandler, Comparable<A
     }
 
     boolean shouldHandle(List<Object> instances) {
-        // 实例数大于1才能路由
+        // Routing is only possible if the number of instances is greater than 1
         return instances != null && instances.size() > 1;
     }
 

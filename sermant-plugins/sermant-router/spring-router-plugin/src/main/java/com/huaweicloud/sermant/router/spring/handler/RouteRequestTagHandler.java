@@ -23,19 +23,19 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 路由web拦截器处理器
+ * Routing web interceptor handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
 public class RouteRequestTagHandler extends AbstractRequestTagHandler {
     /**
-     * 获取透传的标记
+     * Obtain transparent tags
      *
-     * @param path 请求路径
-     * @param methodName 方法名称
-     * @param headers http请求头
-     * @return 透传的标记
+     * @param path The path of the request
+     * @param methodName The name of the method
+     * @param headers HTTP request headers
+     * @return Marks for transparent transmission
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,

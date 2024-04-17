@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
- * 解析url参数、构建公共方法相关工具类
+ * Parse URL parameters and build utility classes related to public methods
  *
  * @author yangrh
  * @since 2022-10-25
@@ -37,9 +37,9 @@ public class RequestInterceptorUtils {
     }
 
     /**
-     * 格式化uri
+     * Format the URI
      *
-     * @param uri 目标uri
+     * @param uri Destination URI
      * @return URI
      */
     public static Optional<URI> formatUri(String uri) {

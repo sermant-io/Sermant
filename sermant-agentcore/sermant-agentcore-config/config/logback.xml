@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" debug="false">
-    <!--  无操作事件监听器  -->
+    <!--  No operation event listener  -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-    <!-- 定义日志文件 输出位置 -->
+    <!-- Configure the log file output location -->
     <property name="log.home_dir" value="${sermant_log_dir:-./logs/sermant/core}"/>
     <property name="log.app_name" value="${sermant_app_name:-sermant}"/>
-    <!-- 日志最大的历史 30天 -->
+    <!-- The maximum log history -->
     <property name="log.maxHistory" value="${sermant_log_max_history:-30}"/>
     <property name="log.level" value="${sermant_log_level:-info}"/>
-    <property name="log.maxSize" value="${sermant_log_max_size:-50MB}" />
+    <property name="log.maxSize" value="${sermant_log_max_size:-50MB}"/>
     <property name="log.totalSize" value="${sermant_log_total_size:-20GB}"/>
 
-    <!-- 设置日志输出格式 -->
-    <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}日期-->
-    <!-- %C类的完整名称-->
-    <!-- %F文件名-->
-    <!-- %M为method-->
-    <!-- %L为行号-->
-    <!-- %thread线程名称-->
-    <!-- %m或者%msg为信息-->
-    <!-- %n换行-->
+    <!-- Configure the log output format -->
+    <!-- %d{yyyy-MM-dd HH:mm:ss.SSS} for date-->
+    <!-- %C for class name-->
+    <!-- %F for file name-->
+    <!-- %M for method name-->
+    <!-- %L for line number-->
+    <!-- %thread for thread name-->
+    <!-- %m %msg for message-->
+    <!-- %n for line break-->
     <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%le] [%C] [%M:%L] [%thread] %m%n"/>
 
-    <!-- ConsoleAppender 控制台输出日志 -->
+    <!-- ConsoleAppender for console output log -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
@@ -38,7 +38,7 @@
         </encoder>
     </appender>
 
-    <!--设置一个向上传递的appender,所有级别的日志都会输出-->
+    <!--Configure an up-pass appender that outputs logs of all levels-->
     <appender name="app" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log.home_dir}/app/%d{yyyy-MM-dd}/${log.app_name}-%i.log</fileNamePattern>
@@ -55,9 +55,9 @@
     </appender>
 
     <root>
-        <!-- 打印debug级别日志及以上级别日志 -->
+        <!-- Print logs for debug and higher level -->
         <level value="${log.level}"/>
-        <appender-ref ref="app" />
+        <appender-ref ref="app"/>
     </root>
 
 </configuration>

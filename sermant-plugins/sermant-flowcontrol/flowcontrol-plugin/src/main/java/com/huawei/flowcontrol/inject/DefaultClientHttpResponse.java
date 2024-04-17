@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 默认响应, 在接管RestTemplate请求，触发治理策略后的默认响应
+ * default response, Default response after taking over the RestTemplate request and triggering the governance policy
  *
  * @author zhouss
  * @since 2022-07-21
@@ -51,9 +51,9 @@ public class DefaultClientHttpResponse implements ClientHttpResponse {
     private InputStream responseStream;
 
     /**
-     * 构造器
+     * constructor
      *
-     * @param flowControlResult 流控修正结果
+     * @param flowControlResult flow control correction results
      */
     public DefaultClientHttpResponse(FlowControlResult flowControlResult) {
         this.flowControlResult = flowControlResult;

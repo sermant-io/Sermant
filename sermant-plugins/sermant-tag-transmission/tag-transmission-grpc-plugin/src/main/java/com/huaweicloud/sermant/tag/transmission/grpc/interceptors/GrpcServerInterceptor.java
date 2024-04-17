@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * grpc 服务端拦截器
+ * grpc server interceptor
  *
  * @author daizhenyu
  * @since 2023-08-15

@@ -22,7 +22,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * 启动类
+ * Startup application
  *
  * @author lilai
  * @version 0.0.1

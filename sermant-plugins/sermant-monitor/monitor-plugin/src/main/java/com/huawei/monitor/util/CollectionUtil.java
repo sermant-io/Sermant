@@ -19,7 +19,7 @@ package com.huawei.monitor.util;
 import java.util.List;
 
 /**
- * 集合工具类
+ * collection utility class
  *
  * @author zhp
  * @version 1.0.0
@@ -30,10 +30,10 @@ public class CollectionUtil {
     }
 
     /**
-     * 是否为空
+     * isEmpty
      *
-     * @param list 集合
-     * @return 判断结果
+     * @param list list
+     * @return is empty
      */
     public static boolean isEmpty(List list) {
         return list == null || list.isEmpty();

@@ -23,7 +23,7 @@ import org.junit.Test;
 import java.util.HashSet;
 
 /**
- * ProhibitionConfigManager单元测试
+ * PromotionConfigManager unit test
  *
  * @author lilai
  * @since 2023-12-23
@@ -52,7 +52,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试Global和Local配置都开启的情况
+     * Test the situation where both Global and Local configurations are enabled
      */
     @Test
     public void testGetKafkaProhibitionTopicsWithGlobalAndLocalConfigEnabled() {
@@ -68,7 +68,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试Global配置开启的情况
+     * Test the Global configuration enabled
      */
     @Test
     public void testGetKafkaProhibitionTopicsWithJustGlobalConfigEnabled() {
@@ -84,7 +84,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试Local配置开启的情况
+     * Test whether the Local configuration is enabled
      */
     @Test
     public void testGetKafkaProhibitionTopicsWithJustLocalConfigEnabled() {
@@ -100,7 +100,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试Global和Local配置都关闭的情况
+     * Test the situation where both Global and Local configurations are turned off
      */
     @Test
     public void testGetKafkaProhibitionTopicsWithBothConfigsDisabled() {
@@ -116,7 +116,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试更新配置不为null的情况
+     * Test the situation where the updated configuration is not null
      */
     @Test
     public void testUpdateConfigWithNonNullConfig() {
@@ -126,7 +126,7 @@ public class ProhibitionConfigManagerTest {
     }
 
     /**
-     * 测试更新配置为null的情况
+     * Test updating configuration to null
      */
     @Test
     public void testUpdateConfigWithNullConfig() {

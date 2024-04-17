@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 随机负载均衡测试
+ * Random load balancing test
  *
  * @author zhouss
  * @since 2022-10-09
@@ -45,7 +45,7 @@ public class RandomLoadbalancerTest extends BaseLoadbalancerTest {
         int curPort;
         boolean isOver = false;
         for (int i = 0; i < 500; i++) {
-            // 模拟是否会出现连续端口, 如果存在则随机生效
+            // Simulate whether there will be a contiguous port, and if it exists, it will take effect randomly
             final Optional<ServiceInstance> choose = randomLoadbalancer.choose(serviceName, serviceInstances);
             Assert.assertTrue(choose.isPresent());
             curPort = choose.get().getPort();

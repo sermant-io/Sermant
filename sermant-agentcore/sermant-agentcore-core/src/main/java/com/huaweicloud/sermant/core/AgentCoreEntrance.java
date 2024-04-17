@@ -43,7 +43,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * agent core入口
+ * agent core entrance
  *
  * @author HapThorin
  * @version 1.0.0
@@ -53,17 +53,17 @@ public class AgentCoreEntrance {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 缓存当前Agent的类型，默认为premain方式启动
+     * Cache the type of the current Agent. The default startup mode is premain
      */
     private static int agentType = AgentType.PREMAIN.getValue();
 
     /**
-     * 缓存当前Agent的产品名
+     * Cache the artifact name of the current Agent
      */
     private static String artifactCache;
 
     /**
-     * 缓存当前Agent的adviser
+     * Cache the current Agent adviser
      */
     private static AdviserInterface adviserCache;
 
@@ -71,13 +71,13 @@ public class AgentCoreEntrance {
     }
 
     /**
-     * 入口方法
+     * Entry method
      *
-     * @param artifact 产品名
-     * @param argsMap 参数集
-     * @param instrumentation Instrumentation对象
-     * @param isDynamic 是否为动态安装 premain[false],agentmain[true]
-     * @throws Exception agent core执行异常
+     * @param artifact artifact name
+     * @param argsMap argsMap
+     * @param instrumentation instrumentation object
+     * @param isDynamic is Dynamic installation, premain[false],agentmain[true]
+     * @throws Exception agent core execution exception
      */
     public static void install(String artifact, Map<String, Object> argsMap, Instrumentation instrumentation,
             boolean isDynamic) throws Exception {
@@ -87,55 +87,55 @@ public class AgentCoreEntrance {
         artifactCache = artifact;
         adviserCache = new DefaultAdviser();
 
-        // 初始化默认日志，在未加载日志引擎前保证日志可用
+        // Initialize default logs to ensure log availability before loading the log engine
         LoggerFactory.initDefaultLogger(artifact);
 
-        // 初始化框架类加载器
+        // Initialize the classloader of framework
         ClassLoaderManager.init(argsMap);
 
-        // 初始化日志，用于添加SermantBridgeHandler
+        // Initialize LoggerFactory for adding SermantBridgeHandler
         LoggerFactory.init(artifact);
 
-        // 通过启动配置构建路径索引
+        // Build the path index by startup configuration
         BootArgsIndexer.build(argsMap);
 
-        // 初始化统一配置
+        // Initialize the unified configuration
         ConfigManager.initialize(argsMap);
 
-        // 初始化操作类
+        // Initialize the operation class
         OperationManager.initOperations();
 
-        // 启动核心服务
+        // Start core services
         ServiceManager.initServices();
 
-        // 初始化事件系统
+        // Initialize the event system
         EventManager.init();
 
-        // 初始化ByteEnhanceManager
+        // Initialize ByteEnhanceManager
         ByteEnhanceManager.init(instrumentation);
 
-        // 初始化插件
+        // Initialize plugins
         PluginSystemEntrance.initialize(isDynamic);
 
-        // 注册Adviser
+        // Registered Adviser
         AdviserScheduler.registry(adviserCache);
 
-        // 静态插件在全部加载结束后，统一增强，复用一个AgentBuilder
+        // After all static plugins are loaded, they are enhanced in a unified manner, using one AgentBuilder
         if (!isDynamic) {
             ByteEnhanceManager.enhance();
         }
 
-        // 上报Sermant启动事件
+        // Report Sermant start event
         FrameworkEventCollector.getInstance().collectAgentStartEvent();
 
-        // 内部通知，Sermant启动完成通知
+        // Internal notification, Sermant start-up completion notification
         if (NotificationManager.isEnable()) {
             NotificationManager.doNotify(new NotificationInfo(SermantNotificationType.LOAD_COMPLETE, null));
         }
     }
 
     /**
-     * 卸载当前Sermant
+     * Uninstall current Sermant
      */
     public static void uninstall() {
         if (isPremain()) {
@@ -143,33 +143,33 @@ public class AgentCoreEntrance {
             return;
         }
 
-        // 在Adviser调度器中取消注册当前Agent的Adviser
+        // Unregister the Adviser of the current Agent in AdviserScheduler
         AdviserScheduler.unRegistry(adviserCache);
 
-        // 卸载全部的插件
+        // Uninstall all plugins
         PluginManager.uninstallAll();
 
-        // 关闭事件系统
+        // Close event system
         EventManager.shutdown();
 
-        // 关闭所有服务
+        // Shut down all services
         ServiceManager.shutdown();
 
-        // 清理操作类
+        // Cleanup operation class
         OperationManager.shutdown();
 
-        // 清理配置类
+        // Cleanup configuration class
         ConfigManager.shutdown();
 
-        // 清理增强信息类
+        // Cleanup the enhanced class information
         EnhancementManager.shutdown();
 
-        // 设置该artifact的Sermant状态为false，非运行状态
+        // Set the Sermant state of this artifact to false, not running
         SermantManager.updateSermantStatus(artifactCache, false);
     }
 
     /**
-     * 该Sermant是否以premain方式启动
+     * Whether the Sermant starts in premain mode
      *
      * @return boolean
      */

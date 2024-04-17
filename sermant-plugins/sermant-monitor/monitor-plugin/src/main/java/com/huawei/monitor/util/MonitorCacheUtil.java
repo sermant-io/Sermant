@@ -22,14 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * 监控数据保存工具类
+ * monitoring data saving tools
  *
  * @author zhp
  * @since 2022-11-01
  */
 public class MonitorCacheUtil {
     /**
-     * 监控数据缓存
+     * monitor data cache
      */
     private static final ConcurrentMap<String, MetricCalEntity> CONCURRENT_MAP = new ConcurrentHashMap<>();
 
@@ -37,19 +37,19 @@ public class MonitorCacheUtil {
     }
 
     /**
-     * 获取监控数据
+     * obtain monitoring data
      *
-     * @param key 监控标签名称
-     * @return MetricCalEntity 监控数据
+     * @param key monitoring tag name
+     * @return MetricCalEntity monitoringData
      */
     public static MetricCalEntity getMetricCalEntity(String key) {
         return CONCURRENT_MAP.computeIfAbsent(key, str -> new MetricCalEntity());
     }
 
     /**
-     * 获取监控数据MAP
+     * obtain monitoring data map
      *
-     * @return ConcurrentMap 监控数据MAP
+     * @return ConcurrentMap monitoring data map
      */
     public static ConcurrentMap<String, MetricCalEntity> getMetric() {
         return CONCURRENT_MAP;

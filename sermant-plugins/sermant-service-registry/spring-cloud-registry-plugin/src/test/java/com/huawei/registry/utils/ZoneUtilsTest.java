@@ -31,14 +31,14 @@ import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * 测试设置zone
+ * Test the zone
  *
  * @author zhouss
  * @since 2022-06-29
  */
 public class ZoneUtilsTest {
     /**
-     * 测试读取zone
+     * Test the read zone
      */
     @Test
     public void testSetZone() {

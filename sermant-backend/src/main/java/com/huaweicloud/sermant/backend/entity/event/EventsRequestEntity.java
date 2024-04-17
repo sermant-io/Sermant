@@ -23,47 +23,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 事件查询请求实体
+ * Event query request entity
  *
- * @since 2023-03-02
  * @author xuezechao
+ * @since 2023-03-02
  */
 @Getter
 @Setter
 public class EventsRequestEntity {
-
     /**
-     * 服务名
+     * service name
      */
     private List<String> service = new ArrayList<>();
 
     /**
-     * 地址
+     * address
      */
     private List<String> ip = new ArrayList<>();
 
     /**
-     * 范围
+     * scope
      */
     private List<String> scope = new ArrayList<>();
 
     /**
-     * 类型
+     * type
      */
     private List<String> type = new ArrayList<>();
 
     /**
-     * 级别
+     * level
      */
     private List<String> level = new ArrayList<>();
 
     /**
-     * 开始时间
+     * start time
      */
     private long startTime;
 
     /**
-     * 截止时间
+     * end time
      */
     private long endTime;
 

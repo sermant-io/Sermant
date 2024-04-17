@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Reactive Client 自动配置
+ * Reactive Client Automatic configuration
  *
  * @author zhouss
  * @since 2022-06-07
@@ -44,7 +44,7 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceCombReactiveConfiguration {
 
     /**
-     * 自动配置reactiveClient
+     * Automatic configuration reactiveClient
      *
      * @return ServiceCombReactiveDiscoveryClient
      */
@@ -55,10 +55,10 @@ public class ServiceCombReactiveConfiguration {
     }
 
     /**
-     * 注入健康检查
+     * Inject health checks
      *
      * @param client reactiveClient
-     * @param properties 健康检查配置
+     * @param properties Configure the health check
      * @return ReactiveDiscoveryClientHealthIndicator
      */
     @Bean

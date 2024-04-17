@@ -1,20 +1,25 @@
 router.plugin:
-  # 是否适配注册插件
+  # whether compatible with the sermant-springboot-registry plugin
   enabled-registry-plugin-adaptation: false
-  # 是否使用请求信息做路由
+  # Whether to use request information for routing
   use-request-router: false
-  # 使用请求信息做路由时的tags
+  # Use request information as tags when routing
   request-tags: []
-  # 需要解析的请求头的tag
+  # the tag of the request header to be resolved
   parse-header-tag: ''
-  # 是否初始化dubbo区域路由，兼容性开关，开启后，会在dubbo的配置缓存中初始化一条以zone匹配的同标签路由
+  # Whether to initialize DUBBO zone routing (compatibility switch)，Once enabled, a routing with the same label that
+  # matches the zone will be initialized in the Dubbo configuration cache
   enabled-dubbo-zone-router: false
-  # 是否初始化spring cloud区域路由，兼容性开关，开启后，会在spring cloud的配置缓存中初始化一条以zone匹配的同标签路由
+  # Whether to initialize the spring cloud area routing (compatibility switch), Once enabled, a routing with the same
+  # label that matches the zone will be initialized in the spring cloud configuration cache
   enabled-spring-zone-router: false
+  # compatibility router config 1.0, default is false not support
+  enabled-previous-rule: false
 transmit.plugin:
-  # 是否在直接new Thread时传递标签
+  # Whether to transmit the label on the direct new thread
   enabled-thread: true
-  # 是否在非定时线程池中传递标签
+  # Whether to transmit the label in the pool of non-scheduled thread pool
   enabled-thread-pool: true
-  # 是否在定时线程池的schedule/scheduleAtFixedRate/scheduleWithFixedDelay方法中传递标签
+  # Whether to transmit the label in the schedule/scheduleAtFixedRate/scheduleWithFixedDelay method of the scheduled
+  # thread pool
   enabled-scheduler: false

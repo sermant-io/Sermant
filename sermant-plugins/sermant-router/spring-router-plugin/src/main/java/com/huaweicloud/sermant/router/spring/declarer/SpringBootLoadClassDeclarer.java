@@ -22,7 +22,7 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import com.huaweicloud.sermant.router.spring.interceptor.SpringBootLoadClassInterceptor;
 
 /**
- * 增强SpringBootApplication类的main方法，用于加载一些特殊的类
+ * Enhance the main method of the SpringBootApplication class to load some special classes
  *
  * @author yuzl 俞真龙
  * @since 2022-10-28

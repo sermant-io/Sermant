@@ -27,14 +27,14 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 规则缓存类
+ * Rule caching class
  *
  * @author zhp
  * @since 2023-02-17
  */
 public class RuleCache {
     /**
-     * 规则缓存MAP
+     * Map for rule cache
      */
     protected static final Map<String, RemovalRule> RULE_MAP = new HashMap<>();
 
@@ -52,9 +52,9 @@ public class RuleCache {
     }
 
     /**
-     * 更新缓存信息
+     * Update the cache information
      *
-     * @param removalConfig 离群实例摘除配置
+     * @param removalConfig Outlier instance removal configuration
      */
     public static void updateCache(RemovalConfig removalConfig) {
         cleanCache();
@@ -66,17 +66,17 @@ public class RuleCache {
     }
 
     /**
-     * 获取规则信息
+     * Obtain rule information
      *
-     * @param key 维度信息
-     * @return 离群实例摘除规则
+     * @param key Dimension information
+     * @return Outlier instance removal rules
      */
     public static Optional<RemovalRule> getRule(String key) {
         return Optional.ofNullable(RULE_MAP.getOrDefault(key, rule));
     }
 
     /**
-     * 清除缓存
+     * Clear the cache
      */
     public static void cleanCache() {
         RuleCache.RULE_MAP.clear();

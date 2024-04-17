@@ -24,49 +24,49 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 记录当前实例的指标数据
+ * Record the metric data of the current instance
  *
  * @author zhouss
  * @since 2022-09-26
  */
 public class InstanceStats implements Recorder {
     /**
-     * 正在请求的数量
+     * The number being requested
      */
     private final AtomicLong activeRequests = new AtomicLong();
 
     /**
-     * 所有的请求数统计
+     * Statistics on the number of all requests
      */
     private final AtomicLong allRequestCount = new AtomicLong();
 
     /**
-     * 所有请求调用的消耗时间
+     * The time spent on all request calls
      */
     private final AtomicLong allRequestConsumeTime = new AtomicLong();
 
     /**
-     * 请求失败数
+     * The number of failed requests
      */
     private final AtomicLong failRequestCount = new AtomicLong();
 
     /**
-     * 时间窗口
+     * Time window
      */
     private final long instanceStateTimeWindowMs;
 
     /**
-     * 上一次时间窗口更新时间, 作为时间窗口的左边界
+     * The last time the time window was updated, as the left boundary of the time window
      */
     private volatile long lastLeftWindowTime;
 
     /**
-     * 时间窗口内的平均响应时间
+     * The average response time over the time window
      */
     private volatile double responseAvgTime;
 
     /**
-     * 构造器
+     * Constructor
      */
     public InstanceStats() {
         this.instanceStateTimeWindowMs =
@@ -75,7 +75,7 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 调用前请求
+     * Pre-call requests
      */
     @Override
     public void beforeRequest() {
@@ -84,10 +84,10 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 异常调用统计
+     * Statistics on abnormal calls
      *
-     * @param consumeTimeMs 消费时间
-     * @param ex 异常类型
+     * @param consumeTimeMs Consumption time
+     * @param ex The type of exception
      */
     @Override
     public void errorRequest(Throwable ex, long consumeTimeMs) {
@@ -96,9 +96,9 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 结果调用
+     * Result call
      *
-     * @param consumeTimeMs 消费时间
+     * @param consumeTimeMs Consumption time
      */
     @Override
     public void afterRequest(long consumeTimeMs) {
@@ -126,7 +126,7 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 结束请求
+     * complete request
      */
     @Override
     public void completeRequest() {
@@ -141,9 +141,9 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 获取并发数
+     * Get the number of concurrent transactions
      *
-     * @return 并发数
+     * @return Number of concurrent transactions
      */
     public long getActiveRequests() {
         final long activeCount = activeRequests.get();
@@ -161,7 +161,7 @@ public class InstanceStats implements Recorder {
     }
 
     /**
-     * 获取平均响应时间
+     * Get the average response time
      *
      * @return responseAvgTime
      */

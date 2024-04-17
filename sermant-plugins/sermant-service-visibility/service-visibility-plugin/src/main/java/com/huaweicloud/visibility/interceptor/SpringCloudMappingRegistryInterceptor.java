@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
- * SpringCloud注册增强器
+ * SpringCloud registration enhancer
  *
  * @author zhp
  * @since 2022-12-05

@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.event;
 import java.util.List;
 
 /**
- * 事件消息
+ * Event Message
  *
  * @author luanwenfei
  * @since 2023-03-07
@@ -30,10 +30,10 @@ public class EventMessage {
     List<Event> events;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param metaHash 原数据hash
-     * @param events 事件列表
+     * @param metaHash meta hash
+     * @param events event list
      */
     public EventMessage(String metaHash, List<Event> events) {
         this.metaHash = metaHash;

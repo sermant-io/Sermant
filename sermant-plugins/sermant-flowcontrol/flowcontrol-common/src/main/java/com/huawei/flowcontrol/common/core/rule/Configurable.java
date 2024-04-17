@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,27 +23,27 @@
 package com.huawei.flowcontrol.common.core.rule;
 
 /**
- * 可配置的规则
- * 默认都含有名称与目标服务
+ * configurable rules
+ * the default contains the name and target service
  *
  * @author zhouss
  * @since 2021-11-15
  */
 public abstract class Configurable {
     /**
-     * 配置名
+     * configuration name
      */
     protected String name;
 
     /**
-     * 目标服务
+     * target service
      */
     protected String services;
 
     /**
-     * 是否合法
+     * is invalid
      *
-     * @return 是否合法
+     * @return is invalid
      */
     public abstract boolean isInValid();
 

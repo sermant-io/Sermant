@@ -21,23 +21,23 @@ import com.huawei.discovery.entity.ServiceInstance;
 import java.util.Optional;
 
 /**
- * 重试策略
+ * Retry policy
  *
  * @author zhouss
  * @since 2022-09-30
  */
 public interface RetryPolicy {
     /**
-     * 选择服务, 基于重试策略选择重试逻辑
+     * Select a service and select the retry logic based on the retry policy
      *
-     * @param serviceName 服务名
-     * @param policyContext 重试上下文
-     * @return 选择的实例
+     * @param serviceName Service name
+     * @param policyContext Retry the context
+     * @return Selected instances
      */
     Optional<ServiceInstance> select(String serviceName, PolicyContext policyContext);
 
     /**
-     * 重试策略名称
+     * The name of the retry policy
      *
      * @return retryPolicy
      */

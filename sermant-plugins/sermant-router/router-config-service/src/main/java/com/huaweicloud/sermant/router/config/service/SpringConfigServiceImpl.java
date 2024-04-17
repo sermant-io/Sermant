@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.router.config.service;
 import com.huaweicloud.sermant.router.spring.service.SpringConfigService;
 
 /**
- * 配置服务
+ * Configuration service
  *
  * @author provenceee
  * @since 2022-07-20

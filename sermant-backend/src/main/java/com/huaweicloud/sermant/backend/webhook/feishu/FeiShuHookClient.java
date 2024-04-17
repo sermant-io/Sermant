@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * 飞书webhook 客户端
+ * FeiShu webhook client
  *
  * @author xuezechao
  * @since 2023-03-02
@@ -57,7 +57,7 @@ public class FeiShuHookClient implements WebHookClient {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
-     * 构造函数
+     * Constructor
      */
     public FeiShuHookClient() {
         feiShuHookConfig.setName(CommonConst.FEISHU_WEBHOOK_NAME);
@@ -65,10 +65,10 @@ public class FeiShuHookClient implements WebHookClient {
     }
 
     /**
-     * webhook推送事件
+     * Webhook notify event
      *
-     * @param events 事件信息
-     * @return 唤醒feishu的webhook结果
+     * @param events event information
+     * @return notify result
      */
     @Override
     public boolean doNotify(List<QueryResultEventInfoEntity> events) {
@@ -90,9 +90,9 @@ public class FeiShuHookClient implements WebHookClient {
     }
 
     /**
-     * 获取配置
+     * Get configuration
      *
-     * @return 配置
+     * @return configuration
      */
     @Override
     public WebHookConfig getConfig() {
@@ -100,10 +100,10 @@ public class FeiShuHookClient implements WebHookClient {
     }
 
     /**
-     * 获取推送内容
+     * Get notify content
      *
-     * @param events 事件
-     * @return 推动信息
+     * @param events event information
+     * @return notify content
      */
     public HashMap<String, Object> getNotifyContent(List<QueryResultEventInfoEntity> events) {
         List<List<FeiShuContentEntity>> content = new ArrayList<>();
@@ -140,10 +140,10 @@ public class FeiShuHookClient implements WebHookClient {
     }
 
     /**
-     * 获取 富文本事件推送
+     * Get rich text of notified event
      *
-     * @param text 文本信息
-     * @return 富文本事件推送内容
+     * @param text text information
+     * @return rich text of notified event
      */
     public List<FeiShuContentEntity> getContent(String text) {
         List<FeiShuContentEntity> result = new ArrayList<>();

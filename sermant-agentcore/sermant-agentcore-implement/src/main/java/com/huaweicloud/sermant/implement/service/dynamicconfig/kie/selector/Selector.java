@@ -19,27 +19,27 @@ package com.huaweicloud.sermant.implement.service.dynamicconfig.kie.selector;
 import java.util.List;
 
 /**
- * 选择器
+ * Selector
  *
- * @param <R> 泛型
+ * @param <R> Generics
  * @author zhouss
  * @since 2021-11-17
  */
 public interface Selector<R> {
     /**
-     * 选择
+     * select
      *
-     * @param list 目标集合
-     * @return 确定的目标
+     * @param list target list
+     * @return selected target
      */
     R select(List<R> list);
 
     /**
-     * 选择
+     * select
      *
-     * @param strategy 选择策略
-     * @param list 目标集合
-     * @return 确定的目标
+     * @param strategy strategy for selection
+     * @param list target list
+     * @return selected target
      */
     R select(List<R> list, SelectStrategy<R> strategy);
 }

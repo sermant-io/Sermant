@@ -30,8 +30,7 @@ import java.time.Duration;
 import java.util.logging.Logger;
 
 /**
- * KafkaConsumer构造方法的拦截器
- * {@link org.apache.kafka.clients.consumer.KafkaConsumer#poll(long)}
+ * Interceptor for KafkaConsumer Construction Method {@link org.apache.kafka.clients.consumer.KafkaConsumer#poll(long)}
  * {@link org.apache.kafka.clients.consumer.KafkaConsumer#poll(Duration)}
  *
  * @author lilai
@@ -46,16 +45,16 @@ public class KafkaConsumerPollInterceptor extends AbstractInterceptor {
     private KafkaConsumerHandler handler;
 
     /**
-     * 带有KafkaConsumerHandler的构造方法
+     * Construction method with KafkaConsumerHandler
      *
-     * @param handler subscribe方法拦截点处理器
+     * @param handler The subscribe method intercepts point handler
      */
     public KafkaConsumerPollInterceptor(KafkaConsumerHandler handler) {
         this.handler = handler;
     }
 
     /**
-     * 无参构造方法
+     * Non parametric construction method
      */
     public KafkaConsumerPollInterceptor() {
     }
@@ -70,8 +69,12 @@ public class KafkaConsumerPollInterceptor extends AbstractInterceptor {
         if (handler != null) {
             handler.doBefore(context);
         } else {
-            // kafka不允许多线程同时操作consumer，因此在动态配置监听到到新配置后，无法直接操作禁消费。
-            // 考虑到只有poll真正被调用才会触发重平衡，合适做法为动态配置线程更新标记位，poll前检查是否需要处理禁止消费，进行订阅增减Topic的操作，然后由poll触发重平衡。
+            // Kafka does not allow multiple threads to operate consumers simultaneously, so it is not possible to
+            // directly disable consumption when a new configuration is detected through dynamic configuration
+            // monitoring. Considering that only when poll is truly called will rebalancing be triggered, a suitable
+            // approach is to dynamically configure the thread to update the flag bit, check whether it is necessary
+            // to handle the prohibition of consumption before poll, perform subscription addition and subtraction of
+            // topics, and then trigger rebalancing by poll.
             if (kafkaConsumerWrapper.getIsConfigChanged().get()) {
                 KafkaConsumerController.disableConsumption(kafkaConsumerWrapper,
                         ProhibitionConfigManager.getKafkaProhibitionTopics());

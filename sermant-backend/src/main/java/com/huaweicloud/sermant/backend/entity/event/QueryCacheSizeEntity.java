@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 事件查询数量实体
+ * Cached Event Size Entity
  *
  * @author xuezechao
  * @since 2023-03-02

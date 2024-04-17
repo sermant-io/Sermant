@@ -23,16 +23,16 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 /**
- * 方法缓存测试
+ * method cache testing
  *
  * @author zhouss
  * @since 2022-03-03
  */
 public class ReflectMethodCacheSupportTest {
     /**
-     * 测试方法缓存
+     * test method cache
      *
-     * @throws Exception 获取方法失败抛出
+     * @throws Exception thrown when obtaining a method fails
      */
     @Test
     public void testCache() throws Exception {

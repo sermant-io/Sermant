@@ -18,19 +18,19 @@
 package com.huawei.flowcontrol.common.enums;
 
 /**
- * 流控框架
+ * flowControl framework
  *
  * @author zhouss
  * @since 2022-01-25
  */
 public enum FlowFramework {
     /**
-     * 基于sentinel
+     * sentinelBased
      */
     SENTINEL,
 
     /**
-     * 基于resilience4j
+     * basedOnResilience4J
      */
     RESILIENCE;
 }

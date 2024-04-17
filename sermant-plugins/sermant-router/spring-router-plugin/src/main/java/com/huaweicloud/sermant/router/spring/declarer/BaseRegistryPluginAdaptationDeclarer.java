@@ -21,7 +21,7 @@ import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
 import com.huaweicloud.sermant.router.common.config.RouterConfig;
 
 /**
- * 适配注册插件拦截点基类
+ * Adapt registration plugin interception point base class
  *
  * @author provenceee
  * @since 2022-11-28
@@ -30,7 +30,7 @@ public abstract class BaseRegistryPluginAdaptationDeclarer extends AbstractPlugi
     private final RouterConfig routerConfig;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public BaseRegistryPluginAdaptationDeclarer() {
         routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);

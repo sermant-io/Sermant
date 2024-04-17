@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 测试ribbon工具类
+ * test the ribbon utility class
  *
  * @author zhouss
  * @since 2022-08-16
@@ -38,21 +38,21 @@ public class CacheUtilsTest {
     private static final String RULE = "Random";
 
     /**
-     * 测试缓存刷新
+     * test cache refresh
      */
     @Test
     public void testCache() {
-        // 判读类型测试
+        // judgment type test
         final LoadbalancerRule newRule = new LoadbalancerRule(NEW_SERVICE_NAME, RULE);
         final Map<String, Object> cache = buildCache();
         Assert.assertFalse(CacheUtils.updateCache(cache, newRule));
-        // 测试清理数据
+        // test cleanup data
         final Map<String, Object> changeCache = buildCache();
         final ChangedLoadbalancerRule changedLoadbalancerRule = new ChangedLoadbalancerRule(
                 new LoadbalancerRule(null, RULE), new LoadbalancerRule(OLD_SERVICE_NAME, RULE));
         Assert.assertTrue(CacheUtils.updateCache(changeCache, changedLoadbalancerRule));
         Assert.assertTrue(changeCache.isEmpty());
-        // 存在其他的服务名, 不仅仅是新旧两个服务
+        // There are other service names, not just the old and the new
         final Map<String, Object> cacheMore = buildCache();
         cacheMore.put("otherService", new Object());
         final ChangedLoadbalancerRule moreChangeRule = new ChangedLoadbalancerRule(

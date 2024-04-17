@@ -18,7 +18,7 @@
 package com.huawei.flowcontrol.common.core.rule.fault;
 
 /**
- * 错误注入异常
+ * error injection exception
  *
  * @author zhouss
  * @since 2022-08-05
@@ -31,11 +31,11 @@ public class FaultException extends RuntimeException {
     private final FaultRule rule;
 
     /**
-     * 错误注入异常
+     * error injection exception
      *
-     * @param code 错误码
-     * @param msg 提示信息
-     * @param rule 错误注入规则
+     * @param code error code
+     * @param msg prompt message
+     * @param rule error injection rule
      */
     public FaultException(int code, String msg, FaultRule rule) {
         this.code = code;

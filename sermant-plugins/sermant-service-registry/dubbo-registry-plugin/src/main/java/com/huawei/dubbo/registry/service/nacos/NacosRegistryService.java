@@ -21,14 +21,14 @@ import com.huaweicloud.sermant.core.plugin.service.PluginService;
 import java.util.Map;
 
 /**
- * nacos注册服务
+ * NACOS Registration Service
  *
  * @author chengyouling
  * @since 2022-10-25
  */
 public interface NacosRegistryService extends PluginService {
     /**
-     * 注册实例
+     * Register instance
      *
      * @param url url
      * @see com.alibaba.dubbo.common.URL
@@ -37,9 +37,9 @@ public interface NacosRegistryService extends PluginService {
     void doRegister(Object url);
 
     /**
-     * 订阅接口
+     * Subscription API
      *
-     * @param notifyListener 实例通知监听器
+     * @param notifyListener instance notifies the listener
      * @param url url
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -49,7 +49,7 @@ public interface NacosRegistryService extends PluginService {
     void doSubscribe(Object url, Object notifyListener);
 
     /**
-     * 清除实例
+     * Clear the instance
      *
      * @param url url
      * @see com.alibaba.dubbo.common.URL
@@ -58,16 +58,16 @@ public interface NacosRegistryService extends PluginService {
     void doUnregister(Object url);
 
     /**
-     * 构建naming服务
+     * Build a naming service
      *
-     * @param parameters url参数
+     * @param parameters URL parameters
      */
     void buildNamingService(Map<String, String> parameters);
 
     /**
-     * 清除订阅
+     * Clear the subscription
      *
-     * @param notifyListener 监听
+     * @param notifyListener Listening
      * @param url url
      * @see com.alibaba.dubbo.common.URL
      * @see org.apache.dubbo.common.URL
@@ -77,9 +77,9 @@ public interface NacosRegistryService extends PluginService {
     void doUnsubscribe(Object url, Object notifyListener);
 
     /**
-     * namingService是否可用
+     * Is NamingService available?
      *
-     * @return 服务是否可用
+     * @return Whether the service is available
      */
     boolean isAvailable();
 }

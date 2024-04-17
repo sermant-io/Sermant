@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 /**
- * 简单的请求记录器, 当前仅记录前置请求
+ * A simple request recorder that currently only logs pre-requests
  *
  * @author zhouss
  * @since 2022-10-12
@@ -40,7 +40,7 @@ public class SimpleRequestRecorder implements Recorder {
     private final DiscoveryPluginConfig discoveryPluginConfig;
 
     /**
-     * 构造器
+     * Constructor
      */
     public SimpleRequestRecorder() {
         this.discoveryPluginConfig = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class);
@@ -62,9 +62,9 @@ public class SimpleRequestRecorder implements Recorder {
     }
 
     /**
-     * 是否开启记录
+     * Whether to turn on recording
      *
-     * @return 是否开启记录
+     * @return Whether to turn on recording
      */
     public boolean isEnable() {
         return this.discoveryPluginConfig.isEnableRequestCount();

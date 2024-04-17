@@ -20,49 +20,49 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 数据库禁写插件配置类
+ * Database prohibit writing plugin configuration classes
  *
  * @author daizhenyu
  * @since 2024-01-15
  **/
 public class DatabaseWriteProhibitionConfig {
     /**
-     * MongoDb是否开启禁写
+     * MongoDb whether to enable write prohibition
      */
     private boolean enableMongoDbWriteProhibition = false;
 
     /**
-     * MongoDb需要禁写的数据库
+     * MongoDb requires writing forbidden databases
      */
     private Set<String> mongoDbDatabases = new HashSet<>();
 
     /**
-     * Mysql是否开启禁写
+     * Mysql whether to enable write prohibition
      */
-    private boolean enableMysqlWriteProhibition = false;
+    private boolean enableMySqlWriteProhibition = false;
 
     /**
-     * Mysql需要禁写的数据库
+     * Mysql requires writing forbidden databases
      */
-    private Set<String> mysqlDatabases = new HashSet<>();
+    private Set<String> mySqlDatabases = new HashSet<>();
 
     /**
-     * PostgreSQL是否开启禁写
+     * PostgreSQL whether to enable write prohibition
      */
     private boolean enablePostgreSqlWriteProhibition = false;
 
     /**
-     * PostgreSQL需要禁写的数据库
+     * PostgreSQL requires writing forbidden databases
      */
     private Set<String> postgreSqlDatabases = new HashSet<>();
 
     /**
-     * OpenGauss是否开启禁写
+     * OpenGauss whether to enable write prohibition
      */
     private boolean enableOpenGaussWriteProhibition = false;
 
     /**
-     * OpenGauss需要禁写的数据库
+     * OpenGauss requires writing forbidden databases
      */
     private Set<String> openGaussDatabases = new HashSet<>();
 
@@ -82,20 +82,20 @@ public class DatabaseWriteProhibitionConfig {
         this.mongoDbDatabases = mongoDbDatabases;
     }
 
-    public boolean isEnableMysqlWriteProhibition() {
-        return enableMysqlWriteProhibition;
+    public boolean isEnableMySqlWriteProhibition() {
+        return enableMySqlWriteProhibition;
     }
 
-    public void setEnableMysqlWriteProhibition(boolean enableMysqlWriteProhibition) {
-        this.enableMysqlWriteProhibition = enableMysqlWriteProhibition;
+    public void setEnableMySqlWriteProhibition(boolean enableMySqlWriteProhibition) {
+        this.enableMySqlWriteProhibition = enableMySqlWriteProhibition;
     }
 
-    public Set<String> getMysqlDatabases() {
-        return mysqlDatabases;
+    public Set<String> getMySqlDatabases() {
+        return mySqlDatabases;
     }
 
-    public void setMysqlDatabases(Set<String> mysqlDatabases) {
-        this.mysqlDatabases = mysqlDatabases;
+    public void setMySqlDatabases(Set<String> mySqlDatabases) {
+        this.mySqlDatabases = mySqlDatabases;
     }
 
     public boolean isEnablePostgreSqlWriteProhibition() {
@@ -134,8 +134,8 @@ public class DatabaseWriteProhibitionConfig {
     public String toString() {
         return "enableMongoDbWriteProhibition=" + enableMongoDbWriteProhibition
                 + ", mongoDbDatabases=" + mongoDbDatabases + "; "
-                + "enableMysqlWriteProhibition=" + enableMysqlWriteProhibition
-                + ", mysqlDatabases=" + mysqlDatabases + "; "
+                + "enableMysqlWriteProhibition=" + enableMySqlWriteProhibition
+                + ", mysqlDatabases=" + mySqlDatabases + "; "
                 + "enablePostgreSqlWriteProhibition=" + enablePostgreSqlWriteProhibition
                 + ", postgreSqlDatabases=" + postgreSqlDatabases + ";"
                 + " enableOpenGaussWriteProhibition=" + enableOpenGaussWriteProhibition

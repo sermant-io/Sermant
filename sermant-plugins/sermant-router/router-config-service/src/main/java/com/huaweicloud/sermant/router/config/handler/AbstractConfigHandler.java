@@ -16,39 +16,42 @@
 
 package com.huaweicloud.sermant.router.config.handler;
 
-import com.huaweicloud.sermant.router.common.constants.RouterConstant;
+import com.huaweicloud.sermant.core.plugin.config.PluginConfigManager;
+import com.huaweicloud.sermant.router.common.config.RouterConfig;
 import com.huaweicloud.sermant.router.config.common.SafeConstructor;
 
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * 配置处理器
+ * Configure the handler
  *
  * @author provenceee
  * @since 2022-08-09
  */
 public abstract class AbstractConfigHandler implements AbstractHandler {
+    private static final RouterConfig ROUTER_CONFIG = PluginConfigManager.getPluginConfig(RouterConfig.class);
+
     /**
      * yaml
      */
     protected final Yaml yaml;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public AbstractConfigHandler() {
         this.yaml = new Yaml(new SafeConstructor(null));
     }
 
     /**
-     * 是否需要处理
+     * Whether it needs to be processed
      *
-     * @param key 配置key
-     * @param content 配置内容
-     * @return 是否需要处理
+     * @param key configuration key
+     * @return Whether it needs to be processed
      */
     @Override
-    public boolean shouldHandle(String key, String content) {
-        return RouterConstant.MATCH_KIND_LIST.stream().anyMatch(content::contains);
+    public boolean shouldHandle(String key) {
+        // return negation value of compatibilityEnabled switch
+        return !ROUTER_CONFIG.isEnabledPreviousRule();
     }
 }

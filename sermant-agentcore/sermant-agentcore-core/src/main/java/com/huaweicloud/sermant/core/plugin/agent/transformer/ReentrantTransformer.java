@@ -36,7 +36,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 可重入的类的Transformer，在通过该Transformer转换过后，当发生重转换时还可以再次通过该Transformer进行转换，advice风格
+ * Reentrant class Transformer，After the transformation through this Transformer, when the transformation occurs,
+ * this Transformer can be used again. Advice style.
  *
  * @author luanwenfei
  * @since 2023-09-09
@@ -45,10 +46,10 @@ public class ReentrantTransformer extends AbstractTransformer {
     private final Plugin plugin;
 
     /**
-     * 构造方法
+     * constructor
      *
-     * @param interceptDeclarers 拦截声明器数组
-     * @param plugin 归属的插件
+     * @param interceptDeclarers intercept declarer set
+     * @param plugin belonged plugin
      */
     public ReentrantTransformer(InterceptDeclarer[] interceptDeclarers, Plugin plugin) {
         super(interceptDeclarers);
@@ -65,7 +66,7 @@ public class ReentrantTransformer extends AbstractTransformer {
         Set<String> createdInterceptorForAdviceKey = plugin.getInterceptors()
                 .computeIfAbsent(adviceKey, key -> new HashSet<>());
         for (Interceptor interceptor : interceptors) {
-            // 需要先校验该Interceptor是否被创建过
+            // need to check whether the Interceptor is created
             if (checkInterceptor(adviceKey, interceptor.getClass().getCanonicalName())) {
                 interceptorsForAdviceKey.add(interceptor);
                 createdInterceptorForAdviceKey.add(interceptor.getClass().getCanonicalName());
@@ -81,7 +82,7 @@ public class ReentrantTransformer extends AbstractTransformer {
 
     private boolean checkAdviceLock(String adviceKey) {
         if (AdviserScheduler.lock(adviceKey)) {
-            // 获取adviceKey锁成功，将其在归属插件中管理
+            // adviceKey lock is successfully obtained, then manage it in the plugin
             plugin.getAdviceLocks().add(adviceKey);
             return true;
         }
@@ -89,7 +90,7 @@ public class ReentrantTransformer extends AbstractTransformer {
     }
 
     private boolean checkInterceptor(String adviceKey, String interceptor) {
-        // 插件是否对该adviceKey创建过拦截器
+        // Whether the plugin has created an interceptor for the adviceKey
         return !plugin.getInterceptors().get(adviceKey).contains(interceptor);
     }
 }

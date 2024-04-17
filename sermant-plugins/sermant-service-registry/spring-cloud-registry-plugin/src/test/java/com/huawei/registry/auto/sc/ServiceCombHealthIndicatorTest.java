@@ -31,7 +31,7 @@ import org.springframework.boot.actuate.health.Health;
 import java.util.List;
 
 /**
- * HealthIndicator测试
+ * HealthIndicator Test
  *
  * @author zhouss
  * @since 2022-09-06

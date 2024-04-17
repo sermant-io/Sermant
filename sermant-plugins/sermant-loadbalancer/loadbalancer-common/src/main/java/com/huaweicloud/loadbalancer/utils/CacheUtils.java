@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 缓存工具类
+ * cache utility class
  *
  * @author zhouss
  * @since 2022-08-12
@@ -34,11 +34,11 @@ public class CacheUtils {
     }
 
     /**
-     * 更新缓存, 只针对modify事件
+     * update the cache only for modify events
      *
-     * @param cache 缓存
-     * @param rule 更新的规则
-     * @return 是否更新
+     * @param cache cache
+     * @param rule updated rule
+     * @return whether to update
      */
     public static boolean updateCache(Map<String, ?> cache, LoadbalancerRule rule) {
         if (!(rule instanceof ChangedLoadbalancerRule)) {

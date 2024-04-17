@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * web 配置
+ * web configuration
  *
  * @author beetlemen
  * @since 2021-12-08

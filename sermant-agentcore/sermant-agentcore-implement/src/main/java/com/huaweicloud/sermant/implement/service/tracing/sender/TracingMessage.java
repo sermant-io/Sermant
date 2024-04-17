@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.implement.service.tracing.sender;
 import com.huaweicloud.sermant.core.service.tracing.common.SpanEvent;
 
 /**
- * 向后端发送的调用链信息
+ * The tracing message sent to the backend node
  *
  * @author luanwenfei
  * @since 2022-03-07
@@ -32,11 +32,11 @@ public class TracingMessage {
     private SpanEvent body;
 
     /**
-     * 构造链路信息
+     * Construct tracing message
      *
-     * @param messageId 消息ID
-     * @param header 链路消息头部
-     * @param body 链路消息体
+     * @param messageId message id
+     * @param header tracing message header
+     * @param body tracing message body
      */
     public TracingMessage(String messageId, TracingMessageHeader header, SpanEvent body) {
         this.messageId = messageId;

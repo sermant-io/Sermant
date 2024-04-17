@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 隔离仓处理
+ * isolation bin treatment
  *
  * @author zhouss
  * @since 2022-07-05

@@ -20,7 +20,7 @@ package com.huawei.flowcontrol.res4j.chain.handler;
 import com.huawei.flowcontrol.common.entity.RequestEntity.RequestType;
 
 /**
- * 熔断服务端处理器
+ * Circuit Breaker Server handler
  *
  * @author zhouss
  * @since 2022-07-23

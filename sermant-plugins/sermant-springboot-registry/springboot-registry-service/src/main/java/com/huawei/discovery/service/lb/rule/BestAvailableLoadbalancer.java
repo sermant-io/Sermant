@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 最低并发负载均衡
+ * Minimum concurrent load balancing
  *
  * @author zhouss
  * @since 2022-09-29
@@ -32,11 +32,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BestAvailableLoadbalancer extends AbstractLoadbalancer {
     @Override
     protected ServiceInstance doChoose(String serviceName, List<ServiceInstance> instances) {
-        // 相同且并发数最小实例数量
+        // The minimum number of instances with the same number of concurrent instances
         int sameActiveCount = 0;
         long minActiveRequest = -1;
 
-        // 记录最小实例的下标
+        // Record the subscript for the least instance
         final int[] activeIndexes = new int[instances.size()];
         for (int index = 0, size = instances.size(); index < size; index++) {
             final ServiceInstance serviceInstance = instances.get(index);
@@ -51,12 +51,12 @@ public class BestAvailableLoadbalancer extends AbstractLoadbalancer {
             }
         }
 
-        // 刚好存在最小的并发实例
+        // There is just the least concurrent instance
         if (sameActiveCount == 1) {
             return instances.get(activeIndexes[0]);
         }
 
-        // 多个相同的并发实例采用从中随机策略选择一个实例
+        // Multiple identical concurrent instances are selected from a random strategy
         return instances.get(activeIndexes[ThreadLocalRandom.current().nextInt(sameActiveCount)]);
     }
 

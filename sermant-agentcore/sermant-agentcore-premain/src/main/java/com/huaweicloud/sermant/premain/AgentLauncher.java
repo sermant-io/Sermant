@@ -39,7 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Agent启动方法，包括premain、agentmain两种方式
+ * The Agent startup method, can be premain or agentmain
  *
  * @author luanwenfei
  * @since 2022-03-26
@@ -55,8 +55,8 @@ public class AgentLauncher {
     /**
      * premain
      *
-     * @param agentArgs premain启动时携带的参数
-     * @param instrumentation 本次启动使用的instrumentation
+     * @param agentArgs agent arguments by premain
+     * @param instrumentation instrumentation during current startup period
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
         launchAgent(agentArgs, instrumentation, false);
@@ -65,8 +65,8 @@ public class AgentLauncher {
     /**
      * agentmain
      *
-     * @param agentArgs agentmain启动时携带的参数
-     * @param instrumentation 本次启动使用的instrumentation
+     * @param agentArgs agent arguments by agentmain
+     * @param instrumentation instrumentation during current startup period
      */
     public static void agentmain(String agentArgs, Instrumentation instrumentation) {
         launchAgent(agentArgs, instrumentation, true);
@@ -74,22 +74,22 @@ public class AgentLauncher {
 
     private static void launchAgent(String agentArgs, Instrumentation instrumentation, boolean isDynamic) {
         try {
-            // 解析Agent参数
+            // Resolve agent arguments
             final Map<String, Object> argsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
 
             installGodLibs(instrumentation);
 
-            // 通过配置文件初始化启动参数
+            // Initialize bootstrap arguments via configuration file
             LOGGER.info("Building argument map by agent arguments.");
             String agentPath = (String) argsMap.get(BootConstant.AGENT_PATH_KEY);
             BootArgsBuilder.build(argsMap, agentPath);
 
             String artifact = (String) argsMap.get(BootConstant.ARTIFACT_NAME_KEY);
 
-            // 安装Agent
+            // Install agent
             installAgent(instrumentation, isDynamic, artifact, argsMap, agentPath);
 
-            // 执行Agent参数中的指令
+            // Execute the command in the agent arguments
             executeCommand(artifact, (String) argsMap.get(BootConstant.COMMAND_KEY));
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Loading sermant agent failed: " + exception.getMessage());
@@ -100,12 +100,12 @@ public class AgentLauncher {
             Map<String, Object> argsMap, String agentPath) {
         try {
             if (!SermantManager.checkSermantStatus(artifact)) {
-                // 添加核心库
+                // Add core library
                 LOGGER.info("Loading core library into SermantClassLoader.");
                 SermantClassLoader sermantClassLoader = SermantManager.createSermant(artifact, getCoreLibUrls(
                         agentPath));
 
-                // 当前artifact未安装，执行agent安装
+                // If the current artifact is not installed, install the agent
                 LOGGER.log(Level.INFO, "Loading sermant agent, artifact is: " + artifact);
                 sermantClassLoader.loadClass(BootConstant.AGENT_CORE_ENTRANCE_CLASS)
                         .getDeclaredMethod(BootConstant.AGENT_INSTALL_METHOD, String.class, Map.class,
@@ -127,7 +127,7 @@ public class AgentLauncher {
 
     private static void installGodLibs(Instrumentation instrumentation) {
         if (!installFlag) {
-            // 添加引导库
+            // Add boot library
             LOGGER.info("Loading god library into BootstrapClassLoader.");
             appendGodLibToBootStrapClassLoaderSearch(instrumentation);
             installFlag = true;
@@ -135,7 +135,7 @@ public class AgentLauncher {
     }
 
     private static void executeCommand(String artifact, String command) {
-        // 处理启动参数中的指令
+        // Process command in agent arguments
         if (command == null || command.isEmpty()) {
             return;
         }

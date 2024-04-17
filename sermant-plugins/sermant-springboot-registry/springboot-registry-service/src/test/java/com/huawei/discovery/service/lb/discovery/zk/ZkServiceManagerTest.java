@@ -29,7 +29,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 /**
- * 测试zk服务版本管理器
+ * Test the zk service version manager
  *
  * @author zhouss
  * @since 2022-10-09

@@ -36,33 +36,33 @@ import java.util.function.BiFunction;
 import java.util.logging.Logger;
 
 /**
- * spring loadbalancer负载均衡器缓存
+ * spring loadbalancer load balancer cache
  *
  * @author provenceee
  * @since 2022-01-20
  */
 public enum SpringLoadbalancerCache {
     /**
-     * 单例
+     * instance
      */
     INSTANCE;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     /**
-     * 参数缓存
+     * parameter cache
      *
      * @see org.springframework.beans.factory.ObjectProvider
      */
     private final Map<String, Object> providerMap = new ConcurrentHashMap<>();
 
     /**
-     * 原来的宿主的负载均衡器的缓存
+     * cache of the original host`s load balancer
      */
     private final Map<String, Object> originCache = new ConcurrentHashMap<>();
 
     /**
-     * 新的负载均衡器的缓存
+     * new load balancer cache
      */
     private final Map<String, Optional<Object>> newCache = new ConcurrentHashMap<>();
 
@@ -115,9 +115,9 @@ public enum SpringLoadbalancerCache {
     }
 
     /**
-     * 存入provider
+     * put provider
      *
-     * @param serviceId 服务id
+     * @param serviceId service id
      * @param provider provider
      */
     public void putProvider(String serviceId, Object provider) {
@@ -125,9 +125,9 @@ public enum SpringLoadbalancerCache {
     }
 
     /**
-     * 获取provider
+     * get provider
      *
-     * @param serviceId 服务id
+     * @param serviceId service id
      * @return provider
      */
     public Object getProvider(String serviceId) {
@@ -135,31 +135,31 @@ public enum SpringLoadbalancerCache {
     }
 
     /**
-     * 存入原来的负载均衡器
+     * stored in the original load balancer
      *
-     * @param serviceId 服务id
-     * @param loadBalancer 负载均衡器
+     * @param serviceId service id
+     * @param loadBalancer load balancer
      */
     public void putOrigin(String serviceId, Object loadBalancer) {
         originCache.putIfAbsent(serviceId, loadBalancer);
     }
 
     /**
-     * 获取原来的负载均衡器
+     * obtain the original load balancer
      *
-     * @param serviceId 服务id
-     * @return 负载均衡器
+     * @param serviceId service id
+     * @return load balancer
      */
     public Object getOrigin(String serviceId) {
         return originCache.get(serviceId);
     }
 
     /**
-     * 获取spring负载均衡类型
+     * gets the spring load balancing type
      *
-     * @param serviceId 服务名
-     * @param creatFun 创建方法
-     * @return 负载均衡
+     * @param serviceId service id
+     * @param creatFun creation method
+     * @return load balancing
      */
     public Optional<Object> getTargetServiceLbType(String serviceId,
             BiFunction<SpringLoadbalancerType, String, Optional<Object>> creatFun) {

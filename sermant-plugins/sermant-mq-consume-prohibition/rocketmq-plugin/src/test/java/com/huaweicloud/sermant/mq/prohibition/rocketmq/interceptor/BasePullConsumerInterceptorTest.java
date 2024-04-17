@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 /**
- * interceptor单元测试基类
+ * interceptor unit test base class
  *
  * @author daizhenyu
  * @since 2023-12-25

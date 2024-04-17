@@ -19,7 +19,7 @@ package com.huaweicloud.sermant.core.plugin.agent.matcher;
 import java.util.Set;
 
 /**
- * 类的类型匹配器，提供获取类型集的方法
+ * ClassTypeMatcher that provides methods for getting a set of types
  *
  * @author HapThorin
  * @version 1.0.0
@@ -27,9 +27,9 @@ import java.util.Set;
  */
 public abstract class ClassTypeMatcher extends ClassMatcher {
     /**
-     * 获取类型集
+     * get type name set
      *
-     * @return 类型集
+     * @return type name set
      */
     public abstract Set<String> getTypeNames();
 }

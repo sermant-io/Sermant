@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 硬盘命令
+ * hard disk command
  *
  * @author zhp
  * @version 1.0.0
@@ -44,10 +44,10 @@ public class DiskCommand extends CommonMonitorCommand<List<DiskCommand.DiskStats
     }
 
     /**
-     * 重构泛PaaS类：com.huawei.sermant.plugin.collection.util.DiskParser parse方法
+     * Refactor the pan-PaaS class: com.huawei.sermant.plugin.collection.util.DiskParser parse method
      *
-     * @param inputStream 外部进程输出流
-     * @return 解析后的结果
+     * @param inputStream external process output stream
+     * @return the result after analysis
      */
     @Override
     public List<DiskStats> parseResult(InputStream inputStream) {
@@ -65,7 +65,7 @@ public class DiskCommand extends CommonMonitorCommand<List<DiskCommand.DiskStats
     }
 
     /**
-     * 磁盘信息
+     * disk information
      *
      * @since 2022-08-02
      */
@@ -91,12 +91,12 @@ public class DiskCommand extends CommonMonitorCommand<List<DiskCommand.DiskStats
         private final long ioSpentMillis;
 
         /**
-         * 构造方法
+         * constructionMethod
          *
-         * @param deviceName 磁盘名称
-         * @param sectorsRead 读磁盘大小
-         * @param sectorsWritten 写洗盘大小
-         * @param ioSpentMillis 耗时
+         * @param deviceName device name
+         * @param sectorsRead read disk size
+         * @param sectorsWritten write disk size
+         * @param ioSpentMillis time consuming
          */
         public DiskStats(String deviceName, long sectorsRead, long sectorsWritten, long ioSpentMillis) {
             this.deviceName = deviceName;

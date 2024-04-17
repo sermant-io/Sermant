@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 /**
- * http处理器
+ * HTTP processor
  *
  * @author provenceee
  * @since 2022-05-27

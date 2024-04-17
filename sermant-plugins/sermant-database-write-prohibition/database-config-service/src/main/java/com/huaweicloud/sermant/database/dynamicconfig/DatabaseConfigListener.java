@@ -34,19 +34,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 数据层中间件禁写插件的动态配置监听器
+ * Data layer middleware prohibit writing plugin dynamic configuration listeners
  *
  * @author daizhenyu
  * @since 2024-01-26
  */
 public class DatabaseConfigListener implements DynamicConfigListener {
     /**
-     * 全局配置的Key
+     * the key is configured globally
      */
     public static final String GLOBAL_CONFIG_KEY = "sermant.database.write.globalConfig";
 
     /**
-     * 局部配置的key的前缀
+     * prefix of the locally configured key
      */
     public static final String LOCAL_CONFIG_KEY_PREFIX = "sermant.database.write.";
 
@@ -55,7 +55,7 @@ public class DatabaseConfigListener implements DynamicConfigListener {
     private final Yaml yaml;
 
     /**
-     * 监听器构造方法
+     * listener construction method
      */
     public DatabaseConfigListener() {
         Representer representer = new Representer(new DumperOptions());
@@ -77,9 +77,9 @@ public class DatabaseConfigListener implements DynamicConfigListener {
     }
 
     /**
-     * 处理初始化、创建或者更新配置的事件
+     * Handles events that initialize, create, or update configurations
      *
-     * @param event 事件
+     * @param event event
      */
     private void processInitOrCreateOrUpdateEvent(DynamicConfigEvent event) {
         if (GLOBAL_CONFIG_KEY.equals(event.getKey())) {
@@ -101,9 +101,9 @@ public class DatabaseConfigListener implements DynamicConfigListener {
     }
 
     /**
-     * 处理删除配置的事件
+     * handling the event of deleting the configuration
      *
-     * @param event 事件
+     * @param event event
      */
     private void processDeleteEvent(DynamicConfigEvent event) {
         if (GLOBAL_CONFIG_KEY.equals(event.getKey())) {

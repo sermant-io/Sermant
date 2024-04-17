@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 心跳数据缓存
+ * Heartbeat data cache
  *
  * @author luanwenfei
  * @since 2022-10-27

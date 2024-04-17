@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 /**
- * 插件元信息校验器
+ * Plugin scheme validator
  *
  * @author HapThorin
  * @version 1.0.0
@@ -34,7 +34,7 @@ import java.util.jar.JarFile;
  */
 public class PluginSchemaValidator {
     /**
-     * 插件名称与版本的集合
+     * A collection of plugin names and versions
      */
     private static final Map<String, String> PLUGIN_VERSION_MAP = new HashMap<>();
 
@@ -42,18 +42,18 @@ public class PluginSchemaValidator {
     }
 
     /**
-     * 获取插件名和插件版本的集合
+     * Gets PLUGIN_VERSION_MAP
      *
-     * @return 插件名和插件版本的集合
+     * @return A collection of plugin names and plug-in versions
      */
     public static Map<String, String> getPluginVersionMap() {
         return Collections.unmodifiableMap(PLUGIN_VERSION_MAP);
     }
 
     /**
-     * 当插件的版本不存在时，使用默认的版本号
+     * When the version of the plugin does not exist, the default version number is used
      *
-     * @param pluginName 插件名称
+     * @param pluginName plugin name
      */
     public static void setDefaultVersion(String pluginName) {
         if (!PLUGIN_VERSION_MAP.containsKey(pluginName)) {
@@ -62,7 +62,7 @@ public class PluginSchemaValidator {
     }
 
     /**
-     * 清理插件的版本缓存
+     * Remove plugin version cache
      *
      * @param pluginName 插件名
      */
@@ -71,14 +71,16 @@ public class PluginSchemaValidator {
     }
 
     /**
-     * 检查名称和版本
+     * Check the name and version
      *
-     * @param pluginName 插件名称
-     * @param realPluginName 实际插件名，插件名去除副本标记后的所使用的插件
-     * @param jarFile 插件包
-     * @return 为真时经过名称和版本校验，为插件包或插件服务包，为假时表示第三方jar包
-     * @throws IOException 获取manifest文件异常
-     * @throws SchemaException 传入插件名和从资源文件中检索到的不一致
+     * @param pluginName plugin name
+     * @param realPluginName The actual plugin name, the plugin name used after the replica tag is removed
+     * @param jarFile plugin package
+     * @return If true, after name and version verification, it is a plugin package or plugin service package. If false
+     * means the third-party jar package
+     *
+     * @throws IOException Get the manifest file exception
+     * @throws SchemaException The plugin name does not match the one retrieved from the resource file
      */
     public static boolean checkSchema(String pluginName, String realPluginName, JarFile jarFile) throws IOException {
         final Object nameAttr = JarFileUtils.getManifestAttr(jarFile, PluginConstant.PLUGIN_NAME_KEY);

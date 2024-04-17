@@ -49,14 +49,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * redis单机客户端
+ * Redis stand-alone client
  *
  * @author xuezechao
  * @since 2023-03-02
  */
 @Component
 public class RedisClientImpl implements EventDao {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientImpl.class);
 
     private JedisPool jedisPool;
@@ -64,9 +63,9 @@ public class RedisClientImpl implements EventDao {
     private BackendConfig backendConfig;
 
     /**
-     * 构造redis 连接池
+     * Construct the Jedis connection pool
      *
-     * @param backendConfig 配置
+     * @param backendConfig configuration
      */
     public RedisClientImpl(BackendConfig backendConfig) {
         this.backendConfig = backendConfig;
@@ -75,19 +74,21 @@ public class RedisClientImpl implements EventDao {
         config.setMaxIdle(Integer.parseInt(backendConfig.getMaxIdle()));
         if (backendConfig.getVersion().compareTo("6.0") < 0) {
             jedisPool = new JedisPool(
-                config,
-                Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
-                Integer.parseInt(Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
-                Integer.parseInt(backendConfig.getTimeout()),
-                backendConfig.getPassword());
+                    config,
+                    Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
+                    Integer.parseInt(
+                            Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
+                    Integer.parseInt(backendConfig.getTimeout()),
+                    backendConfig.getPassword());
         } else {
             jedisPool = new JedisPool(
-                config,
-                Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
-                Integer.parseInt(Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
-                Integer.parseInt(backendConfig.getTimeout()),
-                backendConfig.getUser(),
-                backendConfig.getPassword());
+                    config,
+                    Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
+                    Integer.parseInt(
+                            Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
+                    Integer.parseInt(backendConfig.getTimeout()),
+                    backendConfig.getUser(),
+                    backendConfig.getPassword());
         }
     }
 
@@ -101,20 +102,20 @@ public class RedisClientImpl implements EventDao {
             }
             InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
 
-            // 获取事件字段
+            // get event field
             String field = DbUtils.getEventField(agentInstanceMeta, event);
 
-            // 检查是否有相同field
+            // check whether there are identical fields
             field = field + CommonConst.JOIN_REDIS_KEY + getSameFieldNum(field);
 
-            // 设置已有field缓存 定时过期删除
+            // set an existing field cache to expire and delete it periodically
             jedis.setex(field, backendConfig.getFieldExpire(), Strings.EMPTY);
 
-            // 写入事件
+            // write event
             jedis.hset(CommonConst.REDIS_EVENT_KEY, field,
                     JSONObject.toJSONString(DbUtils.aggregationEvent(event, agentInstanceMeta)));
 
-            // 写入类型索引
+            // write type index
             jedis.zadd(CommonConst.REDIS_EVENT_FIELD_SET_KEY, event.getTime(), field);
             return true;
         } catch (IllegalStateException e) {
@@ -138,10 +139,10 @@ public class RedisClientImpl implements EventDao {
     }
 
     /**
-     * 获取相同field 数量
+     * Get the number of same fields
      *
      * @param field field
-     * @return 相同field 数量
+     * @return number of same fields
      */
     private int getSameFieldNum(String field) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -175,12 +176,12 @@ public class RedisClientImpl implements EventDao {
     }
 
     /**
-     * 按时间范围查询事件
+     * Query events by time range
      *
-     * @param key 集合key
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 查询结果
+     * @param key key
+     * @param startTime start time
+     * @param endTime end time
+     * @return query result
      */
     public List<Tuple> queryByTimeRange(String key, long startTime, long endTime) {
         try (Jedis jedis = jedisPool.getResource()) {
@@ -231,7 +232,7 @@ public class RedisClientImpl implements EventDao {
     }
 
     /**
-     * 定时任务，清理过期数据
+     * Scheduled task to clear expired data
      */
     @Scheduled(fixedDelayString = "${database.fixedDelay}")
     public void cleanOverDueEventTimerTask() {

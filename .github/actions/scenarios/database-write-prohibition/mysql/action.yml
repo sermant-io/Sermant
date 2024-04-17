@@ -1,0 +1,56 @@
+name: "Database Write Prohibition Plugin MySQL Test"
+description: "Auto test for mysql write prohibition"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/databse-write-prohibition/mysql
+    - name: start mysql
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mysql-server
+        sudo systemctl start mysql.service
+        user=$(sudo awk -F '=' '/user/ {print $2; exit}' "/etc/mysql/debian.cnf" | tr -d '[:space:]')
+        password=$(sudo awk -F '=' '/password/ {print $2; exit}' "/etc/mysql/debian.cnf" | tr -d '[:space:]')
+        sudo mysql -u $user -p$password -e "CREATE DATABASE IF NOT EXISTS test;"
+        echo "MYSQL_USER=$user" >> $GITHUB_ENV
+        echo "MYSQL_PASSWORD=$password" >> $GITHUB_ENV
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dmariadb.version=${{ matrix.mysqlClientVersion }} -DskipTests -Pmysql-test --file \
+        sermant-integration-tests/database-write-prohibition-test/pom.xml
+    - name: start mysql demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/mysql -Dmysql.user=${{ env.MYSQL_USER }} -Dmysql.password=${{ env.MYSQL_PASSWORD }} \
+        sermant-integration-tests/database-write-prohibition-test/mariadb-demo/target/mariadb-demo.jar > ${{ env.logDir }}/mariadb.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9098/static/checkStatus 120
+    - name: test mysql
+      shell: bash
+      run: |
+        mvn test -Ddatabase.write.prohibition.integration.test.type=MARIADB --file \
+        sermant-integration-tests/database-write-prohibition-test/database-write-prohibition-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: mariadb
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-database-write-prohibition-mariadb-(${{ matrix.mysqlClientVersion }})-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

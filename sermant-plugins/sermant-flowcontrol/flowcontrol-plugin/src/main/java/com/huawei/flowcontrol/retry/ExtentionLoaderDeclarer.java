@@ -25,28 +25,29 @@ import com.huaweicloud.sermant.core.plugin.agent.matcher.MethodMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 /**
- * 拦截dubbo extensionLoader注入cluster实现重试
+ * Block the dubbo extensionLoader and inject cluster for retry
  *
  * @author zhouss
  * @since 2022-01-27
  */
 public class ExtentionLoaderDeclarer extends AbstractPluginDeclarer {
     /**
-     * 增强类的全限定名
+     * the fully qualified name of the enhanced class
      */
     private static final String APACHE_ENHANCE_CLASS = "org.apache.dubbo.common.extension.ExtensionLoader";
+
     private static final String ALIBABA_ENHANCE_CLASS = "com.alibaba.dubbo.common.extension.ExtensionLoader";
 
     /**
-     * 拦截类的全限定名
+     * the fully qualified name of the interceptor class
      */
     private static final String INTERCEPT_CLASS = ExtensionLoaderInterceptor.class.getCanonicalName();
 
     /**
-     * 获取spi类
+     * get spi class
      */
     private static final String GET_EXTENSION_INTERCEPT_CLASS = ExtensionLoaderGetExtensionInterceptor.class
-        .getCanonicalName();
+            .getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -56,10 +57,10 @@ public class ExtentionLoaderDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("getExtensionClasses"), INTERCEPT_CLASS),
-            InterceptDeclarer.build(MethodMatcher.nameEquals("getExtension").and(ElementMatchers.takesArgument(0,
-                String.class)),
-                GET_EXTENSION_INTERCEPT_CLASS)
+                InterceptDeclarer.build(MethodMatcher.nameEquals("getExtensionClasses"), INTERCEPT_CLASS),
+                InterceptDeclarer.build(MethodMatcher.nameEquals("getExtension").and(ElementMatchers.takesArgument(0,
+                        String.class)),
+                        GET_EXTENSION_INTERCEPT_CLASS)
         };
     }
 }

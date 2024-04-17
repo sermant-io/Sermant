@@ -24,14 +24,15 @@ import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
 import java.util.Locale;
 
 /**
- * 用于选择zookeeper客户端服务{@link ZkService}, 实际基于不同的zk版本具有不同的实现, 参考{@link ZkService34},{@link ZkService35}
+ * Used to select the zookeeper client service {@link ZkService}, which actually has different implementations based on
+ * different zk versions, refer to {@link ZkService34},{@link ZkService35}
  *
  * @author zhouss
  * @since 2022-10-08
  */
 public class ZkServiceManager {
     /**
-     * 3.4版本前缀
+     * 3.4 version prefix
      */
     private static final String VERSION_34_PREFIX = "3.4";
 
@@ -40,17 +41,17 @@ public class ZkServiceManager {
     private volatile ZkService zkService;
 
     /**
-     * 构造器
+     * Constructor
      */
     public ZkServiceManager() {
         this.lbConfig = PluginConfigManager.getPluginConfig(LbConfig.class);
     }
 
     /**
-     * 选择指定版本的服务
+     * Select the specified version of the service
      *
      * @return ZkService
-     * @throws IllegalArgumentException 无法获取zk service抛出
+     * @throws IllegalArgumentException Unable to get zk service throw
      */
     public ZkService chooseService() {
         if (zkService != null) {

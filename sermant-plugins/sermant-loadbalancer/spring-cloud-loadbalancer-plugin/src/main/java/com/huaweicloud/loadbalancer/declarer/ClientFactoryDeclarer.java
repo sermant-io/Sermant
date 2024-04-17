@@ -18,14 +18,14 @@
 package com.huaweicloud.loadbalancer.declarer;
 
 /**
- * LoadBalancerClientFactory增强类
+ * LoadBalancerClientFactory enhancement Class
  *
  * @author provenceee
  * @since 2022-01-20
  */
 public class ClientFactoryDeclarer extends AbstractDeclarer {
     private static final String ENHANCE_CLASS =
-        "org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory";
+            "org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory";
 
     private static final String INTERCEPT_CLASS = "com.huaweicloud.loadbalancer.interceptor.ClientFactoryInterceptor";
 

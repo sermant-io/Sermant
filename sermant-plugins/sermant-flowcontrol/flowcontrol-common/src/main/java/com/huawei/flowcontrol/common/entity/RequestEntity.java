@@ -22,82 +22,82 @@ import com.huawei.flowcontrol.common.cache.Timed;
 import java.util.Map;
 
 /**
- * 请求信息
+ * request-information
  *
  * @author zhouss
  * @since 2022-01-22
  */
 public interface RequestEntity extends Timed {
     /**
-     * 请求路径
+     * request path
      *
-     * @return 请求路径
+     * @return request path
      */
     String getApiPath();
 
     /**
-     * 获取请求头
+     * get request header
      *
-     * @return 请求头
+     * @return request header
      */
     Map<String, String> getHeaders();
 
     /**
-     * 获取请求方法
+     * get request method
      *
-     * @return 方法类型
+     * @return method type
      */
     String getMethod();
 
     /**
-     * 服务名
+     * service name
      *
-     * @return 服务名
+     * @return service name
      */
     String getServiceName();
 
     /**
-     * 请求方向
+     * request direction
      *
-     * @return 请求方向
+     * @return request direction
      */
     RequestType getRequestType();
 
     /**
-     * 必须实现equal方法
+     * the equal method must be implemented
      *
-     * @param obj 比较目标
-     * @return 是否相等
+     * @param obj comparative object
+     * @return whether it is equal or not
      */
     @Override
     boolean equals(Object obj);
 
     /**
-     * 必须实现hashCode编码
+     * the hashCode encoding must be implemented
      *
-     * @return 哈希码
+     * @return hashcode
      */
     @Override
     int hashCode();
 
     /**
-     * 请求类型, 标记请求的方向, 客户端请求或者服务端请求
+     * Request type, marking the direction of the request, client request or server request
      *
      * @since 2022-07-20
      */
     enum RequestType {
         /**
-         * 客户端请求, 即出去的请求
+         * client requests that is outgoing requests
          */
         CLIENT,
 
         /**
-         * 服务端请求, 即进来的请求
+         * server side requests that is incoming requests
          */
         SERVER,
 
         /**
-         * 均可处理
+         * all processable
          */
         BOTH
     }

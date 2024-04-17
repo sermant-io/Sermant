@@ -1,21 +1,27 @@
-# 流量标签在各种通道间(http/rpc/消息队列等)传递的配置
+# configuration of traffic tag transmission between various channels(http/rpc/message queue etc.)
 tag.transmission.config:
-  # 是否开启流量标签透传功能, 默认为true
+  # Whether to enable traffic tag transparent transmission. The default value is true
   enabled: true
-  # 需要透传的流量标签的key的匹配规则, 支持精确、前缀、后缀匹配
+  # Matching rules for keys of traffic tag that need to be transparent-transmitted.
+  # Supports exact matching, prefix matching, and suffix matching
   matchRule:
-    # 精确匹配规则，为列表形式。若列表中的某个元素与标签键相同，则表示该标签需要透传。示例值为["id", "name"]
+    # the exact matching rule is in list form. If an element in the list is the same as the tag key,
+    # it indicates that the tag needs to be transmitted, example values are ["id", "name"]
     exact: ["id", "name"]
-    # 前缀匹配规则，为列表形式。若列表中的某个元素是标签键的前缀，则表示该标签需要透传。示例值为["x-sermant-"]
+    # the prefix matching rule is in in list form. If an element in the list is the prefix of a tag key,
+    # it indicates that the tag needs to be transmitted, example values are ["x-sermant-"]
     prefix: ["x-sermant-"]
-    # 后缀匹配规则，为列表形式。若列表中的某个元素是标签键的后缀，则表示该标签需要透传。示例值为["-sermant"]
+    # the suffix matching rule is in in list form. If an element in the list is the suffix of a tag key,
+    # it indicates that the tag needs to be transmitted, example values are  ["-sermant"]
     suffix: ["-sermant"]
 
-# 跨线程传递标签的配置
+# configuration for transmitting tags across threads
 crossthread.config:
-  # 是否需要在new Thread时透传流量标签，默认开启
+  # Whether to transmit traffic tag when a new Thread is created. This parameter is enabled by default
   enabled-thread: true
-  # 是否需要在普通线程池创建新的线程任务时透传流量标签，默认开启
+  # Whether to transmit traffic tag when creating new thread tasks in a common thread pool.
+  # This parameter is enabled by default
   enabled-thread-pool: true
-  # 是否需要在定时线程池创建新的线程任务时透传流量标签，默认开启
+  # Whether to transmit traffic tag when new thread tasks are created in the scheduled
+  # thread pool. This parameter is enabled by default
   enabled-scheduler: true

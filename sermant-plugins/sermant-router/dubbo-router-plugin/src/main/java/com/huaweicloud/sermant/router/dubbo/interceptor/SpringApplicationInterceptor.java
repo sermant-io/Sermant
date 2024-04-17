@@ -19,14 +19,14 @@ package com.huaweicloud.sermant.router.dubbo.interceptor;
 import com.huaweicloud.sermant.core.plugin.agent.entity.ExecuteContext;
 import com.huaweicloud.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import com.huaweicloud.sermant.core.plugin.service.PluginServiceManager;
+import com.huaweicloud.sermant.router.common.cache.DubboCache;
 import com.huaweicloud.sermant.router.common.constants.RouterConstant;
-import com.huaweicloud.sermant.router.dubbo.cache.DubboCache;
 import com.huaweicloud.sermant.router.dubbo.service.DubboConfigService;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 增强SpringApplication类的run方法
+ * Enhance the run method of the SpringApplication class
  *
  * @author provenceee
  * @since 2022-01-24
@@ -37,7 +37,7 @@ public class SpringApplicationInterceptor extends AbstractInterceptor {
     private final DubboConfigService configService;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public SpringApplicationInterceptor() {
         configService = PluginServiceManager.getPluginService(DubboConfigService.class);

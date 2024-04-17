@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.Collections;
 
 /**
- * 关闭事件测试
+ * Turn off the event test
  *
  * @author zhouss
  * @since 2022-11-16
