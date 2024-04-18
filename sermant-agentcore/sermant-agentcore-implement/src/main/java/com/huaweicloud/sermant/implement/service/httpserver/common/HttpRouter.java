@@ -31,7 +31,6 @@ import java.util.regex.Pattern;
  * @since 2024-02-03
  */
 public class HttpRouter {
-
     private final Pattern pattern;
 
     private final String path;
@@ -45,6 +44,7 @@ public class HttpRouter {
      *
      * @param pluginName 插件名称
      * @param handler HttpRouteHandler对象
+     * @param annotation HttpRouteHandler注解
      */
     public HttpRouter(String pluginName, HttpRouteHandler handler, HttpRouteMapping annotation) {
         this.path = buildPath(pluginName, annotation.path());
@@ -68,8 +68,9 @@ public class HttpRouter {
      *
      * @param request HttpRequest对象
      * @return 如果请求匹配则返回true，否则返回false
+     * @throws HttpMethodNotAllowedException exception
      */
-    public boolean match(HttpRequest request) {
+    public boolean match(HttpRequest request) throws HttpMethodNotAllowedException {
         if (!matchPath(request.getPath())) {
             return false;
         }
@@ -114,5 +115,4 @@ public class HttpRouter {
         expression = expression.replace(".[]", ".*");
         return "^" + expression + "$";
     }
-
 }

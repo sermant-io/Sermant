@@ -23,7 +23,6 @@ package com.huaweicloud.sermant.core.service.httpserver.api;
  * @since 2024-02-03
  */
 public enum HttpMethod {
-
     /**
      * 所有请求方法
      */
@@ -63,6 +62,5 @@ public enum HttpMethod {
      * OPTIONS请求方法
      */
     OPTIONS;
-
 }
 

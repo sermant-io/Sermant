@@ -21,8 +21,8 @@ import com.huaweicloud.sermant.core.config.ConfigManager;
 import com.huaweicloud.sermant.core.service.BaseService;
 import com.huaweicloud.sermant.core.service.httpserver.HttpServerService;
 import com.huaweicloud.sermant.core.service.httpserver.config.HttpServerConfig;
-import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 import com.huaweicloud.sermant.core.service.httpserver.config.HttpServerTypeEnum;
+import com.huaweicloud.sermant.core.utils.SpiLoadUtils;
 
 import org.kohsuke.MetaInfServices;
 

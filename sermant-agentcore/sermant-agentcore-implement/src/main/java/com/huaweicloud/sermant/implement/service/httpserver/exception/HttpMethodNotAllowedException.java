@@ -26,7 +26,6 @@ import com.huaweicloud.sermant.implement.service.httpserver.common.HttpCodeEnum;
  * @since 2024-02-03
  */
 public class HttpMethodNotAllowedException extends HttpServerException {
-
     /**
      * 构造函数，用于创建HttpMethodNotAllowedException对象
      *

@@ -23,7 +23,6 @@ package com.huaweicloud.sermant.implement.service.httpserver;
  * @since 2024-02-02
  */
 public interface HttpServerProvider {
-
     /**
      * 获取类型
      *
@@ -44,6 +43,5 @@ public interface HttpServerProvider {
      * @throws Exception 异常
      */
     void stop() throws Exception;
-
 }
 

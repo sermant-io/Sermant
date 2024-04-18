@@ -18,7 +18,9 @@ package com.huaweicloud.sermant.core.service.httpserver.config;
 
 /**
  * HTTP服务器类型枚举
+ *
  * @author zwmagic
+ * @since 2024-02-04
  */
 public enum HttpServerTypeEnum {
     /**
@@ -33,6 +35,7 @@ public enum HttpServerTypeEnum {
 
     /**
      *  枚举构造函数
+     *
      * @param type 枚举类型的字符串标识
      */
     HttpServerTypeEnum(String type) {
@@ -41,6 +44,7 @@ public enum HttpServerTypeEnum {
 
     /**
      * 获取枚举类型的字符串标识
+     *
      * @return 类型标识字符串
      */
     public String getType() {

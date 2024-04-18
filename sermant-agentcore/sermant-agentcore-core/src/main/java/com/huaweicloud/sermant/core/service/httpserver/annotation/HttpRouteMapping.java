@@ -33,7 +33,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Documented
 public @interface HttpRouteMapping {
-
     /**
      * 请求方法
      *
@@ -54,5 +53,4 @@ public @interface HttpRouteMapping {
      * @return 描述信息
      */
     String desc() default "";
-
 }

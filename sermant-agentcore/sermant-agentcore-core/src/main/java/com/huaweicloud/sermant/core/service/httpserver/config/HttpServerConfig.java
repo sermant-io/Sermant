@@ -27,7 +27,6 @@ import com.huaweicloud.sermant.core.config.common.ConfigTypeKey;
  */
 @ConfigTypeKey("httpserver")
 public class HttpServerConfig implements BaseConfig {
-
     private static final int DEFAULT_PORT = 47128;
 
     /**

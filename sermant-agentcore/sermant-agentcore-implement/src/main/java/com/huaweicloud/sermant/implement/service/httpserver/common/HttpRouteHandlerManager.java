@@ -58,18 +58,8 @@ public class HttpRouteHandlerManager {
      * @return 包含HttpRouteHandler的Optional对象，如果不存在对应的HttpRouteHandler则返回空的Optional对象
      */
     public static Optional<HttpRouteHandler> getHandler(HttpRequest request) {
-        return INSTANCE.getHandler0(request);
-    }
-
-    /**
-     * 获取对应的HttpRouteHandler
-     *
-     * @param request 请求对象
-     * @return HttpRouteHandler对象
-     */
-    private Optional<HttpRouteHandler> getHandler0(HttpRequest request) {
-        String pluginName = getPluginName(request);
-        List<HttpRouter> routers = getRouteHandlers(pluginName);
+        String pluginName = INSTANCE.getPluginName(request);
+        List<HttpRouter> routers = INSTANCE.getRouteHandlers(pluginName);
         if (CollectionUtils.isEmpty(routers)) {
             return Optional.empty();
         }

@@ -25,5 +25,4 @@ import com.huaweicloud.sermant.core.service.BaseService;
  * @since 2024-01-31
  */
 public interface HttpServerService extends BaseService {
-
 }

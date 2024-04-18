@@ -18,32 +18,59 @@ package com.huaweicloud.sermant.implement.service.httpserver.common;
 
 /**
  * HTTP状态码枚举类，用于定义常见的HTTP响应状态码及其对应的信息。
+ *
  * @author zwmagic
+ * @since 2024-02-04
  */
 public enum HttpCodeEnum {
-    // 请求成功
+    /**
+     * 请求成功
+     */
     SUCCESS(200, "SUCCESS"),
-    // 客户端请求有误，服务器无法理解
+
+    /**
+     * 客户端请求有误，服务器无法理解
+     */
     BAD_REQUEST(400, "BAD REQUEST"),
-    // 请求被服务器拒绝，没有权限
+
+    /**
+     * 请求被服务器拒绝，没有权限
+     */
     FORBIDDEN(403, "FORBIDDEN"),
-    // 请求需要用户验证，即未授权
+
+    /**
+     * 请求需要用户验证，即未授权
+     */
     UNAUTHORIZED(401, "UNAUTHORIZED"),
-    // 服务器找不到请求的资源
+
+    /**
+     * 服务器找不到请求的资源
+     */
     NOT_FOUND(404, "Not Found"),
-    // 请求方法不被允许
+
+    /**
+     * 请求方法不被允许
+     */
     METHOD_NOT_ALLOWED(405, "METHOD NOT ALLOWED"),
-    // 服务器内部错误，无法完成请求
+
+    /**
+     * 服务器内部错误，无法完成请求
+     */
     SERVER_ERROR(500, "SERVER ERROR");
 
-    // HTTP状态码
+    /**
+     * HTTP状态码
+     */
     private final int code;
 
-    // 状态码对应的文本信息
+    /**
+     * 状态码对应的文本信息
+     */
     private final String message;
 
     /**
-     * 构造函数，用于初始化枚举实例。
+     * 构造函数，用于初始化枚举实例
+     *
      * @param code 状态码
      * @param message 状态码对应的文本信息
      */
@@ -53,7 +80,8 @@ public enum HttpCodeEnum {
     }
 
     /**
-     * 获取HTTP状态码。
+     * 获取HTTP状态码
+     *
      * @return 状态码
      */
     public int getCode() {
@@ -61,7 +89,8 @@ public enum HttpCodeEnum {
     }
 
     /**
-     * 获取状态码对应的文本信息。
+     * 获取状态码对应的文本信息
+     *
      * @return 文本信息
      */
     public String getMessage() {

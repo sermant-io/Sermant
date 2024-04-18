@@ -89,7 +89,6 @@ public class ServicesMetaInfUtils extends AbstractProcessor {
             Elements elements = processingEnv.getElementUtils();
             Set<String> services = new TreeSet<>();
             for (Element element : roundEnv.getElementsAnnotatedWith(HttpRouteMapping.class)) {
-                HttpRouteMapping annotation = element.getAnnotation(HttpRouteMapping.class);
                 if (!element.getKind().isClass() && !element.getKind().isInterface()) {
                     continue;
                 }

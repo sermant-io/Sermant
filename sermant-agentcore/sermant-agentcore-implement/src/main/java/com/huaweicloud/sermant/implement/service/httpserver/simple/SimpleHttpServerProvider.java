@@ -21,11 +21,11 @@ import com.huaweicloud.sermant.core.service.httpserver.api.HttpRequest;
 import com.huaweicloud.sermant.core.service.httpserver.api.HttpResponse;
 import com.huaweicloud.sermant.core.service.httpserver.api.HttpRouteHandler;
 import com.huaweicloud.sermant.core.service.httpserver.config.HttpServerConfig;
+import com.huaweicloud.sermant.core.service.httpserver.config.HttpServerTypeEnum;
 import com.huaweicloud.sermant.core.service.httpserver.exception.HttpServerException;
 import com.huaweicloud.sermant.implement.service.httpserver.HttpServerProvider;
 import com.huaweicloud.sermant.implement.service.httpserver.common.HttpCodeEnum;
 import com.huaweicloud.sermant.implement.service.httpserver.common.HttpRouteHandlerManager;
-import com.huaweicloud.sermant.core.service.httpserver.config.HttpServerTypeEnum;
 
 import com.sun.net.httpserver.HttpServer;
 

@@ -23,7 +23,6 @@ package com.huaweicloud.sermant.core.service.httpserver.exception;
  * @since 2024-02-01
  */
 public class HttpServerException extends RuntimeException {
-
     /**
      * HttpServerException类的私有成员变量，表示HTTP状态码。
      */
@@ -71,5 +70,4 @@ public class HttpServerException extends RuntimeException {
     public int getStatus() {
         return status;
     }
-
 }
