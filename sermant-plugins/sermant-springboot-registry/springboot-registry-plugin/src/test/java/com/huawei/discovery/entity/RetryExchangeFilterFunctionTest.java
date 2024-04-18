@@ -16,6 +16,7 @@
 
 package com.huawei.discovery.entity;
 
+import com.huawei.discovery.config.DiscoveryPluginConfig;
 import com.huawei.discovery.config.LbConfig;
 import com.huawei.discovery.utils.PlugEffectWhiteBlackUtils;
 
@@ -61,6 +62,8 @@ public class RetryExchangeFilterFunctionTest {
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(LbConfig.class))
                 .thenReturn(new LbConfig());
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class))
+                .thenReturn(new DiscoveryPluginConfig());
 
         mockPlugEffectWhiteBlackUtils = Mockito.mockStatic(PlugEffectWhiteBlackUtils.class);
         mockPlugEffectWhiteBlackUtils.when(() -> PlugEffectWhiteBlackUtils.isHostEqualRealmName("www.domain.com"))
