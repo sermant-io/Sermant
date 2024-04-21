@@ -112,7 +112,10 @@ Please read  [Contribute Guide](https://sermant.io/en/document/CONTRIBUTING.html
 - [Alibaba/Sentinel](https://github.com/alibaba/Sentinel): Sermant's flow-control plugin is built based on Alibaba Sentinel project.
 
 ## Contact Us
+If you have questions, feel free to reach out to us in the following ways:
 
+* [mailing list](https://groups.google.com/forum/#!forum/sermant)
+* [slack](https://cloud-native.slack.com/archives/C06VDFQUA7N) | [Join](https://slack.cncf.io/)
 * [Gitter](https://gitter.im/SermantUsers/community): Sermant's chat room for community messaging, collaboration and discovery.
 * WeChat Group: Please apply for Sermant Xiao Er as a friend first, and will pull you into the group after passing, please note the company + position when applying, thank you.
 
