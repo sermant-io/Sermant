@@ -50,20 +50,23 @@ public class NotifyHttpHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        if (GraceConstants.GRACE_HTTP_METHOD_POST.equalsIgnoreCase(exchange.getRequestMethod())) {
-            String serviceName = exchange.getRequestHeaders().getFirst(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME);
-            addMarkShutdownEndpoint(exchange.getRequestHeaders());
-            if (StringUtils.isBlank(serviceName)) {
-                LOGGER.warning("ServiceName is empty.");
-                return;
+        try {
+            if (GraceConstants.GRACE_HTTP_METHOD_POST.equalsIgnoreCase(exchange.getRequestMethod())) {
+                String serviceName = exchange.getRequestHeaders().getFirst(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME);
+                addMarkShutdownEndpoint(exchange.getRequestHeaders());
+                if (StringUtils.isBlank(serviceName)) {
+                    LOGGER.warning("ServiceName is empty.");
+                    return;
+                }
+                LOGGER.warning(String.format(Locale.ROOT, "Service[%s] has been offline.", serviceName));
+                RefreshUtils.refreshTargetServiceInstances(serviceName);
+                OutputStream responseBody = exchange.getResponseBody();
+                exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_SUCCESS_CODE,
+                        GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
+                responseBody.write(GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.getBytes(StandardCharsets.UTF_8));
+                responseBody.flush();
             }
-            LOGGER.warning(String.format(Locale.ROOT, "Service[%s] has been offline.", serviceName));
-            RefreshUtils.refreshTargetServiceInstances(serviceName);
-            OutputStream responseBody = exchange.getResponseBody();
-            exchange.sendResponseHeaders(GraceConstants.GRACE_HTTP_SUCCESS_CODE,
-                GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.length());
-            responseBody.write(GraceConstants.GRACE_OFFLINE_SUCCESS_MSG.getBytes(StandardCharsets.UTF_8));
-            responseBody.flush();
+        } finally {
             exchange.close();
         }
     }

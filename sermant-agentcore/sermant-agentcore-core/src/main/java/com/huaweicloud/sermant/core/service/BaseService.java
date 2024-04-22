@@ -27,7 +27,7 @@ package com.huaweicloud.sermant.core.service;
  * All {@link BaseService} instances will be managed by {@link ServiceManager}，
  * You can get the service instance by inputting the {@link BaseService} subclass through the
  * {@link ServiceManager#getService(Class)} method.
-* {@link ServiceManager} returns the best implementation class based on the {@link BaseService} type input. You can set
+ * {@link ServiceManager} returns the best implementation class based on the {@link BaseService} type input. You can set
  * the weight of multiple implementation classes with the SpiLoadUtils.SpiWeight annotation.
  *
  * @author justforstudy-A, beetle-man, HapThorin

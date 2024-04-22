@@ -64,19 +64,11 @@ public class NetworkUtils {
             if (netInterfaces == null) {
                 throw new NetworkInterfacesCheckException("netInterfaces is null");
             }
-            InetAddress ip;
+
             while (netInterfaces.hasMoreElements()) {
                 NetworkInterface ni = netInterfaces.nextElement();
                 Enumeration<InetAddress> nii = ni.getInetAddresses();
-                while (nii.hasMoreElements()) {
-                    ip = nii.nextElement();
-                    if (!ip.getHostAddress().contains(":")) {
-                        String str = ip.getHostAddress();
-                        if (!str.startsWith(LOCAL_HOST_IP)) {
-                            result.add(str);
-                        }
-                    }
-                }
+                parseNetworkIp(result, nii);
             }
         } catch (SocketException e) {
             LOGGER.log(Level.SEVERE, "failed to get host ip address", e);
@@ -86,6 +78,19 @@ public class NetworkUtils {
             allNetworkIps = result;
         }
         return allNetworkIps;
+    }
+
+    private static void parseNetworkIp(List<String> result, Enumeration<InetAddress> nii) {
+        InetAddress ip;
+        while (nii.hasMoreElements()) {
+            ip = nii.nextElement();
+            if (!ip.getHostAddress().contains(":")) {
+                String str = ip.getHostAddress();
+                if (!str.startsWith(LOCAL_HOST_IP)) {
+                    result.add(str);
+                }
+            }
+        }
     }
 
     /**

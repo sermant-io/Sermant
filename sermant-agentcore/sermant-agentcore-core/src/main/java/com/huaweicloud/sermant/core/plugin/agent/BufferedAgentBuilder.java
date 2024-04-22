@@ -154,39 +154,46 @@ public class BufferedAgentBuilder {
             return this;
         }
         return addAction(builder -> builder
-                .with(new AgentBuilder.Listener.StreamWriting(new PrintStream(new ByteArrayOutputStream() {
-                    private final byte[] separatorBytes =
-                            System.lineSeparator().getBytes(CommonConstant.DEFAULT_CHARSET);
+                .with(new AgentBuilder.Listener.StreamWriting(new PrintStream(new LogOutPutStream(), true))));
+    }
 
-                    private final int separatorLength = separatorBytes.length;
+    /**
+     * LogOutPutStream
+     *
+     * @since 2022-01-22
+     */
+    class LogOutPutStream extends ByteArrayOutputStream {
+        private final byte[] separatorBytes =
+                System.lineSeparator().getBytes(CommonConstant.DEFAULT_CHARSET);
 
-                    @Override
-                    public void flush() {
-                        if (count < separatorLength) {
-                            return;
-                        }
-                        for (int i = separatorLength - 1; i >= 0; i--) {
-                            if (buf[count + i - separatorLength] != separatorBytes[i]) {
-                                return;
-                            }
-                        }
-                        String enhanceLog = new String(Arrays.copyOf(buf, count - separatorLength));
-                        logAndCollectEvent(enhanceLog);
-                        reset();
-                    }
+        private final int separatorLength = separatorBytes.length;
 
-                    // Logs of Error and Warn levels triggered in Byte-buddy are reported
-                    private void logAndCollectEvent(String enhanceLog) {
-                        if (enhanceLog.contains(CommonConstant.ERROR)) {
-                            FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
-                            return;
-                        }
-                        if (enhanceLog.contains(CommonConstant.TRANSFORM)) {
-                            FrameworkEventCollector.getInstance().collectTransformSuccessEvent(enhanceLog);
-                        }
-                        LOGGER.info(enhanceLog);
-                    }
-                }, true))));
+        @Override
+        public void flush() {
+            if (count < separatorLength) {
+                return;
+            }
+            for (int i = separatorLength - 1; i >= 0; i--) {
+                if (buf[count + i - separatorLength] != separatorBytes[i]) {
+                    return;
+                }
+            }
+            String enhanceLog = new String(Arrays.copyOf(buf, count - separatorLength));
+            logAndCollectEvent(enhanceLog);
+            reset();
+        }
+
+        // Logs of Error and Warn levels triggered in Byte-buddy are reported
+        private void logAndCollectEvent(String enhanceLog) {
+            if (enhanceLog.contains(CommonConstant.ERROR)) {
+                FrameworkEventCollector.getInstance().collectTransformFailureEvent(enhanceLog);
+                return;
+            }
+            if (enhanceLog.contains(CommonConstant.TRANSFORM)) {
+                FrameworkEventCollector.getInstance().collectTransformSuccessEvent(enhanceLog);
+            }
+            LOGGER.info(enhanceLog);
+        }
     }
 
     /**

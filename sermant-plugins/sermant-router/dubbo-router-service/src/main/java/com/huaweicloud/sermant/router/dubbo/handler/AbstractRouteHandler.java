@@ -38,6 +38,16 @@ public abstract class AbstractRouteHandler implements RouteHandler, Comparable<A
     }
 
     @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public int compareTo(AbstractRouteHandler handler) {
         return getOrder() - handler.getOrder();
     }

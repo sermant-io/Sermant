@@ -36,7 +36,7 @@ public class MixedBulkWriteOperationDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                MongoDbV3EnhancementHelper.getExecuteInterceptDeclarer(),
+                MongoDbV3EnhancementHelper.getExecuteInterceptDeclarer()
         };
     }
 }

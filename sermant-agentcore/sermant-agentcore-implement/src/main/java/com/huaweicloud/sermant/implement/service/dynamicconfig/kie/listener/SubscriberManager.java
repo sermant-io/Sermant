@@ -41,6 +41,7 @@ import org.apache.http.client.config.RequestConfig;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.RejectedExecutionException;
@@ -399,18 +400,26 @@ public class SubscriberManager {
                 listenerMap.remove(next.getKey());
                 return true;
             } else {
-                final KieListenerWrapper wrapper = next.getValue();
-                if (wrapper.removeKeyListener(key, dynamicConfigListener)) {
-                    if (wrapper.isEmpty()) {
-                        // If all listeners are cleared, stop the task of changing the label group
-                        wrapper.getTask().stop();
-                    }
+                if (doUnSubscribe(key, dynamicConfigListener, next)) {
                     return true;
                 }
             }
         }
         LOGGER.warning(
                 String.format(Locale.ENGLISH, "The subscriber of group %s not found!", kieRequest.getLabelCondition()));
+        return false;
+    }
+
+    private boolean doUnSubscribe(String key, DynamicConfigListener dynamicConfigListener,
+            Entry<KieRequest, KieListenerWrapper> next) {
+        final KieListenerWrapper wrapper = next.getValue();
+        if (wrapper.removeKeyListener(key, dynamicConfigListener)) {
+            if (wrapper.isEmpty()) {
+                // If all listeners are cleared, stop the task of changing the label group
+                wrapper.getTask().stop();
+            }
+            return true;
+        }
         return false;
     }
 
@@ -427,20 +436,24 @@ public class SubscriberManager {
             if (task.isLongConnectionRequest()) {
                 longRequestExecutor.execute(new TaskRunnable(task));
             } else {
-                if (scheduledExecutorService == null) {
-                    synchronized (SubscriberManager.class) {
-                        if (scheduledExecutorService == null) {
-                            scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
-                                    new ThreadFactoryUtils("kie-subscribe-task"));
-                        }
-                    }
-                }
-                scheduledExecutorService.scheduleAtFixedRate(new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS,
-                        TimeUnit.MILLISECONDS);
+                executeScheduledTask(task);
             }
         } catch (RejectedExecutionException ex) {
             LOGGER.warning("Rejected the task " + task.getClass() + " " + ex.getMessage());
         }
+    }
+
+    private void executeScheduledTask(Task task) {
+        if (scheduledExecutorService == null) {
+            synchronized (SubscriberManager.class) {
+                if (scheduledExecutorService == null) {
+                    scheduledExecutorService = new ScheduledThreadPoolExecutor(THREAD_SIZE,
+                            new ThreadFactoryUtils("kie-subscribe-task"));
+                }
+            }
+        }
+        scheduledExecutorService.scheduleAtFixedRate(new TaskRunnable(task), 0, SCHEDULE_REQUEST_INTERVAL_MS,
+                TimeUnit.MILLISECONDS);
     }
 
     private void tryPublishEvent(KieResponse kieResponse, KieListenerWrapper kieListenerWrapper, boolean isFirst) {

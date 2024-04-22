@@ -406,21 +406,29 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             }
             Map<String, Listener> listenerMap = nacosListener.getKeyListener();
 
-            // 遍历nacos该组内所有key
+            // Iterate all keys in Nacos group
             for (String key : truthKeys) {
-                Listener listenerNacos;
-                if (!listenerMap.containsKey(key)) {
-                    listenerNacos = instantiateListener(key, group, nacosListener.getDynamicConfigListener());
-                    boolean result = nacosClient.addListener(key, group, listenerNacos);
-                    if (!result) {
-                        LOGGER.log(Level.SEVERE, "Nacos add listener failed group is {0} and key is {1}. ",
-                                new String[]{group, key});
-                        break;
-                    }
-                    listenerMap.put(key, listenerNacos);
+                if (doUpdateConfigListener(nacosListener, group, listenerMap, key)) {
+                    break;
                 }
             }
         }
+    }
+
+    private boolean doUpdateConfigListener(NacosListener nacosListener, String group, Map<String, Listener> listenerMap,
+            String key) {
+        Listener listenerNacos;
+        if (!listenerMap.containsKey(key)) {
+            listenerNacos = instantiateListener(key, group, nacosListener.getDynamicConfigListener());
+            boolean result = nacosClient.addListener(key, group, listenerNacos);
+            if (!result) {
+                LOGGER.log(Level.SEVERE, "Nacos add listener failed group is {0} and key is {1}. ",
+                        new String[]{group, key});
+                return true;
+            }
+            listenerMap.put(key, listenerNacos);
+        }
+        return false;
     }
 
     /**

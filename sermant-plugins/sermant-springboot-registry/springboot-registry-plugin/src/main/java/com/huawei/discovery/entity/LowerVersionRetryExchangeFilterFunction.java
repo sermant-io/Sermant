@@ -47,21 +47,23 @@ public class LowerVersionRetryExchangeFilterFunction extends AbstractRetryExchan
     public Mono<ClientResponse> retry(Mono<ClientResponse> mono) {
         try {
             return mono.retry(LB_CONFIG.getMaxRetry(),
-                    throwable -> {
-                        boolean shouldRetry = RETRY_CONFIG.getThrowablePredicate().test(throwable);
-                        if (shouldRetry) {
-                            LOGGER.log(Level.WARNING, "Start retry, throwable is: ", throwable);
-                            try {
-                                Thread.sleep(LB_CONFIG.getRetryWaitMs());
-                            } catch (InterruptedException ignored) {
-                                // ignored
-                            }
-                        }
-                        return shouldRetry;
-                    });
+                    this::retryMatcher);
         } catch (NoSuchMethodError error) {
             LOGGER.log(Level.SEVERE, "Cannot not retry, please check webflux's version, error is: ", error);
             return mono;
         }
+    }
+
+    private boolean retryMatcher(Throwable throwable) {
+        boolean shouldRetry = RETRY_CONFIG.getThrowablePredicate().test(throwable);
+        if (shouldRetry) {
+            LOGGER.log(Level.WARNING, "Start retry, throwable is: ", throwable);
+            try {
+                Thread.sleep(LB_CONFIG.getRetryWaitMs());
+            } catch (InterruptedException ignored) {
+                // ignored
+            }
+        }
+        return shouldRetry;
     }
 }

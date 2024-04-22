@@ -695,20 +695,25 @@ public class RegistryServiceImpl implements RegistryService {
                     return;
                 }
 
-                // Traverse through all interface implementations
-                list.forEach(interfaceData -> {
-                    if (!CollectionUtils.isEmpty(interfaceData.getProtocol())
-                            && !interfaceData.getProtocol().contains(protocol)) {
-                        return;
-                    }
-                    Map<String, String> parameters = getParameters(interfaceData);
-
-                    // Assemble a list of access addresses for all interface implementations
-                    urlMap.computeIfAbsent(getSubscriptionKey(appId, serviceName, newUrl, interfaceData),
-                                    value -> new ArrayList<>())
-                            .add(getUrlOnNotifying(newUrl, url, parameters, interfaceData.getOrder(), protocol));
-                });
+                convertWithAllImplementaion(urlMap, appId, serviceName, url, protocol, newUrl, list);
             });
+        });
+    }
+
+    private void convertWithAllImplementaion(Map<SubscriptionKey, List<Object>> urlMap, String appId,
+            String serviceName, Object url, String protocol, Object newUrl, List<InterfaceData> list) {
+        // Traverse through all interface implementations
+        list.forEach(interfaceData -> {
+            if (!CollectionUtils.isEmpty(interfaceData.getProtocol())
+                    && !interfaceData.getProtocol().contains(protocol)) {
+                return;
+            }
+            Map<String, String> parameters = getParameters(interfaceData);
+
+            // Assemble a list of access addresses for all interface implementations
+            urlMap.computeIfAbsent(getSubscriptionKey(appId, serviceName, newUrl, interfaceData),
+                            value -> new ArrayList<>())
+                    .add(getUrlOnNotifying(newUrl, url, parameters, interfaceData.getOrder(), protocol));
         });
     }
 

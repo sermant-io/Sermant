@@ -181,40 +181,48 @@ public class NettyClient {
             // If the connection is successful, the sending thread is started and the contents of the message queue
             // are sent over and over again
             if (this.connectionAvailable) {
-                reconnectInternalTime = initReconnectInternalTime;
-                channel = channelFuture.channel();
-                if (channel.isActive()) {
-                    isConnected = true;
-                    Sender sender = new Sender(channel, queue);
-                    LOGGER.info("Successfully Connected to server");
-                    executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("netty-send-thread"));
-                    executorService.scheduleAtFixedRate(sender, 0, sendInternalTime, TimeUnit.SECONDS);
-                    if (NotificationManager.isEnable()) {
-                        NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.CONNECTED, null));
-                    }
-                }
+                createSendTask(channelFuture);
             } else {
-                // Check whether the connection has been connected before, prevent the connection failure to send a
-                // notification, only the connection is disconnected or the first connection fails to send a
-                // notification
-                if ((isConnected == null || isConnected) && NotificationManager.isEnable()) {
-                    NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.DISCONNECTED, null));
-                    isConnected = false;
-                }
-
-                // If the system fails, the system reconnects by backoff way. The initial reconnection time is 5
-                // seconds and the maximum reconnection time is 180 seconds
-                LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
-                        reconnectInternalTime));
-                channelFuture.channel().eventLoop()
-                        .schedule(this::doConnect, reconnectInternalTime, TimeUnit.SECONDS);
-                if (reconnectInternalTime > compareTime) {
-                    reconnectInternalTime = maxReconnectInternalTime;
-                } else {
-                    reconnectInternalTime = reconnectInternalTime * BACKOFF_FACTOR;
-                }
+                reconnect(channelFuture);
             }
         });
+    }
+
+    private void reconnect(ChannelFuture channelFuture) {
+        // Check whether the connection has been connected before, prevent the connection failure to send a
+        // notification, only the connection is disconnected or the first connection fails to send a
+        // notification
+        if ((isConnected == null || isConnected) && NotificationManager.isEnable()) {
+            NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.DISCONNECTED, null));
+            isConnected = false;
+        }
+
+        // If the system fails, the system reconnects by backoff way. The initial reconnection time is 5
+        // seconds and the maximum reconnection time is 180 seconds
+        LOGGER.info(String.format(Locale.ROOT, "Failed to connect,try reconnecting after %s seconds ",
+                reconnectInternalTime));
+        channelFuture.channel().eventLoop()
+                .schedule(this::doConnect, reconnectInternalTime, TimeUnit.SECONDS);
+        if (reconnectInternalTime > compareTime) {
+            reconnectInternalTime = maxReconnectInternalTime;
+        } else {
+            reconnectInternalTime = reconnectInternalTime * BACKOFF_FACTOR;
+        }
+    }
+
+    private void createSendTask(ChannelFuture channelFuture) {
+        reconnectInternalTime = initReconnectInternalTime;
+        channel = channelFuture.channel();
+        if (channel.isActive()) {
+            isConnected = true;
+            Sender sender = new Sender(channel, queue);
+            LOGGER.info("Successfully Connected to server");
+            executorService = Executors.newScheduledThreadPool(1, new ThreadFactoryUtils("netty-send-thread"));
+            executorService.scheduleAtFixedRate(sender, 0, sendInternalTime, TimeUnit.SECONDS);
+            if (NotificationManager.isEnable()) {
+                NotificationManager.doNotify(new NotificationInfo(NettyNotificationType.CONNECTED, null));
+            }
+        }
     }
 
     /**

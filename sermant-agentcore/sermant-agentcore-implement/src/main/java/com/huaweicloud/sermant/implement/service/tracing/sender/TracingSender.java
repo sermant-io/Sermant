@@ -91,7 +91,9 @@ public class TracingSender {
             executorService = Executors.newSingleThreadExecutor(
                     runnable -> new Thread(runnable, "tracing-sender-thread"));
         }
-        executorService.execute(new SpanEventSendThread());
+        SpanEventSendThread spanEventSendThread = new SpanEventSendThread();
+        spanEventSendThread.setName("tracing-sender-thread");
+        executorService.execute(spanEventSendThread);
     }
 
     /**

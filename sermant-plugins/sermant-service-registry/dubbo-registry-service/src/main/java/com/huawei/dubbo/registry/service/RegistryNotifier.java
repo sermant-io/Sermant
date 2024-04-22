@@ -36,14 +36,22 @@ import java.util.logging.Logger;
  */
 public abstract class RegistryNotifier {
     private static final int DEFAULT_DELAY_EXECUTE_TIMES = 10;
+
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final ScheduledExecutorService SCHEDULER = new ScheduledThreadPoolExecutor(1,
             new RegistryNotifyThreadFactory("dubbo-registry-notify-thread"));
+
     private volatile long lastExecuteTime;
+
     private volatile long lastEventTime;
+
     private Object rawAddresses;
+
     private final long delayTime;
+
     private final AtomicBoolean shouldDelay = new AtomicBoolean(false);
+
     private final AtomicInteger executeTime = new AtomicInteger(0);
 
     /**
@@ -90,6 +98,7 @@ public abstract class RegistryNotifier {
      */
     public static class NotificationTask implements Runnable {
         private final RegistryNotifier listener;
+
         private final long time;
 
         /**
@@ -107,16 +116,20 @@ public abstract class RegistryNotifier {
         public void run() {
             try {
                 if (this.time == listener.lastEventTime) {
-                    listener.doNotify(listener.rawAddresses);
-                    listener.lastExecuteTime = System.currentTimeMillis();
-                    synchronized (listener) {
-                        if (this.time == listener.lastEventTime) {
-                            listener.rawAddresses = null;
-                        }
-                    }
+                    doNotify();
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE,"Error occurred when notify directory. ", e);
+                LOGGER.log(Level.SEVERE, "Error occurred when notify directory. ", e);
+            }
+        }
+
+        private void doNotify() {
+            listener.doNotify(listener.rawAddresses);
+            listener.lastExecuteTime = System.currentTimeMillis();
+            synchronized (listener) {
+                if (this.time == listener.lastEventTime) {
+                    listener.rawAddresses = null;
+                }
             }
         }
     }

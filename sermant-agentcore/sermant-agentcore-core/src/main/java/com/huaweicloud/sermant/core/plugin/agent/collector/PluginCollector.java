@@ -118,40 +118,52 @@ public class PluginCollector {
             @Override
             public Builder<?> transform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
                     JavaModule javaModule, ProtectionDomain protectionDomain) {
-                final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.get(typeDescription.getActualName());
-                final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
-                for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
-                    ClassLoader loader = pluginDeclarer.getClass().getClassLoader();
-                    if (loader instanceof PluginClassLoader) {
-                        PluginClassLoader pluginClassLoader = (PluginClassLoader) loader;
-                        pluginClassLoader.setLocalLoader(classLoader);
-                        interceptDeclarers.addAll(Arrays.asList(
-                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
-                        pluginClassLoader.removeLocalLoader();
-                    } else {
-                        interceptDeclarers.addAll(Arrays.asList(
-                                pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
-                    }
-                }
-                return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]), plugin).transform(
-                        builder, typeDescription, classLoader, javaModule, protectionDomain);
+                return doTransform(builder, typeDescription, classLoader, javaModule, protectionDomain, nameCombinedMap,
+                        plugin);
             }
 
             @Override
             public boolean matches(TypeDescription target) {
                 final String typeName = target.getActualName();
-                for (PluginDeclarer declarer : combinedList) {
-                    if (matchTarget(declarer.getClassMatcher(), target)) {
-                        List<PluginDeclarer> declarers = nameCombinedMap.computeIfAbsent(typeName,
-                                key -> new ArrayList<>());
-                        if (!declarers.contains(declarer)) {
-                            declarers.add(declarer);
-                        }
-                    }
-                }
+                doMatch(target, typeName, combinedList, nameCombinedMap);
                 return nameCombinedMap.containsKey(typeName);
             }
         };
+    }
+
+    private static void doMatch(TypeDescription target, String typeName, List<PluginDeclarer> combinedList,
+            Map<String, List<PluginDeclarer>> nameCombinedMap) {
+        for (PluginDeclarer declarer : combinedList) {
+            if (matchTarget(declarer.getClassMatcher(), target)) {
+                List<PluginDeclarer> declarers = nameCombinedMap.computeIfAbsent(typeName,
+                        key -> new ArrayList<>());
+                if (!declarers.contains(declarer)) {
+                    declarers.add(declarer);
+                }
+            }
+        }
+    }
+
+    private static Builder<?> doTransform(Builder<?> builder, TypeDescription typeDescription, ClassLoader classLoader,
+            JavaModule javaModule, ProtectionDomain protectionDomain, Map<String, List<PluginDeclarer>> nameCombinedMap,
+            Plugin plugin) {
+        final List<PluginDeclarer> pluginDeclarers = nameCombinedMap.get(typeDescription.getActualName());
+        final List<InterceptDeclarer> interceptDeclarers = new ArrayList<>();
+        for (PluginDeclarer pluginDeclarer : pluginDeclarers) {
+            ClassLoader loader = pluginDeclarer.getClass().getClassLoader();
+            if (loader instanceof PluginClassLoader) {
+                PluginClassLoader pluginClassLoader = (PluginClassLoader) loader;
+                pluginClassLoader.setLocalLoader(classLoader);
+                interceptDeclarers.addAll(Arrays.asList(
+                        pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+                pluginClassLoader.removeLocalLoader();
+            } else {
+                interceptDeclarers.addAll(Arrays.asList(
+                        pluginDeclarer.getInterceptDeclarers(ClassLoader.getSystemClassLoader())));
+            }
+        }
+        return new ReentrantTransformer(interceptDeclarers.toArray(new InterceptDeclarer[0]), plugin).transform(
+                builder, typeDescription, classLoader, javaModule, protectionDomain);
     }
 
     /**

@@ -54,17 +54,19 @@ public class ClassLoaderFindResourceInterceptor implements Interceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
-        if (context.getResult() == null) {
-            String path = (String) context.getArguments()[0];
-            if (isSermantResource(path)) {
-                Optional<URL> url = ClassLoaderManager.getPluginClassFinder().findSermantResource(path);
-                if (!url.isPresent()) {
-                    LOGGER.log(Level.WARNING, "Can not find resource [{0}] by sermant.And then find by {1}. ",
-                            new Object[]{path, context.getObject()});
-                } else {
-                    context.changeResult(url.get());
-                    LOGGER.log(Level.INFO, "Find resource: {0} successfully by sermant.", path);
-                }
+        if (context.getResult() != null) {
+            return context;
+        }
+
+        String path = (String) context.getArguments()[0];
+        if (isSermantResource(path)) {
+            Optional<URL> url = ClassLoaderManager.getPluginClassFinder().findSermantResource(path);
+            if (!url.isPresent()) {
+                LOGGER.log(Level.WARNING, "Can not find resource [{0}] by sermant.And then find by {1}. ",
+                        new Object[]{path, context.getObject()});
+            } else {
+                context.changeResult(url.get());
+                LOGGER.log(Level.INFO, "Find resource: {0} successfully by sermant.", path);
             }
         }
         return context;

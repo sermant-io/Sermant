@@ -70,12 +70,14 @@ public class WebClientBuilderInterceptor extends AbstractInterceptor {
 
             // Injected retries will no longer be injected
             Optional<Object> filters = ReflectUtils.getFieldValue(builder, "filters");
-            if (filters.isPresent()) {
-                List<ExchangeFilterFunction> list = (List<ExchangeFilterFunction>) filters.get();
-                for (ExchangeFilterFunction filterFunction : list) {
-                    if (filterFunction instanceof AbstractRetryExchangeFilterFunction) {
-                        return context;
-                    }
+            if (!filters.isPresent()) {
+                context.skip(getRetryWebClient(builder));
+                return context;
+            }
+            List<ExchangeFilterFunction> list = (List<ExchangeFilterFunction>) filters.get();
+            for (ExchangeFilterFunction filterFunction : list) {
+                if (filterFunction instanceof AbstractRetryExchangeFilterFunction) {
+                    return context;
                 }
             }
             context.skip(getRetryWebClient(builder));

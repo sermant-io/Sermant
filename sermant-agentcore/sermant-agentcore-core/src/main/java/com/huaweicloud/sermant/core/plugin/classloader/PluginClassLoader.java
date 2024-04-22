@@ -113,22 +113,7 @@ public class PluginClassLoader extends URLClassLoader {
             // If the class cannot be found from the Sermant search path, it is attempted to be loaded via the
             // thread-bound localClassLoader
             if (clazz == null) {
-                ClassLoader loader = localLoader.get(Thread.currentThread().getId());
-
-                if (loader == null && useContextLoader) {
-                    loader = Thread.currentThread().getContextClassLoader();
-                }
-
-                // Make sure the localClassLoader is not the current classLoader or ServiceClassLoader, otherwise it
-                // will cause stackoverflow
-                if (loader != null && !this.equals(loader) && !(loader instanceof ServiceClassLoader)) {
-                    try {
-                        clazz = loader.loadClass(name);
-                    } catch (ClassNotFoundException e) {
-                        // Class not found, ignored, exception thrown later
-                        LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
-                    }
-                }
+                clazz = getClassFromLocalClassLoader(name);
             }
 
             // If the class cannot be found, an exception is thrown
@@ -142,6 +127,27 @@ public class PluginClassLoader extends URLClassLoader {
             }
             return clazz;
         }
+    }
+
+    private Class<?> getClassFromLocalClassLoader(String name) {
+        ClassLoader loader = localLoader.get(Thread.currentThread().getId());
+
+        if (loader == null && useContextLoader) {
+            loader = Thread.currentThread().getContextClassLoader();
+        }
+        Class<?> clazz = null;
+
+        // Make sure the localClassLoader is not the current classLoader or ServiceClassLoader, otherwise it
+        // will cause stackoverflow
+        if (loader != null && !this.equals(loader) && !(loader instanceof ServiceClassLoader)) {
+            try {
+                clazz = loader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // Class not found, ignored, exception thrown later
+                LOGGER.log(Level.FINE, "Load class failed, msg is {0}", e.getMessage());
+            }
+        }
+        return clazz;
     }
 
     /**

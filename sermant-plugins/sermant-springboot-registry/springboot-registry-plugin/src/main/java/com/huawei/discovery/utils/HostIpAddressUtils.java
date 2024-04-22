@@ -32,7 +32,6 @@ import java.util.logging.Logger;
  * @since 2022-09-29
  */
 public class HostIpAddressUtils {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String DEFAULT_ADDRESS = "127.0.0.1";
@@ -48,33 +47,42 @@ public class HostIpAddressUtils {
      * @throws SocketException
      */
     public static String getHostAddress() throws SocketException {
+        InetAddress candidateAddress = findNonLoopbackAddress();
+        if (candidateAddress != null) {
+            return candidateAddress.getHostAddress();
+        }
+
         try {
-            Enumeration<NetworkInterface> networkInterface = NetworkInterface.getNetworkInterfaces();
-            InetAddress candidateAddress = null;
-            while (networkInterface.hasMoreElements()) {
-                NetworkInterface ni = networkInterface.nextElement();
-                for (Enumeration<InetAddress> inetAdd = ni.getInetAddresses(); inetAdd.hasMoreElements();) {
-                    InetAddress inetAddress = inetAdd.nextElement();
-
-                    // Determine whether it is a loopback address
-                    if (!inetAddress.isLoopbackAddress()) {
-                        // If it is a site-local address, return it directly
-                        if (inetAddress.isSiteLocalAddress()) {
-                            return inetAddress.getHostAddress();
-                        }
-                        if (candidateAddress == null) {
-                            candidateAddress = inetAddress;
-                        }
-                    }
-                }
-            }
-
-            // If there is no other address outside the loopback, then Inet Address will be obtained directly
-            return candidateAddress == null ? InetAddress.getLocalHost().getHostAddress()
-                    : candidateAddress.getHostAddress();
+            return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
             LOGGER.warning("get host address error");
         }
+
         return DEFAULT_ADDRESS;
+    }
+
+    private static InetAddress findNonLoopbackAddress() throws SocketException {
+        Enumeration<NetworkInterface> networkInterface = NetworkInterface.getNetworkInterfaces();
+        InetAddress candidateAddress = null;
+        while (networkInterface.hasMoreElements()) {
+            NetworkInterface ni = networkInterface.nextElement();
+            for (Enumeration<InetAddress> inetAdd = ni.getInetAddresses(); inetAdd.hasMoreElements(); ) {
+                InetAddress inetAddress = inetAdd.nextElement();
+
+                // Determine whether it is a loopback address
+                if (inetAddress.isLoopbackAddress()) {
+                    continue;
+                }
+
+                // If it is a site-local address, return it directly
+                if (inetAddress.isSiteLocalAddress()) {
+                    return inetAddress;
+                }
+                if (candidateAddress == null) {
+                    candidateAddress = inetAddress;
+                }
+            }
+        }
+        return candidateAddress;
     }
 }
