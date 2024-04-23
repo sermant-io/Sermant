@@ -1,0 +1,33 @@
+#
+# Copyright (C) 2022-2023 Huawei Technologies Co., Ltd. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+io.sermant.discovery.declarers.RestTemplateDeclarer
+io.sermant.discovery.declarers.httpclient.HttpClient4xDeclarer
+io.sermant.discovery.declarers.httpclient.HttpAsyncClient4xDeclarer
+io.sermant.discovery.declarers.httpclient.HttpAsyncClient4xHandlerDeclarer
+io.sermant.discovery.declarers.OkHttpClientDeclarer
+io.sermant.discovery.declarers.FeignInvokeDeclarer
+io.sermant.discovery.declarers.OkHttp3ClientDeclarer
+io.sermant.discovery.declarers.SpringEnvironmentInfoDeclarer
+io.sermant.discovery.declarers.SpringApplicationDeclarer
+io.sermant.discovery.declarers.httpconnection.HttpUrlConnectionConnectDeclarer
+io.sermant.discovery.declarers.httpconnection.HttpUrlConnectionResponseStreamDeclarer
+io.sermant.discovery.declarers.SpringContextDeclarer
+io.sermant.discovery.declarers.MonoHttpConnectDeclarer
+io.sermant.discovery.declarers.WebClientBuilderDeclarer
+io.sermant.discovery.declarers.HttpComponentsClientHttpConnectorDeclarer
+io.sermant.discovery.declarers.JettyRequestDeclarer
+io.sermant.discovery.declarers.JettyClientDeclarer

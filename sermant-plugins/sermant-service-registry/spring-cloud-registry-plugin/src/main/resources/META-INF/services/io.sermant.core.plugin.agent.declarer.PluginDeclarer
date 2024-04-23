@@ -1,0 +1,44 @@
+#
+# Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+# common
+io.sermant.registry.declarers.SpringFactoriesDeclarer
+# common
+io.sermant.registry.declarers.DiscoveryClientConfigurationDeclarer
+io.sermant.registry.declarers.DiscoveryClientDeclarer
+io.sermant.registry.declarers.DynamicServerListLoadbalancerDeclarer
+io.sermant.registry.declarers.RegistrationDeclarer
+io.sermant.registry.declarers.cloud3.x.ZookeeperInstanceSupplierDeclarer
+# health
+io.sermant.registry.declarers.health.ConsulWatchConDeclarer
+io.sermant.registry.declarers.health.NacosHealthDeclarer
+io.sermant.registry.declarers.health.NacosRpcClientHealthDeclarer
+io.sermant.registry.declarers.health.NacosGrpcProxyDeregisterDeclarer
+io.sermant.registry.declarers.health.ZookeeperHealthDeclarer
+io.sermant.registry.declarers.health.ConsulHealthDeclarer
+io.sermant.registry.declarers.health.ScheduleProcessorDeclared
+io.sermant.registry.declarers.health.EurekaHealthDeclarer
+io.sermant.registry.declarers.health.HealthIndicatorDeclarer
+# grace
+io.sermant.registry.grace.declarers.RegistryDelayDeclarer
+io.sermant.registry.grace.declarers.SpringRibbonWarmUpDeclarer
+io.sermant.registry.grace.declarers.SpringLoadbalancerWarmUpDeclarer
+io.sermant.registry.grace.declarers.SpringWebHandlerDeclarer
+io.sermant.registry.grace.declarers.SpringRibbonBalancerDeclarer
+io.sermant.registry.grace.declarers.SpringCacheManagerDeclarer
+io.sermant.registry.grace.declarers.SpringLoadbalancerFeignResponseDeclarer
+io.sermant.registry.grace.declarers.SpringLoadbalancerRestTemplateResponseDeclarer
+io.sermant.registry.grace.declarers.SpringZuulResponseDeclarer

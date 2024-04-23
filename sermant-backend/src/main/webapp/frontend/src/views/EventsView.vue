@@ -261,8 +261,8 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
+import {onBeforeMount, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
 import qs from "qs";
 import moment from "moment";
 import axios from "axios";

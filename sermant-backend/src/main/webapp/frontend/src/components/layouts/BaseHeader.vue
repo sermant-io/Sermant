@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { toggleDark } from "~/composables";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
+import {toggleDark} from "~/composables";
+import {useRouter} from "vue-router";
+import {ref} from "vue";
 
 const activeName = ref("first");
 

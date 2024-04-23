@@ -136,8 +136,8 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, reactive, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import {onMounted, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
 import axios from "axios";
 
 import moment from "moment";

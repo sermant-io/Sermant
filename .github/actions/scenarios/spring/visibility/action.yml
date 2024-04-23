@@ -22,7 +22,6 @@ runs:
       env:
         VISIBILITY_SERVICE_FLAG: true
         VISIBILITY_CONFIG_START_FLAG: true
-        AGENT_CONFIG_SERVICE_BLACK_LIST: com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8013 -jar \
         -Dsermant_log_dir=${{ env.logDir }}/feign-provider${{ env.tailVersion }} -Dconfig.retry.sleepMs=20 \
@@ -35,7 +34,6 @@ runs:
       env:
         VISIBILITY_SERVICE_FLAG: true
         VISIBILITY_CONFIG_START_FLAG: true
-        AGENT_CONFIG_SERVICE_BLACK_LIST: com.huaweicloud.sermant.implement.service.tracing.TracingServiceImpl
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8015 -jar \
                 -Dsermant_log_dir=${{ env.logDir }}/feign-consumer${{ env.tailVersion }} -Dservicecomb.service.openMigration=true -Dservicecomb.service.enableSpringRegister=true \

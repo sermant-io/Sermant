@@ -16,7 +16,7 @@ server:
 sermant-agent:
   image:
     # agent image address
-    addr: xxx.huawei.com/sermant-agent:0.0.1
+    addr: io.sermant/sermant-agent:0.0.1
     # pulling policy of agent image
     pullPolicy: IfNotPresent
   mount:

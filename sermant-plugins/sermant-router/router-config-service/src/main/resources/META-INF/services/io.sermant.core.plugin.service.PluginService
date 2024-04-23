@@ -1,0 +1,5 @@
+#
+# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+#
+io.sermant.router.config.service.DubboConfigServiceImpl
+io.sermant.router.config.service.SpringConfigServiceImpl

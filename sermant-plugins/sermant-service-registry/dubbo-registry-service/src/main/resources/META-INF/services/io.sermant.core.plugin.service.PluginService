@@ -1,0 +1,5 @@
+io.sermant.dubbo.registry.service.ApplicationConfigServiceImpl
+io.sermant.dubbo.registry.service.GovernanceService
+io.sermant.dubbo.registry.service.RegistryConfigServiceImpl
+io.sermant.dubbo.registry.service.RegistryServiceImpl
+io.sermant.dubbo.registry.service.NacosRegistryServiceImpl

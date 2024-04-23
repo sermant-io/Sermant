@@ -3,10 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>sermant</artifactId>
-        <groupId>com.huaweicloud.sermant</groupId>
+        <groupId>io.sermant.integration</groupId>
+        <artifactId>sermant-integration-tests</artifactId>
         <version>1.0.0</version>
-        <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -18,6 +17,7 @@
         <module>dynamic-test-first-plugin</module>
         <module>dynamic-test-second-plugin</module>
         <module>dynamic-test-third-plugin</module>
+        <module>agentcore-integration-test</module>
     </modules>
 
     <properties>

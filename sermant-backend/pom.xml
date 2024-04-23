@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>sermant</artifactId>
-        <groupId>com.huaweicloud.sermant</groupId>
+        <groupId>io.sermant</groupId>
         <version>1.0.0</version>
     </parent>
     <artifactId>sermant-backend</artifactId>
@@ -268,7 +268,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <version>${spring-boot.version}</version>
                         <configuration>
-                            <mainClass>com.huaweicloud.sermant.backend.Backend</mainClass>
+                            <mainClass>io.sermant.backend.Backend</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
                         </configuration>
                         <executions>
@@ -291,7 +291,7 @@
                         <artifactId>spring-boot-maven-plugin</artifactId>
                         <version>${spring-boot.version}</version>
                         <configuration>
-                            <mainClass>com.huaweicloud.sermant.backend.Backend</mainClass>
+                            <mainClass>io.sermant.backend.Backend</mainClass>
                             <outputDirectory>${package.output.dir}</outputDirectory>
                         </configuration>
                         <executions>

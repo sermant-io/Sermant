@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>sermant-springboot-registry</artifactId>
-        <groupId>com.huaweicloud.sermant</groupId>
+        <groupId>io.sermant</groupId>
         <version>1.0.0</version>
     </parent>
 
@@ -30,7 +30,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
+            <groupId>io.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -114,7 +114,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
+            <groupId>io.sermant</groupId>
             <artifactId>sermant-agentcore-implement</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

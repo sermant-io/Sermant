@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>tag-transmission-test</artifactId>
-        <groupId>com.huaweicloud.sermant.tagtransmission</groupId>
+        <groupId>io.sermant.tagtransmission</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -23,7 +23,7 @@
             <version>${spring.boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.huaweicloud.sermant.tagtransmission</groupId>
+            <groupId>io.sermant.tagtransmission</groupId>
             <artifactId>tag-transmission-util-demo</artifactId>
             <version>${tag-transmission.version}</version>
         </dependency>

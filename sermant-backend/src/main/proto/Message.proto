@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "com.huaweicloud.sermant.backend.pojo";
+option java_package = "io.sermant.backend.pojo";
 
 message NettyMessage{
   enum MessageType {

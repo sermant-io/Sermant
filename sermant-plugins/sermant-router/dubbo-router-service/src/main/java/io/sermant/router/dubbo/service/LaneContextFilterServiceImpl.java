@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.sermant.router.dubbo.service;
+
+import io.sermant.router.common.cache.DubboCache;
+import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.config.cache.ConfigCache;
+import io.sermant.router.config.entity.Protocol;
+import io.sermant.router.config.entity.Route;
+import io.sermant.router.config.entity.RouterConfiguration;
+import io.sermant.router.config.entity.Rule;
+import io.sermant.router.config.utils.RuleUtils;
+import io.sermant.router.dubbo.utils.RouteUtils;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The service of ContextFilter
+ *
+ * @author provenceee
+ * @since 2023-02-16
+ */
+public class LaneContextFilterServiceImpl implements LaneContextFilterService {
+    /**
+     * get swimlane markers
+     *
+     * @param interfaceName the name of the interface
+     * @param methodName method name
+     * @param attachments attachments
+     * @param args interface parameters
+     * @return swimlane markers
+     */
+    @Override
+    public Map<String, List<String>> getLane(String interfaceName, String methodName, Map<String, Object> attachments,
+            Object[] args) {
+        RouterConfiguration configuration = ConfigCache.getLabel(RouterConstant.DUBBO_CACHE_NAME);
+        if (RouterConfiguration.isInValid(configuration, RouterConstant.LANE_MATCH_KIND)) {
+            return Collections.emptyMap();
+        }
+        List<Rule> rules = RuleUtils.getLaneRules(configuration, methodName, interfaceName,
+                DubboCache.INSTANCE.getAppName(), Protocol.DUBBO);
+        List<Route> routes = RouteUtils.getLaneRoutes(rules, attachments, args);
+        return RuleUtils.getTargetLaneTags(routes);
+    }
+}

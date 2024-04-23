@@ -1,0 +1,64 @@
+/*
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.sermant.registry.interceptors.health;
+
+import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.ReflectUtils;
+import io.sermant.registry.context.RegisterContext;
+import io.sermant.registry.handler.SingleStateCloseHandler;
+
+import java.util.logging.Logger;
+
+/**
+ * Registry health status changes, for NACOS2.x, GRPC protocol
+ *
+ * @author zhouss
+ * @since 2022-12-20
+ */
+public class NacosRpcClientHealthInterceptor extends SingleStateCloseHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    @Override
+    protected void close() {
+        // Turn off nacos heartbeat transmission
+        ReflectUtils.invokeMethod(target, "shutdown", null, null);
+        LOGGER.warning("Nacos heartbeat has been closed by user.");
+    }
+
+    @Override
+    protected ExecuteContext doBefore(ExecuteContext context) {
+        checkState(context, null);
+        return context;
+    }
+
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        final Object result = context.getResult();
+        if (result instanceof Boolean) {
+            boolean health = (boolean) result;
+            if (health) {
+                RegisterContext.INSTANCE.compareAndSet(false, true);
+                LOGGER.info("Nacos registry center recover healthy status!");
+            } else {
+                RegisterContext.INSTANCE.compareAndSet(true, false);
+                LOGGER.info("Nacos registry center may be unhealthy!");
+            }
+        }
+        return context;
+    }
+}

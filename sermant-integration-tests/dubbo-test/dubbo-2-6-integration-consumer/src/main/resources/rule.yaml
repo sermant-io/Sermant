@@ -6,30 +6,30 @@ servicecomb:
     demo-fault-null: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.faultNull"
+            exact: "io.sermant.integration.service.FlowControlService.faultNull"
     demo-fault-throw: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.faultThrowEx"
+            exact: "io.sermant.integration.service.FlowControlService.faultThrowEx"
     demo-fault-delay: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.faultDelay"
+            exact: "io.sermant.integration.service.FlowControlService.faultDelay"
     demo-retry: |
       matches:
         - apiPath:
-            prefix: "com.huaweicloud.integration.service.FlowControlService.retry"
+            prefix: "io.sermant.integration.service.FlowControlService.retry"
           serviceName: dubbo-integration-provider
           method:
           - POST
     demo-rateLimiting: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimiting"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimiting"
     demo-rateLimiting-prefix: |
       matches:
         - apiPath:
-            prefix: "com.huaweicloud.integration.service.FlowControlService.rateLimitingPref"
+            prefix: "io.sermant.integration.service.FlowControlService.rateLimitingPref"
     demo-rateLimiting-suffix: |
       matches:
         - apiPath:
@@ -41,16 +41,16 @@ servicecomb:
     demo-rateLimiting-version: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlVersionService:1.0.0.rateLimitingWithVersion"
+            exact: "io.sermant.integration.service.FlowControlVersionService:1.0.0.rateLimitingWithVersion"
     demo-rateLimiting-match-application: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithApplication"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithApplication"
           serviceName: dubbo-integration-provider
     demo-rateLimiting-match-attachement: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -58,7 +58,7 @@ servicecomb:
     demo-rateLimiting-match-attachement-exact: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -66,7 +66,7 @@ servicecomb:
     demo-rateLimiting-match-attachement-prefix: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -74,7 +74,7 @@ servicecomb:
     demo-rateLimiting-match-attachement-suffix: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -82,7 +82,7 @@ servicecomb:
     demo-rateLimiting-match-attachement-contains: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -90,7 +90,7 @@ servicecomb:
     demo-rateLimiting-match-attachement-compare: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.rateLimitingWithHeader"
+            exact: "io.sermant.integration.service.FlowControlService.rateLimitingWithHeader"
           serviceName: dubbo-integration-provider
           headers:
             key:
@@ -98,23 +98,23 @@ servicecomb:
     demo-circuitBreaker-timed: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.cirSlowInvoker"
+            exact: "io.sermant.integration.service.FlowControlService.cirSlowInvoker"
     demo-circuitBreaker-exception: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.cirEx"
+            exact: "io.sermant.integration.service.FlowControlService.cirEx"
     demo-instance-isolation-timed: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.instanceSlowInvoker"
+            exact: "io.sermant.integration.service.FlowControlService.instanceSlowInvoker"
     demo-instance-isolation-exception: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.instanceEx"
+            exact: "io.sermant.integration.service.FlowControlService.instanceEx"
     demo-bulkhead: |
       matches:
         - apiPath:
-            exact: "com.huaweicloud.integration.service.FlowControlService.bulkhead"
+            exact: "io.sermant.integration.service.FlowControlService.bulkhead"
   rateLimiting:
     demo-rateLimiting: |
       rate: 1

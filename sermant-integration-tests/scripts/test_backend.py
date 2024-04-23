@@ -16,10 +16,9 @@
 #
 
 import json
-import unittest
-import time
-
 import requests
+import time
+import unittest
 
 
 class TestBackend(unittest.TestCase):

@@ -1,7 +1,7 @@
 # sermant suffix version of the packaged folder name
 sermantVersion=1.0.0
 # image name of sermant-agent
-imageName=xxx.huawei.com/sermant/sermant-agent
+imageName=io.sermant/sermant-agent
 # image version of sermant-agent
 imageVersion=1.0.0
 

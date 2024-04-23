@@ -16,27 +16,27 @@
 
     <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"/>
 
-    <bean id="barServiceImpl" class="com.huaweicloud.integration.service.BarServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="barServiceImpl"/>
+    <bean id="barServiceImpl" class="io.sermant.integration.service.BarServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.BarService" ref="barServiceImpl"/>
 
-    <bean id="removalServiceImpl" class="com.huaweicloud.integration.service.RemovalServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.RemovalService" ref="removalServiceImpl"/>
+    <bean id="removalServiceImpl" class="io.sermant.integration.service.RemovalServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.RemovalService" ref="removalServiceImpl"/>
 
-    <bean id="bar2ServiceImpl" class="com.huaweicloud.integration.service.Bar2ServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.BarService" ref="bar2ServiceImpl" group="bar2"/>
+    <bean id="bar2ServiceImpl" class="io.sermant.integration.service.Bar2ServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.BarService" ref="bar2ServiceImpl" group="bar2"/>
 
-    <bean id="fooServiceImpl" class="com.huaweicloud.integration.service.FooServiceImpl"/>
+    <bean id="fooServiceImpl" class="io.sermant.integration.service.FooServiceImpl"/>
     <!-- dubbo2.6.6+才支持tag功能 -->
-    <!--<dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"
+    <!--<dubbo:service interface="FooService" ref="fooServiceImpl" version="0.0.1"
             tag="app1"/>-->
-    <dubbo:service interface="com.huaweicloud.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"/>
+    <dubbo:service interface="io.sermant.integration.service.FooService" ref="fooServiceImpl" version="0.0.1"/>
 
     <!--流控测试-->
-    <bean id="flowControlServiceImpl" class="com.huaweicloud.integration.service.FlowRetryExServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.FlowControlService" ref="flowControlServiceImpl"
+    <bean id="flowControlServiceImpl" class="io.sermant.integration.service.FlowRetryExServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.FlowControlService" ref="flowControlServiceImpl"
             group="flow"/>
 
-    <bean id="flowControlVersionServiceImpl" class="com.huaweicloud.integration.service.impl.FlowControlVersionServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.FlowControlVersionService" ref="flowControlVersionServiceImpl"
+    <bean id="flowControlVersionServiceImpl" class="io.sermant.integration.service.impl.FlowControlVersionServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.FlowControlVersionService" ref="flowControlVersionServiceImpl"
             group="flow" version="1.0.0"/>
 </beans>

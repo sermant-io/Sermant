@@ -18,28 +18,28 @@
 
     <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"/>
 
-    <dubbo:reference id="barService" check="false" interface="com.huaweicloud.integration.service.BarService"/>
-    <dubbo:reference id="removalService" check="false" interface="com.huaweicloud.integration.service.RemovalService"
+    <dubbo:reference id="barService" check="false" interface="io.sermant.integration.service.BarService"/>
+    <dubbo:reference id="removalService" check="false" interface="io.sermant.integration.service.RemovalService"
         timeout="1000"/>
-    <dubbo:reference id="bar2Service" check="false" interface="com.huaweicloud.integration.service.BarService"
+    <dubbo:reference id="bar2Service" check="false" interface="io.sermant.integration.service.BarService"
             group="bar2"/>
-    <dubbo:reference id="barGenericService" check="false" interface="com.huaweicloud.integration.service.BarService"
+    <dubbo:reference id="barGenericService" check="false" interface="io.sermant.integration.service.BarService"
             generic="true"/>
-    <dubbo:reference id="fooService" check="false" interface="com.huaweicloud.integration.service.FooService"
+    <dubbo:reference id="fooService" check="false" interface="io.sermant.integration.service.FooService"
             version="0.0.1" timeout="10000"/>
-    <dubbo:reference id="fooWildcardService" check="false" interface="com.huaweicloud.integration.service.FooService"
+    <dubbo:reference id="fooWildcardService" check="false" interface="io.sermant.integration.service.FooService"
             version="*"/>
 
     <dubbo:reference id="flowControlService" check="false"
-            interface="com.huaweicloud.integration.service.FlowControlService" group="flow"/>
+            interface="io.sermant.integration.service.FlowControlService" group="flow"/>
 
     <dubbo:reference id="flowControlVersionService" check="false" version="1.0.0"
-            interface="com.huaweicloud.integration.service.FlowControlVersionService" group="flow"/>
+            interface="io.sermant.integration.service.FlowControlVersionService" group="flow"/>
 
-    <bean id="metadataServiceImpl" class="com.huaweicloud.integration.service.MetadataServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.MetadataService" ref="metadataServiceImpl"/>
+    <bean id="metadataServiceImpl" class="io.sermant.integration.service.MetadataServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.MetadataService" ref="metadataServiceImpl"/>
 
     <!-- 泳道测试 -->
-    <bean id="laneServiceImpl" class="com.huaweicloud.integration.service.LaneServiceImpl"/>
-    <dubbo:service interface="com.huaweicloud.integration.service.LaneService" ref="laneServiceImpl"/>
+    <bean id="laneServiceImpl" class="io.sermant.integration.service.LaneServiceImpl"/>
+    <dubbo:service interface="io.sermant.integration.service.LaneService" ref="laneServiceImpl"/>
 </beans>

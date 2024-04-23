@@ -34,8 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
+import {onBeforeMount, reactive, ref} from "vue";
+import {useRouter} from "vue-router";
 import axios from "axios";
 
 const router = useRouter();
