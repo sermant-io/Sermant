@@ -178,7 +178,7 @@
    APPENDIX: How to apply the Apache License to your work.
 
       To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
+      boilerplate notice, with the fields enclosed by brackets "{}"
       replaced with your own identifying information. (Don't include
       the brackets!)  The text should be enclosed in the appropriate
       comment syntax for the file format. We also recommend that a
@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright {yyyy} {name of copyright owner}
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -200,27 +200,42 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-====================================================================================
+=======================================================================
+Apache ServiceComb Java Chassis Subcomponents:
 
-Some files in this project contain a portion of the following project and we have declared in each file.
+The Apache ServiceComb Java Chassis project contains subcomponents with
+separate copyright notices and license terms. Your use of the source
+for these subcomponents is subject to the terms and conditions of the
+following licenses.
 
-1. Apache Skywalking project.
-Apache SkyWalking project is published at https://github.com/apache/skywalking-java and its license is Apache License Version 2.0.
 
-2. Alibaba Sentinel project.
-Alibaba Sentinel project is published at https://github.com/alibaba/Sentinel and its license is Apache License Version 2.0.
+================================================================
+For foundations/foundation-common/src/main/java/org/apache/servicecomb/foundation/common/utils/MimeTypesUtils.java
+    transports/transport-rest/transport-rest-vertx/src/main/java/org/apache/servicecomb/transport/rest/vertx/RestBodyHandler.java
+================================================================
+This product bundles files from vertx which is licensed under the Apache License v2.
+For details, see https://github.com/vert-x3/vertx-web
 
-3. Alibaba spring-cloud-alibaba project.
-Alibaba spring-cloud-alibaba project is published at https://github.com/alibaba/spring-cloud-alibaba and its license is Apache License Version 2.0.
+================================================================
+For swagger/swagger-generator/generator-core/src/main/java/org/apache/servicecomb/swagger/extend/property/AbstractBaseIntegerProperty.java
+================================================================
+This product bundles files from swagger which is licensed under the Apache License v2.
+For details, see https://github.com/swagger-api/swagger-core
 
-4. Apache ServiceComb Java Chassis project.
-Apache ServiceComb Java Chassis project is published at https://github.com/apache/servicecomb-java-chassis and its license is Apache License Version 2.0.
-
-5. Apache Dubbo project.
-Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
-
-6. License Maven Plugin project.
-License Maven Plugin project is published at https://github.com/mojohaus/license-maven-plugin and its license is GNU LGPL Version 3.0.
-
-7. openEuler gala-gopher project.
-openEuler gala-gopher project is published at https://gitee.com/openeuler/gala-gopher and its license is Mulan PSL v2.
+================================================================
+For foundations/foundation-protobuf/src/main/java/io/protostuff/runtime/ArrayFieldMapEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/runtime/FieldMapEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/runtime/FieldSchema.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/runtime/FieldTypeUtils.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/runtime/HashFieldMapEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/ByteArrayInputEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/InputEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/OutputEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/package-info.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/ProtobufOutputEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/SchemaEx.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/SchemaReader.java
+    foundations/foundation-protobuf/src/main/java/io/protostuff/SchemaWriter.java
+================================================================
+This product bundles files from protostuff which is licensed under the Apache License v2.
+For details, see  https://github.com/protostuff/protostuff
