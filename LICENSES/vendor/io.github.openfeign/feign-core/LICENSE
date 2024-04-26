@@ -1,3 +1,4 @@
+
                                  Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -186,7 +187,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [yyyy] [name of copyright owner]
+   Copyright 2012 The Feign Authors
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -199,28 +200,3 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-
-====================================================================================
-
-Some files in this project contain a portion of the following project and we have declared in each file.
-
-1. Apache Skywalking project.
-Apache SkyWalking project is published at https://github.com/apache/skywalking-java and its license is Apache License Version 2.0.
-
-2. Alibaba Sentinel project.
-Alibaba Sentinel project is published at https://github.com/alibaba/Sentinel and its license is Apache License Version 2.0.
-
-3. Alibaba spring-cloud-alibaba project.
-Alibaba spring-cloud-alibaba project is published at https://github.com/alibaba/spring-cloud-alibaba and its license is Apache License Version 2.0.
-
-4. Apache ServiceComb Java Chassis project.
-Apache ServiceComb Java Chassis project is published at https://github.com/apache/servicecomb-java-chassis and its license is Apache License Version 2.0.
-
-5. Apache Dubbo project.
-Apache Dubbo project is published at https://github.com/apache/dubbo and its license is Apache License Version 2.0.
-
-6. License Maven Plugin project.
-License Maven Plugin project is published at https://github.com/mojohaus/license-maven-plugin and its license is GNU LGPL Version 3.0.
-
-7. openEuler gala-gopher project.
-openEuler gala-gopher project is published at https://gitee.com/openeuler/gala-gopher and its license is Mulan PSL v2.
