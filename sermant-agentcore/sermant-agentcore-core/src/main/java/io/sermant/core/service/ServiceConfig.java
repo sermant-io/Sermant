@@ -95,10 +95,10 @@ public class ServiceConfig implements BaseConfig {
     }
 
     /**
-     * 通过服务的类名来检查该类型服务是否开启
+     * Check whether the service of the given class name is enabled.
      *
-     * @param serviceName 服务名
-     * @return 是否开启了该服务
+     * @param serviceName The name of the service.
+     * @return Whether the service is enabled.
      */
     public boolean checkServiceEnable(String serviceName) {
         if (ServiceManager.HEARTBEAT_SERVICE_IMPL.equals(serviceName)) {
