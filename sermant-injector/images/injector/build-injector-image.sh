@@ -1,5 +1,5 @@
 # image name of sermant-injector
-imageName=xxx.huawei.com/sermant/sermant-injector
+imageName=io.sermant/sermant-injector
 # image version of sermant-injector
 imageVersion=1.0.0
 

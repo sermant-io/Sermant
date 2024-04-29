@@ -1,1 +1,1 @@
-getLb=com.huaweicloud.integration.filter.LbFilter
+getLb=io.sermant.integration.filter.LbFilter

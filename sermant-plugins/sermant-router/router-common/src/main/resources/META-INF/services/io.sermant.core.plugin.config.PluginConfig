@@ -1,0 +1,6 @@
+#
+# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+#
+
+io.sermant.router.common.config.RouterConfig
+io.sermant.router.common.config.TransmitConfig

@@ -26,7 +26,7 @@
         <relativePath/>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.huawei.spring.test</groupId>
+    <groupId>io.sermant.spring.test</groupId>
     <artifactId>spring-test</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
@@ -42,7 +42,7 @@
         <processor.version>2.2.0.RELEASE</processor.version>
     </properties>
     <modules>
-        <module>spring-intergration-test</module>
+        <module>spring-integration-test</module>
     </modules>
 
     <profiles>

@@ -1,0 +1,10 @@
+io.sermant.dubbo.registry.declarer.AlibabaInterfaceConfigDeclarer
+io.sermant.dubbo.registry.declarer.ApacheInterfaceConfigDeclarer
+io.sermant.dubbo.registry.declarer.ApplicationConfigDeclarer
+io.sermant.dubbo.registry.declarer.ConfigValidationDeclarer
+io.sermant.dubbo.registry.declarer.ExtensionLoaderDeclarer
+io.sermant.dubbo.registry.declarer.MigrationRuleDeclarer
+io.sermant.dubbo.registry.declarer.MigrationRuleHandlerDeclarer
+io.sermant.dubbo.registry.declarer.RegistryConfigDeclarer
+io.sermant.dubbo.registry.declarer.RegistryProtocolDeclarer
+io.sermant.dubbo.registry.declarer.SpringApplicationDeclarer

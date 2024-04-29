@@ -1,0 +1,10 @@
+#
+# Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+#
+
+io.sermant.router.dubbo.declarer.AbstractDirectoryDeclarer
+io.sermant.router.dubbo.declarer.ApplicationConfigDeclarer
+io.sermant.router.dubbo.declarer.ClusterUtilsDeclarer
+io.sermant.router.dubbo.declarer.ContextFilterDeclarer
+io.sermant.router.dubbo.declarer.SpringApplicationDeclarer
+io.sermant.router.dubbo.declarer.AbstractConfigDeclarer

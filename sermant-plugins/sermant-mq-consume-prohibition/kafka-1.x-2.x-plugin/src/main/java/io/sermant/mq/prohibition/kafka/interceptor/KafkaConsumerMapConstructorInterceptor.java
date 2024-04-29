@@ -1,0 +1,110 @@
+/*
+ * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.sermant.mq.prohibition.kafka.interceptor;
+
+import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.mq.prohibition.controller.kafka.KafkaConsumerController;
+import io.sermant.mq.prohibition.controller.kafka.extension.KafkaConsumerHandler;
+import io.sermant.mq.prohibition.kafka.utils.MarkUtils;
+
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.Deserializer;
+
+import java.util.Map;
+import java.util.logging.Logger;
+
+/**
+ * Interceptor for the construction method of KafkaConsumer Map
+ * {@link org.apache.kafka.clients.consumer.KafkaConsumer#KafkaConsumer(Map, Deserializer, Deserializer)}
+ *
+ * @author lilai
+ * @since 2023-12-05
+ */
+public class KafkaConsumerMapConstructorInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private KafkaConsumerHandler handler;
+
+    /**
+     * Construction method with KafkaConsumerHandler
+     *
+     * @param handler Construction Method Interception Point handler
+     */
+    public KafkaConsumerMapConstructorInterceptor(KafkaConsumerHandler handler) {
+        this.handler = handler;
+    }
+
+    /**
+     * No parameter construction method
+     */
+    public KafkaConsumerMapConstructorInterceptor() {
+    }
+
+    @Override
+    public ExecuteContext before(ExecuteContext context) {
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
+        if (handler != null) {
+            handler.doBefore(context);
+        }
+        return context;
+    }
+
+    @Override
+    public ExecuteContext after(ExecuteContext context) {
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
+        if (handler != null) {
+            handler.doAfter(context);
+        }
+
+        cacheKafkaConsumer(context);
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        // Higher versions of Properties will call the Map method to avoid duplicate entries
+        if (MarkUtils.getMark() != null) {
+            return context;
+        }
+        if (handler != null) {
+            handler.doOnThrow(context);
+        }
+        return context;
+    }
+
+    /**
+     * Caching consumer instances
+     *
+     * @param context Interception point execution context
+     */
+    private void cacheKafkaConsumer(ExecuteContext context) {
+        Object kafkaConsumerObject = context.getObject();
+        if (kafkaConsumerObject instanceof KafkaConsumer) {
+            KafkaConsumer<?, ?> consumer = (KafkaConsumer<?, ?>) kafkaConsumerObject;
+            KafkaConsumerController.addKafkaConsumerCache(consumer);
+            LOGGER.info("KafkaConsumer has been cached by Sermant.");
+        }
+    }
+}

@@ -1,0 +1,6 @@
+#
+# Copyright (C) 2024-2024 Huawei Technologies Co., Ltd. All rights reserved.
+#
+
+io.sermant.router.dubbo.declarer.RegistryDirectoryDeclarer
+io.sermant.router.dubbo.declarer.ServiceDiscoveryRegistryDirectoryDeclarer

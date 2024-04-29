@@ -10,8 +10,8 @@
     <dubbo:consumer timeout="10000"/>
 
     <dubbo:reference id="metadataService" check="false"
-            interface="com.huaweicloud.integration.service.MetadataService" timeout="10000"/>
+            interface="io.sermant.integration.service.MetadataService" timeout="10000"/>
 
     <dubbo:reference id="laneService" check="false"
-            interface="com.huaweicloud.integration.service.LaneService" timeout="10000" async="true"/>
+            interface="io.sermant.integration.service.LaneService" timeout="10000" async="true"/>
 </beans>

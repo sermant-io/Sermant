@@ -6,7 +6,7 @@
 
     <parent>
         <artifactId>sermant-plugins</artifactId>
-        <groupId>com.huaweicloud.sermant</groupId>
+        <groupId>io.sermant</groupId>
         <version>1.0.0</version>
     </parent>
 

@@ -1,6 +1,0 @@
-#
-# Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
-#
-
-com.huaweicloud.sermant.router.common.config.RouterConfig
-com.huaweicloud.sermant.router.common.config.TransmitConfig

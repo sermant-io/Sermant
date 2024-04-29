@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>sermant-database-write-prohibition</artifactId>
-        <groupId>com.huaweicloud.sermant</groupId>
+        <groupId>io.sermant</groupId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
+            <groupId>io.sermant</groupId>
             <artifactId>sermant-agentcore-core</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -31,7 +31,7 @@
             <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.huaweicloud.sermant</groupId>
+            <groupId>io.sermant</groupId>
             <artifactId>database-controller</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

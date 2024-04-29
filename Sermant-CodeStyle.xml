@@ -22,10 +22,6 @@
       <value>
         <package name="" withSubpackages="true" static="true" />
         <emptyLine />
-        <package name="com.huawei" withSubpackages="true" static="false" />
-        <emptyLine />
-        <package name="com.huaweicloud" withSubpackages="true" static="false" />
-        <emptyLine />
         <package name="com" withSubpackages="true" static="false" />
         <emptyLine />
         <package name="" withSubpackages="true" static="false" />

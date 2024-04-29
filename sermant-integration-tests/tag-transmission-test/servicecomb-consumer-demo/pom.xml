@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.huaweicloud.sermant.tagtransmission</groupId>
+        <groupId>io.sermant.tagtransmission</groupId>
         <artifactId>tag-transmission-test</artifactId>
         <version>1.0.0</version>
     </parent>
@@ -38,7 +38,7 @@
             <version>${servicecomb.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.huaweicloud.sermant.tagtransmission</groupId>
+            <groupId>io.sermant.tagtransmission</groupId>
             <artifactId>rpc-api-demo</artifactId>
         </dependency>
     </dependencies>

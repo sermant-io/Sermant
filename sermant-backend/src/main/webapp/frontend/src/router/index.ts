@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import EventsView from '~/views/EventsView.vue'
 import EventsConfigView from '~/views/EventsConfigView.vue'
 import InstancesView from '~/views/InstancesView.vue'
