@@ -17,6 +17,6 @@ No
 <!-- Follow this checklist to help us incorporate your contribution quickly and easily: -->
 
 ## Checklist
-- [ ] Make sure there is a [GitHub_issue](https://github.com/huaweicloud/Sermant/issues) related with this PR before you start working on it.
+- [ ] Make sure there is a [GitHub_issue](https://github.com/sermant-io/Sermant/issues) related with this PR before you start working on it.
 - [ ] Make sure you have squashed your change to one single commit.
 - [ ] GitHub Actions works fine in this PR.
