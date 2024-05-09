@@ -99,7 +99,7 @@ Sermant 采用 [Apache 2.0 License.](/LICENSE)
 
 ## 贡献指南
 
-请阅读 [贡献指南](https://sermant.io/zh/document/CONTRIBUTING.html) 以了解如何贡献项目。
+请阅读 [贡献指南](CONTRIBUTING.md) 以了解如何贡献项目。
 
 ## 更多文档
 
