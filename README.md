@@ -98,7 +98,7 @@ Sermant adopts [Apache 2.0 License.](/LICENSE)
 
 ## How to Contribute
 
-Please read  [Contribute Guide](https://sermant.io/en/document/CONTRIBUTING.html) to refer how to join the contribution.
+Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contribution.
 
 ## More Documents to Follow
 
