@@ -11,7 +11,7 @@
 
     <name>sermant-agentcore-core</name>
     <description>The core capability and agent framework of Sermant.</description>
-    <url>https://github.com/huaweicloud/Sermant</url>
+    <url>https://github.com/sermant-io/Sermant</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -20,9 +20,9 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/huaweicloud/Sermant</url>
-        <connection>scm:git:git://github.com/huaweicloud/Sermant.git</connection>
-        <developerConnection>scm:git:ssh://github.com:huaweicloud/Sermant.git</developerConnection>
+        <url>https://github.com/sermant-io/Sermant</url>
+        <connection>scm:git:git://github.com/sermant-io/Sermant.git</connection>
+        <developerConnection>scm:git:ssh://github.com:sermant-io/Sermant.git</developerConnection>
     </scm>
     <developers>
         <developer>

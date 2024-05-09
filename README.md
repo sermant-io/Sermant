@@ -10,8 +10,8 @@
 
 [![CNCF Landscape](https://img.shields.io/badge/CNCF%20Landscape-5699C6)](https://landscape.cncf.io/?item=orchestration-management--service-mesh--sermant)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![CI/IT Tests](https://github.com/huaweicloud/Sermant/workflows/CI/badge.svg?branch=develop)](https://github.com/huaweicloud/Sermant/actions?query=workflow:CI:push%20branch:develop)
-[![codecov](https://codecov.io/gh/huaweicloud/Sermant/develop/graph/badge.svg)](https://codecov.io/gh/huaweicloud/Sermant)
+[![CI/IT Tests](https://github.com/sermant-io/Sermant/workflows/CI/badge.svg?branch=develop)](https://github.com/sermant-io/Sermant/actions?query=workflow:CI:push%20branch:develop)
+[![codecov](https://codecov.io/gh/sermant-io/Sermant/develop/graph/badge.svg)](https://codecov.io/gh/sermant-io/Sermant)
 </div>
 
 ## What is Sermant?
@@ -44,8 +44,8 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ### Preparation
 
-- [Download](https://github.com/huaweicloud/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release package (The current version recommended is 1.4.0)
-- [Download](https://github.com/huaweicloud/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz) Demo binary product compression package
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release package (The current version recommended is 1.4.0)
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz) Demo binary product compression package
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
 ### Obtain Demo binary products

@@ -10,14 +10,14 @@ This document gives a brief overview of the Sermant community roles with the req
 | [Approver](#approver) | Sponsor from 2 maintainers, highly experienced and knowledge of domain, actively contributed to code and review  | Review and approve contributions from community members | Write access to specific packagies in relevant repository |
 | [Maintainer](#maintainer) | Sponsor from 2 maintainers, shown good technical judgement in feature design/development and PR review, helps drive the overall Sermant project | Participate in release planning and feature development/maintenance. Drive the overall technical roadmap of the project and set priorities of activities in release planning | Top level write access to relevant repository. Name entry in Maintainers file of the repository. One of the maintainers also has Sermant GitHub organization Admin access |
 
-**Note :** It is mandatory for all Sermant community members to follow Sermant [Code of Conduct](https://github.com/huaweicloud/Sermant/blob/develop/CODE_OF_CONDUCT.md).
+**Note :** It is mandatory for all Sermant community members to follow Sermant [Code of Conduct](https://github.com/sermant-io/Sermant/blob/develop/CODE_OF_CONDUCT.md).
 
 ## Member
 
 Members are active participants in the community who contribute by authoring PRs,
 reviewing issues/PRs or participate in community discussions on slack/mailing list.
 
-**Note:** If you meet the following requirements, welcome to [open an issue](https://github.com/huaweicloud/Sermant/issues) and apply to become a Sermant Organization member!
+**Note:** If you meet the following requirements, welcome to [open an issue](https://github.com/sermant-io/Sermant/issues) and apply to become a Sermant Organization member!
 
 
 ### Requirements
@@ -130,6 +130,6 @@ those members would need to re-familiarize themselves with the current state
 before being able to contribute effectively.
 
 
-[Code of Conduct]: https://github.com/huaweicloud/Sermant/blob/develop/CODE_OF_CONDUCT.md
+[Code of Conduct]: https://github.com/sermant-io/Sermant/blob/develop/CODE_OF_CONDUCT.md
 [two-factor authentication]: https://help.github.com/articles/about-two-factor-authentication
-[Insights]: https://github.com/huaweicloud/Sermant/pulse
+[Insights]: https://github.com/sermant-io/Sermant/pulse
