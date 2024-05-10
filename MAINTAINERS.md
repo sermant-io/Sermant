@@ -6,5 +6,9 @@ Please keep the below list sorted in ascending order.
 
 ## Maintainers
 
-| Maintainer        | GitHub ID           | Affiliation             | 
-|-----------------|---------------------|-------------------------|
+| Maintainer    | GitHub ID      | Affiliation | Email                     |
+| ------------- | -------------- | ----------- | ------------------------- |
+| Lai Li        | @lilai23       | Huawei      | lilai1@huawei.com         |
+| Haopeng Zhang | @hanbingleixue | Huawei      | hanbingleixue@hotmail.com |
+| Yuyi Peng     | @provenceee    | Huawei      | provenceee@foxmail.com    |
+| Zhenyu Dai    | @daizhenyu     | Huawei      | daizhenyu10@gmail.com     |
