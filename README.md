@@ -108,7 +108,3 @@ Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contri
 
 * [Mailing list](https://groups.google.com/forum/#!forum/sermant)
 * [Slack](https://cloud-native.slack.com/archives/C06VDFQUA7N) | [Join](https://slack.cncf.io/)
-* WeChat Group: Please apply for Sermant Xiao Er as a friend first, and we will pull you into the group.
-
-![sermant](docs/binary-docs/contact-wechat.png)
-
