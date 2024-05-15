@@ -79,10 +79,16 @@ public class ServiceManager {
             "io.sermant.implement.service.tracing.TracingServiceImpl";
 
     /**
-     * HttpServer服务类名
+     * HttpServer service name
      */
     public static final String HTTP_SERVER_SERVICE_IMPL =
             "io.sermant.implement.service.httpserver.HttpServerServiceImpl";
+
+    /**
+     * xDS Service Discover
+     */
+    public static final String XDS_SERVICE_IMPL =
+            "io.sermant.implement.service.xds.XdsServiceImpl";
 
     /**
      * logger

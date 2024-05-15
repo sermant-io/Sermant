@@ -73,7 +73,7 @@
         <dependency.plugin.version>3.3.0</dependency.plugin.version>
         <shade.plugin.version>3.2.4</shade.plugin.version>
         <assembly.plugin.version>2.5.3</assembly.plugin.version>
-        <grpc.version>1.36.1</grpc.version>
+        <grpc.version>1.52.1</grpc.version>
         <os.plugin.version>1.5.0.Final</os.plugin.version>
         <protubuf.plugin.version>0.5.1</protubuf.plugin.version>
         <version.plugin.version>2.8.1</version.plugin.version>

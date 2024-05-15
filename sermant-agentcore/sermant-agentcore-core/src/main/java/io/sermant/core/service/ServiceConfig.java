@@ -46,6 +46,9 @@ public class ServiceConfig implements BaseConfig {
     @ConfigFieldKey("httpserver.enable")
     private boolean httpserverEnable = false;
 
+    @ConfigFieldKey("xds.service.enable")
+    private boolean xdsServiceEnable = false;
+
     public boolean isHeartBeatEnable() {
         return heartBeatEnable;
     }
@@ -94,6 +97,14 @@ public class ServiceConfig implements BaseConfig {
         this.httpserverEnable = httpserverEnable;
     }
 
+    public boolean isXdsServiceEnable() {
+        return xdsServiceEnable;
+    }
+
+    public void setXdsServiceEnable(boolean xdsServiceEnable) {
+        this.xdsServiceEnable = xdsServiceEnable;
+    }
+
     /**
      * Check whether the service of the given class name is enabled.
      *
@@ -118,6 +129,9 @@ public class ServiceConfig implements BaseConfig {
         }
         if (ServiceManager.HTTP_SERVER_SERVICE_IMPL.equals(serviceName)) {
             return isHttpserverEnable();
+        }
+        if (ServiceManager.XDS_SERVICE_IMPL.equals(serviceName)) {
+            return isXdsServiceEnable();
         }
         return false;
     }

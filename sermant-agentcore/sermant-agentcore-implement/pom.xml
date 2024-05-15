@@ -30,6 +30,7 @@
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
         <nacos.version>2.1.2</nacos.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
+        <envoyproxy.controlplane.version>0.1.32</envoyproxy.controlplane.version>
     </properties>
 
     <dependencies>
@@ -124,6 +125,26 @@
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-commons</artifactId>
             <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.envoyproxy.controlplane</groupId>
+            <artifactId>api</artifactId>
+            <version>${envoyproxy.controlplane.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
