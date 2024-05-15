@@ -3,7 +3,7 @@
 <p>
     <img  src="docs/binary-docs/sermant-logo.png" width="50%" syt height="50%">
 </p>
-<h1>A Proxyless Service Mesh Solution Based on JavaAgent</h1>
+<h1>A Proxyless Service Mesh Based on Bytecode Enhancement</h1>
 
 
 [简体中文](README-zh.md) | [English](README.md)
