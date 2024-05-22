@@ -9,3 +9,4 @@ io.sermant.core.service.send.config.GatewayConfig
 io.sermant.core.plugin.config.ServiceMeta
 io.sermant.core.notification.config.NotificationConfig
 io.sermant.core.service.httpserver.config.HttpServerConfig
+io.sermant.core.service.xds.config.XdsConfig

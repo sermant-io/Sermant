@@ -23,6 +23,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -190,6 +194,26 @@ public class FileUtils {
                 return matchFileByWildcard(name, wcs);
             }
         });
+    }
+
+    /**
+     * read file and convert it to string
+     *
+     * @param filePath file path
+     * @return String
+     */
+    public static String readFileToString(String filePath) {
+        // Read all bytes from the file at once
+        byte[] bytes = null;
+        try {
+            bytes = Files.readAllBytes(Paths.get(filePath));
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "cannot read file content, please check the path");
+            return StringUtils.EMPTY;
+        }
+
+        // Convert the bytes to a String using UTF-8 encoding
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     private static boolean matchFileByWildcard(String name, String[] wcs) {
