@@ -85,13 +85,16 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      */
     private Map<String, Object> argsMap;
 
+    private final SermantYamlConstructor constructor;
+
     /**
      * 构造函数
      */
     public LoadYamlStrategy() {
         Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
-        this.yaml = new Yaml(representer);
+        this.constructor = new SermantYamlConstructor();
+        this.yaml = new Yaml(constructor, representer);
     }
 
     @Override
@@ -107,7 +110,7 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     @Override
-    public <R extends BaseConfig> R loadConfig(Map holder, R config) {
+    public <R extends BaseConfig> R loadConfig(Map holder, R config, boolean isDynamic) {
         final Class<R> cls = (Class<R>) config.getClass();
         final String typeKey = ConfigKeyUtil.getTypeKey(cls);
         final Object typeVal = holder.get(typeKey);
@@ -124,13 +127,11 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
                 configMap.put(field.getName(), null);
             }
         }
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(cls.getClassLoader());
-            return (R) yaml.loadAs(yaml.dump(fixEntry(configMap, cls)), cls);
-        } finally {
-            Thread.currentThread().setContextClassLoader(classLoader);
+        constructor.setLoader(cls.getClassLoader());
+        if (isDynamic) {
+            constructor.clearCache();
         }
+        return (R) yaml.loadAs(yaml.dump(fixEntry(configMap, cls)), cls);
     }
 
     /**
