@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * <p>Loading configuration information consists of two steps:
  * <pre>
  *     1.Load the configuration file as configuration information{@link #getConfigHolder(File, Map)}
- *     2.Load the configuration information into the configuration object{@link #loadConfig(Object, BaseConfig)}
+ *     2.Load the configuration information into the configuration object{@link #loadConfig(Object, BaseConfig,boolean)}
  * </pre>
  *
  * @param <T> configuration type
@@ -67,14 +67,15 @@ public interface LoadConfigStrategy<T> {
     T getConfigHolder(File config, Map<String, Object> argsMap);
 
     /**
-     * 加载配置，将配置信息主要承载对象中的配置信息加载到配置对象中
+     * Loading configuration: Loads the configuration information of the main carrier object to the configuration object
      *
-     * @param holder 配置信息主要承载对象
-     * @param config 配置对象
-     * @param <R>    配置对象类型
-     * @return 配置对象
+     * @param holder configuration holder
+     * @param config configuration object
+     * @param <R>    configuration class type
+     * @param isDynamic is the config loaded dynamically
+     * @return configuration object after processing
      */
-    <R extends BaseConfig> R loadConfig(T holder, R config);
+    <R extends BaseConfig> R loadConfig(T holder, R config, boolean isDynamic);
 
     /**
      * default {@link LoadConfigStrategy}, do not perform any logical operations
@@ -100,7 +101,7 @@ public interface LoadConfigStrategy<T> {
         }
 
         @Override
-        public <R extends BaseConfig> R loadConfig(Object holder, R config) {
+        public <R extends BaseConfig> R loadConfig(Object holder, R config, boolean isDynamic) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "[%s] will do nothing when loading config. ",
                     DefaultLoadConfigStrategy.class.getName()));
             return config;
