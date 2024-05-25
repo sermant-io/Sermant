@@ -36,12 +36,12 @@ public class XdsConstant {
     /**
      * eds resource type
      */
-    public static final String EDS_RESOURCE_TYPE = "envoy.config.endpoint.v3.ClusterLoadAssignment";
+    public static final String EDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.endpoint.v3.ClusterLoadAssignment";
 
     /**
      * cds resource type
      */
-    public static final String CDS_RESOURCE_TYPE = "envoy.config.cluster.v3.Cluster";
+    public static final String CDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.cluster.v3.Cluster";
 
     /**
      * sidecar string

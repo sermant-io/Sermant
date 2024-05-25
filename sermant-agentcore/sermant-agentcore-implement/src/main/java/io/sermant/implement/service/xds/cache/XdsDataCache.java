@@ -22,6 +22,7 @@ import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class XdsDataCache {
     /**
      * key:service name value:cluster map
      */
-    private static Map<String, List<String>> serviceNameMapping;
+    private static Map<String, Set<String>> serviceNameMapping = new HashMap<>();
 
     private XdsDataCache() {
     }
@@ -64,17 +65,29 @@ public class XdsDataCache {
      *
      * @param mapping the mapping between service and cluster
      */
-    public static void updateServiceNameMapping(Map<String, List<String>> mapping) {
+    public static void updateServiceNameMapping(Map<String, Set<String>> mapping) {
+        if (mapping == null) {
+            serviceNameMapping = new HashMap<>();
+        }
         serviceNameMapping = mapping;
     }
 
     /**
-     * get cluster list for service
+     * get cluster set for service
      *
      * @param serviceName
-     * @return cluster list for service
+     * @return cluster set for service
      */
-    public static List<String> getClustersByServiceName(String serviceName) {
-        return serviceNameMapping.getOrDefault(serviceName, Collections.EMPTY_LIST);
+    public static Set<String> getClustersByServiceName(String serviceName) {
+        return serviceNameMapping.getOrDefault(serviceName, Collections.EMPTY_SET);
+    }
+
+    /**
+     * get serviceNameMapping
+     *
+     * @return serviceNameMapping
+     */
+    public static Map<String, Set<String>> getServiceNameMapping() {
+        return serviceNameMapping;
     }
 }

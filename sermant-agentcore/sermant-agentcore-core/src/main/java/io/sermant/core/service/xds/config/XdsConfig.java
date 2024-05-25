@@ -34,11 +34,16 @@ public class XdsConfig implements BaseConfig {
     @ConfigFieldKey("security.enable")
     private boolean securityEnable = false;
 
-    @ConfigFieldKey("certificate.path")
-    private String certificatePath;
+    @ConfigFieldKey("service.account.token.path")
+    private String tokenPath;
 
-    @ConfigFieldKey("private.key.path")
-    private String privateKeyPath;
+    public String getTokenPath() {
+        return tokenPath;
+    }
+
+    public void setTokenPath(String tokenPath) {
+        this.tokenPath = tokenPath;
+    }
 
     public String getControlPlaneAddress() {
         return controlPlaneAddress;
@@ -54,21 +59,5 @@ public class XdsConfig implements BaseConfig {
 
     public void setSecurityEnable(boolean securityEnable) {
         this.securityEnable = securityEnable;
-    }
-
-    public String getCertificatePath() {
-        return certificatePath;
-    }
-
-    public void setCertificatePath(String certificatePath) {
-        this.certificatePath = certificatePath;
-    }
-
-    public String getPrivateKeyPath() {
-        return privateKeyPath;
-    }
-
-    public void setPrivateKeyPath(String privateKeyPath) {
-        this.privateKeyPath = privateKeyPath;
     }
 }
