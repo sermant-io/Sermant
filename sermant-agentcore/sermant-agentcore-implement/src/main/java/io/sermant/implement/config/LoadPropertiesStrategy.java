@@ -110,7 +110,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * @return Configure object generics
      */
     @Override
-    public <R extends BaseConfig> R loadConfig(Properties holder, R config) {
+    public <R extends BaseConfig> R loadConfig(Properties holder, R config, boolean isDynamic) {
         return loadConfig(holder, config.getClass(), config);
     }
 

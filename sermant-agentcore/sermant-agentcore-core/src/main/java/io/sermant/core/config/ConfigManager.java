@@ -148,7 +148,7 @@ public abstract class ConfigManager {
             final String typeKey = ConfigKeyUtil.getTypeKey(config.getClass());
             final BaseConfig retainedConfig = CONFIG_MAP.get(typeKey);
             if (retainedConfig == null) {
-                CONFIG_MAP.put(typeKey, doLoad(configFile, config));
+                CONFIG_MAP.put(typeKey, doLoad(configFile, config, false));
             } else if (retainedConfig.getClass() == config.getClass()) {
                 LOGGER.fine(String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
                         config.getClass().getName()));
@@ -164,14 +164,15 @@ public abstract class ConfigManager {
      *
      * @param configFile configuration file
      * @param baseConfig base config
+     * @param isDynamic is the config loaded dynamically
      * @return The configuration object after loading
      */
-    public static BaseConfig doLoad(File configFile, BaseConfig baseConfig) {
+    public static BaseConfig doLoad(File configFile, BaseConfig baseConfig, boolean isDynamic) {
         // Obtain configuration loading strategy using the FrameworkClassLoader
         final LoadConfigStrategy<?> loadConfigStrategy = getLoadConfigStrategy(configFile,
                 ClassLoaderManager.getFrameworkClassLoader());
         final Object holder = loadConfigStrategy.getConfigHolder(configFile, argsMap);
-        return ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, baseConfig);
+        return ((LoadConfigStrategy) loadConfigStrategy).loadConfig(holder, baseConfig, isDynamic);
     }
 
     /**
