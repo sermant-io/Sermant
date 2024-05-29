@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2021 Sermant Authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.sermant.core.utils;
+package io.sermant.implement.utils;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.utils.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

@@ -21,7 +21,11 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.service.ServiceManager;
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import io.sermant.core.utils.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -34,6 +38,10 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final String GROUP_SEPARATOR = "&";
+
+    private static final String KV_SEPARATOR = "=";
 
     private DynamicConfigService dynamicConfigService;
 
@@ -99,6 +107,36 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
             LoggerFactory.getLogger().info(String.format(Locale.ENGLISH,
                     "Success to subscribe group [%s]", group));
         }
+    }
+
+    /**
+     * Create Label Group
+     *
+     * @param labels labels
+     * @return labelGroup such as: app=sc&service=helloService
+     */
+    public static String createLabelGroup(Map<String, String> labels) {
+        if (labels == null || labels.isEmpty()) {
+            return StringUtils.EMPTY;
+        }
+        final StringBuilder group = new StringBuilder();
+        final List<String> keys = new ArrayList<>(labels.keySet());
+
+        // Prevent the same map from having different labels in the end
+        Collections.sort(keys);
+        for (String key : keys) {
+            String value = labels.get(key);
+            if (key == null || value == null) {
+                LOGGER.warning(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
+                        key, value));
+                continue;
+            }
+            group.append(key).append(KV_SEPARATOR).append(value).append(GROUP_SEPARATOR);
+        }
+        if (group.length() == 0) {
+            return StringUtils.EMPTY;
+        }
+        return group.deleteCharAt(group.length() - 1).toString();
     }
 
     /**

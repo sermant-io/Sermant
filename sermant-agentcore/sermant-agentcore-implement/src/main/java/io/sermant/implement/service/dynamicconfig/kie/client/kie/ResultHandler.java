@@ -50,10 +50,18 @@ public interface ResultHandler<R> {
     class DefaultResultHandler implements ResultHandler<KieResponse> {
         private final boolean onlyEnabled;
 
+        /**
+         * Constructor
+         */
         public DefaultResultHandler() {
             onlyEnabled = true;
         }
 
+        /**
+         * Constructor
+         *
+         * @param onlyEnabled Identification: Whether to only obtain the configuration for startup
+         */
         public DefaultResultHandler(boolean onlyEnabled) {
             this.onlyEnabled = onlyEnabled;
         }
@@ -93,13 +101,7 @@ public interface ResultHandler<R> {
             if (!onlyEnabled) {
                 return;
             }
-            final Iterator<KieConfigEntity> iterator = data.iterator();
-            while (iterator.hasNext()) {
-                final KieConfigEntity next = iterator.next();
-                if ("disabled".equals(next.getStatus())) {
-                    iterator.remove();
-                }
-            }
+            data.removeIf(next -> "disabled".equals(next.getStatus()));
         }
     }
 }

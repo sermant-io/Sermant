@@ -16,6 +16,7 @@
 
 package io.sermant.implement.service.dynamicconfig.zookeeper;
 
+
 import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
@@ -25,18 +26,11 @@ import io.sermant.core.notification.ZookeeperNotificationType;
 import io.sermant.core.service.dynamicconfig.config.DynamicConfig;
 import io.sermant.core.utils.AesUtil;
 
-import org.apache.zookeeper.AddWatchMode;
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -73,7 +67,7 @@ public class ZooKeeperBufferedClient implements Closeable {
     /**
      * ZK client
      */
-    private ZooKeeper zkClient;
+    private ZooKeeperClient zkClient;
 
     /**
      * Create a ZooKeeperBufferedClient, initialize the ZK client, and provide an expired reconnection mechanism
@@ -81,15 +75,15 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
      * @param sessionTimeout session timeout
      * @throws ZooKeeperInitException In the case of dependent dynamic configuration, if ZK initialization fails then
-     * Sermant needs to be interrupted
+     *                                Sermant needs to be interrupted
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout) {
-        zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
+        zkClient = new ZooKeeperClient(connectString, sessionTimeout, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
                 // 连接过期重连
                 if (event.getState() == Event.KeeperState.Expired) {
-                    zkClient = newZkClient(connectString, sessionTimeout, this);
+                    zkClient = new ZooKeeperClient(connectString, sessionTimeout, this);
                 }
                 postZookeeperConnectNotification(event);
             }
@@ -107,14 +101,14 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @param key key for encryption
      */
     public ZooKeeperBufferedClient(String connectString, int sessionTimeout, String userName,
-            String password, String key) {
+                                   String password, String key) {
         String authInfo = userName + ZK_AUTH_SEPARATOR + AesUtil.decrypt(key, password).orElse(null);
-        zkClient = newZkClient(connectString, sessionTimeout, new Watcher() {
+        zkClient = new ZooKeeperClient(connectString, sessionTimeout, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
                 // The connection expires and reconnects
                 if (event.getState() == Event.KeeperState.Expired) {
-                    zkClient = newZkClient(connectString, sessionTimeout, this);
+                    zkClient = new ZooKeeperClient(connectString, sessionTimeout, this);
                     waitConnect();
                     zkClient.addAuthInfo(SCHEME, authInfo.getBytes(CommonConstant.DEFAULT_CHARSET));
                 }
@@ -171,70 +165,24 @@ public class ZooKeeperBufferedClient implements Closeable {
     }
 
     /**
-     * Create ZK client
-     *
-     * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
-     * @param sessionTimeout session timeout
-     * @param watcher default watcher
-     * @return ZK client
-     * @throws ZooKeeperInitException zk initialization exception
-     */
-    private ZooKeeper newZkClient(String connectString, int sessionTimeout, Watcher watcher) {
-        try {
-            return new ZooKeeper(connectString, sessionTimeout, watcher);
-        } catch (IOException ignored) {
-            throw new ZooKeeperInitException("Connect to " + connectString + "failed. ");
-        }
-    }
-
-    /**
-     * Gets the ZK client and throws an exception if the client is disconnected
-     *
-     * @return ZK client
-     * @throws ZooKeeperConnectionException zk initialization exception
-     */
-    private ZooKeeper getZkClient() {
-        final ZooKeeper.States state = zkClient.getState();
-        if (state == ZooKeeper.States.CONNECTED || state == ZooKeeper.States.CONNECTEDREADONLY) {
-            return zkClient;
-        }
-        throw new ZooKeeperConnectionException("Unable to connect to the zookeeper server, connection timeout.");
-    }
-
-    /**
      * Check whether the node exists
      *
      * @param path node path
      * @return whether the node exists
      */
     public boolean ifNodeExist(String path) {
-        try {
-            return zkClient.exists(path, false) != null;
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
+        return zkClient.ifNodeExist(path);
     }
 
     /**
-     * Query node content
+     * Get configuration
      *
-     * @param path node path
+     * @param key configuration key
+     * @param group configuration group
      * @return node content
      */
-    public String getNode(String path) {
-        if (!ifNodeExist(path)) {
-            return "";
-        }
-        final byte[] data;
-        try {
-            data = getZkClient().getData(path, false, null);
-        } catch (KeeperException | InterruptedException ignored) {
-            return "";
-        }
-        if (data == null) {
-            return "";
-        }
-        return new String(data, CommonConstant.DEFAULT_CHARSET);
+    public String getNode(String key, String group) {
+        return zkClient.getConfig(key, group);
     }
 
     /**
@@ -244,65 +192,30 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return create result
      */
     public boolean createParent(String path) {
-        final int separatorIndex = path.lastIndexOf(ZK_PATH_SEPARATOR);
-        if (separatorIndex == 0) {
-            return true;
-        }
-        final String parent = path.substring(0, separatorIndex);
-        if (ifNodeExist(parent)) {
-            return true;
-        }
-        if (!createParent(parent)) {
-            return false;
-        }
-        try {
-            getZkClient().create(parent, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+        return zkClient.createParent(path);
     }
 
     /**
      * Update content of node, which is automatically created when it does not exist
      *
-     * @param path node path
+     * @param key node name
+     * @param group node parent path
      * @param data data
      * @return update result
      */
-    public boolean updateNode(String path, String data) {
-        try {
-            if (ifNodeExist(path)) {
-                getZkClient().setData(path, data.getBytes(CommonConstant.DEFAULT_CHARSET), -1);
-            } else {
-                if (!createParent(path)) {
-                    return false;
-                }
-                getZkClient().create(path, data.getBytes(CommonConstant.DEFAULT_CHARSET), ZooDefs.Ids.OPEN_ACL_UNSAFE,
-                        CreateMode.PERSISTENT);
-            }
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+    public boolean updateNode(String key, String group, String data) {
+        return zkClient.publishConfig(key, group, data);
     }
 
     /**
      * Remove node
      *
-     * @param path node path
+     * @param key node name
+     * @param group node parent path
      * @return remove result
      */
-    public boolean removeNode(String path) {
-        if (!ifNodeExist(path)) {
-            return true;
-        }
-        try {
-            getZkClient().delete(path, -1);
-        } catch (InterruptedException | KeeperException ignored) {
-            return false;
-        }
-        return true;
+    public boolean removeNode(String key, String group) {
+        return zkClient.removeConfig(key, group);
     }
 
     /**
@@ -312,22 +225,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return path list
      */
     public List<String> listAllNodes(String path) {
-        if (!ifNodeExist(path)) {
-            return Collections.emptyList();
-        }
-        final List<String> children;
-        try {
-            children = getZkClient().getChildren(path, false);
-        } catch (KeeperException | InterruptedException ignored) {
-            return Collections.emptyList();
-        }
-        final List<String> nodes = new ArrayList<>();
-        for (String child : children) {
-            final String childPath = path + ZK_PATH_SEPARATOR + child;
-            nodes.add(childPath);
-            nodes.addAll(listAllNodes(childPath));
-        }
-        return nodes;
+        return zkClient.listAllNodes(path);
     }
 
     /**
@@ -342,28 +240,8 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @param handler Exception handler after loop registration failure of watcher
      * @return add result
      */
-    public boolean addDataLoopWatch(String path, Watcher watcher, BreakHandler handler) {
-        final Watcher bufferedWatcher = new Watcher() {
-            @Override
-            public void process(WatchedEvent event) {
-                final Event.EventType type = event.getType();
-                if (type == Event.EventType.DataWatchRemoved) {
-                    return;
-                }
-                watcher.process(event);
-                try {
-                    getZkClient().exists(path, this);
-                } catch (KeeperException | InterruptedException e) {
-                    handler.handle(e);
-                }
-            }
-        };
-        try {
-            getZkClient().exists(path, bufferedWatcher);
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+    public boolean addDataLoopWatch(String path, Watcher watcher, ZooKeeperClient.BreakHandler handler) {
+        return zkClient.addDataLoopWatch(path, watcher, handler);
     }
 
     /**
@@ -374,12 +252,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return add result
      */
     public boolean addPersistentRecursiveWatches(String path, Watcher watcher) {
-        try {
-            getZkClient().addWatch(path, watcher, AddWatchMode.PERSISTENT_RECURSIVE);
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+        return zkClient.addPersistentRecursiveWatches(path, watcher);
     }
 
     /**
@@ -389,12 +262,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return remove result
      */
     public boolean removeDataWatches(String path) {
-        try {
-            getZkClient().removeAllWatches(path, Watcher.WatcherType.Data, false);
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+        return zkClient.removeDataWatches(path);
     }
 
     /**
@@ -404,12 +272,7 @@ public class ZooKeeperBufferedClient implements Closeable {
      * @return remove result
      */
     public boolean removeAllWatches(String path) {
-        try {
-            getZkClient().removeAllWatches(path, Watcher.WatcherType.Any, false);
-        } catch (KeeperException | InterruptedException ignored) {
-            return false;
-        }
-        return true;
+        return zkClient.removeAllWatches(path);
     }
 
     @Override
@@ -419,19 +282,5 @@ public class ZooKeeperBufferedClient implements Closeable {
         } catch (InterruptedException ignored) {
             LOGGER.warning("Unexpected exception occurs. ");
         }
-    }
-
-    /**
-     * The loop out processor is currently used to handle cases where loop registration is accidentally terminated
-     *
-     * @since 2021-12-15
-     */
-    public interface BreakHandler {
-        /**
-         * Handles cases where circular registration is accidentally terminated
-         *
-         * @param throwable throwable
-         */
-        void handle(Throwable throwable);
     }
 }

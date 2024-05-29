@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Sermant Authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package io.sermant.core.utils;
+package io.sermant.implement.service.util;
 
+
+import io.sermant.implement.utils.LabelGroupUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +29,7 @@ import java.util.Map;
  * LabelGroup tests
  *
  * @author xzc
- * @since 2022-10-08
+ * @since 2024-05-16
  */
 public class LabelGroupUtilsTest {
     @Test

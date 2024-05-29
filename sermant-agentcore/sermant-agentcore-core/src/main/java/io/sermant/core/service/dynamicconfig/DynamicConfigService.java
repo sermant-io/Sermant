@@ -45,7 +45,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     protected static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
 
     /**
-     * 日志
+     * A Logger object is used to log messages for a specific system or application component.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -56,7 +56,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
      * @return fixed group
      */
     protected String fixGroup(String group) {
-        return group == null || group.length() <= 0 ? CONFIG.getDefaultGroup() : group;
+        return group == null || group.isEmpty() ? CONFIG.getDefaultGroup() : group;
     }
 
     @Override
@@ -79,7 +79,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
         if (!checkKey(key)) {
             return false;
         }
-        if (content == null || content.length() <= 0) {
+        if (content == null || content.isEmpty()) {
             LOGGER.warning("Publish empty config is meaningless, so skip. ");
             return false;
         }
@@ -276,7 +276,7 @@ public abstract class DynamicConfigService implements BaseService, KeyService, K
     public abstract boolean doAddGroupListener(String group, DynamicConfigListener listener);
 
     private boolean checkKey(String key) {
-        if (key == null || key.length() <= 0) {
+        if (key == null || key.isEmpty()) {
             LOGGER.warning("Empty key is not allowed. ");
             return false;
         }
