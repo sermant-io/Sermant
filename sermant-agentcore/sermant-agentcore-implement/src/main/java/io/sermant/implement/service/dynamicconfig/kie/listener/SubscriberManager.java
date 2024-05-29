@@ -23,19 +23,19 @@
 package io.sermant.implement.service.dynamicconfig.kie.listener;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.config.ConfigManager;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.LabelGroupUtils;
-import io.sermant.core.utils.StringUtils;
+import io.sermant.core.service.dynamicconfig.config.KieDynamicConfig;
 import io.sermant.core.utils.ThreadFactoryUtils;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieClient;
-import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieConfigEntity;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieListenerWrapper;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieRequest;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieResponse;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieSubscriber;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.ResultHandler;
 import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
+import io.sermant.implement.utils.LabelGroupUtils;
 
 import org.apache.http.client.config.RequestConfig;
 
@@ -133,7 +133,8 @@ public class SubscriberManager {
      * @param timeout timeout
      */
     public SubscriberManager(String serverAddress, int timeout) {
-        kieClient = new KieClient(new ClientUrlManager(serverAddress), timeout);
+        kieClient = new KieClient(new ClientUrlManager(serverAddress),
+                ConfigManager.getConfig(KieDynamicConfig.class).getProject(), timeout);
     }
 
     /**
@@ -215,7 +216,7 @@ public class SubscriberManager {
      * @return publish result
      */
     public boolean publishConfig(String key, String group, String content) {
-        final Optional<String> keyIdOptional = getKeyId(key, group);
+        final Optional<String> keyIdOptional = this.kieClient.getKeyId(key, group);
         if (!keyIdOptional.isPresent()) {
             // If not exists, then publish
             final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
@@ -233,48 +234,8 @@ public class SubscriberManager {
      * @return remove result
      */
     public boolean removeConfig(String key, String group) {
-        final Optional<String> keyIdOptional = getKeyId(key, group);
+        final Optional<String> keyIdOptional = this.kieClient.getKeyId(key, group);
         return keyIdOptional.filter(kieClient::doDeleteConfig).isPresent();
-    }
-
-    /**
-     * Get key_id
-     *
-     * @param key configuration key
-     * @param group configuration group
-     * @return key_id, return null if not exists
-     */
-    private Optional<String> getKeyId(String key, String group) {
-        final KieResponse kieResponse = queryConfigurations(null, LabelGroupUtils.getLabelCondition(group), false);
-        if (kieResponse == null || kieResponse.getData() == null) {
-            return Optional.empty();
-        }
-        final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
-        for (KieConfigEntity entity : kieResponse.getData()) {
-            if (isSameKey(entity, key, labels)) {
-                return Optional.of(entity.getId());
-            }
-        }
-        return Optional.empty();
-    }
-
-    private boolean isSameKey(KieConfigEntity entity, String targetKey, Map<String, String> targetLabels) {
-        if (!StringUtils.equals(entity.getKey(), targetKey)) {
-            return false;
-        }
-
-        // Compare labels to see if they are the same
-        final Map<String, String> sourceLabels = entity.getLabels();
-        if (sourceLabels == null || (sourceLabels.size() != targetLabels.size())) {
-            return false;
-        }
-        for (Map.Entry<String, String> entry : sourceLabels.entrySet()) {
-            final String labelValue = targetLabels.get(entry.getKey());
-            if (!StringUtils.equals(labelValue, entry.getValue())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -287,7 +248,7 @@ public class SubscriberManager {
      * @return subscribe result
      */
     public boolean subscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener,
-            boolean ifNotify) {
+                             boolean ifNotify) {
         final KieListenerWrapper oldWrapper = listenerMap.get(kieRequest);
         if (oldWrapper == null) {
             return firstSubscribeForGroup(key, kieRequest, dynamicConfigListener, ifNotify);
@@ -305,7 +266,7 @@ public class SubscriberManager {
     }
 
     private boolean firstSubscribeForGroup(String key, KieRequest kieRequest,
-            DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
+                                           DynamicConfigListener dynamicConfigListener, boolean ifNotify) {
         final KieSubscriber kieSubscriber = new KieSubscriber(kieRequest);
         Task task;
         KieListenerWrapper kieListenerWrapper =
@@ -392,7 +353,7 @@ public class SubscriberManager {
      * @return boolean
      */
     public boolean unSubscribe(String key, KieRequest kieRequest, DynamicConfigListener dynamicConfigListener) {
-        for (Map.Entry<KieRequest, KieListenerWrapper> next : listenerMap.entrySet()) {
+        for (Entry<KieRequest, KieListenerWrapper> next : listenerMap.entrySet()) {
             if (!next.getKey().equals(kieRequest)) {
                 continue;
             }
@@ -411,7 +372,7 @@ public class SubscriberManager {
     }
 
     private boolean doUnSubscribe(String key, DynamicConfigListener dynamicConfigListener,
-            Entry<KieRequest, KieListenerWrapper> next) {
+                                  Entry<KieRequest, KieListenerWrapper> next) {
         final KieListenerWrapper wrapper = next.getValue();
         if (wrapper.removeKeyListener(key, dynamicConfigListener)) {
             if (wrapper.isEmpty()) {
@@ -465,29 +426,6 @@ public class SubscriberManager {
     }
 
     /**
-     * TaskRunnable
-     *
-     * @since 2021-11-17
-     */
-    static class TaskRunnable implements Runnable {
-        private final Task task;
-
-        TaskRunnable(Task task) {
-            this.task = task;
-        }
-
-        @Override
-        public void run() {
-            try {
-                task.execute();
-            } catch (Exception ex) {
-                LOGGER.warning(
-                        String.format(Locale.ENGLISH, "The error occurred when execute task , %s", ex.getMessage()));
-            }
-        }
-    }
-
-    /**
      * Task
      *
      * @since 2021-11-17
@@ -509,6 +447,29 @@ public class SubscriberManager {
          * stop task
          */
         void stop();
+    }
+
+    /**
+     * TaskRunnable
+     *
+     * @since 2021-11-17
+     */
+    static class TaskRunnable implements Runnable {
+        private final Task task;
+
+        TaskRunnable(Task task) {
+            this.task = task;
+        }
+
+        @Override
+        public void run() {
+            try {
+                task.execute();
+            } catch (Exception ex) {
+                LOGGER.warning(
+                        String.format(Locale.ENGLISH, "The error occurred when execute task , %s", ex.getMessage()));
+            }
+        }
     }
 
     /**

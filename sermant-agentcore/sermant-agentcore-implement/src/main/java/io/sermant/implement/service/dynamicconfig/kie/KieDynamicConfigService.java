@@ -19,10 +19,10 @@ package io.sermant.implement.service.dynamicconfig.kie;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.LabelGroupUtils;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieConfigEntity;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieResponse;
 import io.sermant.implement.service.dynamicconfig.kie.listener.SubscriberManager;
+import io.sermant.implement.utils.LabelGroupUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +128,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
                 subscriberManager.queryConfigurations(null, LabelGroupUtils.getLabelCondition(group));
         if (isValidResponse(kieResponse)) {
             final List<KieConfigEntity> data = kieResponse.getData();
-            final List<String> keys = new ArrayList<String>(data.size());
+            final List<String> keys = new ArrayList<>(data.size());
             for (KieConfigEntity entity : data) {
                 keys.add(entity.getKey());
             }
@@ -176,6 +176,7 @@ public class KieDynamicConfigService extends DynamicConfigService {
      * @param str key or group
      * @param isGroup Group or not
      * @return fixed value
+     * @throws IllegalArgumentException Exception thrown when key is empty
      */
     private String fixSeparator(String str, boolean isGroup) {
         String newStr = str;

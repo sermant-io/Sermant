@@ -42,15 +42,19 @@ public class ZooKeeperBufferedClientTest {
 
     private static final String PARENT_PATH = "/path";
 
+    private static final String PARENT_KEY = "path";
+
     private static final String CHILD_ONE_PATH = "/path/1";
 
     private static final String CHILE_TWO_PATh = "/path/2";
 
+    private static final String CHILE_TWO_PATh_PARENT = "/path";
+
+    private static final String CHILE_TWO_PATh_KEY = "2";
+
     private static final String NODE_CONTENT = "data";
-
-    private MockedStatic<ConfigManager> configManagerMockedStatic;
-
     ZooKeeperBufferedClient zooKeeperBufferedClient;
+    private MockedStatic<ConfigManager> configManagerMockedStatic;
 
     @Before
     public void setUp() {
@@ -80,41 +84,47 @@ public class ZooKeeperBufferedClientTest {
 
     @Test
     public void testUpdateNode() {
-        boolean result = zooKeeperBufferedClient.updateNode(PARENT_PATH, NODE_CONTENT);
+        boolean result = zooKeeperBufferedClient.updateNode(PARENT_PATH, null, NODE_CONTENT);
         Assert.assertTrue(result);
     }
 
     @Test
     public void testGetNode() {
-        String result = zooKeeperBufferedClient.getNode(PARENT_PATH);
+        String result = zooKeeperBufferedClient.getNode(PARENT_PATH, null);
         Assert.assertEquals(NODE_CONTENT, result);
     }
 
     @Test
     public void testCreateParentNode1() {
-        boolean result = zooKeeperBufferedClient.updateNode(CHILD_ONE_PATH, NODE_CONTENT);
+        int index = CHILD_ONE_PATH.lastIndexOf("/");
+        String parentPath = CHILD_ONE_PATH.substring(0, index);
+        String key = CHILD_ONE_PATH.substring(index + 1);
+        boolean result = zooKeeperBufferedClient.updateNode(key, parentPath, NODE_CONTENT);
         Assert.assertTrue(result);
     }
 
     @Test
     public void testCreateParentNode2() {
-        boolean result = zooKeeperBufferedClient.updateNode(CHILE_TWO_PATh, NODE_CONTENT);
+        boolean result = zooKeeperBufferedClient.updateNode(CHILE_TWO_PATh_KEY, CHILE_TWO_PATh_PARENT, NODE_CONTENT);
         Assert.assertTrue(result);
     }
 
     @Test
     public void testListAllNodes() {
         List<String> result = zooKeeperBufferedClient.listAllNodes(PARENT_PATH);
-        Assert.assertEquals(Arrays.<String>asList(CHILD_ONE_PATH, CHILE_TWO_PATh), result);
+        Assert.assertEquals(Arrays.asList(CHILD_ONE_PATH, CHILE_TWO_PATh), result);
     }
 
     @Test
     public void testRemoveNode() {
-        boolean deleteChileOne = zooKeeperBufferedClient.removeNode(CHILD_ONE_PATH);
+        int index = CHILD_ONE_PATH.lastIndexOf("/");
+        String parentPath = CHILD_ONE_PATH.substring(0, index);
+        String key = CHILD_ONE_PATH.substring(index + 1);
+        boolean deleteChileOne = zooKeeperBufferedClient.removeNode(key, parentPath);
         Assert.assertTrue(deleteChileOne);
-        boolean deleteChileTwo = zooKeeperBufferedClient.removeNode(CHILE_TWO_PATh);
+        boolean deleteChileTwo = zooKeeperBufferedClient.removeNode(CHILE_TWO_PATh_KEY, CHILE_TWO_PATh_PARENT);
         Assert.assertTrue(deleteChileTwo);
-        boolean deleteParentNode = zooKeeperBufferedClient.removeNode(PARENT_PATH);
+        boolean deleteParentNode = zooKeeperBufferedClient.removeNode(PARENT_PATH, null);
         Assert.assertTrue(deleteParentNode);
     }
 }

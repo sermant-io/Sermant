@@ -21,7 +21,6 @@ import io.sermant.core.plugin.subscribe.processor.DefaultConfigProcessor;
 import io.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.LabelGroupUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.Collections;
@@ -67,7 +66,7 @@ public class DefaultGroupConfigSubscriber extends AbstractGroupConfigSubscriber 
     @Override
     protected Map<String, DynamicConfigListener> buildGroupSubscribers() {
         return Collections
-                .singletonMap(LabelGroupUtils.createLabelGroup(Collections.singletonMap("service", serviceName)),
+                .singletonMap(createLabelGroup(Collections.singletonMap("service", serviceName)),
                         new IntegratedEventListenerAdapter(new DefaultConfigProcessor(listener), null));
     }
 

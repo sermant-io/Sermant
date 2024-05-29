@@ -35,7 +35,7 @@ public class KieRequest {
      * kie changes. OFFICIAL-STATEMENT： "wait until any kv changed. for example wait=5s, server will not response until
      * 5 seconds, during that time window, if any kv changed, server will return 200 and kv list, otherwise return 304
      * and empty body".
-     *
+     * <p>
      * It is recommended that the time not exceed 50 seconds. If the time exceeds 50 seconds, it will be calculated as
      * 50 seconds
      */
@@ -56,6 +56,11 @@ public class KieRequest {
      * condition
      */
     private boolean accurateMatchLabel = true;
+
+    /**
+     * Key condition
+     */
+    private String key;
 
     public RequestConfig getRequestConfig() {
         return requestConfig;
@@ -118,6 +123,21 @@ public class KieRequest {
         return this;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * set key
+     *
+     * @param key key
+     * @return KieRequest
+     */
+    public KieRequest setKey(String key) {
+        this.key = key;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -126,9 +146,7 @@ public class KieRequest {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         KieRequest that = (KieRequest) obj;
-
         return labelCondition != null ? labelCondition.equals(that.labelCondition) : that.labelCondition == null;
     }
 

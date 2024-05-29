@@ -16,18 +16,25 @@
 
 package io.sermant.implement.service.dynamicconfig.kie.client.kie;
 
-import io.sermant.core.config.ConfigManager;
-import io.sermant.core.service.dynamicconfig.config.KieDynamicConfig;
+import io.sermant.implement.service.dynamicconfig.ConfigClient;
+import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
 import io.sermant.implement.service.dynamicconfig.kie.client.AbstractClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.http.HttpResult;
+import io.sermant.implement.utils.LabelGroupUtils;
 
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Kie Client
@@ -35,7 +42,9 @@ import java.util.Map;
  * @author zhouss
  * @since 2021-11-17
  */
-public class KieClient extends AbstractClient {
+public class KieClient extends AbstractClient implements ConfigClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KieClient.class.getName());
+
     /**
      * Default version
      */
@@ -46,16 +55,6 @@ public class KieClient extends AbstractClient {
     private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
 
     private String kieApi;
-
-    /**
-     * Kie client constructor
-     *
-     * @param clientUrlManager kie url manager
-     * @param timeout timeout
-     */
-    public KieClient(ClientUrlManager clientUrlManager, int timeout) {
-        this(clientUrlManager, ConfigManager.getConfig(KieDynamicConfig.class).getProject(), timeout);
-    }
 
     /**
      * Kie client constructor
@@ -119,6 +118,13 @@ public class KieClient extends AbstractClient {
         if (request.isAccurateMatchLabel()) {
             requestUrl.append("&match=exact");
         }
+        if (request.getKey() != null) {
+            if (request.isAccurateMatchLabel()) {
+                requestUrl.append("&key=").append(request.getKey());
+            } else {
+                requestUrl.append("&key=wildcard(*").append(request.getKey()).append("*)");
+            }
+        }
         if (request.getWait() != null) {
             requestUrl.append("&wait=").append(formatNullString(request.getWait())).append("s");
         }
@@ -143,6 +149,11 @@ public class KieClient extends AbstractClient {
         params.put("status", enabled ? "enabled" : "disabled");
         final HttpResult httpResult = this.httpClient.doPost(clientUrlManager.getUrl() + kieApi, params);
         return httpResult.getCode() == HttpStatus.SC_OK;
+    }
+
+    @Override
+    public boolean publishConfig(String key, String group, String content) {
+        return this.publishConfig(key, LabelGroupUtils.resolveGroupLabels(group), content, true);
     }
 
     /**
@@ -178,11 +189,76 @@ public class KieClient extends AbstractClient {
     }
 
     private String formatNullString(String val) {
-        if (val == null || val.trim().length() == 0) {
+        if (val == null || val.trim().isEmpty()) {
             // When the version number is empty, the default version number is set to "0". When the version is
             // updated, the data is returned immediately to avoid blocking problems
             return ABSENT_REVISION;
         }
         return val;
+    }
+
+    @Override
+    public String getConfig(String key, String group) {
+        final KieResponse kieResponse = this.getKieResponse(key, group, true);
+        if (kieResponse == null || kieResponse.getData() == null) {
+            return DynamicConstants.EMPTY_STRING;
+        }
+        final List<KieConfigEntity> data = kieResponse.getData();
+        for (KieConfigEntity entity : data) {
+            return entity.getValue();
+        }
+        return DynamicConstants.EMPTY_STRING;
+    }
+
+    @Override
+    public Map<String, List<String>> getConfigList(String key, String group, boolean exactMatchFlag) {
+        final KieResponse kieResponse = getKieResponse(key, group, exactMatchFlag);
+        if (kieResponse == null || kieResponse.getData() == null) {
+            return Collections.emptyMap();
+        }
+        Map<String, List<String>> result = new HashMap<>();
+        for (KieConfigEntity entity : kieResponse.getData()) {
+            List<String> configList = result.computeIfAbsent(LabelGroupUtils.createLabelGroup(entity.getLabels()),
+                    configKey -> new ArrayList<>());
+            configList.add(entity.getKey());
+        }
+        return result;
+    }
+
+    private KieResponse getKieResponse(String key, String group, boolean exactMatchFlag) {
+        String labelCondition = LabelGroupUtils.getLabelCondition(group);
+        final KieRequest cloneRequest = new KieRequest().setRevision(null).setLabelCondition(labelCondition)
+                .setKey(key);
+        cloneRequest.setAccurateMatchLabel(exactMatchFlag);
+        return this.queryConfigurations(cloneRequest);
+    }
+
+    @Override
+    public boolean removeConfig(String key, String group) {
+        Optional<String> keyIdOptional = getKeyId(key, group);
+        if (!keyIdOptional.isPresent()) {
+            LOGGER.warn("The configuration item does not exist, key is {}, group is {}.", key, group);
+            return false;
+        }
+        final HttpResult httpResult = this.httpClient.doDelete(buildKeyIdUrl(keyIdOptional.get()));
+        return httpResult.getCode() == HttpStatus.SC_OK;
+    }
+
+    /**
+     * Get key_id
+     *
+     * @param key configuration key
+     * @param group configuration group
+     * @return key_id, return null if not exists
+     */
+    public Optional<String> getKeyId(String key, String group) {
+        final KieResponse kieResponse = this.getKieResponse(key, group, true);
+        if (kieResponse == null || kieResponse.getData() == null) {
+            return Optional.empty();
+        }
+        for (KieConfigEntity entity : kieResponse.getData()) {
+            return Optional.of(entity.getId());
+        }
+        return Optional.empty();
     }
 }

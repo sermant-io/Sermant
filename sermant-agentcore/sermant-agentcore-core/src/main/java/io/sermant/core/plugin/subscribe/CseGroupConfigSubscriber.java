@@ -25,7 +25,6 @@ import io.sermant.core.plugin.subscribe.processor.ConfigProcessor;
 import io.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.LabelGroupUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
@@ -94,7 +93,7 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         map.put("app", config.getApplication());
         map.put("service", serviceName);
         map.put("environment", config.getEnvironment());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, SERVICE_ORDER));
     }
@@ -103,7 +102,7 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put("app", config.getApplication());
         map.put("environment", config.getEnvironment());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, APP_ORDER));
     }
@@ -114,7 +113,7 @@ public class CseGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         }
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put(config.getCustomLabel(), config.getCustomLabelValue());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, CUSTOM_ORDER));
     }

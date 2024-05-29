@@ -16,11 +16,11 @@
 
 package io.sermant.implement.service.dynamicconfig.nacos;
 
-import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.client.auth.impl.NacosAuthLoginConstant;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
@@ -29,6 +29,10 @@ import io.sermant.core.utils.AesUtil;
 import io.sermant.core.utils.StringUtils;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -56,7 +60,9 @@ public class NacosBufferedClient implements Closeable {
      */
     private static final DynamicConfig CONFIG = ConfigManager.getConfig(DynamicConfig.class);
 
-    private ConfigService configService;
+    private NacosClient nacosClient;
+
+    private final String namepase;
 
     /**
      * Create a NacosBufferedClient and initialize the Nacos client
@@ -65,11 +71,12 @@ public class NacosBufferedClient implements Closeable {
      * @param sessionTimeout session timeout
      * @param namespace namespace
      * @throws NacosInitException In the case of dependent dynamic configuration, if Nacos initialization fails then
-     * Sermant needs to be interrupted
+     *                            Sermant needs to be interrupted
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace) {
         Properties properties = createProperties(connectString, sessionTimeout, namespace);
-        createConfigService(connectString, properties);
+        this.namepase = namespace;
+        createNacosClient(connectString, properties);
     }
 
     /**
@@ -81,12 +88,27 @@ public class NacosBufferedClient implements Closeable {
      * @param userName username
      * @param password encrypted password
      * @throws NacosInitException In the case of dependent dynamic configuration, if Nacos initialization fails then
-     * Sermant needs to be interrupted
+     *                            Sermant needs to be interrupted
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace, String userName,
-            String password) {
+                               String password) {
         Properties properties = createProperties(connectString, sessionTimeout, namespace, userName, password);
-        createConfigService(connectString, properties);
+        this.namepase = namespace;
+        createNacosClient(connectString, properties);
+    }
+
+    /**
+     * Get all keys for all Nacos groups
+     *
+     * @return A Map of the groups and all its keys
+     */
+    public Map<String, List<String>> getGroupKeys() {
+        try {
+            return this.nacosClient.getGroupKeys(null, null, this.namepase, true);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Nacos http request exception.");
+            return new HashMap<>();
+        }
     }
 
     /**
@@ -98,7 +120,7 @@ public class NacosBufferedClient implements Closeable {
      */
     public String getConfig(String key, String group) {
         try {
-            final String data = this.configService.getConfig(key, group, CONFIG.getRequestTimeout());
+            final String data = this.nacosClient.getConfig(key, group, CONFIG.getRequestTimeout());
             return data == null ? "" : data;
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, "Nacos getConfig exception, msg is: {0}", e.getMessage());
@@ -115,12 +137,7 @@ public class NacosBufferedClient implements Closeable {
      * @return publish result
      */
     public boolean publishConfig(String key, String group, String content) {
-        try {
-            return this.configService.publishConfig(key, group, content);
-        } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, "Nacos publishConfig exception, msg is: {0}", e.getMessage());
-            return false;
-        }
+        return this.nacosClient.publishConfig(key, group, content);
     }
 
     /**
@@ -131,12 +148,7 @@ public class NacosBufferedClient implements Closeable {
      * @return remove result
      */
     public boolean removeConfig(String key, String group) {
-        try {
-            return this.configService.removeConfig(key, group);
-        } catch (NacosException e) {
-            LOGGER.log(Level.SEVERE, "Nacos removeConfig exception, msg is: {0}", e.getMessage());
-            return false;
-        }
+        return this.nacosClient.removeConfig(key, group);
     }
 
     /**
@@ -149,7 +161,7 @@ public class NacosBufferedClient implements Closeable {
      */
     public boolean addListener(String key, String group, Listener listener) {
         try {
-            this.configService.addListener(key, group, listener);
+            this.nacosClient.addListener(key, group, listener);
             return true;
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, "Nacos addListener exception, msg is: {0}", e.getMessage());
@@ -165,7 +177,7 @@ public class NacosBufferedClient implements Closeable {
      * @param listener listener
      */
     public void removeListener(String key, String group, Listener listener) {
-        this.configService.removeListener(key, group, listener);
+        this.nacosClient.removeListener(key, group, listener);
     }
 
     /**
@@ -178,6 +190,7 @@ public class NacosBufferedClient implements Closeable {
      */
     private Properties createProperties(String connectString, int sessionTimeout, String namespace) {
         Properties properties = new Properties();
+        properties.setProperty(NacosAuthLoginConstant.SERVER, connectString);
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, connectString);
         properties.setProperty(PropertyKeyConst.NAMESPACE, namespace);
         properties.setProperty(PropertyKeyConst.CONFIG_LONG_POLL_TIMEOUT, String.valueOf(sessionTimeout));
@@ -220,7 +233,7 @@ public class NacosBufferedClient implements Closeable {
      * @param properties properties
      * @throws NacosInitException Connect to Nacos failed
      */
-    private void createConfigService(String connectString, Properties properties) {
+    private void createNacosClient(String connectString, Properties properties) {
         try {
             if (!connect(properties)) {
                 LOGGER.log(Level.SEVERE, "Nacos connection reaches the maximum number of retries");
@@ -246,9 +259,9 @@ public class NacosBufferedClient implements Closeable {
             // changed back to the original classloader
             ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-            configService = NacosFactory.createConfigService(properties);
+            nacosClient = new NacosClient(properties);
             Thread.currentThread().setContextClassLoader(tempClassLoader);
-            if (KEY_CONNECTED.equals(configService.getServerStatus())) {
+            if (KEY_CONNECTED.equals(nacosClient.getServerStatus())) {
                 return true;
             }
             try {
@@ -264,7 +277,7 @@ public class NacosBufferedClient implements Closeable {
     @Override
     public void close() {
         try {
-            configService.shutDown();
+            nacosClient.close();
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, "Nacos close exception, msg is: {0}", e.getMessage());
         }

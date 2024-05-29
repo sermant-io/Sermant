@@ -22,7 +22,6 @@ import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 
 import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,40 +115,32 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
 
     @Override
     public Optional<String> doGetConfig(String key, String group) {
-        return Optional.ofNullable(zkClient.getNode(toPath(key, group)));
+        return Optional.ofNullable(zkClient.getNode(key, group));
     }
 
     @Override
     public boolean doPublishConfig(String key, String group, String content) {
-        return zkClient.updateNode(toPath(key, group), content);
+        return zkClient.updateNode(key, group, content);
     }
 
     @Override
     public boolean doRemoveConfig(String key, String group) {
-        return zkClient.removeNode(toPath(key, group));
+        return zkClient.removeNode(key, group);
     }
 
     @Override
     public boolean doAddConfigListener(String key, String group, DynamicConfigListener listener) {
         final String fullPath = toPath(key, group);
-        return zkClient.addDataLoopWatch(fullPath, new Watcher() {
-            @Override
-            public void process(WatchedEvent watchedEvent) {
-                if (!fullPath.equals(watchedEvent.getPath())) {
-                    LOGGER.warning(String.format(Locale.ROOT,
-                            "Unexpected event path, giving [%s], but expecting [%s]. ",
-                            watchedEvent.getPath(), fullPath));
-                    return;
-                }
-                listener.process(transEvent(key, group, watchedEvent));
-            }
-        }, new ZooKeeperBufferedClient.BreakHandler() {
-            @Override
-            public void handle(Throwable throwable) {
+        return zkClient.addDataLoopWatch(fullPath, watchedEvent -> {
+            if (!fullPath.equals(watchedEvent.getPath())) {
                 LOGGER.warning(String.format(Locale.ROOT,
-                        "Cancel watch [%s] for [%s]: [%s]. ", fullPath, throwable.getClass(), throwable.getMessage()));
+                        "Unexpected event path, giving [%s], but expecting [%s]. ",
+                        watchedEvent.getPath(), fullPath));
+                return;
             }
-        });
+            listener.process(transEvent(key, group, watchedEvent));
+        }, throwable -> LOGGER.warning(String.format(Locale.ROOT,
+                "Cancel watch [%s] for [%s]: [%s]. ", fullPath, throwable.getClass(), throwable.getMessage())));
     }
 
     @Override
@@ -172,25 +163,22 @@ public class ZooKeeperDynamicConfigService extends DynamicConfigService {
     @Override
     public boolean doAddGroupListener(String group, DynamicConfigListener listener) {
         final String groupPath = toPath(group);
-        return zkClient.addPersistentRecursiveWatches(groupPath, new Watcher() {
-            @Override
-            public void process(WatchedEvent watchedEvent) {
-                final String eventPath = watchedEvent.getPath();
-                if (eventPath == null) {
-                    LOGGER.warning("Unexpected empty event path. ");
-                    return;
-                }
-                if (groupPath.equals(eventPath)) {
-                    LOGGER.fine(String.format(Locale.ROOT, "Skip processing group event [%s]. ", groupPath));
-                    return;
-                }
-                if (!eventPath.startsWith(groupPath) || eventPath.charAt(groupPath.length()) != ZK_PATH_SEPARATOR) {
-                    LOGGER.warning(String.format(Locale.ROOT,
-                            "Event path [%s] is not child of [%s]. ", eventPath, groupPath));
-                    return;
-                }
-                listener.process(transEvent(eventPath.substring(groupPath.length() + 1), group, watchedEvent));
+        return zkClient.addPersistentRecursiveWatches(groupPath, watchedEvent -> {
+            final String eventPath = watchedEvent.getPath();
+            if (eventPath == null) {
+                LOGGER.warning("Unexpected empty event path. ");
+                return;
             }
+            if (groupPath.equals(eventPath)) {
+                LOGGER.fine(String.format(Locale.ROOT, "Skip processing group event [%s]. ", groupPath));
+                return;
+            }
+            if (!eventPath.startsWith(groupPath) || eventPath.charAt(groupPath.length()) != ZK_PATH_SEPARATOR) {
+                LOGGER.warning(String.format(Locale.ROOT,
+                        "Event path [%s] is not child of [%s]. ", eventPath, groupPath));
+                return;
+            }
+            listener.process(transEvent(eventPath.substring(groupPath.length() + 1), group, watchedEvent));
         });
     }
 

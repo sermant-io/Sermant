@@ -25,7 +25,6 @@ import io.sermant.core.plugin.subscribe.processor.ConfigProcessor;
 import io.sermant.core.plugin.subscribe.processor.IntegratedEventListenerAdapter;
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.LabelGroupUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
@@ -117,7 +116,7 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         map.put(APP, config.getApplication());
         map.put(SERVICE, serviceName);
         map.put(ENVIRONMENT, config.getEnvironment());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, SERVICE_ORDER));
     }
@@ -126,7 +125,7 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put(APP, config.getApplication());
         map.put(ENVIRONMENT, config.getEnvironment());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, APP_ORDER));
     }
@@ -136,7 +135,7 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         map.put(APP, config.getApplication());
         map.put(ENVIRONMENT, config.getEnvironment());
         map.put(ZONE, config.getZone());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, ZONE_ORDER));
     }
@@ -147,7 +146,7 @@ public class CommonGroupConfigSubscriber extends AbstractGroupConfigSubscriber {
         }
         final HashMap<String, String> map = new HashMap<>(REQUEST_MAP_SIZE);
         map.put(config.getCustomLabel(), config.getCustomLabelValue());
-        final String labelGroup = LabelGroupUtils.createLabelGroup(map);
+        final String labelGroup = createLabelGroup(map);
         listenerCache.put(labelGroup, new IntegratedEventListenerAdapter(configOrderIntegratedProcessor, labelGroup));
         configOrderIntegratedProcessor.addHolder(new ConfigDataHolder(labelGroup, CUSTOM_ORDER));
     }
