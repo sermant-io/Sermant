@@ -28,8 +28,8 @@ public interface XdsServiceAction {
     /**
      * subscribe
      *
-     * @param resourceKey resource key to get the xds data from cache
+     * @param requestKey request key to get the xds data from cache
      * @param countDownLatch Used to notify the xds requesting thread to obtain data
      */
-    void subscribe(String resourceKey, CountDownLatch countDownLatch);
+    void subscribe(String requestKey, CountDownLatch countDownLatch);
 }

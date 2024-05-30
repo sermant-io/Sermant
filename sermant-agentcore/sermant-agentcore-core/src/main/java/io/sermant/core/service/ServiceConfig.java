@@ -130,7 +130,7 @@ public class ServiceConfig implements BaseConfig {
         if (ServiceManager.HTTP_SERVER_SERVICE_IMPL.equals(serviceName)) {
             return isHttpserverEnable();
         }
-        if (ServiceManager.XDS_SERVICE_IMPL.equals(serviceName)) {
+        if (ServiceManager.XDS_CORE_SERVICE_IMPL.equals(serviceName)) {
             return isXdsServiceEnable();
         }
         return false;

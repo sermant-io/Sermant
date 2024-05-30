@@ -87,8 +87,8 @@ public class ServiceManager {
     /**
      * xDS Service Discover
      */
-    public static final String XDS_SERVICE_IMPL =
-            "io.sermant.implement.service.xds.XdsServiceImpl";
+    public static final String XDS_CORE_SERVICE_IMPL =
+            "io.sermant.implement.service.xds.XdsCoreServiceImpl";
 
     /**
      * logger

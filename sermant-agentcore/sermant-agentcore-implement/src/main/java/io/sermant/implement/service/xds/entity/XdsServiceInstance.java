@@ -32,7 +32,7 @@ public class XdsServiceInstance implements ServiceInstance {
 
     private String service;
 
-    private String address;
+    private String host;
 
     private int port;
 
@@ -52,7 +52,7 @@ public class XdsServiceInstance implements ServiceInstance {
 
     @Override
     public String getHost() {
-        return service;
+        return host;
     }
 
     @Override
@@ -82,13 +82,13 @@ public class XdsServiceInstance implements ServiceInstance {
         return port == instance.port && healthStatus == instance.healthStatus
                 && Objects.equals(cluster, instance.cluster)
                 && Objects.equals(service, instance.service)
-                && Objects.equals(address, instance.address)
+                && Objects.equals(host, instance.host)
                 && Objects.equals(metadata, instance.metadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cluster, service, address, port, healthStatus, metadata);
+        return Objects.hash(cluster, service, host, port, healthStatus, metadata);
     }
 
     public void setCluster(String cluster) {
@@ -99,8 +99,8 @@ public class XdsServiceInstance implements ServiceInstance {
         this.service = service;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public void setPort(int port) {
