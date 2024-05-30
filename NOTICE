@@ -98,7 +98,10 @@ mockito-inline (org.mockito:mockito-inline) - https://github.com/mockito/mockito
 Project Lombok (org.projectlombok:lombok) - https://projectlombok.org
 JUL to SLF4J bridge (org.slf4j:jul-to-slf4j) - http://www.slf4j.org
 SLF4J API Module (org.slf4j:slf4j-api) - http://www.slf4j.org
-
+api (io.envoyproxy.controlplane:api) - https://github.com/envoyproxy/java-control-plane
+grpc-netty (io.grpc:grpc-netty) https://github.com/grpc/grpc-java
+grpc-stub (io.grpc:grpc-stub) https://github.com/grpc/grpc-java
+grpc-protobuf (io.grpc:grpc-protobuf) https://github.com/grpc/grpc-java
 
 - The works of other projects included in this project.
 

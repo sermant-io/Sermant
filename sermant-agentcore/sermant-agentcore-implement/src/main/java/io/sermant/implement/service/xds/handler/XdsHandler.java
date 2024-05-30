@@ -49,7 +49,7 @@ public abstract class XdsHandler implements XdsServiceAction {
 
     protected final XdsClient client;
 
-    protected final String resourceType;
+    protected String resourceType;
 
     protected Node node;
 
@@ -57,16 +57,14 @@ public abstract class XdsHandler implements XdsServiceAction {
      * construction method
      *
      * @param client xds client
-     * @param resourceType xds resource type
      */
-    public XdsHandler(XdsClient client, String resourceType) {
+    public XdsHandler(XdsClient client) {
         this.client = client;
-        this.resourceType = resourceType;
         createNode();
     }
 
     /**
-     * built DiscoveryRequest
+     * build DiscoveryRequest
      *
      * @param type resource type
      * @param version resource version
@@ -74,7 +72,7 @@ public abstract class XdsHandler implements XdsServiceAction {
      * @param resourceName resource name
      * @return DiscoveryRequest
      */
-    protected DiscoveryRequest builtDiscoveryRequest(String type, String version, String nonce,
+    protected DiscoveryRequest buildDiscoveryRequest(String type, String version, String nonce,
             Set<String> resourceName) {
         DiscoveryRequest.Builder builder = DiscoveryRequest.newBuilder()
                 .setNode(node)
@@ -97,7 +95,7 @@ public abstract class XdsHandler implements XdsServiceAction {
      * @return DiscoveryRequest
      */
     protected DiscoveryRequest builtAckDiscoveryRequest(DiscoveryResponse response, Set<String> resourceName) {
-        return builtDiscoveryRequest(response.getTypeUrl(), response.getVersionInfo(), response.getNonce(),
+        return buildDiscoveryRequest(response.getTypeUrl(), response.getVersionInfo(), response.getNonce(),
                 resourceName);
     }
 
@@ -135,14 +133,14 @@ public abstract class XdsHandler implements XdsServiceAction {
             @Override
             public void onNext(DiscoveryResponse response) {
                 handleResponse(requestKey, response);
-                if (countDownLatch != null && countDownLatch.getCount() == 1) {
+                if (countDownLatch != null) {
                     countDownLatch.countDown();
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (countDownLatch != null && countDownLatch.getCount() == 1) {
+                if (countDownLatch != null) {
                     countDownLatch.countDown();
                 }
                 client.updateChannel();
@@ -152,7 +150,7 @@ public abstract class XdsHandler implements XdsServiceAction {
 
             @Override
             public void onCompleted() {
-                if (countDownLatch != null && countDownLatch.getCount() == 1) {
+                if (countDownLatch != null) {
                     countDownLatch.countDown();
                 }
                 subscribe(requestKey, null);

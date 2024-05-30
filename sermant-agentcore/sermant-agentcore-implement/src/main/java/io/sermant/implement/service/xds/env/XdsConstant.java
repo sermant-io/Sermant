@@ -29,11 +29,6 @@ public class XdsConstant {
     public static final String POD_NAME_ENV = "HOSTNAME";
 
     /**
-     * rsa key size
-     */
-    public static final int RSA_KEY_SIZE = 2048;
-
-    /**
      * eds resource type
      */
     public static final String EDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.endpoint.v3.ClusterLoadAssignment";
