@@ -1,0 +1,50 @@
+package io.sermant.backend.handler.config.handler;
+
+import io.sermant.backend.entity.config.ConfigInfo;
+import io.sermant.backend.entity.config.PluginType;
+import io.sermant.backend.handler.config.PluginConfigHandler;
+import io.sermant.backend.handler.config.RouterPluginHandler;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+public class RouterPluginHandlerTest {
+    private static final String DEFAULT_APP_NAME = "default";
+
+    private static final String DEFAULT_ENVIRONMENT_NAME = "prod";
+
+    private static final String DEFAULT_SERVICE_NAME = "provider";
+
+    private static final String DEFAULT_GROUP = "app=default&environment=prod";
+
+    private static final String ERROR_GROUP = "app=default&env=prod";
+
+    private static final String ERROR_KEY = "testKey";
+
+    private static final String SERVICE_CONFIGURATION_NAME = "servicecomb.routeRule.provider";
+
+    private static final String GLOBAL_CONFIGURATION_NAME = "servicecomb.globalRouteRule";
+
+    @Test
+    public void parsePluginInfo() {
+        PluginConfigHandler handler = new RouterPluginHandler();
+        ConfigInfo configInfo = handler.parsePluginInfo(SERVICE_CONFIGURATION_NAME, DEFAULT_GROUP);
+        Assert.assertEquals(configInfo.getAppName(), DEFAULT_APP_NAME);
+        Assert.assertEquals(configInfo.getEnvironment(), DEFAULT_ENVIRONMENT_NAME);
+        Assert.assertEquals(configInfo.getServiceName(), DEFAULT_SERVICE_NAME);
+        Assert.assertEquals(configInfo.getKey(), SERVICE_CONFIGURATION_NAME);
+        Assert.assertEquals(configInfo.getGroup(), DEFAULT_GROUP);
+        Assert.assertEquals(configInfo.getPluginType(), PluginType.ROUTER.getPluginName());
+    }
+
+    @Test
+    public void verifyConfiguration() {
+        PluginConfigHandler handler = new RouterPluginHandler();
+        Assert.assertTrue(handler.verifyConfiguration(SERVICE_CONFIGURATION_NAME, DEFAULT_GROUP));
+        Assert.assertTrue(handler.verifyConfiguration(GLOBAL_CONFIGURATION_NAME, DEFAULT_GROUP));
+        Assert.assertFalse(handler.verifyConfiguration(SERVICE_CONFIGURATION_NAME, ERROR_GROUP));
+        Assert.assertFalse(handler.verifyConfiguration(ERROR_KEY, DEFAULT_GROUP));
+    }
+}

@@ -133,6 +133,16 @@ public class CommonConst {
                     + "> throwable: %s  " + System.lineSeparator()
                     + "---  " + System.lineSeparator();
 
+    /**
+     * Service name for global configuration
+     */
+    public static final String GLOBAL_CONFIGURATION_SERVICE_NAME = "ALL_SERVICE";
+
+    /**
+     * Default regular expression for configuration item Group
+     */
+    public static final String CONFIGURATION_DEFAULT_PATTERN = "^(app=[^&]*+&environment=[^&]*+(&service=[^&]*)?)?$";
+
     private CommonConst() {
 
     }
