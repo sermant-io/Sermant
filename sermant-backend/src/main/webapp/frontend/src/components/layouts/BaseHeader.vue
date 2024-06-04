@@ -23,6 +23,10 @@ const toEventsConfig = () => {
   router.replace("/events-config");
 };
 
+const toConfig = () => {
+  router.replace("/config");
+};
+
 const getAssetsImge = (url: string) => {
   return new URL(`../../assets/${url}`, import.meta.url).href;
 };
@@ -42,6 +46,7 @@ const getAssetsImge = (url: string) => {
       <el-menu-item index="3-1" @click="toEvents"> 监测 </el-menu-item>
       <el-menu-item index="3-2" @click="toEventsConfig"> 配置 </el-menu-item>
     </el-sub-menu>
+    <el-menu-item index="4" @click="toConfig"> 配置管理 </el-menu-item>
     <el-menu-item h="full" @click="toggleDark()">
       <button
         class="border-none w-full bg-transparent cursor-pointer"
