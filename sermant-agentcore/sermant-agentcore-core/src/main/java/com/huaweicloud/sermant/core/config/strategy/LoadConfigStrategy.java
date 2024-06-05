@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  * <p>加载配置信息主要分两步：
  * <pre>
  *     1.加载配置文件为配置信息{@link #getConfigHolder(File, Map)}
- *     2.将配置信息加载到配置对象中{@link #loadConfig(Object, BaseConfig)}
+ *     2.将配置信息加载到配置对象中{@link #loadConfig(Object, BaseConfig, boolean)}
  * </pre>
  *
  * @param <T> 配置主体
@@ -70,9 +70,10 @@ public interface LoadConfigStrategy<T> {
      * @param holder 配置信息主要承载对象
      * @param config 配置对象
      * @param <R>    配置对象类型
+     * @param isDynamic is the config loaded dynamically
      * @return 配置对象
      */
-    <R extends BaseConfig> R loadConfig(T holder, R config);
+    <R extends BaseConfig> R loadConfig(T holder, R config, boolean isDynamic);
 
     /**
      * 默认的{@link LoadConfigStrategy}，不做任何逻辑操作
@@ -96,7 +97,7 @@ public interface LoadConfigStrategy<T> {
         }
 
         @Override
-        public <R extends BaseConfig> R loadConfig(Object holder, R config) {
+        public <R extends BaseConfig> R loadConfig(Object holder, R config, boolean isDynamic) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "[%s] will do nothing when loading config. ",
                     DefaultLoadConfigStrategy.class.getName()));
             return config;

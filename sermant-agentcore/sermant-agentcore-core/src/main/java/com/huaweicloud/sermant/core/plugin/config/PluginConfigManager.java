@@ -68,7 +68,8 @@ public class PluginConfigManager {
             final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
             if (pluginConfigFile.exists() && pluginConfigFile.isFile()) {
                 if (retainedConfig == null) {
-                    PLUGIN_CONFIG_MAP.put(pluginConfigKey, ConfigManager.doLoad(pluginConfigFile, config));
+                    PLUGIN_CONFIG_MAP.put(pluginConfigKey,
+                            ConfigManager.doLoad(pluginConfigFile, config, plugin.isDynamic()));
                     plugin.getConfigs().add(pluginConfigKey);
                 } else if (retainedConfig.getClass() == pluginConfigCls) {
                     LOGGER.fine(String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",

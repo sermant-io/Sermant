@@ -104,7 +104,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      * @return 配置对象泛型
      */
     @Override
-    public <R extends BaseConfig> R loadConfig(Properties holder, R config) {
+    public <R extends BaseConfig> R loadConfig(Properties holder, R config, boolean isDynamic) {
         return loadConfig(holder, config.getClass(), config);
     }
 
