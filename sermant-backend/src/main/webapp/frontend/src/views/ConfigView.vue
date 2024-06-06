@@ -5,7 +5,8 @@
         <span class="font-600 mr-3"> 配置管理 </span>
       </template>
     </el-page-header>
-    <el-descriptions class="ep-page-header__content" title="配置中心信息" style="margin-top: 30px; width: 800px;"></el-descriptions>
+    <el-descriptions class="ep-page-header__content" title="配置中心信息"
+                     style="margin-top: 30px; width: 800px;"></el-descriptions>
     <el-form :inline="true" style="margin: 15px 0 15px 0">
       <el-form-item>
         <el-input size="large" readonly disabled v-model.trim="configCenterInfo.dynamicConfigType">
@@ -35,7 +36,7 @@
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="configCenterInfo.dynamicConfigType == 'nacos'">
+      <el-form-item v-if="configCenterInfo.dynamicConfigType == 'nacos'" prop="namespace">
         <el-input size="large" v-model.trim="requestParam.namespace" placeholder="请输入命名空间">
           <template #prepend>
             <span color="#606266">命名空间</span>
@@ -172,9 +173,10 @@ const environments = reactive([
 ]);
 
 const configCenterInfo = reactive({
-  dynamicConfigType: "zookeeper",
-  serverAddress: "127.0.0.1:2181",
-  userName: "zhp"
+  dynamicConfigType: "",
+  serverAddress: "",
+  userName: "",
+  namespace: ""
 });
 
 onBeforeMount(() => {
@@ -285,6 +287,20 @@ const fillEnvironments = () => {
 }
 
 const getConfigList = () => {
+  if (configCenterInfo.dynamicConfigType == 'nacos' && !requestParam.namespace) {
+    ElMessage({
+      message: "命名空间不能为空",
+      type: "error",
+    });
+    return;
+  }
+  if (requestParam.pluginType == 'other' && !requestParam.group) {
+    ElMessage({
+      message: "group不能为空",
+      type: "error",
+    });
+    return;
+  }
   axios.get(`${window.location.origin}/sermant/configs`, {
     params: requestParam,
   }).then(function (response) {
@@ -341,6 +357,8 @@ const getConfigurationCenter = () => {
     configCenterInfo.serverAddress = data.serverAddress;
     configCenterInfo.dynamicConfigType = data.dynamicConfigType.toLowerCase();
     configCenterInfo.userName = data.userName;
+    configCenterInfo.userName = data.namespace;
+    requestParam.namespace = data.namespace;
   }).catch(function (error) {
     console.log(error);
   });
@@ -419,7 +437,8 @@ const handleCurrentChange = (newPage: number) => {
 const deleteConfig = (row: ConfigInfo, index: number) => {
   const params = {
     group: row.group,
-    key: row.key
+    key: row.key,
+    namespace: row.namespace
   };
   axios.delete(`${window.location.origin}/sermant/config`, {
     params: params,
@@ -486,7 +505,7 @@ const deleteRow = (index: number) => {
   width: 70px !important;
 }
 
-:deep(.ep-select) {
+:deep(.ep-form-item__content .ep-select) {
   width: 200px;
 }
 
