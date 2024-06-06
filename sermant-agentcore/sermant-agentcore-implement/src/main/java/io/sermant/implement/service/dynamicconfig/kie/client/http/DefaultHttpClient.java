@@ -18,7 +18,6 @@ package io.sermant.implement.service.dynamicconfig.kie.client.http;
 
 import com.alibaba.fastjson.JSONObject;
 
-import io.sermant.core.common.LoggerFactory;
 import io.sermant.implement.service.dynamicconfig.kie.listener.SubscriberManager;
 
 import org.apache.http.HttpEntity;
@@ -45,6 +44,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -53,8 +54,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -67,7 +66,7 @@ import javax.net.ssl.SSLContext;
  */
 public class DefaultHttpClient
         implements io.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpClient.class);
 
     /**
      * Maximum number of connections. The value is recommended to be greater than maximum number of threads
@@ -134,7 +133,7 @@ public class DefaultHttpClient
             final SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(new SslTrustStrategy()).build();
             builder.register("https", new SSLConnectionSocketFactory(sslContext, hostnameVerifier));
         } catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-            LOGGER.log(Level.WARNING, "Failed to get SSLContext, reason: ", ex);
+            LOGGER.warn("Failed to get SSLContext, reason: ", ex);
         }
     }
 
@@ -224,7 +223,7 @@ public class DefaultHttpClient
             }
             result = EntityUtils.toString(entity, "UTF-8");
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Execute request failed.", ex);
+            LOGGER.warn("Execute request failed.", ex);
         } finally {
             consumeEntity(entity);
         }
@@ -238,7 +237,7 @@ public class DefaultHttpClient
         try {
             EntityUtils.consume(entity);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, "Consumed http entity failed.", ex);
+            LOGGER.warn("Consumed http entity failed.", ex);
         }
     }
 

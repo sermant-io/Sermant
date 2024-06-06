@@ -17,6 +17,9 @@
 package io.sermant.backend.handler.config;
 
 import io.sermant.backend.entity.config.ConfigInfo;
+import io.sermant.backend.entity.config.PluginType;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +56,33 @@ public abstract class PluginConfigHandler {
     private static final String GROUP_CONNECT = "=";
 
     /**
+     * Determine whether the configuration match the conditions based on the request information
+     *
+     * @param filterConditions Configuration information as filtering criteria
+     * @param filteredConfigInfo Configuration information that needs to be filtered
+     * @return filter results true：match Conditions. false：not match Conditions
+     */
+    public boolean filterConfiguration(ConfigInfo filterConditions, ConfigInfo filteredConfigInfo) {
+        if (StringUtils.equals(filterConditions.getPluginType(), PluginType.OTHER.getPluginName())) {
+            return true;
+        }
+        if (StringUtils.isNotBlank(filterConditions.getAppName())
+                && !StringUtils.contains(filteredConfigInfo.getAppName(), filterConditions.getAppName())) {
+            return false;
+        }
+        if (StringUtils.isNotBlank(filterConditions.getEnvironment())
+                && !StringUtils.contains(filteredConfigInfo.getEnvironment(), filterConditions.getEnvironment())) {
+            return false;
+        }
+        if (StringUtils.isNotBlank(filterConditions.getServiceName())
+                && !StringUtils.contains(filteredConfigInfo.getServiceName(), filterConditions.getServiceName())) {
+            return false;
+        }
+        return StringUtils.isBlank(filterConditions.getZone())
+                || StringUtils.contains(filteredConfigInfo.getZone(), filterConditions.getZone());
+    }
+
+    /**
      * Parse plugin information, extract application name, service name, and environment name from group and key
      * information
      *
@@ -74,11 +104,18 @@ public abstract class PluginConfigHandler {
     /**
      * Verify if the configuration item is the current plugin configuration
      *
-     * @param key Configuration Item Name
      * @param group Configuration item group name
      * @return Verification results
      */
-    public abstract boolean verifyConfiguration(String key, String group);
+    public abstract boolean verifyConfigurationGroup(String group);
+
+    /**
+     * Verify if the configuration item is the current plugin configuration
+     *
+     * @param key Configuration Item Name
+     * @return Verification results
+     */
+    public abstract boolean verifyConfigurationKey(String key);
 
     /**
      * Parsing group information

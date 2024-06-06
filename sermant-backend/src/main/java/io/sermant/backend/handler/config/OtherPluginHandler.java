@@ -38,7 +38,12 @@ public class OtherPluginHandler extends PluginConfigHandler {
     }
 
     @Override
-    public boolean verifyConfiguration(String key, String group) {
-        return StringUtils.isNotBlank(key) && StringUtils.isNotBlank(group);
+    public boolean verifyConfigurationGroup(String group) {
+        return StringUtils.isNotBlank(group);
+    }
+
+    @Override
+    public boolean verifyConfigurationKey(String key) {
+        return StringUtils.isNotBlank(key);
     }
 }

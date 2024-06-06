@@ -63,4 +63,11 @@ public interface ConfigClient {
      * @return remove result
      */
     boolean removeConfig(String key, String group);
+
+    /**
+     * Determine if the connection is successful
+     *
+     * @return if the connection is successful
+     */
+    boolean isConnect();
 }

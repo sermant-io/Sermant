@@ -16,8 +16,10 @@
 
 package io.sermant.implement.utils;
 
-import io.sermant.core.common.LoggerFactory;
-import io.sermant.core.utils.StringUtils;
+import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -28,8 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * group generator
@@ -38,7 +38,7 @@ import java.util.logging.Logger;
  * @since 2021-11-23
  */
 public class LabelGroupUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelGroupUtils.class);
 
     private static final String GROUP_SEPARATOR = "&";
 
@@ -75,7 +75,7 @@ public class LabelGroupUtils {
      */
     public static String createLabelGroup(Map<String, String> labels) {
         if (labels == null || labels.isEmpty()) {
-            return StringUtils.EMPTY;
+            return DynamicConstants.EMPTY_STRING;
         }
         final StringBuilder group = new StringBuilder();
         final List<String> keys = new ArrayList<>(labels.keySet());
@@ -85,14 +85,14 @@ public class LabelGroupUtils {
         for (String key : keys) {
             String value = labels.get(key);
             if (key == null || value == null) {
-                LOGGER.warning(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
+                LOGGER.warn(String.format(Locale.ENGLISH, "Invalid group label, key = %s, value = %s",
                         key, value));
                 continue;
             }
             group.append(key).append(KV_SEPARATOR).append(value).append(GROUP_SEPARATOR);
         }
         if (group.length() == 0) {
-            return StringUtils.EMPTY;
+            return DynamicConstants.EMPTY_STRING;
         }
         return group.deleteCharAt(group.length() - 1).toString();
     }
@@ -148,11 +148,11 @@ public class LabelGroupUtils {
                     // If only key is configured, use an empty string instead
                     result.put(labelKv[0], "");
                 } else {
-                    LOGGER.warning(String.format(Locale.ENGLISH, "Invalid label [%s]", label));
+                    LOGGER.warn(String.format(Locale.ENGLISH, "Invalid label [%s]", label));
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.WARNING, "UnsupportedEncodingException, msg is {0}.", e.getMessage());
+            LOGGER.warn("UnsupportedEncodingException, msg is {}.", e.getMessage());
         }
         return result;
     }
@@ -164,7 +164,7 @@ public class LabelGroupUtils {
      * @return label condition
      */
     public static String getLabelCondition(String group) {
-        if (StringUtils.isEmpty(group)) {
+        if (group == null || group.isEmpty()) {
             return group;
         }
         String curGroup = rebuildGroup(group);
@@ -182,8 +182,8 @@ public class LabelGroupUtils {
         try {
             return URLEncoder.encode(key + LABEL_QUERY_SEPARATOR + value, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.WARNING, "UnsupportedEncodingException, msg is {0}.", e.getMessage());
-            return StringUtils.EMPTY;
+            LOGGER.warn("UnsupportedEncodingException, msg is {0}.", e.getMessage());
+            return DynamicConstants.EMPTY_STRING;
         }
     }
 }

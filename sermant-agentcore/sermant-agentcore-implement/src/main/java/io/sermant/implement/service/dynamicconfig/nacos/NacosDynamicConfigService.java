@@ -118,7 +118,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "nacos get config failed, group name is invalid. group: {1}", group);
             return Optional.empty();
         }
-        return Optional.ofNullable(nacosClient.getConfig(key, NacosUtils.reBuildGroup(group)));
+        return Optional.ofNullable(nacosClient.getConfig(key, NacosUtils.rebuildGroup(group)));
     }
 
     @Override
@@ -127,7 +127,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "nacos publish config failed, group name is invalid. group: {1}", group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         boolean result = nacosClient.publishConfig(key, validGroup, content);
         if (result) {
             LOGGER.log(Level.INFO, "nacos config publish success, key: {0}, group: {1}, content: {2}",
@@ -145,7 +145,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "nacos remove config failed, group name is invalid. group: {1}", group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         boolean result = nacosClient.removeConfig(key, validGroup);
         if (result) {
             LOGGER.log(Level.INFO, "nacos config remove success, key: {0}, group: {1}",
@@ -163,7 +163,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "nacos add config Listener failed, group name is invalid. group: {1}", group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         Listener nacosListener = instantiateListener(key, validGroup, listener);
         boolean result = nacosClient.addListener(key, validGroup, nacosListener);
         if (result) {
@@ -185,7 +185,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "nacos remove config Listener failed, group name is invalid. group: {1}", group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         List<NacosListener> listenerList = getListener(key, validGroup, TYPE_KEY);
         for (NacosListener nacosListener : listenerList) {
             nacosClient.removeListener(key, validGroup, nacosListener.getKeyListener().get(key));
@@ -203,7 +203,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                     group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         List<String> keys = doListKeysFromGroup(validGroup);
         Map<String, Listener> keyListenerMap = new HashMap<>();
         for (String key : keys) {
@@ -227,7 +227,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                     group);
             return false;
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         List<NacosListener> listenerList = getGroupListener(validGroup);
         for (NacosListener nacosListener : listenerList) {
             for (Map.Entry<String, Listener> entry : nacosListener.getKeyListener().entrySet()) {
@@ -248,7 +248,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                     group);
             return Collections.emptyList();
         }
-        String validGroup = NacosUtils.reBuildGroup(group);
+        String validGroup = NacosUtils.rebuildGroup(group);
         List<String> resultList = this.nacosClient.getGroupKeys().get(validGroup);
         return CollectionUtils.isEmpty(resultList) ? Collections.emptyList() : resultList;
     }

@@ -137,36 +137,80 @@ public class ZooKeeperClient implements ConfigClient {
 
     @Override
     public Map<String, List<String>> getConfigList(String key, String group, boolean flag) {
-        Map<String, List<String>> configList = new HashMap<>();
         String path = toPath(group);
         try {
-            if (flag) {
-                List<String> childList = this.zkClient.getChildren(path, false);
-                configList.put(group, childList.stream().filter(value -> value.equals(key))
-                        .collect(Collectors.toList()));
-                return configList;
+            if (!flag) {
+                return fuzzyGetConfigListByGroupAndKey(key, path);
             }
-            int index = path.lastIndexOf(ZK_PATH_SEPARATOR);
-            String parentPath = path.substring(0, index + 1);
-            String currentPath = path.substring(index + 1);
-            List<String> strings = this.zkClient.getChildren(parentPath, false);
-            for (String child : strings) {
-                if (!child.contains(currentPath)) {
-                    continue;
-                }
-                String childPath = parentPath + child;
-                List<String> subChild = this.zkClient.getChildren(childPath, false);
-                if (key == null) {
-                    configList.put(childPath, subChild);
-                    continue;
-                }
-                List<String> matchSubChild = subChild.stream().filter(value -> value.contains(key))
-                        .collect(Collectors.toList());
-                configList.put(childPath.substring(1), matchSubChild);
+            if (key == null || key.isEmpty()) {
+                return accurateGetConfigListByGroup(path);
             }
+            return accurateGetConfigListByGroupAndKey(key, path);
         } catch (KeeperException | InterruptedException e) {
             LOGGER.error("Exception in querying configuration list", e);
         }
+        return Collections.EMPTY_MAP;
+    }
+
+    private Map<String, List<String>> fuzzyGetConfigListByGroupAndKey(String key, String path)
+            throws KeeperException, InterruptedException {
+        Map<String, List<String>> configList = new HashMap<>();
+        int index = path.lastIndexOf(ZK_PATH_SEPARATOR);
+        String parentNodePath;
+        if (index == 0) {
+            parentNodePath = path.substring(0, index + 1);
+        } else {
+            parentNodePath = path.substring(0, index);
+        }
+        String nodeName = path.substring(index + 1);
+        if (!ifNodeExist(parentNodePath)) {
+            return configList;
+        }
+        List<String> childList = this.zkClient.getChildren(parentNodePath, false);
+        for (String child : childList) {
+            if (!child.contains(nodeName)) {
+                continue;
+            }
+            String childPath = parentNodePath + child;
+            List<String> subChild = this.zkClient.getChildren(childPath, false);
+            if (subChild == null || subChild.isEmpty()) {
+                continue;
+            }
+            if (key == null || key.isEmpty()) {
+                configList.put(childPath.substring(1), subChild);
+                continue;
+            }
+            List<String> matchSubChild = subChild.stream().filter(value -> value.contains(key))
+                    .collect(Collectors.toList());
+            if (matchSubChild.isEmpty()) {
+                continue;
+            }
+            configList.put(childPath.substring(1), matchSubChild);
+        }
+        return configList;
+    }
+
+    private Map<String, List<String>> accurateGetConfigListByGroupAndKey(String key, String group)
+            throws KeeperException, InterruptedException {
+        Map<String, List<String>> configList = new HashMap<>();
+        if (!ifNodeExist(group)) {
+            return configList;
+        }
+        List<String> childList = this.zkClient.getChildren(group, false);
+        configList.put(group.substring(1), childList.stream()
+                .filter(value -> value.equals(key))
+                .collect(Collectors.toList()));
+        return configList;
+    }
+
+    private Map<String, List<String>> accurateGetConfigListByGroup(String group)
+            throws KeeperException, InterruptedException {
+        Map<String, List<String>> configList = new HashMap<>();
+        if (!ifNodeExist(group)) {
+            return configList;
+        }
+        List<String> childList = this.zkClient.getChildren(group, false);
+        configList.put(group.substring(1), childList);
         return configList;
     }
 
@@ -227,6 +271,12 @@ public class ZooKeeperClient implements ConfigClient {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean isConnect() {
+        return zkClient.getState() == ZooKeeper.States.CONNECTED
+                || zkClient.getState() == ZooKeeper.States.CONNECTEDREADONLY;
     }
 
     /**
