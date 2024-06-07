@@ -52,4 +52,9 @@ public class ConfigServerInfo {
      * Type of Configuration Center
      */
     private String dynamicConfigType;
+
+    /**
+     * The namespace to which the configuration item belongs
+     */
+    private String namespace;
 }

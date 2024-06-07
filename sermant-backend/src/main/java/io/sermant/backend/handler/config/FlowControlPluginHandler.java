@@ -48,11 +48,16 @@ public class FlowControlPluginHandler extends PluginConfigHandler {
     }
 
     @Override
-    public boolean verifyConfiguration(String key, String group) {
-        if (StringUtils.isBlank(key) || StringUtils.isBlank(group)) {
+    public boolean verifyConfigurationGroup(String group) {
+        if (StringUtils.isBlank(group)) {
             return false;
         }
-        if (!group.matches(PATTERN)) {
+        return group.matches(PATTERN);
+    }
+
+    @Override
+    public boolean verifyConfigurationKey(String key) {
+        if (StringUtils.isBlank(key)) {
             return false;
         }
         for (String name : CONFIGURATION_NAME_PREFIX_ARRAY) {

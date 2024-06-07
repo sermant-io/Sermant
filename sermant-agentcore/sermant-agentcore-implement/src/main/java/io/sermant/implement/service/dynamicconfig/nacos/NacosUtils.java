@@ -53,7 +53,17 @@ public class NacosUtils {
      * @param group group name
      * @return valid group
      */
-    public static String reBuildGroup(String group) {
+    public static String rebuildGroup(String group) {
         return group.replace('=', ':').replace('&', '_').replace('/', '.');
+    }
+
+    /**
+     * convert the group name to nacos group
+     *
+     * @param group group name
+     * @return valid group
+     */
+    public static String convertGroup(String group) {
+        return group.replace(':', '=').replace('_', '&').replace('.', '/');
     }
 }

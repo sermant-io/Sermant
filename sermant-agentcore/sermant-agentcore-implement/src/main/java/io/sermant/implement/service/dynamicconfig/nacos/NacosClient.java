@@ -177,6 +177,11 @@ public class NacosClient implements ConfigClient {
         }
     }
 
+    @Override
+    public boolean isConnect() {
+        return "UP".equals(this.configService.getServerStatus());
+    }
+
     /**
      * Add listener
      *
@@ -263,12 +268,16 @@ public class NacosClient implements ConfigClient {
     private String buildUrl(String key, String group, String namespace, boolean exactMatchFlag) {
         final StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL);
         int pageSize = Integer.MAX_VALUE;
-        requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR)).append(URL).append(pageSize)
-                .append("&dataId=").append(key == null ? DynamicConstants.EMPTY_STRING : key)
-                .append("&group=").append(group == null ? DynamicConstants.EMPTY_STRING : group)
-                .append("&tenant=").append(namespace);
         if (exactMatchFlag) {
-            requestUrl.append("&search=accurate");
+            requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR)).append(URL).append(pageSize)
+                    .append("&dataId=").append(key == null ? DynamicConstants.EMPTY_STRING : key)
+                    .append("&group=").append(group == null ? DynamicConstants.EMPTY_STRING : group)
+                    .append("&tenant=").append(namespace).append("&search=accurate");
+        } else {
+            requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR)).append(URL).append(pageSize)
+                    .append("&dataId=*").append(key == null ? DynamicConstants.EMPTY_STRING : key)
+                    .append("*&group=*").append(group == null ? DynamicConstants.EMPTY_STRING : group)
+                    .append("*&tenant=").append(namespace).append("&search=blur");
         }
         if (properties.get(PropertyKeyConst.USERNAME) != null && properties.get(PropertyKeyConst.PASSWORD) != null) {
             String accessToken = getToken();

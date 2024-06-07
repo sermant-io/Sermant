@@ -44,10 +44,18 @@ public class TagTransmissionPluginHandler extends PluginConfigHandler {
     }
 
     @Override
-    public boolean verifyConfiguration(String key, String group) {
-        if (StringUtils.isBlank(key) || StringUtils.isBlank(group)) {
+    public boolean verifyConfigurationGroup(String group) {
+        if (StringUtils.isBlank(group)) {
             return false;
         }
-        return group.equals(CONFIGURATION_GROUP_NAME) && key.equals(CONFIGURATION_KEY_NAME);
+        return group.equals(CONFIGURATION_GROUP_NAME);
+    }
+
+    @Override
+    public boolean verifyConfigurationKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        return key.equals(CONFIGURATION_KEY_NAME);
     }
 }

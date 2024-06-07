@@ -212,15 +212,29 @@ public class KieClient extends AbstractClient implements ConfigClient {
 
     @Override
     public Map<String, List<String>> getConfigList(String key, String group, boolean exactMatchFlag) {
-        final KieResponse kieResponse = getKieResponse(key, group, exactMatchFlag);
+        final KieResponse kieResponse;
+        if (exactMatchFlag) {
+            kieResponse = getKieResponse(key, group, exactMatchFlag);
+        } else {
+            kieResponse = getKieResponse(key, null, exactMatchFlag);
+        }
         if (kieResponse == null || kieResponse.getData() == null) {
             return Collections.emptyMap();
         }
         Map<String, List<String>> result = new HashMap<>();
         for (KieConfigEntity entity : kieResponse.getData()) {
-            List<String> configList = result.computeIfAbsent(LabelGroupUtils.createLabelGroup(entity.getLabels()),
-                    configKey -> new ArrayList<>());
-            configList.add(entity.getKey());
+            if (exactMatchFlag) {
+                List<String> configList = result.computeIfAbsent(LabelGroupUtils.createLabelGroup(entity.getLabels()),
+                        configKey -> new ArrayList<>());
+                configList.add(entity.getKey());
+            } else {
+                String currentConfigGroup = LabelGroupUtils.createLabelGroup(entity.getLabels());
+                if (currentConfigGroup.contains(group)) {
+                    List<String> configList = result.computeIfAbsent(
+                            LabelGroupUtils.createLabelGroup(entity.getLabels()), configKey -> new ArrayList<>());
+                    configList.add(entity.getKey());
+                }
+            }
         }
         return result;
     }
@@ -242,6 +256,14 @@ public class KieClient extends AbstractClient implements ConfigClient {
         }
         final HttpResult httpResult = this.httpClient.doDelete(buildKeyIdUrl(keyIdOptional.get()));
         return httpResult.getCode() == HttpStatus.SC_OK;
+    }
+
+    @Override
+    public boolean isConnect() {
+        String requestUrl = clientUrlManager.getUrl() + "/v1/health";
+        KieRequest kieRequest = new KieRequest();
+        HttpResult httpResult = httpClient.doGet(requestUrl, kieRequest.getRequestConfig());
+        return !httpResult.isError();
     }
 
     /**

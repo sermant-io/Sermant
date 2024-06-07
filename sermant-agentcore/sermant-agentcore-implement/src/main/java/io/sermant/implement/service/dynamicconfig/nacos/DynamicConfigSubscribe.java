@@ -165,6 +165,6 @@ public class DynamicConfigSubscribe implements ConfigSubscriber {
             LOGGER.log(Level.SEVERE, "Invalid group name. group: {0}", group);
             return StringUtils.EMPTY;
         }
-        return NacosUtils.reBuildGroup(group.deleteCharAt(group.length() - 1).toString());
+        return NacosUtils.rebuildGroup(group.deleteCharAt(group.length() - 1).toString());
     }
 }

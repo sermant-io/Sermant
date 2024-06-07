@@ -33,7 +33,7 @@ public class SpringBootRegistryPluginHandler extends PluginConfigHandler {
 
     @Override
     public ConfigInfo parsePluginInfo(String key, String group) {
-        ConfigInfo configInfo = super.parsePluginInfo(key,group);
+        ConfigInfo configInfo = super.parsePluginInfo(key, group);
         if (StringUtils.isEmpty(configInfo.getServiceName())) {
             configInfo.setServiceName(CommonConst.GLOBAL_CONFIGURATION_SERVICE_NAME);
         }
@@ -42,11 +42,16 @@ public class SpringBootRegistryPluginHandler extends PluginConfigHandler {
     }
 
     @Override
-    public boolean verifyConfiguration(String key, String group) {
-        if (StringUtils.isBlank(key) || StringUtils.isBlank(group)) {
+    public boolean verifyConfigurationGroup(String group) {
+        if (StringUtils.isBlank(group)) {
             return false;
         }
-        if (!group.matches(CommonConst.CONFIGURATION_DEFAULT_PATTERN)) {
+        return group.matches(CommonConst.CONFIGURATION_DEFAULT_PATTERN);
+    }
+
+    @Override
+    public boolean verifyConfigurationKey(String key) {
+        if (StringUtils.isBlank(key)) {
             return false;
         }
         return key.equals(CONFIGURATION_NAME);

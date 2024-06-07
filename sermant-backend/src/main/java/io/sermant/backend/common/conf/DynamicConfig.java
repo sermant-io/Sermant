@@ -47,12 +47,6 @@ public class DynamicConfig {
     private String dynamicConfigType;
 
     /**
-     * Request timeout
-     */
-    @Value("${dynamic.config.requestTimeout}")
-    private long requestTimeout;
-
-    /**
      * Connection timeout
      */
     @Value("${dynamic.config.connectTimeout}")

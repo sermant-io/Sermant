@@ -199,12 +199,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito-core.version}</version>
@@ -252,6 +246,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectjweaver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sermant</groupId>
+            <artifactId>sermant-agentcore-implement</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
