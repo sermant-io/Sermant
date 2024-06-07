@@ -112,10 +112,9 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
         final Map<String, Object> result = new HashMap<>(CAP_SIZE);
         for (ConfigDataHolder dataHolder : dataHolders) {
             for (Map<String, Object> data : dataHolder.getHolder().values()) {
-                // To prevent multiple layers from overwriting each other, the full key name is resolved here
-                final HashMap<String, Object> resolveData = new HashMap<>(data.size());
-                MapUtils.resolveNestMap(resolveData, data, null);
-                result.putAll(resolveData);
+                if (data != null) {
+                    result.putAll(data);
+                }
             }
         }
         return result;
@@ -126,9 +125,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
         dataHolders.forEach(dataHolder -> {
             final Map<String, Object> curContent = dataHolder.getHolder().get(originEvent.getKey());
             if (curContent != null) {
-                final HashMap<String, Object> resolveData = new HashMap<>(curContent.size());
-                MapUtils.resolveNestMap(resolveData, curContent, null);
-                result.putAll(resolveData);
+                result.putAll(curContent);
             }
         });
         return result;
