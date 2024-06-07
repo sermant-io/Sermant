@@ -3,6 +3,7 @@ import EventsView from '~/views/EventsView.vue'
 import EventsConfigView from '~/views/EventsConfigView.vue'
 import InstancesView from '~/views/InstancesView.vue'
 import ConfigView from "~/views/ConfigView.vue";
+import configInfo from "~/views/ConfigInfo.vue";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,11 @@ const router = createRouter({
       path: '/config',
       name: 'config',
       component: ConfigView
+    },
+    {
+      path: '/configInfo',
+      name: 'configInfo',
+      component: configInfo
     },
   ]
 })
