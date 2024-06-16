@@ -34,7 +34,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * HTTP 路由处理器管理
+ * HTTP Route Handler Manager
  *
  * @author zwmagic
  * @since 2024-02-02
@@ -52,10 +52,10 @@ public class HttpRouteHandlerManager {
     }
 
     /**
-     * 获取与给定请求对应的HttpRouteHandler。
+     * Retrieves the HttpRouteHandler corresponding to the given request.
      *
-     * @param request 请求对象
-     * @return 包含HttpRouteHandler的Optional对象，如果不存在对应的HttpRouteHandler则返回空的Optional对象
+     * @param request The request object
+     * @return An Optional containing the HttpRouteHandler, or an empty Optional if no matching handler exists
      */
     public static Optional<HttpRouteHandler> getHandler(HttpRequest request) {
         String pluginName = INSTANCE.getPluginName(request);
@@ -82,7 +82,7 @@ public class HttpRouteHandlerManager {
             }
             ClassLoader classLoader;
             if (SERMANT_PLUGIN_NAME.equals(pluginName)) {
-                // sermant core 支持对外提供http api 能力
+                // Sermant core supports providing external HTTP API capabilities
                 classLoader = ClassLoaderManager.getFrameworkClassLoader();
             } else {
                 Plugin plugin = PluginManager.getPluginMap().get(pluginName);

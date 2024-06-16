@@ -17,22 +17,22 @@
 package io.sermant.core.service.httpserver.exception;
 
 /**
- * HTTP server 异常
+ * HTTP Server Exception
  *
  * @author zwmagic
  * @since 2024-02-01
  */
 public class HttpServerException extends RuntimeException {
     /**
-     * HttpServerException类的私有成员变量，表示HTTP状态码。
+     * Private member variable, represents the HTTP status code
      */
     private final int status;
 
     /**
-     * 构造函数，用于创建一个HttpServerException对象。
+     * Constructor for creating an HttpServerException instance
      *
-     * @param status HTTP状态码
-     * @param message 异常信息
+     * @param status HTTP status code
+     * @param message Exception message
      */
     public HttpServerException(int status, String message) {
         super(message);
@@ -40,11 +40,11 @@ public class HttpServerException extends RuntimeException {
     }
 
     /**
-     * 构造函数，用于创建一个HttpServerException对象。
+     * Constructor for creating an HttpServerException instance with cause
      *
-     * @param status HTTP状态码
-     * @param message 异常信息
-     * @param cause 异常的原始异常
+     * @param status HTTP status code
+     * @param message Exception message
+     * @param cause Original throwable causing the exception
      */
     public HttpServerException(int status, String message, Throwable cause) {
         super(message, cause);
@@ -52,10 +52,10 @@ public class HttpServerException extends RuntimeException {
     }
 
     /**
-     * 构造函数，用于创建一个HttpServerException对象。
+     * Constructor for creating an HttpServerException instance with cause but no explicit message
      *
-     * @param status HTTP状态码
-     * @param cause 异常的原始异常
+     * @param status HTTP status code
+     * @param cause Original throwable causing the exception
      */
     public HttpServerException(int status, Throwable cause) {
         super(cause);
@@ -63,11 +63,12 @@ public class HttpServerException extends RuntimeException {
     }
 
     /**
-     * 获取HTTP状态码。
+     * Retrieves the HTTP status code
      *
-     * @return HTTP状态码
+     * @return HTTP status code
      */
     public int getStatus() {
         return status;
     }
 }
+

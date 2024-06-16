@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * 简单http请求实现
+ * Simple HTTP request implementation.
  *
  * @author zwmagic
  * @since 2024-02-02
@@ -61,9 +61,9 @@ public class SimpleHttpRequest implements HttpRequest {
     private final Map<String, String> params = new HashMap<>();
 
     /**
-     * 构造函数，用于创建一个SimpleHttpRequest对象。
+     * Create a SimpleHttpRequest object.
      *
-     * @param exchange HttpExchange对象，用于与服务器进行通信
+     * @param exchange The HttpExchange object for server communication
      */
     public SimpleHttpRequest(HttpExchange exchange) {
         this.exchange = exchange;
@@ -171,7 +171,7 @@ public class SimpleHttpRequest implements HttpRequest {
     }
 
     /**
-     * 获取body内容
+     * Retrieves the body content.
      */
     @Override
     public String getBody(Charset charset) throws HttpServerException {
@@ -223,3 +223,4 @@ public class SimpleHttpRequest implements HttpRequest {
         return exchange.getRequestBody();
     }
 }
+

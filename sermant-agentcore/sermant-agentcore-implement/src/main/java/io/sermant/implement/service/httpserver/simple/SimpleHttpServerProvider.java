@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 简单的HTTP服务器提供者
+ * Simple HTTP server provider.
  *
  * @author zwmagic
  * @since 2024-02-02

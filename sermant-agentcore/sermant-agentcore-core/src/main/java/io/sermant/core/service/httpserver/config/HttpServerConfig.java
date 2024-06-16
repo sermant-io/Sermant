@@ -20,7 +20,7 @@ import io.sermant.core.config.common.BaseConfig;
 import io.sermant.core.config.common.ConfigTypeKey;
 
 /**
- * Http Server 配置
+ * HTTP Server Configuration
  *
  * @author zwmagic
  * @since 2024-02-01
@@ -30,30 +30,25 @@ public class HttpServerConfig implements BaseConfig {
     private static final int DEFAULT_PORT = 47128;
 
     /**
-     * HTTP Server 类型, 支持扩展为其他HTTP服务器
+     * HTTP Server type, extensible to other HTTP servers
      * <p>
-     *     simple: JDK内置的一个轻量级HTTP服务器
+     *     simple: A lightweight HTTP server built into the JDK
      * </p>
      */
     private String type = HttpServerTypeEnum.SIMPLE.getType();
 
     /**
-     * 默认端口号
+     * Default port number
      */
     private int port = DEFAULT_PORT;
 
     /**
-     * 允许远程访问开关
-     */
-    private boolean remoteCallLimitEnable = true;
-
-    /**
-     * HTTP Server 核心线程池
+     * Core thread pool for HTTP Server
      */
     private Integer serverCorePoolSize;
 
     /**
-     * HTTP Server 最大线程池
+     * Maximum thread pool for HTTP Server
      */
     private Integer serverMaxPoolSize;
 
@@ -71,14 +66,6 @@ public class HttpServerConfig implements BaseConfig {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public boolean isRemoteCallLimitEnable() {
-        return remoteCallLimitEnable;
-    }
-
-    public void setRemoteCallLimitEnable(boolean remoteCallLimitEnable) {
-        this.remoteCallLimitEnable = remoteCallLimitEnable;
     }
 
     public Integer getServerCorePoolSize() {

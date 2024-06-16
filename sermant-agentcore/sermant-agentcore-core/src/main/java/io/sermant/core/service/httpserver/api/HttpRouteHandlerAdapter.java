@@ -17,7 +17,7 @@
 package io.sermant.core.service.httpserver.api;
 
 /**
- * Http路由处理器适配器抽象类
+ * HTTP Route Handler Adapter Abstract Class
  *
  * @author zwmagic
  * @since 2024-02-03
@@ -34,12 +34,11 @@ public abstract class HttpRouteHandlerAdapter implements HttpRouteHandler {
     }
 
     /**
-     * 执行处理请求的方法。
+     * Executes the method to process the request.
      *
-     * @param <T> 泛型类型
-     * @param request HTTP请求对象
-     * @return 处理请求后的结果对象
+     * @param <T> Generic type
+     * @param request HTTP request object
+     * @return Result object after processing the request
      */
     public abstract <T> ResponseResult<T> doHandle(HttpRequest request);
 }
-

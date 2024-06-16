@@ -26,94 +26,95 @@ import java.util.Map;
  */
 public interface HttpResponse {
     /**
-     * 获取响应状态码
+     * Retrieves the response status code
      *
-     * @return 响应状态码
+     * @return Response status code
      */
     int getStatus();
 
     /**
-     * 设置响应状态码
+     * Sets the response status code
      *
-     * @param status 响应状态码
-     * @return 响应对象
+     * @param status Response status code
+     * @return Response object
      */
     HttpResponse setStatus(int status);
 
     /**
-     * 添加响应头
+     * Adds a response header
      *
-     * @param name 头部名称
-     * @param value 头部值
-     * @return 响应对象
+     * @param name Header name
+     * @param value Header value
+     * @return Response object
      */
     HttpResponse addHeader(String name, String value);
 
     /**
-     * 设置响应头
+     * Sets a response header
      *
-     * @param name 头部名称
-     * @param value 头部值
-     * @return 响应对象
+     * @param name Header name
+     * @param value Header value
+     * @return Response object
      */
     HttpResponse setHeader(String name, String value);
 
     /**
-     * 设置响应头集合
+     * Sets the collection of response headers
      *
-     * @param headers 响应头集合
-     * @return 响应对象
+     * @param headers Map of headers
+     * @return Response object
      */
     HttpResponse setHeaders(Map<String, String> headers);
 
     /**
-     * 设置响应内容类型
+     * Sets the content type of the response
      *
-     * @param contentType 内容类型
-     * @return 响应对象
+     * @param contentType Content type
+     * @return Response object
      */
     HttpResponse setContentType(String contentType);
 
     /**
-     * 设置响应内容长度
+     * Sets the content length of the response
      *
-     * @param size 内容长度
-     * @return 响应对象
+     * @param size Content length
+     * @return Response object
      */
     HttpResponse setContentLength(long size);
 
     /**
-     * 写入响应体（字节数组）
+     * Writes the response body as a byte array
      *
-     * @param bytes 字节数组
+     * @param bytes Byte array
      */
     void writeBody(byte[] bytes);
 
     /**
-     * 写入响应体（字符串）
+     * Writes the response body as a string
      *
-     * @param str 字符串
+     * @param str String
      */
     void writeBody(String str);
 
     /**
-     * 写入响应体（异常）
+     * Writes the response body with an exception
      *
-     * @param ex 异常对象
+     * @param ex Exception object
      */
     void writeBody(Throwable ex);
 
     /**
-     * 写入响应体（JSON字符串）
+     * Writes the response body as a JSON string
      *
-     * @param json JSON字符串
+     * @param json JSON string
      */
     void writeBodyAsJson(String json);
 
     /**
-     * 写入响应体（JSON对象）
+     * Writes the response body as a JSON object
      *
-     * @param obj JSON对象
+     * @param obj JSON object
      */
     void writeBodyAsJson(Object obj);
 }
+

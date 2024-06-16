@@ -25,160 +25,161 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Http Request
+ * HTTP Request
  *
  * @author zwmagic
  * @since 2024-02-02
  */
 public interface HttpRequest {
     /**
-     * 获取URI。
+     * Retrieves the URI
      *
-     * @return URI对象
+     * @return URI object
      */
     URI getUri();
 
     /**
-     * 经过解析后的请求path
+     * Resolved request path
      *
-     * @return 请求的path
+     * @return request path
      */
     String getPath();
 
     /**
-     * 原始的请求path
+     * Original request path
      *
-     * @return 请求的path
+     * @return request path
      */
     String getOriginalPath();
 
     /**
-     * HTTP 方法
+     * HTTP method.
      *
-     * @return HttpMethod，如 GET POST等
+     * @return HttpMethod such as GET, POST, etc.
      */
     String getMethod();
 
     /**
-     * 获取内容类型。
+     * Gets the content type
      *
-     * @return 内容类型
+     * @return content type
      */
     String getContentType();
 
     /**
-     * 获取IP地址。
+     * Retrieves the IP address
      *
-     * @return IP地址
+     * @return IP address
      */
     String getIp();
 
     /**
-     * 获取指定名称的header的第一个值。
+     * Gets the first value of a specified header
      *
-     * @param name header的key
-     * @return 返回指定name的header的第一个值
+     * @param name header key
+     * @return first value of the named header
      */
     String getFirstHeader(String name);
 
     /**
-     * 获取指定名称的header的第一个值。
+     * Retrieves the first value of a specified header with a default value
      *
-     * @param name header的key
-     * @param defaultValue 当值是null时，返回默认值
-     * @return 返回指定name的header的第一个值
+     * @param name header key
+     * @param defaultValue default value when value is null
+     * @return first value of the named header or default value
      */
     String getFirstHeader(String name, String defaultValue);
 
     /**
-     * 获取所有的header。
+     * Retrieves all headers
      *
-     * @return 返回一个包含所有header的Map，其中key为header的名称，value为该header的值列表
+     * @return a Map containing all headers, where keys are header names and values are lists of header values
      */
     Map<String, List<String>> getHeaders();
 
     /**
-     * 指定name的参数
+     * Query parameter by specified name
      * <pre>
-     *     eg: http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2， params为k1=v1&k2=v2
+     *     e.g., http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2, params are k1=v1&k2=v2
      * </pre>
      *
-     * @param name 参数名
-     * @return 返回指定name的参数
+     * @param name parameter name
+     * @return value of the named parameter
      */
     String getParam(String name);
 
     /**
-     * 指定name的参数
+     * Query parameter by specified name with a default value
      * <pre>
-     *     eg: http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2， params为k1=v1&k2=v2
+     *     e.g., http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2, params are k1=v1&k2=v2
      * </pre>
      *
-     * @param name 参数名
-     * @param defaultValue 当值是null时，返回默认值
-     * @return 返回指定name的参数
+     * @param name parameter name
+     * @param defaultValue default value when value is null
+     * @return value of the named parameter or default value
      */
     String getParam(String name, String defaultValue);
 
     /**
-     * 指定name的参数
+     * All query parameters
      * <pre>
-     *     eg: http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2， params为k1=v1&k2=v2
+     *     e.g., http://127.0.0.1:8080/api/v1/test?k1=v1&k2=v2, params are k1=v1&k2=v2
      * </pre>
      *
-     * @return 返回指定name的参数
+     * @return map of query parameters
      */
     Map<String, String> getParams();
 
     /**
-     * 获取请求的主体内容。
+     * Retrieves the request body
      *
-     * @return 请求的主体内容
-     * @throws HttpServerException 如果发生HTTP服务异常
+     * @return request body content
+     * @throws HttpServerException if an HTTP server exception occurs
      */
     String getBody() throws HttpServerException;
 
     /**
-     * 从请求体中解析出指定类型的对象。
+     * Parses an object of the specified type from the request body
      *
-     * @param <T> 泛型类型
-     * @param clazz 要解析的类
-     * @return 解析出的对象
-     * @throws HttpServerException 如果发生HTTP服务异常
+     * @param <T> generic type
+     * @param clazz class to parse
+     * @return parsed object
+     * @throws HttpServerException if an HTTP server exception occurs
      */
     <T> T getBody(Class<T> clazz) throws HttpServerException;
 
     /**
-     * 获取请求的主体内容。
+     * Retrieves the request body with a specified charset
      *
-     * @param charset 字符集
-     * @return 请求的主体内容
-     * @throws HttpServerException 如果发生HTTP服务异常
+     * @param charset character set
+     * @return request body content
+     * @throws HttpServerException if an HTTP server exception occurs
      */
     String getBody(Charset charset) throws HttpServerException;
 
     /**
-     * 将请求体转换为字节数组。
+     * Converts the request body to a byte array
      *
-     * @return 请求体的字节数组
-     * @throws HttpServerException 如果发生HTTP服务异常
+     * @return byte array of the request body
+     * @throws HttpServerException if an HTTP server exception occurs
      */
     byte[] getBodyAsBytes() throws HttpServerException;
 
     /**
-     * 从请求体中解析出指定类型的对象列表。
+     * Parses a list of objects of the specified type from the request body
      *
-     * @param <T> 泛型类型
-     * @param clazz 要解析的类
-     * @return 解析出的对象列表
-     * @throws HttpServerException 如果发生HTTP服务异常
+     * @param <T> generic type
+     * @param clazz class to parse
+     * @return list of parsed objects
+     * @throws HttpServerException if an HTTP server exception occurs
      */
     <T> List<T> getBodyAsList(Class<T> clazz) throws HttpServerException;
 
     /**
-     * 获取请求体的输入流。
+     * Retrieves the request body as an input stream
      *
-     * @return 请求体的输入流
+     * @return input stream of the request body
      */
     InputStream getBodyAsStream();
 }
+

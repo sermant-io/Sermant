@@ -29,7 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
- * 简单http响应
+ * Simple HTTP response implementation.
  *
  * @author zwmagic
  * @since 2024-02-02
@@ -40,9 +40,9 @@ public class SimpleHttpResponse implements HttpResponse {
     private int status = HttpCodeEnum.SUCCESS.getCode();
 
     /**
-     * 构造函数，用于创建一个SimpleHttpResponse对象。
+     * Constructs a SimpleHttpResponse object.
      *
-     * @param exchange HttpExchange对象，用于与服务器进行通信
+     * @param exchange The HttpExchange object for server communication
      */
     public SimpleHttpResponse(HttpExchange exchange) {
         this.exchange = exchange;

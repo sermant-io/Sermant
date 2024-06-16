@@ -25,7 +25,7 @@ import io.sermant.implement.service.httpserver.exception.HttpMethodNotAllowedExc
 import java.util.regex.Pattern;
 
 /**
- * HTTP 路由
+ * HTTP Routing
  *
  * @author zwmagic
  * @since 2024-02-03
@@ -40,11 +40,11 @@ public class HttpRouter {
     private final HttpRouteHandler handler;
 
     /**
-     * 构造函数，用于创建HttpRouter对象
+     * Constructor to create an HttpRouter instance.
      *
-     * @param pluginName 插件名称
-     * @param handler HttpRouteHandler对象
-     * @param annotation HttpRouteHandler注解
+     * @param pluginName Name of the plugin
+     * @param handler HttpRouteHandler instance
+     * @param annotation HttpRouteMapping annotation
      */
     public HttpRouter(String pluginName, HttpRouteHandler handler, HttpRouteMapping annotation) {
         this.path = buildPath(pluginName, annotation.path());
@@ -64,11 +64,11 @@ public class HttpRouter {
     }
 
     /**
-     * 判断请求是否匹配当前HttpRouter
+     * Determines if the request matches the current HttpRouter.
      *
-     * @param request HttpRequest对象
-     * @return 如果请求匹配则返回true，否则返回false
-     * @throws HttpMethodNotAllowedException exception
+     * @param request HttpRequest object
+     * @return true if the request matches, false otherwise
+     * @throws HttpMethodNotAllowedException if the HTTP method is not allowed
      */
     public boolean match(HttpRequest request) throws HttpMethodNotAllowedException {
         if (!matchPath(request.getPath())) {
