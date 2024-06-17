@@ -118,10 +118,11 @@ public class AgentLauncher {
             }
         } catch (InvocationTargetException invocationTargetException) {
             LOGGER.log(Level.SEVERE,
-                    "Install agent failed: " + invocationTargetException.getTargetException().getMessage());
+                    "Install agent failed: " + LoggerUtils.recordStackTrace(
+                            invocationTargetException.getTargetException()));
         } catch (IOException | IllegalAccessException | NoSuchMethodException | ClassNotFoundException exception) {
             LOGGER.log(Level.SEVERE,
-                    "Install agent failed: " + exception.getMessage());
+                    "Install agent failed: " + LoggerUtils.recordStackTrace(exception));
         }
     }
 

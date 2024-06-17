@@ -16,8 +16,6 @@
 
 package io.sermant.implement.config;
 
-import com.alibaba.fastjson.util.IOUtils;
-
 import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.common.BaseConfig;
@@ -105,8 +103,8 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
     }
 
     @Override
-    public Map getConfigHolder(File config, Map<String, Object> bootstreapArgsMap) {
-        this.argsMap = bootstreapArgsMap;
+    public Map getConfigHolder(File config, Map<String, Object> bootstrapArgsMap) {
+        this.argsMap = bootstrapArgsMap;
         return readConfig(config);
     }
 
@@ -142,16 +140,12 @@ public class LoadYamlStrategy implements LoadConfigStrategy<Map> {
      * @return Configuration information
      */
     private Map<?, ?> readConfig(File config) {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(config),
-                    CommonConstant.DEFAULT_CHARSET));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(config),
+                CommonConstant.DEFAULT_CHARSET))) {
             return yaml.loadAs(reader, Map.class);
         } catch (IOException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
                     "Missing config file [%s], please check.", config));
-        } finally {
-            IOUtils.close(reader);
         }
         return Collections.emptyMap();
     }

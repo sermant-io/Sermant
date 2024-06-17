@@ -56,6 +56,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -327,6 +328,11 @@ public class BufferedAgentBuilder {
 
         private final Set<String> ignoredInterfaces;
 
+        /**
+         * unMatched Class Cache
+         */
+        private final Map<String, String> unMatchedClassCache = FileUtils.getUnMatchedClassCache();
+
         IgnoredMatcher(AgentConfig config) {
             ignoredPrefixes = config.getIgnoredPrefixes();
             serviceInjectList = config.getServiceInjectList();
@@ -336,6 +342,10 @@ public class BufferedAgentBuilder {
         @Override
         public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule javaModule,
                 Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
+            if (unMatchedClassCache.containsKey(typeDesc.getActualName())) {
+                return true;
+            }
+
             if (!checkInjectList(typeDesc, classLoader)) {
                 return false;
             }

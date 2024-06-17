@@ -111,7 +111,7 @@ public abstract class ConfigManager {
      * @param classLoader classLoader, which determines from which class Loader api operations are performed
      */
     protected static void loadConfig(File configFile, ClassLoader classLoader) {
-        if (configFile.exists() && configFile.isFile()) {
+        if (configFile.isFile()) {
             doLoadConfig(configFile, classLoader);
         } else {
             loadDefaultConfig(classLoader);

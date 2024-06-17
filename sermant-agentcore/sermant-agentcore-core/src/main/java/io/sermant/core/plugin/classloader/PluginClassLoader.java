@@ -167,7 +167,6 @@ public class PluginClassLoader extends URLClassLoader {
                     clazz = super.loadClass(name, false);
                 } catch (ClassNotFoundException e) {
                     // Class not found, ignored, exception thrown later
-                    LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
                 }
             }
 

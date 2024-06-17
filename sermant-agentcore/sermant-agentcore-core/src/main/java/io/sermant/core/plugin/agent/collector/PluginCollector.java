@@ -17,7 +17,9 @@
 package io.sermant.core.plugin.agent.collector;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.config.ConfigManager;
 import io.sermant.core.plugin.Plugin;
+import io.sermant.core.plugin.agent.config.AgentConfig;
 import io.sermant.core.plugin.agent.declarer.AbstractPluginDescription;
 import io.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import io.sermant.core.plugin.agent.declarer.PluginDeclarer;
@@ -26,6 +28,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.ClassTypeMatcher;
 import io.sermant.core.plugin.agent.transformer.ReentrantTransformer;
 import io.sermant.core.plugin.classloader.PluginClassLoader;
+import io.sermant.core.utils.FileUtils;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -52,12 +55,14 @@ import java.util.logging.Logger;
 public class PluginCollector {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final boolean IS_PRE_FILTER_ENABLE = ConfigManager.getConfig(AgentConfig.class).isPreFilterEnable();
+
     private PluginCollector() {
     }
 
     /**
-     * Resolve all plugin descriptions from the plugin collector and apply the configured merge policy to the
-     * plugin declarers
+     * Resolve all plugin descriptions from the plugin collector and apply the configured merge policy to the plugin
+     * declarers
      *
      * @param plugin plugin
      * @return list of PluginDescription
@@ -192,7 +197,12 @@ public class PluginCollector {
 
     private static boolean matchTarget(ElementMatcher<TypeDescription> matcher, TypeDescription target) {
         try {
-            return matcher.matches(target);
+            boolean result = matcher.matches(target);
+            if (IS_PRE_FILTER_ENABLE && !result) {
+                FileUtils.addToUnmatchedClassCache(target.getActualName());
+            }
+
+            return result;
         } catch (Exception exception) {
             LOGGER.log(Level.WARNING, "Exception occurs when math target: " + target.getActualName() + ",{0}",
                     exception.getMessage());

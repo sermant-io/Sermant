@@ -17,6 +17,8 @@
 package io.sermant.premain.utils;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
@@ -57,5 +59,21 @@ public class LoggerUtils {
      */
     public static Logger getLogger() {
         return LOGGER;
+    }
+
+    /**
+     * record stack trace
+     *
+     * @param throwable throwable
+     * @return record string
+     */
+    public static String recordStackTrace(Throwable throwable) {
+        StringBuilder record = new StringBuilder(throwable.toString());
+        record.append(System.lineSeparator());
+        StackTraceElement[] messages = throwable.getStackTrace();
+        Arrays.stream(messages).filter(Objects::nonNull).forEach(stackTraceElement -> {
+            record.append(stackTraceElement).append(System.lineSeparator());
+        });
+        return record.toString();
     }
 }

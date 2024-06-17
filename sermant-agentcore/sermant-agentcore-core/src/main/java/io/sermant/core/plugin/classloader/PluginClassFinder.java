@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -74,7 +73,7 @@ public class PluginClassFinder {
                     return clazz;
                 }
             } catch (ClassNotFoundException e) {
-                LOGGER.log(Level.WARNING, "load sermant class failed, msg is {0}", e.getMessage());
+                // Class not found, ignored, exception thrown later
             }
         }
         throw new ClassNotFoundException("Can not load class in pluginClassLoaders: " + name);

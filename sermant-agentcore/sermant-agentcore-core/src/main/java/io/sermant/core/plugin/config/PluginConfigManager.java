@@ -25,9 +25,9 @@ import io.sermant.core.plugin.common.PluginConstant;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -65,17 +65,18 @@ public class PluginConfigManager {
             String pluginConfigKey = ConfigKeyUtil.getTypeKeyWithClassloader(ConfigKeyUtil.getTypeKey(pluginConfigCls),
                     pluginConfigCls.getClassLoader());
             final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
-            if (pluginConfigFile.exists() && pluginConfigFile.isFile()) {
+            if (pluginConfigFile.isFile()) {
                 if (retainedConfig == null) {
                     PLUGIN_CONFIG_MAP.put(pluginConfigKey,
                             ConfigManager.doLoad(pluginConfigFile, config, plugin.isDynamic()));
                     plugin.getConfigs().add(pluginConfigKey);
                 } else if (retainedConfig.getClass() == pluginConfigCls) {
-                    LOGGER.fine(String.format(Locale.ROOT, "Skip load config [%s] repeatedly. ",
-                            pluginConfigCls.getName()));
+                    LOGGER.log(Level.FINE, "Skip load config [{0}] repeatedly. ",
+                            pluginConfigCls.getName());
                 } else {
-                    LOGGER.warning(String.format(Locale.ROOT, "Type key of %s is %s, same as %s's. ",
-                            pluginConfigCls.getName(), pluginConfigKey, retainedConfig.getClass().getName()));
+                    LOGGER.log(Level.WARNING, "Type key of {0} is {1}, same as {2}'s. ",
+                            new String[]{pluginConfigCls.getName(), pluginConfigKey,
+                                    retainedConfig.getClass().getName()});
                 }
                 continue;
             }
@@ -83,7 +84,7 @@ public class PluginConfigManager {
                 continue;
             }
 
-            // 不能从文件加载，则为默认配置
+            // If it cannot be loaded from file, it is the default configuration
             PLUGIN_CONFIG_MAP.put(pluginConfigKey, config);
             plugin.getConfigs().add(pluginConfigKey);
         }

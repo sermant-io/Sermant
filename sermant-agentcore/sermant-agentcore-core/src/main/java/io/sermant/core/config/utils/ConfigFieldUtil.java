@@ -80,13 +80,12 @@ public class ConfigFieldUtil {
                 field.set(obj, value);
             }
         } catch (IllegalAccessException ignored) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Cannot access field [%s] of [%s], try forced set.",
-                    field.getName(), field.getDeclaringClass().getName()));
+            LOGGER.log(Level.WARNING, "Cannot access field [{0}] of [{1}], try forced set.",
+                    new String[]{field.getName(), field.getDeclaringClass().getName()});
             forceSet(obj, field, value);
         } catch (InvocationTargetException ignored) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Failed to set field [%s] of [%s].", field.getName(), field.getDeclaringClass().getName()));
+            LOGGER.log(Level.WARNING, "Failed to set field [{0}] of [{1}].",
+                    new String[]{field.getName(), field.getDeclaringClass().getName()});
         }
     }
 
@@ -124,11 +123,11 @@ public class ConfigFieldUtil {
             field.set(obj, value);
             modifiersField.setInt(field, modifiers);
         } catch (NoSuchFieldException e) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Missing modifiers field [%s] of [%s]. ", field.getName(), field.getDeclaringClass().getName()));
+            LOGGER.log(Level.WARNING, "Missing modifiers field [{0}] of [{1}]. ",
+                    new String[]{field.getName(), field.getDeclaringClass().getName()});
         } catch (IllegalAccessException e) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
-                    "Forced set field [%s] of [%s] failed.", field.getName(), field.getDeclaringClass().getName()));
+            LOGGER.log(Level.WARNING, "Forced set field [{0}] of [{1}] failed.",
+                    new String[]{field.getName(), field.getDeclaringClass().getName()});
         }
     }
 

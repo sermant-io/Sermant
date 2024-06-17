@@ -93,24 +93,15 @@ public class PluginSystemEntrance {
      * @return Plugin configuration
      */
     private static PluginSetting loadSetting() {
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(Files.newInputStream(BootArgsIndexer.getPluginSettingFile().toPath()),
-                    CommonConstant.DEFAULT_CHARSET);
+        try (Reader reader = new InputStreamReader(
+                Files.newInputStream(BootArgsIndexer.getPluginSettingFile().toPath()),
+                CommonConstant.DEFAULT_CHARSET)) {
             Optional<PluginSetting> pluginSettingOptional = OperationManager.getOperation(YamlConverter.class)
                     .convert(reader, PluginSetting.class);
             return pluginSettingOptional.orElse(null);
         } catch (IOException ignored) {
             LOGGER.warning("Plugin setting file is not found. ");
             return new PluginSetting();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                    LOGGER.warning("Unexpected exception occurs. ");
-                }
-            }
         }
     }
 }

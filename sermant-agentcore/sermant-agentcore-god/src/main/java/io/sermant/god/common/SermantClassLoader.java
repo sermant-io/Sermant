@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -104,7 +105,7 @@ public class SermantClassLoader extends URLClassLoader {
      *
      * @param urls urls
      */
-    public void appendUrls(URL[] urls) {
+    public void appendUrls(List<URL> urls) {
         for (URL url : urls) {
             this.addURL(url);
         }

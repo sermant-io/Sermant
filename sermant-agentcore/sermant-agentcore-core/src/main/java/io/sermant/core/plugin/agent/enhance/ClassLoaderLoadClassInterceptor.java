@@ -61,7 +61,7 @@ public class ClassLoaderLoadClassInterceptor implements Interceptor {
         if (isSermantClass(name)) {
             try {
                 Class<?> sermantClazz = ClassLoaderManager.getPluginClassFinder().loadSermantClass(name);
-                LOGGER.log(Level.INFO, "Load class: {0} successfully by sermant.", name);
+                LOGGER.log(Level.FINE, "Load class: {0} successfully by sermant.", name);
                 context.changeResult(sermantClazz);
                 context.changeThrowable(null);
             } catch (ClassNotFoundException classNotFoundException) {

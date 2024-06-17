@@ -128,26 +128,26 @@ public class BootArgsIndexer {
      */
     public static void build(Map<String, Object> argsMap) {
         implementDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString()));
-        if (!implementDir.exists() || !implementDir.isDirectory()) {
+        if (!implementDir.isDirectory()) {
             LOGGER.warning("Implement directory not found! ");
         }
         configFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.CORE_CONFIG_FILE_KEY).toString()));
-        if (!configFile.exists() || !configFile.isFile()) {
+        if (!configFile.isFile()) {
             LOGGER.warning("Config file is not found! ");
         }
         pluginSettingFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.PLUGIN_SETTING_FILE_KEY)
                 .toString()));
-        if (!pluginSettingFile.exists() || !pluginSettingFile.isFile()) {
+        if (!pluginSettingFile.isFile()) {
             LOGGER.warning("Plugin setting file is not found! ");
         }
         logSettingFile = new File(FileUtils.validatePath(argsMap.get(CommonConstant.LOG_SETTING_FILE_KEY)
                 .toString()));
-        if (!logSettingFile.exists() || !logSettingFile.isFile()) {
+        if (!logSettingFile.isFile()) {
             LOGGER.warning("Log setting file is not found! Using default log setting file in resources.");
         }
         pluginPackageDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.PLUGIN_PACKAGE_DIR_KEY)
                 .toString()));
-        if (!pluginPackageDir.exists() || !pluginPackageDir.isDirectory()) {
+        if (!pluginPackageDir.isDirectory()) {
             LOGGER.warning("Plugin package directory is not found! ");
         }
 
@@ -162,20 +162,11 @@ public class BootArgsIndexer {
 
     static {
         final String currentFile = BootArgsIndexer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(currentFile);
+        try (JarFile jarFile = new JarFile(currentFile)) {
             CORE_VERSION = JarFileUtils.getManifestAttr(jarFile, CommonConstant.CORE_VERSION_KEY).toString();
         } catch (IOException e) {
+            LOGGER.severe("Failed to read the core version from the manifest file: " + currentFile);
             throw new SchemaException(SchemaException.MISSING_VERSION, currentFile);
-        } finally {
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (IOException ignored) {
-                    LOGGER.warning("Unexpected exception occurs. ");
-                }
-            }
         }
     }
 }
