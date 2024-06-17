@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>sermant-plugins</artifactId>
+        <groupId>io.sermant</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>sermant-mq-grayscale</artifactId>
+    <name>sermant-mq-grayscale</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
+        <package.plugin.name>sermant-mq-grayscale</package.plugin.name>
+        <rocketmq-client.version>5.0.0</rocketmq-client.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-common</artifactId>
+                <version>${rocketmq-client.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>agent</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>sermant-mq-grayscale-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>test</id>
+            <modules>
+                <module>sermant-mq-grayscale-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>sermant-mq-grayscale-plugin</module>
+            </modules>
+        </profile>
+    </profiles>
+</project>

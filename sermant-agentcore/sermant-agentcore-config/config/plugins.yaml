@@ -18,6 +18,7 @@ plugins:
   - service-visibility
   - tag-transmission
   - database-write-prohibition
+  - sermant-mq-grayscale
 # 'dynamicPlugins' is used to configure plugins that support dynamic installation. The plugins take effect when Sermant starts by agentmain. allows uninstallation:
 # 1. active plugins will be actively enabled
 # 2. passive plugins need to be enabled by commands
