@@ -17,62 +17,62 @@
 package io.sermant.implement.service.httpserver.common;
 
 /**
- * HTTP状态码枚举类，用于定义常见的HTTP响应状态码及其对应的信息。
+ * HTTP Status Code Enumeration, defining common HTTP response codes and their respective messages.
  *
  * @author zwmagic
  * @since 2024-02-04
  */
 public enum HttpCodeEnum {
     /**
-     * 请求成功
+     * Successful request
      */
     SUCCESS(200, "SUCCESS"),
 
     /**
-     * 客户端请求有误，服务器无法理解
+     * Client request is erroneous, server unable to understand
      */
     BAD_REQUEST(400, "BAD REQUEST"),
 
     /**
-     * 请求被服务器拒绝，没有权限
+     * Request denied by the server, no permission
      */
     FORBIDDEN(403, "FORBIDDEN"),
 
     /**
-     * 请求需要用户验证，即未授权
+     * Request requires user authentication, i.e., unauthorized
      */
     UNAUTHORIZED(401, "UNAUTHORIZED"),
 
     /**
-     * 服务器找不到请求的资源
+     * Server cannot find the requested resource
      */
     NOT_FOUND(404, "Not Found"),
 
     /**
-     * 请求方法不被允许
+     * Request method is not allowed
      */
     METHOD_NOT_ALLOWED(405, "METHOD NOT ALLOWED"),
 
     /**
-     * 服务器内部错误，无法完成请求
+     * Server internal error, unable to fulfill the request
      */
     SERVER_ERROR(500, "SERVER ERROR");
 
     /**
-     * HTTP状态码
+     * HTTP status code
      */
     private final int code;
 
     /**
-     * 状态码对应的文本信息
+     * Text message corresponding to the status code
      */
     private final String message;
 
     /**
-     * 构造函数，用于初始化枚举实例
+     * Constructor to initialize enum instance
      *
-     * @param code 状态码
-     * @param message 状态码对应的文本信息
+     * @param code Status code
+     * @param message Message corresponding to the status code
      */
     HttpCodeEnum(int code, String message) {
         this.code = code;
@@ -80,18 +80,18 @@ public enum HttpCodeEnum {
     }
 
     /**
-     * 获取HTTP状态码
+     * Get the HTTP status code
      *
-     * @return 状态码
+     * @return Status code
      */
     public int getCode() {
         return code;
     }
 
     /**
-     * 获取状态码对应的文本信息
+     * Get the text message corresponding to the status code
      *
-     * @return 文本信息
+     * @return Message
      */
     public String getMessage() {
         return message;

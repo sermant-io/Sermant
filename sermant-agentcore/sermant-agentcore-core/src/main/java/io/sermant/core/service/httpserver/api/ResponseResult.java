@@ -17,9 +17,9 @@
 package io.sermant.core.service.httpserver.api;
 
 /**
- * 响应结果类
+ * Response Result Class
  *
- * @param <T> 数据类型
+ * @param <T> Data Type
  * @author zwmagic
  * @since 2024-02-03
  */
@@ -31,11 +31,11 @@ public class ResponseResult<T> {
     private T data;
 
     /**
-     * 构造函数，用于创建一个ResponseResult对象。
+     * Constructor for creating a ResponseResult object.
      *
-     * @param success 表示操作是否成功
-     * @param message 操作成功或失败时的提示信息
-     * @param data 操作成功时返回的数据
+     * @param success Indicates whether the operation was successful
+     * @param message Prompt message on success or failure
+     * @param data Data returned upon success
      */
     public ResponseResult(boolean success, String message, T data) {
         this.success = success;
@@ -44,53 +44,53 @@ public class ResponseResult<T> {
     }
 
     /**
-     * 创建一个成功的ResponseResult对象。
+     * Creates a successful ResponseResult object.
      *
-     * @param <T> 泛型类型
-     * @return ResponseResult对象
+     * @param <T> Generic type
+     * @return ResponseResult object
      */
     public static <T> ResponseResult<T> ofSuccess() {
         return new ResponseResult<>(true, null, null);
     }
 
     /**
-     * 创建一个成功的ResponseResult对象，并指定数据。
+     * Creates a successful ResponseResult object with specified data.
      *
-     * @param <T> 泛型类型
-     * @param data 数据
-     * @return ResponseResult对象
+     * @param <T> Generic type
+     * @param data Data
+     * @return ResponseResult object
      */
     public static <T> ResponseResult<T> ofSuccess(T data) {
         return new ResponseResult<>(true, null, data);
     }
 
     /**
-     * 创建一个失败的ResponseResult对象。
+     * Creates a failed ResponseResult object.
      *
-     * @param <T> 泛型类型
-     * @return ResponseResult对象
+     * @param <T> Generic type
+     * @return ResponseResult object
      */
     public static <T> ResponseResult<T> ofFailure() {
         return new ResponseResult<>(false, null, null);
     }
 
     /**
-     * 创建一个失败的ResponseResult对象，并指定数据。
+     * Creates a failed ResponseResult object with specified data.
      *
-     * @param <T> 泛型类型
-     * @param data 数据
-     * @return ResponseResult对象
+     * @param <T> Generic type
+     * @param data Data
+     * @return ResponseResult object
      */
     public static <T> ResponseResult<T> ofFailure(T data) {
         return new ResponseResult<>(false, null, data);
     }
 
     /**
-     * 创建一个失败的ResponseResult对象，并指定异常信息。
+     * Creates a failed ResponseResult object with specified exception information.
      *
-     * @param <T> 泛型类型
-     * @param t 异常信息
-     * @return ResponseResult对象
+     * @param <T> Generic type
+     * @param t Exception information
+     * @return ResponseResult object
      */
     public static <T> ResponseResult<T> ofFailure(Throwable t) {
         return new ResponseResult<>(false, t.getMessage(), null);
@@ -120,3 +120,4 @@ public class ResponseResult<T> {
         this.data = data;
     }
 }
+

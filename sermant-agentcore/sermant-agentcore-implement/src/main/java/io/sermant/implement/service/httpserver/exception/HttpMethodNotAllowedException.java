@@ -20,16 +20,16 @@ import io.sermant.core.service.httpserver.exception.HttpServerException;
 import io.sermant.implement.service.httpserver.common.HttpCodeEnum;
 
 /**
- * 表示请求方法不允许的异常情况
+ * Exception indicating that the HTTP method used in the request is not allowed
  *
  * @author zwmagic
  * @since 2024-02-03
  */
 public class HttpMethodNotAllowedException extends HttpServerException {
     /**
-     * 构造函数，用于创建HttpMethodNotAllowedException对象
+     * Create an HttpMethodNotAllowedException instance
      *
-     * @param message 异常信息
+     * @param message The exception message
      */
     public HttpMethodNotAllowedException(String message) {
         super(HttpCodeEnum.METHOD_NOT_ALLOWED.getCode(), message);

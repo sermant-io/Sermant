@@ -17,35 +17,35 @@
 package io.sermant.core.service.httpserver.config;
 
 /**
- * HTTP服务器类型枚举
+ * HTTP Server Type Enumeration
  *
  * @author zwmagic
  * @since 2024-02-04
  */
 public enum HttpServerTypeEnum {
     /**
-     * 简单服务器类型, 使用JDK自带的Http Server
+     * Simple server type, utilizing JDK's built-in Http Server
      */
     SIMPLE("simple");
 
     /**
-     * 类型标识
+     * Type identifier
      */
     private final String type;
 
     /**
-     *  枚举构造函数
+     * Enum constructor
      *
-     * @param type 枚举类型的字符串标识
+     * @param type String identifier for the enum type
      */
     HttpServerTypeEnum(String type) {
         this.type = type;
     }
 
     /**
-     * 获取枚举类型的字符串标识
+     * Retrieves the string identifier of the enum type
      *
-     * @return 类型标识字符串
+     * @return Identifier string of the type
      */
     public String getType() {
         return type;

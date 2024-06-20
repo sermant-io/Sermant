@@ -17,31 +17,30 @@
 package io.sermant.implement.service.httpserver;
 
 /**
- * HttpServerProvider接口
+ * HTTP server provider interface.
  *
  * @author zwmagic
  * @since 2024-02-02
  */
 public interface HttpServerProvider {
     /**
-     * 获取类型
+     * Get Http server type
      *
-     * @return 类型
+     * @return Http server Type
      */
     String getType();
 
     /**
-     * 启动HttpServer
+     * Start HTTP server
      *
-     * @throws Exception 异常
+     * @throws Exception Exception
      */
     void start() throws Exception;
 
     /**
-     * 停止HttpServer
+     * Stop HTTP server
      *
-     * @throws Exception 异常
+     * @throws Exception Exception
      */
     void stop() throws Exception;
 }
-

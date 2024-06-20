@@ -17,19 +17,18 @@
 package io.sermant.core.service.httpserver.api;
 
 /**
- * Http路由处理器接口
+ * HTTP Routing Handler Interface
  *
  * @author zwmagic
  * @since 2024-02-02
  */
 public interface HttpRouteHandler {
     /**
-     * 处理HTTP请求
+     * Processes an HTTP request
      *
-     * @param request HTTP请求对象
-     * @param response HTTP响应对象
-     * @throws Exception 如果处理过程中发生异常
+     * @param request HTTP request object
+     * @param response HTTP response object
+     * @throws Exception if an exception occurs during processing
      */
     void handle(HttpRequest request, HttpResponse response) throws Exception;
 }
-

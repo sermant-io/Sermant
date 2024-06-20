@@ -17,50 +17,49 @@
 package io.sermant.core.service.httpserver.api;
 
 /**
- * HTTP请求方法枚举类
+ * HTTP request method enumeration class.
  *
  * @author zwmagic
  * @since 2024-02-03
  */
 public enum HttpMethod {
     /**
-     * 所有请求方法
+     * All request methods
      */
     ALL,
 
     /**
-     * GET请求方法
+     * GET request method
      */
     GET,
 
     /**
-     * POST请求方法
+     * POST request method
      */
     POST,
 
     /**
-     * PUT请求方法
+     * PUT request method
      */
     PUT,
 
     /**
-     * DELETE请求方法
+     * DELETE request method
      */
     DELETE,
 
     /**
-     * PATCH请求方法
+     * PATCH request method
      */
     PATCH,
 
     /**
-     * HEAD请求方法
+     * HEAD request method
      */
     HEAD,
 
     /**
-     * OPTIONS请求方法
+     * OPTIONS request method
      */
     OPTIONS;
 }
-

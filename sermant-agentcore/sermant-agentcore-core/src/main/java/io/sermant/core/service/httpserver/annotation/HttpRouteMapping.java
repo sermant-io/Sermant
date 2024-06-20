@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * http route映射注解，类似 springmvc @RequestMapping
+ * HTTP route mapping annotation, similar to SpringMVC @RequestMapping
  * @author zwmagic
  * @since 2024-02-02
  */
@@ -34,23 +34,23 @@ import java.lang.annotation.Target;
 @Documented
 public @interface HttpRouteMapping {
     /**
-     * 请求方法
+     * HTTP request method
      *
-     * @return 请求方法
+     * @return the HTTP request method
      */
     HttpMethod method();
 
     /**
-     * 请求路径
+     * Request path mapping
      *
-     * @return 请求路径
+     * @return the path for the request mapping
      */
     String path();
 
     /**
-     * 描述信息
+     * Description information
      *
-     * @return 描述信息
+     * @return description information, defaults to an empty string if not set
      */
     String desc() default "";
 }

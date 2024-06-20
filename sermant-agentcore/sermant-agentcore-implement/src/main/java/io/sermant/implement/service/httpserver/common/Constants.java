@@ -17,35 +17,36 @@
 package io.sermant.implement.service.httpserver.common;
 
 /**
- * 常量
+ * Constants Class
  *
  * @author zwmagic
  * @since 2024-02-02
  */
-public class Constants {
+public final class Constants {
     /**
-     * 默认编码
+     * Default character encoding
      */
     public static final String DEFAULT_ENCODE = "UTF-8";
 
     /**
-     * 指示HTTP消息体的MIME类型和编码格式的头部字段名
+     * Header field name indicating the MIME type and encoding of the HTTP message body
      */
     public static final String CONTENT_TYPE = "Content-Type";
 
     /**
-     *  指示HTTP消息体的大小，以字节为单位的头部字段名
+     * Header field name indicating the size of the HTTP message body in bytes
      */
     public static final String CONTENT_LENGTH = "Content-Length";
 
     /**
-     * HTTP路径分隔符
+     * HTTP path separator
      */
     public static final String HTTP_PATH_DIVIDER = "/";
 
     /**
-     * 私有构造方法，防止外部实例化
+     * Private constructor to prevent instantiation from outside
      */
     private Constants() {
     }
 }
+
