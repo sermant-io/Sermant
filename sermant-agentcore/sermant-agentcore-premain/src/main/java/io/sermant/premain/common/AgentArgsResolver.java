@@ -36,8 +36,8 @@ public class AgentArgsResolver {
      * @return Resolve result
      * @throws IllegalArgumentException Agent arguments are unavailable
      */
-    public static Map<String, Object> resolveAgentArgs(String agentArgs) {
-        final Map<String, Object> argsMap = new HashMap<>();
+    public static Map<String, String> resolveAgentArgs(String agentArgs) {
+        final Map<String, String> argsMap = new HashMap<>();
         if (agentArgs == null) {
             return argsMap;
         }

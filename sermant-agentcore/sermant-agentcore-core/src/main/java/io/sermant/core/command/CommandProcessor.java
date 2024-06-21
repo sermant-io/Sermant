@@ -39,6 +39,8 @@ public class CommandProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String COMMAND = "command";
+
     static {
         COMMAND_EXECUTOR_MAP.put(Command.INSTALL_PLUGINS.getValue(), new PluginsInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UNINSTALL_AGENT.getValue(), new AgentUnInstallCommandExecutor());
@@ -55,9 +57,10 @@ public class CommandProcessor {
     /**
      * process command
      *
-     * @param command command
+     * @param agentArgsMap agent args map for dynamic command
      */
-    public static void process(String command) {
+    public static void process(Map<String, String> agentArgsMap) {
+        String command = agentArgsMap.get(COMMAND);
         if (StringUtils.isEmpty(command)) {
             LOGGER.warning("Command information is empty.");
             return;
@@ -74,6 +77,7 @@ public class CommandProcessor {
             return;
         }
         String commandArgs = commandInfo.length > 1 ? commandInfo[1] : null;
+        DynamicAgentArgsManager.refreshAgentArgs(agentArgsMap);
         commandExecutor.execute(commandArgs);
     }
 }
