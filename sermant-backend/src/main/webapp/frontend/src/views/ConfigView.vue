@@ -148,6 +148,7 @@ import {RouteParamsRaw, useRouter} from "vue-router";
 import axios from "axios";
 import {Delete, InfoFilled, Search} from '@element-plus/icons-vue'
 import {ElMessage, TableColumnCtx} from 'element-plus'
+import {resultCodeMap, options} from '../composables/config'
 
 const requestParam = reactive<ConfigInfo>({
   appName: "",
@@ -203,19 +204,6 @@ const filterHandler = (
   const property = column['property']
   return row[property] == value;
 }
-
-const options = [
-  {label: '路由插件配置', value: 'router',},
-  {label: 'springboot注册插件配置', value: 'springboot-registry',},
-  {label: '注册迁移插件配置', value: 'service-registry',},
-  {label: '流控插件配置', value: 'flowcontrol',},
-  {label: '离群实例摘除插件配置', value: 'removal',},
-  {label: '负载均衡插件配置', value: 'loadbalancer',},
-  {label: '标签透传插件配置', value: 'tag-transmission',},
-  {label: '消息队列禁止消费', value: 'mq-consume-prohibition',},
-  {label: '数据库禁写插件配置', value: 'database-write-prohibition',},
-  {label: '其他配置', value: 'other',},
-]
 
 // 路由
 const router = useRouter();
@@ -327,6 +315,14 @@ const getConfigList = () => {
           } else if (!info.group.includes("&zone=") && !info.zone) {
             info.zone = "N/A";
           }
+          if (info.group.includes("app=") && !info.appName) {
+            info.appName = "-";
+          } else if (!info.group.includes("app=") && !info.appName) {
+            info.appName = "N/A";
+          }
+          if (info.group.includes("GROUP=") && configCenterInfo.dynamicConfigType == 'kie') {
+            info.group = info.group.replace("GROUP=", "");
+          }
         });
         fillAppNames();
         fillServiceNames();
@@ -339,7 +335,7 @@ const getConfigList = () => {
     } else {
       configInfos.configInfos = [];
       ElMessage({
-        message: data.message,
+        message: resultCodeMap.get(data.code),
         type: "error",
       });
     }
@@ -380,7 +376,7 @@ const handlerChangePluginType = (value: string) => {
     requestParam.key = "servicecomb."
   } else if (value == "removal") {
     requestParam.group = "app="
-    requestParam.key = "sermant.removal.config."
+    requestParam.key = "sermant.removal.config"
   } else if (value == "loadbalancer") {
     requestParam.group = "app="
     requestParam.key = "servicecomb."
@@ -451,9 +447,8 @@ const deleteConfig = (row: ConfigInfo, index: number) => {
       });
       deleteRow(index);
     } else {
-      configInfos.configInfos = [];
       ElMessage({
-        message: data.message,
+        message: resultCodeMap.get(data.code),
         type: "error",
       });
     }
