@@ -54,3 +54,5 @@ jobs:
           files: ${{ github.workspace }}/report/target/jacoco/jacoco.xml
           flags: unittests
           fail_ci_if_error: true # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
