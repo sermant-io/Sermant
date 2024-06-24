@@ -27,14 +27,19 @@ import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.grpc.stub.StreamObserver;
 import io.sermant.core.common.LoggerFactory;
-import io.sermant.core.config.ConfigManager;
-import io.sermant.core.plugin.config.ServiceMeta;
+import io.sermant.core.utils.FileUtils;
 import io.sermant.core.utils.NetworkUtils;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.xds.client.XdsClient;
 import io.sermant.implement.service.xds.env.XdsConstant;
 
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,6 +51,18 @@ import java.util.logging.Logger;
  **/
 public abstract class XdsHandler implements XdsServiceAction {
     protected static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private static final int DELAY_TIME = 3000;
+
+    private static final int THREAD_CORE_SIZE = 1;
+
+    private static final int THREAD_MAX_SIZE = 3;
+
+    private static final long THREAD_KEEP_ALIVE_TIME = 60L;
+
+    private static final int THREAD_QUEUE_CAPACITY = 20;
+
+    private static volatile ThreadPoolExecutor executor;
 
     protected final XdsClient client;
 
@@ -100,7 +117,8 @@ public abstract class XdsHandler implements XdsServiceAction {
     }
 
     private void createNode() {
-        String namespace = ConfigManager.getConfig(ServiceMeta.class).getProject();
+        String fileContent = FileUtils.readFileToString(XdsConstant.K8S_POD_NAMESPACE_PATH);
+        String namespace = StringUtils.isEmpty(fileContent) ? XdsConstant.K8S_DEFAULT_NAMESPACE : fileContent;
         StringBuilder nodeIdBuilder = new StringBuilder();
 
         // nodeId:sidecar~{pod_ip}~{pod_name}.{namespace}~{namespace}.svc.cluster.local
@@ -143,8 +161,16 @@ public abstract class XdsHandler implements XdsServiceAction {
                 if (countDownLatch != null) {
                     countDownLatch.countDown();
                 }
-                client.updateChannel();
-                subscribe(requestKey, null);
+                initExecutor();
+                executor.submit(() -> {
+                    try {
+                        Thread.sleep(DELAY_TIME);
+                    } catch (InterruptedException e) {
+                        LOGGER.log(Level.WARNING, "An error occurred in thread sleeping.", e);
+                    }
+                    client.updateChannel();
+                    subscribe(requestKey, null);
+                });
                 LOGGER.log(Level.SEVERE, "An error occurred in Xds communication with istiod.", throwable);
             }
 
@@ -166,4 +192,40 @@ public abstract class XdsHandler implements XdsServiceAction {
      * @param response
      */
     protected abstract void handleResponse(String requestKey, DiscoveryResponse response);
+
+    private static void initExecutor() {
+        if (executor == null) {
+            synchronized (XdsHandler.class) {
+                if (executor == null) {
+                    executor = new ThreadPoolExecutor(THREAD_CORE_SIZE, THREAD_MAX_SIZE, THREAD_KEEP_ALIVE_TIME,
+                            TimeUnit.SECONDS, new ArrayBlockingQueue<>(THREAD_QUEUE_CAPACITY),
+                            new NamedThreadFactory());
+                    executor.allowCoreThreadTimeOut(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * thread factory to name thread
+     *
+     * @author daizhenyu
+     * @since 2024-06-25
+     **/
+    static class NamedThreadFactory implements ThreadFactory {
+        /**
+         * thread name prefix
+         */
+        private static final String THREAD_NAME_PREFIX = "xds-reconnection-thread-";
+
+        /**
+         * thread number
+         */
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+        @Override
+        public Thread newThread(Runnable r) {
+            return new Thread(r, THREAD_NAME_PREFIX + threadNumber.getAndIncrement());
+        }
+    }
 }

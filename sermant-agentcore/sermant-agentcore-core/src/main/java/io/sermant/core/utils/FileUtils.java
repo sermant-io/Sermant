@@ -204,7 +204,7 @@ public class FileUtils {
      */
     public static String readFileToString(String filePath) {
         // Read all bytes from the file at once
-        byte[] bytes = null;
+        byte[] bytes;
         try {
             bytes = Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {

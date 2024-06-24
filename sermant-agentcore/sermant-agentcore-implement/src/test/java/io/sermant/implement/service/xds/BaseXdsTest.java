@@ -16,8 +16,7 @@
 
 package io.sermant.implement.service.xds;
 
-import io.sermant.core.config.ConfigManager;
-import io.sermant.core.plugin.config.ServiceMeta;
+import io.sermant.core.utils.FileUtils;
 import io.sermant.implement.service.xds.client.XdsClient;
 import io.sermant.implement.service.xds.handler.StreamObserverRequestImpl;
 
@@ -31,7 +30,7 @@ import org.mockito.Mockito;
  * @since 2024-05-25
  **/
 public abstract class BaseXdsTest {
-    private static MockedStatic<ConfigManager> mockedConfigManager;
+    private static MockedStatic<FileUtils> mockedFileUtils;
 
     protected static XdsClient client;
 
@@ -43,17 +42,15 @@ public abstract class BaseXdsTest {
         client = Mockito.mock(XdsClient.class);
         Mockito.doReturn(requestStreamObserver).when(client).getDiscoveryRequestObserver(Mockito.any());
 
-        mockedConfigManager = Mockito.mockStatic(ConfigManager.class);
-        ServiceMeta meta = new ServiceMeta();
-        meta.setProject("default");
-        mockedConfigManager.when(() -> ConfigManager.getConfig(ServiceMeta.class)).thenReturn(meta);
+        mockedFileUtils = Mockito.mockStatic(FileUtils.class);
+        mockedFileUtils.when(() -> FileUtils.readFileToString(Mockito.any())).thenReturn("default");
     }
 
     @AfterClass
     public static void after() {
         Mockito.clearAllCaches();
-        if (mockedConfigManager != null) {
-            mockedConfigManager.close();
+        if (mockedFileUtils != null) {
+            mockedFileUtils.close();
         }
     }
 }
