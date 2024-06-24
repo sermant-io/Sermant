@@ -42,5 +42,6 @@ declare module '@vue/runtime-core' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TooltipIcon: typeof import('./components/layouts/TooltipIcon.vue')['default']
   }
 }
