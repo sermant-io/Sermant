@@ -216,14 +216,7 @@ public class SubscriberManager {
      * @return publish result
      */
     public boolean publishConfig(String key, String group, String content) {
-        final Optional<String> keyIdOptional = this.kieClient.getKeyId(key, group);
-        if (!keyIdOptional.isPresent()) {
-            // If not exists, then publish
-            final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
-            return kieClient.publishConfig(key, labels, content, true);
-        } else {
-            return kieClient.doUpdateConfig(keyIdOptional.get(), content, true);
-        }
+        return kieClient.publishConfig(key, group, content);
     }
 
     /**

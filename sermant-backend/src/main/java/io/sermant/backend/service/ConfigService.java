@@ -250,7 +250,7 @@ public class ConfigService {
             return configClient;
         }
         ConfigClient client = CONFIG_CLIENT_MAP.get(namespace);
-        if (client == null || !client.isConnect()) {
+        if (client == null) {
             return createNacosClient(namespace);
         }
         return client;
@@ -326,7 +326,7 @@ public class ConfigService {
         }
         if (ConfigCenterType.NACOS.name().equals(dynamicConfig.getDynamicConfigType()) && !configClient.isConnect()) {
             for (Map.Entry<String, ConfigClient> entry : CONFIG_CLIENT_MAP.entrySet()) {
-                getConfigClient(entry.getKey());
+                createNacosClient(entry.getKey());
             }
         }
     }
