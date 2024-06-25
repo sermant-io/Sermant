@@ -171,7 +171,12 @@ public class ZooKeeperClient implements ConfigClient {
             if (!child.contains(nodeName)) {
                 continue;
             }
-            String childPath = parentNodePath + child;
+            String childPath;
+            if (parentNodePath.endsWith(String.valueOf(ZK_PATH_SEPARATOR))) {
+                childPath = parentNodePath + child;
+            } else {
+                childPath = parentNodePath + ZK_PATH_SEPARATOR + child;
+            }
             List<String> subChild = this.zkClient.getChildren(childPath, false);
             if (subChild == null || subChild.isEmpty()) {
                 continue;

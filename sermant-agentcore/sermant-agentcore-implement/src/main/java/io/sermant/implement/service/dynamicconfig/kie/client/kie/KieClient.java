@@ -153,7 +153,14 @@ public class KieClient extends AbstractClient implements ConfigClient {
 
     @Override
     public boolean publishConfig(String key, String group, String content) {
-        return this.publishConfig(key, LabelGroupUtils.resolveGroupLabels(group), content, true);
+        final Optional<String> keyIdOptional = this.getKeyId(key, group);
+        if (keyIdOptional.isPresent()) {
+            return this.doUpdateConfig(keyIdOptional.get(), content, true);
+        }
+
+        // If not exists, then publish
+        final Map<String, String> labels = LabelGroupUtils.resolveGroupLabels(group);
+        return this.publishConfig(key, labels, content, true);
     }
 
     /**
@@ -255,7 +262,7 @@ public class KieClient extends AbstractClient implements ConfigClient {
             return false;
         }
         final HttpResult httpResult = this.httpClient.doDelete(buildKeyIdUrl(keyIdOptional.get()));
-        return httpResult.getCode() == HttpStatus.SC_OK;
+        return httpResult.getCode() == HttpStatus.SC_NO_CONTENT;
     }
 
     @Override
