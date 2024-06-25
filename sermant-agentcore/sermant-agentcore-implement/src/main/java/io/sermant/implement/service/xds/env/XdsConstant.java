@@ -63,6 +63,16 @@ public class XdsConstant {
      */
     public static final String CDS_ALL_RESOURCE = "CLUSTER_ALL";
 
+    /**
+     * the namespace file path of k8s pod
+     */
+    public static final String K8S_POD_NAMESPACE_PATH = "/var/run/secrets/kubernetes.io/serviceaccount/namespace";
+
+    /**
+     * the default namespace of k8s pod
+     */
+    public static final String K8S_DEFAULT_NAMESPACE = "default";
+
     private XdsConstant() {
     }
 }
