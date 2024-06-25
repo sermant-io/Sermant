@@ -18,12 +18,8 @@ package io.sermant.core.plugin.agent.enhance;
 
 import io.sermant.core.classloader.ClassLoaderManager;
 import io.sermant.core.common.LoggerFactory;
-import io.sermant.core.config.ConfigManager;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
-import io.sermant.core.plugin.agent.interceptor.Interceptor;
-import io.sermant.core.service.inject.config.InjectConfig;
 
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,17 +29,8 @@ import java.util.logging.Logger;
  * @author luanwenfei
  * @since 2023-04-28
  */
-public class ClassLoaderLoadClassInterceptor implements Interceptor {
+public class ClassLoaderLoadClassInterceptor extends AbstractClassLoaderInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
-    private final Set<String> essentialPackage;
-
-    /**
-     * constructor
-     */
-    public ClassLoaderLoadClassInterceptor() {
-        essentialPackage = ConfigManager.getConfig(InjectConfig.class).getEssentialPackage();
-    }
 
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
@@ -69,14 +56,5 @@ public class ClassLoaderLoadClassInterceptor implements Interceptor {
             }
         }
         return context;
-    }
-
-    private boolean isSermantClass(String name) {
-        for (String prefix : essentialPackage) {
-            if (name.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

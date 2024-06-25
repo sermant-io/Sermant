@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.sermant.core.plugin.agent.enhance;
 
 import io.sermant.core.classloader.ClassLoaderManager;
@@ -26,12 +10,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Enhance findResource method
+ * 发行版Tomcat ClassLoader getResourceAsStream 增强
  *
- * @author luanwenfei
- * @since 2023-05-08
+ * @author Yaxx19
+ * @since 2024-06-04
  */
-public class ClassLoaderFindResourceInterceptor extends AbstractClassLoaderInterceptor {
+public class WebappClassLoaderGetResourceAsStreamInterceptor extends AbstractClassLoaderInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
@@ -49,11 +33,11 @@ public class ClassLoaderFindResourceInterceptor extends AbstractClassLoaderInter
         if (isSermantResource(path)) {
             Optional<URL> url = ClassLoaderManager.getPluginClassFinder().findSermantResource(path);
             if (!url.isPresent()) {
-                LOGGER.log(Level.WARNING, "Can not find resource [{0}] by sermant.And then find by {1}. ",
+                LOGGER.log(Level.WARNING, "Can not get resource stream [{0}] by sermant.And then find by {1}. ",
                         new Object[]{path, context.getObject()});
             } else {
-                context.changeResult(url.get());
-                LOGGER.log(Level.INFO, "Find resource: {0} successfully by sermant.", path);
+                context.changeResult(url.get().openStream());
+                LOGGER.log(Level.INFO, "Get resource stream: {0} successfully by sermant.", path);
             }
         }
         return context;
@@ -63,5 +47,4 @@ public class ClassLoaderFindResourceInterceptor extends AbstractClassLoaderInter
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         return context;
     }
-
 }
