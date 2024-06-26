@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,13 @@ import io.sermant.backend.common.conf.BackendConfig;
 import io.sermant.backend.dao.DatabaseType;
 import io.sermant.backend.dao.EventDao;
 import io.sermant.backend.dao.memory.MemoryClientImpl;
-import io.sermant.backend.dao.redis.EventDaoForRedis;
+import io.sermant.backend.dao.redis.RedisClientImpl;
 import io.sermant.backend.entity.InstanceMeta;
 import io.sermant.backend.entity.event.Event;
 import io.sermant.backend.entity.event.EventsRequestEntity;
 import io.sermant.backend.entity.event.QueryCacheSizeEntity;
 import io.sermant.backend.entity.event.QueryResultEventInfoEntity;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +43,6 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class EventServer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventServer.class);
-
-    private static EventServer eventServer;
-
     @Autowired
     private BackendConfig backendConfig;
 
@@ -62,12 +56,11 @@ public class EventServer {
      */
     @PostConstruct
     public void init() {
-        eventServer = this;
         if (Objects.requireNonNull(backendConfig.getDatabase()) == DatabaseType.REDIS) {
-            eventServer.daoService = new EventDaoForRedis(backendConfig);
-        } else {
-            eventServer.daoService = new MemoryClientImpl(backendConfig);
+            this.daoService = new RedisClientImpl(backendConfig);
+            return;
         }
+        this.daoService = new MemoryClientImpl(backendConfig);
     }
 
     /**
