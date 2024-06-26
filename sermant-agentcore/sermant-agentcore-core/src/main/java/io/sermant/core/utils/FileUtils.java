@@ -17,15 +17,23 @@
 package io.sermant.core.utils;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.config.ConfigManager;
+import io.sermant.core.plugin.agent.config.AgentConfig;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,6 +54,16 @@ public class FileUtils {
 
     private static final String AGENT_PATH = new File(new File(FileUtils.class.getProtectionDomain().getCodeSource()
             .getLocation().getPath()).getParent()).getParent();
+
+    /**
+     * file name of unmatched class name
+     */
+    private static final String DEFAULT_OUTPUT_CLASS_NAME_FILE = "unmatched_class_name.txt";
+
+    /**
+     * unmatched class cache
+     */
+    private static final Map<String, String> UNMATCHED_CLASS_CACHE = new ConcurrentHashMap<>();
 
     /**
      * buffer size
@@ -223,5 +241,59 @@ public class FileUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * add unmatched class for enhancement to cache
+     *
+     * @param className class name
+     */
+    public static void addToUnmatchedClassCache(String className) {
+        UNMATCHED_CLASS_CACHE.putIfAbsent(className, className);
+    }
+
+    /**
+     * output file
+     */
+    public static void writeUnmatchedClassNameToFile() {
+        try (BufferedWriter classNameWriter = new BufferedWriter(new FileWriter(buildUnmatchedFileString()))) {
+            for (String className : UNMATCHED_CLASS_CACHE.keySet()) {
+                classNameWriter.write(className);
+                classNameWriter.newLine();
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Fail to write class name to file. ", e);
+        }
+    }
+
+    /**
+     * load unmatched file name to cache
+     */
+    public static void readUnmatchedClassNameFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(buildUnmatchedFileString()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                UNMATCHED_CLASS_CACHE.putIfAbsent(line, line);
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Fail to read class name from file: " + e.getMessage());
+        }
+    }
+
+    public static Map<String, String> getUnMatchedClassCache() {
+        return UNMATCHED_CLASS_CACHE;
+    }
+
+    private static String buildUnmatchedFileString() {
+        AgentConfig config = ConfigManager.getConfig(AgentConfig.class);
+        String preFilterPath = config.getPreFilterPath();
+        if (StringUtils.isEmpty(preFilterPath)) {
+            preFilterPath = AGENT_PATH;
+        }
+        String preFilterFile = config.getPreFilterFile();
+        if (StringUtils.isEmpty(preFilterFile)) {
+            preFilterFile = DEFAULT_OUTPUT_CLASS_NAME_FILE;
+        }
+        return preFilterPath + File.separatorChar + preFilterFile;
     }
 }

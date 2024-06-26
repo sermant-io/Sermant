@@ -121,7 +121,7 @@ public class ClassLoaderManager {
         return urlList.toArray(new URL[0]);
     }
 
-    private static URL[] listCommonLibUrls(String commonLibPath) throws MalformedURLException {
+    private static List<URL> listCommonLibUrls(String commonLibPath) throws MalformedURLException {
         File commonLibDir = new File(FileUtils.validatePath(commonLibPath));
         if (!commonLibDir.exists() || !commonLibDir.isDirectory()) {
             throw new FileCheckException("common lib is not exist or is not directory.");
@@ -134,6 +134,6 @@ public class ClassLoaderManager {
         for (File jar : jars) {
             urlList.add(jar.toURI().toURL());
         }
-        return urlList.toArray(new URL[0]);
+        return urlList;
     }
 }

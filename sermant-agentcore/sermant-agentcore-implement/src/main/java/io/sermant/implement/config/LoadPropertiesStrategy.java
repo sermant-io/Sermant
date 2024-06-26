@@ -70,6 +70,11 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
     private static final int MAP_ARGUMENT_TYPE_LEN = 2;
 
     /**
+     * collection pattern
+     */
+    private static final String COLLECTION_PATTERN = "(.*)\\[[0-9]*]$";
+
+    /**
      * argsMap
      */
     private Map<String, Object> argsMap;
@@ -141,21 +146,11 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      */
     private Properties readConfig(File config) {
         final Properties properties = new Properties();
-        Reader reader = null;
-        try {
-            reader = new InputStreamReader(new FileInputStream(config), CommonConstant.DEFAULT_CHARSET);
+        try (Reader reader = new InputStreamReader(new FileInputStream(config), CommonConstant.DEFAULT_CHARSET)) {
             properties.load(reader);
         } catch (IOException ignored) {
             LOGGER.log(Level.WARNING, String.format(Locale.ROOT,
                     "Missing config file [%s], please check.", config));
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ignored) {
-                    LOGGER.warning("Unexpected exception occurs. ");
-                }
-            }
         }
         return properties;
     }
@@ -216,7 +211,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
         for (String propertyName : config.stringPropertyNames()) {
             if (propertyName.startsWith(key)) {
                 // Match List and Set
-                if (propertyName.matches("(.*)\\[[0-9]*]$")) {
+                if (propertyName.matches(COLLECTION_PATTERN)) {
                     sb.append(config.getProperty(propertyName))
                             .append(CommonConstant.COMMA);
                 } else {

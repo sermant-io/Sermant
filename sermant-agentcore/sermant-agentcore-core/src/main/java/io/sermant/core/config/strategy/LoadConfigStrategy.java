@@ -20,7 +20,6 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.common.BaseConfig;
 
 import java.io.File;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,11 +66,12 @@ public interface LoadConfigStrategy<T> {
     T getConfigHolder(File config, Map<String, Object> argsMap);
 
     /**
-     * Loading configuration: Loads the configuration information of the main carrier object to the configuration object
+     * Loading configuration: Loads the configuration information of the main carrier object to the configuration
+     * object
      *
      * @param holder configuration holder
      * @param config configuration object
-     * @param <R>    configuration class type
+     * @param <R> configuration class type
      * @param isDynamic is the config loaded dynamically
      * @return configuration object after processing
      */
@@ -84,7 +84,7 @@ public interface LoadConfigStrategy<T> {
      */
     class DefaultLoadConfigStrategy implements LoadConfigStrategy<Object> {
         /**
-         * 日志
+         * logger
          */
         private static final Logger LOGGER = LoggerFactory.getLogger();
 
@@ -95,15 +95,15 @@ public interface LoadConfigStrategy<T> {
 
         @Override
         public Object getConfigHolder(File config, Map<String, Object> argsMap) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "[%s] will do nothing when reading config file. ",
-                    DefaultLoadConfigStrategy.class.getName()));
+            LOGGER.log(Level.WARNING, "[{0}] will do nothing when reading config file. ",
+                    DefaultLoadConfigStrategy.class.getName());
             return argsMap;
         }
 
         @Override
         public <R extends BaseConfig> R loadConfig(Object holder, R config, boolean isDynamic) {
-            LOGGER.log(Level.WARNING, String.format(Locale.ROOT, "[%s] will do nothing when loading config. ",
-                    DefaultLoadConfigStrategy.class.getName()));
+            LOGGER.log(Level.WARNING, "[{0}] will do nothing when loading config. ",
+                    DefaultLoadConfigStrategy.class.getName());
             return config;
         }
     }

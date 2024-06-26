@@ -34,6 +34,7 @@ import io.sermant.core.utils.SpiLoadUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -111,13 +112,14 @@ public class ServiceManager {
      */
     public static void initServices() {
         ServiceConfig serviceConfig = ConfigManager.getConfig(ServiceConfig.class);
-        ArrayList<String> startServiceArray = new ArrayList<>();
+        List<String> startServiceArray = new ArrayList<>();
         for (final BaseService service : ServiceLoader.load(BaseService.class,
                 ClassLoaderManager.getFrameworkClassLoader())) {
-            if (serviceConfig.checkServiceEnable(service.getClass().getName()) && loadService(service,
+            String serviceName = service.getClass().getName();
+            if (serviceConfig.checkServiceEnable(serviceName) && loadService(service,
                     service.getClass(), BaseService.class)) {
                 service.start();
-                startServiceArray.add(service.getClass().getName());
+                startServiceArray.add(serviceName);
             }
         }
         FrameworkEventCollector.getInstance().collectServiceStartEvent(startServiceArray.toString());
@@ -205,7 +207,7 @@ public class ServiceManager {
 
     private static void offerEvent() {
         // Report service stop event
-        ArrayList<String> stopServiceArray = new ArrayList<>();
+        List<String> stopServiceArray = new ArrayList<>();
         for (BaseService baseService : new HashSet<>(SERVICES.values())) {
             stopServiceArray.add(baseService.getClass().getName());
         }

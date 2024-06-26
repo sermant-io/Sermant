@@ -19,9 +19,11 @@ package io.sermant.core.plugin.agent;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.plugin.Plugin;
 import io.sermant.core.plugin.agent.collector.PluginCollector;
+import io.sermant.core.plugin.agent.config.AgentConfig;
 import io.sermant.core.plugin.agent.declarer.PluginDescription;
 import io.sermant.core.plugin.agent.enhance.ClassLoaderDeclarer;
 import io.sermant.core.service.ServiceConfig;
+import io.sermant.core.utils.FileUtils;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy;
@@ -65,7 +67,20 @@ public class ByteEnhanceManager {
      * Install classloader enhanced bytecode for premain only
      */
     public static void enhance() {
+        cacheUnmatchedClass();
         builder.install(instrumentationCache);
+        saveUnMatchedClass();
+    }
+
+    private static void saveUnMatchedClass() {
+        if (ConfigManager.getConfig(AgentConfig.class).isPreFilterEnable()) {
+            Runtime.getRuntime().addShutdownHook(new Thread(FileUtils::writeUnmatchedClassNameToFile
+            ));
+        }
+    }
+
+    private static void cacheUnmatchedClass() {
+        FileUtils.readUnmatchedClassNameFromFile();
     }
 
     /**

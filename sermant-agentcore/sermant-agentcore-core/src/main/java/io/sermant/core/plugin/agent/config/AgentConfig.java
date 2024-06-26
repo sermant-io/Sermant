@@ -17,6 +17,7 @@
 package io.sermant.core.plugin.agent.config;
 
 import io.sermant.core.config.common.BaseConfig;
+import io.sermant.core.config.common.ConfigFieldKey;
 import io.sermant.core.config.common.ConfigTypeKey;
 
 import java.util.Collections;
@@ -69,10 +70,18 @@ public class AgentConfig implements BaseConfig {
      */
     private Set<String> serviceInjectList = Collections.emptySet();
 
+    @ConfigFieldKey("preFilter.enable")
+    private boolean preFilterEnable = false;
+
+    @ConfigFieldKey("preFilter.path")
+    private String preFilterPath;
+
+    @ConfigFieldKey("preFilter.file")
+    private String preFilterFile;
+
     /**
-     * Allows classes to be loaded from the thread context, mainly used by the PluginClassLoader to load the
-     * classes of the host instance through the thread context, if not allowed can be specified during the
-     * interceptor call
+     * Allows classes to be loaded from the thread context, mainly used by the PluginClassLoader to load the classes of
+     * the host instance through the thread context, if not allowed can be specified during the interceptor call
      */
     private boolean useContextLoader = false;
 
@@ -138,5 +147,29 @@ public class AgentConfig implements BaseConfig {
 
     public void setUseContextLoader(boolean useContextLoader) {
         this.useContextLoader = useContextLoader;
+    }
+
+    public boolean isPreFilterEnable() {
+        return preFilterEnable;
+    }
+
+    public void setPreFilterEnable(boolean preFilterEnable) {
+        this.preFilterEnable = preFilterEnable;
+    }
+
+    public String getPreFilterPath() {
+        return preFilterPath;
+    }
+
+    public void setPreFilterPath(String preFilterPath) {
+        this.preFilterPath = preFilterPath;
+    }
+
+    public String getPreFilterFile() {
+        return preFilterFile;
+    }
+
+    public void setPreFilterFile(String preFilterFile) {
+        this.preFilterFile = preFilterFile;
     }
 }

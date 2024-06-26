@@ -96,6 +96,23 @@ public class ConfigValueUtil {
             key -> key.toLowerCase(Locale.ROOT).replace('.', '-')
     };
 
+    private static final Map<Class<?>, BaseTypeParser> BASE_TYPE_PARSERS = new HashMap<Class<?>, BaseTypeParser>() {
+        {
+            put(int.class, Integer::parseInt);
+            put(Integer.class, Integer::valueOf);
+            put(short.class, Short::parseShort);
+            put(Short.class, Short::valueOf);
+            put(long.class, Long::parseLong);
+            put(Long.class, Long::valueOf);
+            put(float.class, Float::parseFloat);
+            put(Float.class, Float::valueOf);
+            put(double.class, Double::parseDouble);
+            put(Double.class, Double::valueOf);
+            put(boolean.class, Boolean::parseBoolean);
+            put(Boolean.class, Boolean::valueOf);
+        }
+    };
+
     /**
      * function for obtaining reference config values
      * <p>Priority: Startup Configuration > Environment Variables > Startup Parameters > Configuration File</p>
@@ -245,8 +262,8 @@ public class ConfigValueUtil {
     }
 
     /**
-     * Converts configuration information strings to int, short, long, float, double, enumeration, String, and
-     * Object, and returns null if conversion fails
+     * Converts configuration information strings to int, short, long, float, double, enumeration, String, and Object,
+     * and returns null if conversion fails
      *
      * @param configStr configuration information string
      * @param type type of object
@@ -258,38 +275,19 @@ public class ConfigValueUtil {
         if (configStr == null || "".equals(configStr)) {
             return (R) result;
         }
-        if (type == int.class) {
-            result = Integer.parseInt(configStr);
-        } else if (type == Integer.class) {
-            result = Integer.valueOf(configStr);
-        } else if (type == short.class) {
-            result = Short.parseShort(configStr);
-        } else if (type == Short.class) {
-            result = Short.valueOf(configStr);
-        } else if (type == long.class) {
-            result = Long.parseLong(configStr);
-        } else if (type == Long.class) {
-            result = Long.valueOf(configStr);
-        } else if (type == float.class) {
-            result = Float.parseFloat(configStr);
-        } else if (type == Float.class) {
-            result = Float.valueOf(configStr);
-        } else if (type == double.class) {
-            result = Double.parseDouble(configStr);
-        } else if (type == Double.class) {
-            result = Double.valueOf(configStr);
-        } else if (type == boolean.class) {
-            result = Boolean.parseBoolean(configStr);
-        } else if (type == Boolean.class) {
-            result = Boolean.valueOf(configStr);
-        } else if (type.isEnum()) {
-            result = Enum.valueOf((Class) type, configStr);
-        } else if (type == String.class || type == Object.class) {
-            result = configStr;
-        } else {
-            result = null;
+
+        BaseTypeParser baseTypeParser = BASE_TYPE_PARSERS.get(type);
+        if (baseTypeParser != null) {
+            return (R) baseTypeParser.parse(configStr);
         }
-        return (R) result;
+
+        if (type.isEnum()) {
+            return (R) Enum.valueOf((Class) type, configStr);
+        }
+        if (type == String.class || type == Object.class) {
+            return (R) configStr;
+        }
+        return null;
     }
 
     /**
@@ -378,8 +376,8 @@ public class ConfigValueUtil {
     }
 
     /**
-     * Environment variables are read after being processed by KeyFormatter. The priorities are: Startup
-     * Configuration > Environment Variables > Startup Parameters > Configuration File
+     * Environment variables are read after being processed by KeyFormatter. The priorities are: Startup Configuration >
+     * Environment Variables > Startup Parameters > Configuration File
      *
      * @param key key
      * @param argsMap argsMap
@@ -499,5 +497,23 @@ public class ConfigValueUtil {
          * @return Corrected value
          */
         String getFixedValue(String key);
+    }
+
+    /**
+     * base type parser
+     *
+     * @param <R>
+     * @author lilai
+     * @since 2024-06-14
+     */
+    @FunctionalInterface
+    interface BaseTypeParser<R> {
+        /**
+         * parse string to base type such as int, double
+         *
+         * @param str original string
+         * @return parsed object
+         */
+        R parse(String str);
     }
 }

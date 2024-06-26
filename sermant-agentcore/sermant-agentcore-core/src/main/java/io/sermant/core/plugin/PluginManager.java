@@ -155,7 +155,7 @@ public class PluginManager {
      * @param isDynamic Whether the plugin is dynamic
      */
     public static void initPlugins(Set<String> pluginNames, boolean isDynamic) {
-        if (pluginNames == null || pluginNames.isEmpty()) {
+        if (CollectionUtils.isEmpty(pluginNames)) {
             LOGGER.log(Level.WARNING, "Non plugin is configured to be initialized.");
             return;
         }
@@ -300,9 +300,7 @@ public class PluginManager {
      */
     private static boolean processByJarFile(String pluginName, File jar, boolean ifCheckSchema,
             JarFileConsumer consumer) {
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(jar);
+        try (JarFile jarFile = new JarFile(jar)) {
             if (ifCheckSchema && !PluginSchemaValidator.checkSchema(pluginName, getRealPluginName(pluginName),
                     jarFile)) {
                 throw new SchemaException(SchemaException.UNEXPECTED_EXT_JAR, jar.getPath());
@@ -314,14 +312,6 @@ public class PluginManager {
         } catch (IOException ignored) {
             LOGGER.warning(String.format(Locale.ROOT, "Check schema of %s failed. ", jar.getPath()));
             return false;
-        } finally {
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (IOException ioException) {
-                    LOGGER.severe("Occurred ioException when close jar.");
-                }
-            }
         }
     }
 
@@ -344,7 +334,7 @@ public class PluginManager {
      * @return all jars
      */
     private static File[] listJars(File dir) {
-        if (!dir.exists() || !dir.isDirectory()) {
+        if (!dir.isDirectory()) {
             return new File[0];
         }
         final File[] files = dir.listFiles(new FileFilter() {
