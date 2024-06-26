@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,15 @@ import io.sermant.backend.entity.event.EventsRequestEntity;
 import io.sermant.backend.entity.event.QueryCacheSizeEntity;
 import io.sermant.backend.entity.event.QueryResultEventInfoEntity;
 import io.sermant.backend.util.DbUtils;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.resps.Tuple;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,13 +49,12 @@ import java.util.stream.Collectors;
  * @author xuezechao
  * @since 2023-03-02
  */
-@Component
 public class RedisClientImpl implements EventDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientImpl.class);
 
-    private JedisPool jedisPool;
+    private final BackendConfig backendConfig;
 
-    private BackendConfig backendConfig;
+    private RedisOperation redisOperation;
 
     /**
      * Construct the Jedis connection pool
@@ -68,73 +63,51 @@ public class RedisClientImpl implements EventDao {
      */
     public RedisClientImpl(BackendConfig backendConfig) {
         this.backendConfig = backendConfig;
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(Integer.parseInt(backendConfig.getMaxTotal()));
-        config.setMaxIdle(Integer.parseInt(backendConfig.getMaxIdle()));
-        if (backendConfig.getVersion().compareTo("6.0") < 0) {
-            jedisPool = new JedisPool(
-                    config,
-                    Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
-                    Integer.parseInt(
-                            Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
-                    Integer.parseInt(backendConfig.getTimeout()),
-                    backendConfig.getPassword());
-        } else {
-            jedisPool = new JedisPool(
-                    config,
-                    Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(0),
-                    Integer.parseInt(
-                            Arrays.asList(backendConfig.getUrl().split(CommonConst.REDIS_ADDRESS_SPLIT)).get(1)),
-                    Integer.parseInt(backendConfig.getTimeout()),
-                    backendConfig.getUser(),
-                    backendConfig.getPassword());
+        String url = StringUtils.trim(backendConfig.getUrl());
+        String[] addressList = url.split(CommonConst.REDIS_CLUSTER_SPLIT);
+        if (addressList.length == 0) {
+            LOGGER.error("Redis service address is empty.");
+            return;
         }
+        if (addressList.length > 1) {
+            redisOperation = new RedisClusterOperationImpl(backendConfig, addressList);
+            return;
+        }
+        redisOperation = new RedisStandAloneOperationImpl(backendConfig);
     }
 
     @Override
     public boolean addEvent(Event event) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            String instanceMeta = jedis.get(event.getMetaHash());
-            if (DbUtils.isEmpty(instanceMeta)) {
-                LOGGER.error("add event failed, event:{}, error message:[instance not exist]", event);
-                return false;
-            }
-            InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
-
-            // get event field
-            String field = DbUtils.getEventField(agentInstanceMeta, event);
-
-            // check whether there are identical fields
-            field = field + CommonConst.JOIN_REDIS_KEY + getSameFieldNum(field);
-
-            // set an existing field cache to expire and delete it periodically
-            jedis.setex(field, backendConfig.getFieldExpire(), Strings.EMPTY);
-
-            // write event
-            jedis.hset(CommonConst.REDIS_EVENT_KEY, field,
-                    JSONObject.toJSONString(DbUtils.aggregationEvent(event, agentInstanceMeta)));
-
-            // write type index
-            jedis.zadd(CommonConst.REDIS_EVENT_FIELD_SET_KEY, event.getTime(), field);
-            return true;
-        } catch (IllegalStateException e) {
-            LOGGER.error("add event failed, event:{}, error message:{}", event, e.getMessage());
+        String instanceMeta = redisOperation.get(event.getMetaHash());
+        if (DbUtils.isEmpty(instanceMeta)) {
+            LOGGER.error("add event failed, event:{}, error message:[instance not exist]", event);
             return false;
         }
+        InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
+
+        // get event field
+        String field = DbUtils.getEventField(agentInstanceMeta, event);
+
+        // check whether there are identical fields
+        field = field + CommonConst.JOIN_REDIS_KEY + getSameFieldNum(field);
+
+        // set an existing field cache to expire and delete it periodically
+        redisOperation.setex(field, backendConfig.getFieldExpire(), Strings.EMPTY);
+
+        // write event
+        redisOperation.hset(CommonConst.REDIS_EVENT_KEY, field,
+                JSONObject.toJSONString(DbUtils.aggregationEvent(event, agentInstanceMeta)));
+
+        // write type index
+        redisOperation.zadd(CommonConst.REDIS_EVENT_FIELD_SET_KEY, event.getTime(), field);
+        return true;
     }
 
     @Override
     public boolean addInstanceMeta(InstanceMeta instanceMeta) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            jedis.setex(
-                    instanceMeta.getMetaHash(),
-                    backendConfig.getHeartbeatEffectiveTime(),
-                    JSONObject.toJSONString(instanceMeta));
-            return true;
-        } catch (IllegalStateException e) {
-            LOGGER.error("add instance meta failed, instance meta:{}, error message:{}", instanceMeta, e.getMessage());
-            return false;
-        }
+        redisOperation.setex(instanceMeta.getMetaHash(), backendConfig.getHeartbeatEffectiveTime(),
+                JSONObject.toJSONString(instanceMeta));
+        return true;
     }
 
     /**
@@ -144,34 +117,22 @@ public class RedisClientImpl implements EventDao {
      * @return number of same fields
      */
     private int getSameFieldNum(String field) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.keys(field + "*").size();
-        } catch (IllegalStateException e) {
-            LOGGER.error("query same field failed, field:{}, error message:{}", field, e.getMessage());
-            return 0;
-        }
+        return redisOperation.keys(field + "*").size();
     }
 
     @Override
     public List<QueryResultEventInfoEntity> queryEvent(EventsRequestEntity eventsRequestEntity) {
         String pattern = DbUtils.getPattern(eventsRequestEntity);
-        try (Jedis jedis = jedisPool.getResource()) {
-            List<Tuple> queryResultByTime = queryByTimeRange(CommonConst.REDIS_EVENT_FIELD_SET_KEY,
-                    eventsRequestEntity.getStartTime(),
-                    eventsRequestEntity.getEndTime());
-            queryResultByTime = DbUtils.filterQueryResult(backendConfig, queryResultByTime, pattern);
-            List<String> eventKeys = queryResultByTime.stream().sorted(Comparator.comparing(Tuple::getScore))
-                    .map(Tuple::getElement).collect(Collectors.toList());
-            Collections.reverse(eventKeys);
-            jedis.setex(
-                    eventsRequestEntity.getSessionId(),
-                    backendConfig.getSessionTimeout(),
-                    JSONObject.toJSONString(eventKeys));
-            return queryEventPage(eventsRequestEntity.getSessionId(), 1);
-        } catch (IllegalStateException e) {
-            LOGGER.error("query event failed, error message:{}", e.getMessage());
-            return new ArrayList<>();
-        }
+        List<Tuple> queryResultByTime = queryByTimeRange(CommonConst.REDIS_EVENT_FIELD_SET_KEY,
+                eventsRequestEntity.getStartTime(),
+                eventsRequestEntity.getEndTime());
+        queryResultByTime = DbUtils.filterQueryResult(backendConfig, queryResultByTime, pattern);
+        List<String> eventKeys = queryResultByTime.stream().sorted(Comparator.comparing(Tuple::getScore))
+                .map(Tuple::getElement).collect(Collectors.toList());
+        Collections.reverse(eventKeys);
+        redisOperation.setex(eventsRequestEntity.getSessionId(), backendConfig.getSessionTimeout(),
+                JSONObject.toJSONString(eventKeys));
+        return queryEventPage(eventsRequestEntity.getSessionId(), 1);
     }
 
     /**
@@ -183,51 +144,30 @@ public class RedisClientImpl implements EventDao {
      * @return query result
      */
     public List<Tuple> queryByTimeRange(String key, long startTime, long endTime) {
-        try (Jedis jedis = jedisPool.getResource()) {
-            return jedis.zrangeByScoreWithScores(key, startTime, endTime);
-        } catch (IllegalStateException e) {
-            LOGGER.error("query event by time failed, key:{}, startTime:{}, endTime:{}, error message:{}",
-                    key, startTime, endTime, e.getMessage());
-            return Collections.emptyList();
-        }
+        return redisOperation.zrangeByScoreWithScores(key, startTime, endTime);
     }
 
     @Override
     public List<QueryResultEventInfoEntity> queryEventPage(String sessionId, int page) {
         List<QueryResultEventInfoEntity> result = new ArrayList<>();
-        try (Jedis jedis = jedisPool.getResource()) {
-            String events = jedis.get(sessionId);
-            if (!DbUtils.isEmpty(events)) {
-                List<String> keyList = JSONObject.parseArray(events, String.class);
-                int startIndex = (page - 1) * CommonConst.DEFAULT_PAGE_SIZE;
-                int endIndex = Math.min(startIndex + CommonConst.DEFAULT_PAGE_SIZE, keyList.size());
-                for (String key : keyList.subList(startIndex, endIndex)) {
-                    result.add(JSONObject.parseObject(
-                            jedis.hget(CommonConst.REDIS_EVENT_KEY, key),
-                            QueryResultEventInfoEntity.class));
-                }
+        String events = redisOperation.get(sessionId);
+        if (!DbUtils.isEmpty(events)) {
+            List<String> keyList = JSONObject.parseArray(events, String.class);
+            int startIndex = (page - 1) * CommonConst.DEFAULT_PAGE_SIZE;
+            int endIndex = Math.min(startIndex + CommonConst.DEFAULT_PAGE_SIZE, keyList.size());
+            for (String key : keyList.subList(startIndex, endIndex)) {
+                result.add(JSONObject.parseObject(
+                        redisOperation.hget(CommonConst.REDIS_EVENT_KEY, key), QueryResultEventInfoEntity.class));
             }
-            return result;
-        } catch (IllegalStateException e) {
-            LOGGER.error("query event by page failed, sessionId:{}, error message:{}",
-                    sessionId, e.getMessage());
-            return result;
         }
+        return result;
     }
 
     @Override
     public QueryCacheSizeEntity getQueryCacheSize(EventsRequestEntity eventsRequestEntity) {
-        QueryCacheSizeEntity queryCacheSize = new QueryCacheSizeEntity();
-        try (Jedis jedis = jedisPool.getResource()) {
-            String events = jedis.get(eventsRequestEntity.getSessionId());
-            List<String> keyList = JSONObject.parseArray(events, String.class);
-            queryCacheSize = DbUtils.getQueryCacheSize(keyList);
-            return queryCacheSize;
-        } catch (IllegalStateException e) {
-            LOGGER.error("query event size failed, sessionId:{}, error message:{}",
-                    eventsRequestEntity.getSessionId(), e.getMessage());
-            return queryCacheSize;
-        }
+        String events = redisOperation.get(eventsRequestEntity.getSessionId());
+        List<String> keyList = JSONObject.parseArray(events, String.class);
+        return DbUtils.getQueryCacheSize(keyList);
     }
 
     /**
@@ -241,31 +181,22 @@ public class RedisClientImpl implements EventDao {
             List<Tuple> needCleanEvent = queryByTimeRange(
                     CommonConst.REDIS_EVENT_FIELD_SET_KEY, 0, calendar.getTimeInMillis());
             List<String> eventKeys = needCleanEvent.stream().map(Tuple::getElement).collect(Collectors.toList());
-            if (eventKeys.size() <= 0) {
+            if (eventKeys.isEmpty()) {
                 return;
             }
-            try (Jedis jedis = jedisPool.getResource()) {
-                jedis.hdel(CommonConst.REDIS_EVENT_KEY, eventKeys.toArray(new String[0]));
-                jedis.zrem(CommonConst.REDIS_EVENT_FIELD_SET_KEY, eventKeys.toArray(new String[0]));
-            } catch (IllegalStateException e) {
-                LOGGER.error("delete over dur event failed, error message:{}", e.getMessage());
-            }
+            redisOperation.hdel(CommonConst.REDIS_EVENT_KEY, eventKeys.toArray(new String[0]));
+            redisOperation.zrem(CommonConst.REDIS_EVENT_FIELD_SET_KEY, eventKeys.toArray(new String[0]));
         }
     }
 
     @Override
     public QueryResultEventInfoEntity getDoNotifyEvent(Event event) {
         QueryResultEventInfoEntity queryResultEventInfoEntity = new QueryResultEventInfoEntity();
-        try (Jedis jedis = jedisPool.getResource()) {
-            String instanceMeta = jedis.hget(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META, event.getMetaHash());
-            if (!DbUtils.isEmpty(instanceMeta)) {
-                InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
-                queryResultEventInfoEntity = DbUtils.aggregationEvent(event, agentInstanceMeta);
-            }
-            return queryResultEventInfoEntity;
-        } catch (IllegalStateException e) {
-            LOGGER.error("add event failed, event:{}, error message:{}", event, e.getMessage());
-            return queryResultEventInfoEntity;
+        String instanceMeta = redisOperation.hget(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META, event.getMetaHash());
+        if (!DbUtils.isEmpty(instanceMeta)) {
+            InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
+            queryResultEventInfoEntity = DbUtils.aggregationEvent(event, agentInstanceMeta);
         }
+        return queryResultEventInfoEntity;
     }
 }
