@@ -1,155 +1,163 @@
 <template>
   <div style="width: 100%">
-    <el-page-header :title="'配置管理'" @back="goBack">
+    <el-page-header :title="$t('configInfo.configurationManagement')" @back="goBack">
       <template #content>
-        <span class="font-600 mr-3"> 配置详情 </span>
+        <span class="font-600 mr-3"> {{ $t('configInfo.configurationDetail') }} </span>
       </template>
     </el-page-header>
     <el-form :inline="true" :model="requestParam" label-width="auto" :rules="checkRule" ref="ruleFormRef"
              style="max-width: 80%; margin-top: 30px;margin-bottom: 15px; margin-left: 20px;">
-      <el-descriptions title="插件配置信息" style="margin-top: 15px;"></el-descriptions>
+      <el-descriptions :title="$t('configInfo.pluginInformation')" style="margin-top: 15px;"></el-descriptions>
       <el-form-item prop="pluginType">
         <div data-v-6e4bcd7a="" class="ep-input ep-input--large ep-input-group ep-input-group--prepend"
              style="width: auto;" v-if="!types.modifyFlay">
-          <div class="ep-input-group__prepend" color="#606266">插件类型</div>
+          <div class="ep-input-group__prepend" color="#606266">{{ $t('configInfo.type') }}</div>
         </div>
-        <el-select v-model="requestParam.pluginType" placeholder="请选择插件类型" size="large"
+        <el-select v-model="requestParam.pluginType" :placeholder="$t('configInfo.selectPlugin')" size="large"
                    :disabled="types.modifyFlay" @change="changePluginType()" v-if="!types.modifyFlay">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
         <el-input size="large" v-model="pluginName.name"
-                  placeholder="请选择插件类型"
+                  :placeholder="$t('configInfo.selectPlugin')"
                   class="input-style" :disabled="types.modifyFlay" @change="changePluginType()"
                   v-if="types.modifyFlay">
           <template #prepend>
-            <span color="#606266" class="form-text">插件类型</span>
+            <span color="#606266" class="form-text">{{ $t('configInfo.type') }}</span>
           </template>
         </el-input>
       </el-form-item>
       <el-descriptions v-if="requestParam.pluginType == 'flowcontrol' || requestParam.pluginType == 'loadbalancer'"
-                       title="规则信息" style="margin-top: 15px;"></el-descriptions>
+                       :title="$t('configInfo.ruleInformation')" style="margin-top: 15px;"></el-descriptions>
       <el-form-item prop="ruleType"
                     v-if="requestParam.pluginType == 'flowcontrol' || requestParam.pluginType == 'loadbalancer'">
         <div data-v-6e4bcd7a="" class="ep-input ep-input--large ep-input-group ep-input-group--prepend"
              style="width: auto;" v-if="!types.modifyFlay">
-          <div class="ep-input-group__prepend form-text" color="#606266">规则类型</div>
+          <div class="ep-input-group__prepend form-text" color="#606266">{{ $t('configInfo.ruleType') }}</div>
         </div>
-        <el-select placeholder="请选择规则类型" v-model="requestParam.ruleType" size="large"
+        <el-select :placeholder="$t('configInfo.selectRuleType')" v-model="requestParam.ruleType" size="large"
                    :disabled="types.modifyFlay" v-if="!types.modifyFlay"
                    @change="handlerChange(true)">
-          <el-option v-for="item in rules.value" :key="item.value" :label="item.label" :value="item.value"/>
+          <el-option v-for="item in rules" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
         <el-input size="large" v-model="ruleName.name"
-                  placeholder="请选择规则类型"
+                  :placeholder="$t('configInfo.selectRuleType')"
                   class="input-style" :disabled="types.modifyFlay" @change="handlerChange(true)"
                   v-if="types.modifyFlay">
           <template #prepend>
-            <span color="#606266" class="form-text">规则类型</span>
+            <span color="#606266" class="form-text">{{ $t('configInfo.ruleType') }}</span>
           </template>
         </el-input>
-        <TooltipIcon content="插件支持的规则类型"/>
+        <TooltipIcon :content="$t('configInfo.ruleTypeSupportedInPlugin')"/>
       </el-form-item>
       <el-form-item prop="sceneName"
                     v-if="requestParam.pluginType == 'flowcontrol' || requestParam.pluginType == 'loadbalancer'">
-        <el-input size="large" v-model="requestParam.sceneName" placeholder="请输入规则场景名称"
+        <el-input size="large" v-model="requestParam.sceneName" :placeholder="$t('configInfo.inputSceneName')"
                   class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)">
           <template #prepend>
-            <span color="#606266" class="form-text">规则场景名称</span>
+            <span color="#606266" class="form-text">{{ $t('configInfo.sceneName') }}</span>
           </template>
         </el-input>
-        <TooltipIcon v-if="requestParam.pluginType == 'flowcontrol'" content="流量匹配和具体流控规则的场景名称一致时流控规则才会生效"/>
-        <TooltipIcon v-if="requestParam.pluginType == 'loadbalancer'" content="流量标记和负载均衡策略的场景一致时负载均衡策略生效"/>
+        <TooltipIcon v-if="requestParam.pluginType == 'flowcontrol'" :content="$t('configInfo.flowcontrolRuleNotice')"/>
+        <TooltipIcon v-if="requestParam.pluginType == 'loadbalancer'"
+                     :content="$t('configInfo.loadbalancerRuleNotice')"/>
       </el-form-item>
       <div v-if="(requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'
       && requestParam.pluginType != 'tag-transmission') || types.configType == 'nacos'">
         <el-descriptions title="service.meta信息" style="margin-top: 15px;"></el-descriptions>
         <el-form-item v-if="types.configType == 'nacos'" prop="namespace">
-          <el-input size="large" v-model.trim="requestParam.namespace" placeholder="请输入命名空间"
+          <el-input size="large" v-model.trim="requestParam.namespace" :placeholder="$t('configInfo.inputProjectName')"
                     class="input-style" :disabled="types.modifyFlay">
             <template #prepend>
               <span color="#606266" class="form-text">project</span>
             </template>
           </el-input>
-          <TooltipIcon content="该配置对应sermant配置文件中的service.meta.project"/>
+          <TooltipIcon :content="$t('configInfo.projectNotice')"/>
         </el-form-item>
         <el-form-item prop="appName" v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'
                       && requestParam.pluginType != 'tag-transmission'">
-          <el-input size="large" v-model.trim="requestParam.appName" placeholder="请输入应用名称"
+          <el-input size="large" v-model.trim="requestParam.appName"
+                    :placeholder="$t('configInfo.inputApplicationName')"
                     style="width: 90%; margin-right: 5px;" :disabled="types.modifyFlay" @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266" class="form-text">application</span>
             </template>
           </el-input>
-          <TooltipIcon content="该配置对应sermant配置文件中的service.meta.application"/>
+          <TooltipIcon :content="$t('configInfo.applicationNotice')"/>
         </el-form-item>
         <el-form-item
             v-if="requestParam.pluginType == 'database-write-prohibition' || requestParam.pluginType == 'mq-consume-prohibition'">
-          <el-input size="large" v-model.trim="requestParam.serviceName" placeholder="请输入服务名称，为空时下发全局配置"
+          <el-input size="large" v-model.trim="requestParam.serviceName"
+                    :placeholder="$t('configInfo.inputServiceNameOrEmpty')"
                     class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266">service</span>
             </template>
           </el-input>
-          <TooltipIcon content="该配置对应sermant配置文件中的service.meta.service"/>
+          <TooltipIcon :content="$t('configInfo.metaServiceNotice')"/>
         </el-form-item>
         <el-form-item v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'
                       && requestParam.pluginType != 'tag-transmission'">
-          <el-input size="large" v-model.trim="requestParam.environment" placeholder="请输入环境名称"
+          <el-input size="large" v-model.trim="requestParam.environment"
+                    :placeholder="$t('configInfo.inputEnvironmentName')"
                     class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266" class="form-text">environment</span>
             </template>
           </el-input>
-          <TooltipIcon content="该配置对应sermant配置文件中的service.meta.environment"/>
+          <TooltipIcon :content="$t('configInfo.environmentNotice')"/>
         </el-form-item>
         <el-form-item prop="zone"
                       v-if="requestParam.pluginType == 'database-write-prohibition' || requestParam.pluginType == 'mq-consume-prohibition'">
-          <el-input size="large" v-model.trim="requestParam.zone" placeholder="请输入区域名称"
+          <el-input size="large" v-model.trim="requestParam.zone" :placeholder="$t('configInfo.inputZoneName')"
                     class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266" class="form-text">zone</span>
             </template>
           </el-input>
-          <TooltipIcon content="该配置对应sermant配置文件中的service.meta.zone"/>
+          <TooltipIcon :content="$t('configInfo.zoneNotice')"/>
         </el-form-item>
       </div>
       <div v-if="requestParam.pluginType != 'database-write-prohibition' && requestParam.pluginType != 'mq-consume-prohibition'
                        && requestParam.pluginType != 'removal' && requestParam.pluginType != 'other'
                        && requestParam.pluginType != 'tag-transmission'">
-        <el-descriptions title="服务信息" style="margin-top: 15px;">
+        <el-descriptions :title="$t('configInfo.serviceInformation')" style="margin-top: 15px;">
         </el-descriptions>
         <el-form-item prop="serviceName" v-if="requestParam.pluginType == 'flowcontrol'">
-          <el-input size="large" v-model.trim="requestParam.serviceName" placeholder="请输入服务名称"
+          <el-input size="large" v-model.trim="requestParam.serviceName"
+                    :placeholder="$t('configInfo.inputServiceName')"
                     class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266" class="form-text">service</span>
             </template>
           </el-input>
-          <TooltipIcon content="微服务的名称，由微服务配置文件的dubbo.application.name、spring.applicaton.name确定"/>
+          <TooltipIcon :content="$t('configInfo.serviceNotice')"/>
         </el-form-item>
         <el-form-item v-if="requestParam.pluginType != 'flowcontrol'">
           <el-input v-if="requestParam.pluginType == 'router'" size="large" v-model.trim="requestParam.serviceName"
-                    placeholder="请输入服务名称，为空时下发全局配置" class="input-style" :disabled="types.modifyFlay"
+                    :placeholder="$t('configInfo.inputServiceNameOrEmpty')" class="input-style"
+                    :disabled="types.modifyFlay"
                     @change="handlerChange(false)">
             <template #prepend>
               <span color="#606266" class="form-text">service</span>
             </template>
           </el-input>
-          <el-input size="large" v-model.trim="requestParam.serviceName" placeholder="请输入服务名称"
+          <el-input size="large" v-model.trim="requestParam.serviceName"
+                    :placeholder="$t('configInfo.inputServiceName')"
                     class="input-style" :disabled="types.modifyFlay" @change="handlerChange(false)"
                     v-if="requestParam.pluginType != 'router'">
             <template #prepend>
               <span color="#606266" class="form-text">service</span>
             </template>
           </el-input>
-          <TooltipIcon content="微服务的名称，由微服务配置文件的dubbo.application.name、spring.applicaton.name确定"/>
+          <TooltipIcon :content="$t('configInfo.serviceNotice')"/>
         </el-form-item>
       </div>
       <div>
-        <el-descriptions title="配置项信息" style="margin-top: 15px;">
+        <el-descriptions :title="$t('configInfo.configurationInformation')" style="margin-top: 15px;">
         </el-descriptions>
         <el-form-item prop="group" v-if="requestParam.pluginType == 'other'">
-          <el-input size="large" v-model.trim="requestParam.group" placeholder="请输入配置项的group"
+          <el-input size="large" v-model.trim="requestParam.group"
+                    :placeholder="$t('configInfo.inputConfigurationGroup')"
                     class="input-style"
                     :disabled="types.modifyFlay || requestParam.pluginType !='other'"
                     @change="handlerChange(false)">
@@ -157,10 +165,11 @@
               <span color="#606266" class="form-text">group</span>
             </template>
           </el-input>
-          <TooltipIcon content="配置sermant原生插件配置时，自动生成，无需修改"/>
+          <TooltipIcon :content="$t('configInfo.configurationNotice')"/>
         </el-form-item>
         <el-form-item v-if="requestParam.pluginType != 'other'">
-          <el-input size="large" v-model.trim="requestParam.group" placeholder=""
+          <el-input size="large" v-model.trim="requestParam.group"
+                    :placeholder="$t('configInfo.inputConfigurationGroup')"
                     class="input-style"
                     :disabled="types.modifyFlay || requestParam.pluginType !='other'"
                     @change="handlerChange(false)">
@@ -168,10 +177,10 @@
               <span color="#606266" class="form-text">group</span>
             </template>
           </el-input>
-          <TooltipIcon content="配置sermant原生插件配置时，自动生成，无需修改"/>
+          <TooltipIcon :content="$t('configInfo.configurationNotice')"/>
         </el-form-item>
         <el-form-item prop="key" v-if="requestParam.pluginType == 'other'">
-          <el-input size="large" v-model.trim="requestParam.key" placeholder="请输入配置项名称"
+          <el-input size="large" v-model.trim="requestParam.key" :placeholder="$t('configInfo.inputConfigurationName')"
                     class="input-style"
                     :disabled="types.modifyFlay || requestParam.pluginType !='other'"
                     @change="handlerChange(false)">
@@ -179,7 +188,7 @@
               <span color="#606266" class="form-text">key</span>
             </template>
           </el-input>
-          <TooltipIcon content="配置sermant原生插件配置时，自动生成，无需修改"/>
+          <TooltipIcon :content="$t('configInfo.configurationNotice')"/>
         </el-form-item>
         <el-form-item v-if="requestParam.pluginType != 'other'">
           <el-input size="large" v-model.trim="requestParam.key" placeholder=""
@@ -190,22 +199,22 @@
               <span color="#606266" class="form-text">key</span>
             </template>
           </el-input>
-          <TooltipIcon content="配置sermant原生插件配置时，自动生成，无需修改"/>
+          <TooltipIcon :content="$t('configInfo.configurationNotice')"/>
         </el-form-item>
       </div>
-      <el-descriptions title="配置内容" style="margin-top: 15px;">
+      <el-descriptions :title="$t('configInfo.configurationContent')" style="margin-top: 15px;">
       </el-descriptions>
       <el-form-item style="display: flex;">
         <el-input v-model="requestParam.content" style="width: 90%;padding-right: 5px;" :autosize="{ minRows: 8 }"
                   type="textarea"
-                  placeholder="请输入配置内容"
+                  :placeholder="$t('configInfo.inputConfigurationContent')"
         />
-        <TooltipIcon content="sermant原生插件需使用yaml格式"/>
+        <TooltipIcon :content="$t('configInfo.configurationContentNotice')"/>
       </el-form-item>
       <div style="display: flex;align-items: center; margin-left: 30%; margin-top: 30px;width: 90%;">
         <el-button type="primary" size="large" style="width: 20%;" shouldAddSpace="true;"
                    @click="submit(ruleFormRef)">
-          提交
+          {{ $t('configInfo.submit') }}
         </el-button>
       </div>
     </el-form>
@@ -213,37 +222,61 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {LocationQuery, useRouter} from "vue-router";
 import axios from "axios";
 import TooltipIcon from '../components/layouts/TooltipIcon.vue'
 import {ElMessage, FormInstance, FormRules} from "element-plus";
-import {resultCodeMap, options} from '../composables/config'
+import {options, resultCodeMap} from '~/composables/config'
+import i18n from "~/composables/translations";
 
 const ruleFormRef = ref<FormInstance>()
 
-const flowcontrolRules = [
-  {label: '流量匹配规则', value: 'matchGroup',},
-  {label: '限流规则', value: 'rateLimiting',},
-  {label: '熔断规则', value: 'circuitBreaker',},
-  {label: '隔离规则', value: 'bulkhead',},
-  {label: '错误注入', value: 'faultInjection',},
-  {label: '重试', value: 'retry',},
-  {label: '系统级流控', value: 'system',},
-]
+const flowcontrolRules = ref([
+  {label: '', value: ''},
+]);
 
-const pluginName = reactive({name: '路由插件配置'});
+const pluginName = reactive({name: ''});
 
-const ruleName = reactive({name: '流量匹配规则'});
+const ruleName = reactive({name: ''});
 
-const rules = reactive({
-  value: [{label: '流量匹配规则', value: 'matchGroup'}]
-});
+const rules = ref([
+  {label: i18n.global.t('configInfo.trafficMatchingRule'), value: 'matchGroup'}
+]);
 
-const loadbalancerRules = [
-  {label: '流量标记规则', value: 'matchGroup',},
-  {label: '负载均衡规则', value: 'loadbalance',}
-]
+
+const loadbalancerRules = ref([
+  {label: i18n.global.t('configInfo.trafficTaggingRule'), value: 'matchGroup',},
+  {label: i18n.global.t('configInfo.loadBalancingRule'), value: 'loadbalance',}
+]);
+
+const updateFlowControlRules = () => {
+  flowcontrolRules.value = [
+    {label: i18n.global.t('configInfo.trafficMatchingRule'), value: 'matchGroup',},
+    {label: i18n.global.t('configInfo.rateLimitingRule'), value: 'rateLimiting',},
+    {label: i18n.global.t('configInfo.circuitBreakerRule'), value: 'circuitBreaker',},
+    {label: i18n.global.t('configInfo.bulkheadRule'), value: 'bulkhead',},
+    {label: i18n.global.t('configInfo.faultInjectionRule'), value: 'faultInjection',},
+    {label: i18n.global.t('configInfo.retryRule'), value: 'retry',},
+    {label: i18n.global.t('configInfo.systemLevelFlowControl'), value: 'system',},
+  ];
+}
+
+const updateLoadbalancerRules = () => {
+  loadbalancerRules.value = [
+    {label: i18n.global.t('configInfo.trafficTaggingRule'), value: 'matchGroup',},
+    {label: i18n.global.t('configInfo.loadBalancingRule'), value: 'loadbalance',}
+  ];
+}
+
+const updateRules = () => {
+  const value = requestParam.pluginType;
+  if (value == "flowcontrol") {
+    rules.value = flowcontrolRules.value
+  } else if (value == "loadbalancer") {
+    rules.value = loadbalancerRules.value
+  }
+}
 
 const requestParam: ConfigInfo = reactive({
   pluginType: "",
@@ -294,7 +327,7 @@ const getConfig = () => {
     }
   }).catch(function () {
     ElMessage({
-      message: "获取配置失败",
+      message: i18n.global.t('configInfo.failedToObtainConfiguration'),
       type: "error",
     });
   });
@@ -306,6 +339,10 @@ const types = reactive({
 });
 
 onMounted(() => {
+  updateFlowControlRules();
+  updateLoadbalancerRules();
+  updateRules();
+  console.log(rules.value)
   const param: LocationQuery = router.currentRoute.value.query;
   requestParam.ruleType = "matchGroup";
   types.configType = <string>param.configType;
@@ -315,7 +352,7 @@ onMounted(() => {
   types.modifyFlay = true;
   requestParam.pluginType = <string>param.pluginType;
   changeRules();
-  pluginName.name = getLabelByValue(options, requestParam.pluginType);
+  pluginName.name = getLabelByValue(options.value, requestParam.pluginType);
   requestParam.group = <string>param.group;
   requestParam.key = <string>param.key;
   requestParam.environment = <string>param.environment;
@@ -335,21 +372,9 @@ onMounted(() => {
 });
 
 const changeRules = () => {
-  const value = requestParam.pluginType;
-  if (value == "flowcontrol") {
-    replaceArray(flowcontrolRules, rules.value);
-  } else if (value == "loadbalancer") {
-    replaceArray(loadbalancerRules, rules.value);
-  }
+  updateRules();
   handlerChange(true);
 }
-
-const replaceArray = (source: { label: string; value: string; }[], target: { label: string; value: string; }[]) => {
-  target.splice(0, target.length); // 清空数组 A
-  source.forEach(item => {
-    target.push(item); // 将数组 B 的内容添加到数组 A
-  });
-};
 
 const changePluginType = () => {
   changeRules();
@@ -626,34 +651,48 @@ const handlerChange = (isChangeTemplate: boolean) => {
   }
 }
 
-const checkRule = reactive<FormRules>({
+const checkRule = reactive({
   appName: [
-    {required: true, message: '请输入应用名称', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.inputApplicationName'), trigger: 'change'}
   ],
   pluginType: [
-    {required: true, message: '请选择插件类型', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.selectPlugin'), trigger: 'change'}
   ],
   ruleType: [
-    {required: true, message: '请选择规则类型', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.selectRuleType'), trigger: 'change'}
   ],
   sceneName: [
-    {required: true, message: '请输入场景名称', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.inputSceneName'), trigger: 'change'}
   ],
   group: [
-    {required: true, message: '请输入group名称', trigger: 'change'}
+    {required: true, message: i18n.global.t('configInfo.inputConfigurationGroup'), trigger: 'change'}
   ],
   key: [
-    {required: true, message: '请输入配置key', trigger: 'change'}
+    {required: true, message: i18n.global.t('configInfo.inputConfigurationName'), trigger: 'change'}
   ],
-  nacos: [
-    {required: true, message: '请输入命名空间', trigger: 'blur'}
+  namespace: [
+    {required: true, message: i18n.global.t('configInfo.inputProjectName'), trigger: 'change'}
   ],
   zone: [
-    {required: true, message: '请输入区域名称', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.inputZoneName'), trigger: 'change'}
   ],
   serviceName: [
-    {required: true, message: '请输入服务名称', trigger: 'blur'}
+    {required: true, message: i18n.global.t('configInfo.inputServiceName'), trigger: 'change'}
   ],
+});
+watch(() => i18n.global.locale, () => {
+  updateFlowControlRules();
+  updateLoadbalancerRules();
+  updateRules();
+  checkRule.appName[0].message = i18n.global.t('configInfo.inputApplicationName');
+  checkRule.pluginType[0].message = i18n.global.t('configInfo.selectPlugin');
+  checkRule.ruleType[0].message = i18n.global.t('configInfo.selectRuleType');
+  checkRule.sceneName[0].message = i18n.global.t('configInfo.inputSceneName');
+  checkRule.group[0].message = i18n.global.t('configInfo.inputConfigurationGroup');
+  checkRule.key[0].message = i18n.global.t('configInfo.inputConfigurationName');
+  checkRule.namespace[0].message = i18n.global.t('configInfo.inputProjectName');
+  checkRule.zone[0].message = i18n.global.t('configInfo.inputZoneName');
+  checkRule.serviceName[0].message = i18n.global.t('configInfo.inputServiceName');
 });
 
 const getLabelByValue = (arr: { label: string; value: string; }[], value: string) => {
@@ -688,12 +727,12 @@ const addConfig = () => {
   }).then(function (response) {
     if (response.data.code == "00") {
       ElMessage({
-        message: "新增配置成功",
+        message: i18n.global.t('configInfo.successfullyCreatedConfiguration'),
         type: "success",
       });
     } else if (response.data.code == "05") {
       ElMessage({
-        message: "新增配置失败",
+        message: i18n.global.t('configInfo.failedToCreateConfiguration'),
         type: "error",
       });
     } else {
@@ -704,7 +743,7 @@ const addConfig = () => {
     }
   }).catch(function () {
     ElMessage({
-      message: "新增配置失败",
+      message: i18n.global.t('configInfo.failedToCreateConfiguration'),
       type: "error",
     });
   });
@@ -719,12 +758,12 @@ const updateConfig = () => {
   }).then(function (response) {
     if (response.data.code == "00") {
       ElMessage({
-        message: "更新配置成功",
+        message: i18n.global.t('configInfo.successfullyUpdatedConfiguration'),
         type: "success",
       });
     } else if (response.data.code == "05") {
       ElMessage({
-        message: "更新配置失败",
+        message: i18n.global.t('configInfo.failedToUpdateConfiguration'),
         type: "error",
       });
     } else {
@@ -735,7 +774,7 @@ const updateConfig = () => {
     }
   }).catch(function () {
     ElMessage({
-      message: "更新配置失败",
+      message: i18n.global.t('configInfo.failedToUpdateConfiguration'),
       type: "error",
     });
   });
@@ -757,11 +796,13 @@ const updateConfig = () => {
 }
 
 .form-text {
-  width: 100px;text-align: center;
+  width: 100px;
+  text-align: center;
 }
 
 .input-style {
-  width: 90%;margin-right: 5px;
+  width: 90%;
+  margin-right: 5px;
 }
 
 :deep(.ep-form-item) {

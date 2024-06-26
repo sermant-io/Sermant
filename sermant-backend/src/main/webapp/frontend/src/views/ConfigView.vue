@@ -1,76 +1,76 @@
 <template>
   <div style="width: 100%">
-    <el-page-header :title="'实例'" @back="goBack">
+    <el-page-header :title="$t('configView.instance')" @back="goBack">
       <template #content>
-        <span class="font-600 mr-3"> 配置管理 </span>
+        <span class="font-600 mr-3"> {{ $t('configView.configurationManagement') }} </span>
       </template>
     </el-page-header>
-    <el-descriptions class="ep-page-header__content" title="配置中心信息"
+    <el-descriptions class="ep-page-header__content" :title="$t('configView.configurationCenterInformation')"
                      style="margin-top: 30px; width: 800px;"></el-descriptions>
     <el-form :inline="true" style="margin: 15px 0 15px 0">
       <el-form-item>
         <el-input size="large" readonly disabled v-model.trim="configCenterInfo.dynamicConfigType">
-          <template #prepend><span color="#606266">配置中心类型</span></template>
+          <template #prepend><span color="#606266">{{ $t('configView.type') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item>
         <el-input size="large" readonly disabled v-model.trim="configCenterInfo.serverAddress">
-          <template #prepend><span color="#606266">配置中心地址</span></template>
+          <template #prepend><span color="#606266">{{ $t('configView.address') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item>
         <el-input size="large" readonly disabled v-model.trim="configCenterInfo.userName">
-          <template #prepend><span color="#606266">用户名称</span></template>
+          <template #prepend><span color="#606266">{{ $t('configView.user') }}</span></template>
         </el-input>
       </el-form-item>
     </el-form>
-    <el-descriptions title="配置信息" style="margin-top: 15px; width: 800px;font-weight:600;"></el-descriptions>
+    <el-descriptions :title=" $t('configView.configurationInformation')" style="margin-top: 15px; width: 800px;font-weight:600;"></el-descriptions>
     <el-form :inline="true" style="margin: 15px 0 15px 0">
       <el-form-item>
         <div data-v-6e4bcd7a="" class="ep-input ep-input--large ep-input-group ep-input-group--prepend"
              style="width: auto;">
-          <div class="ep-input-group__prepend" color="#606266">插件类型</div>
+          <div class="ep-input-group__prepend" color="#606266">{{ $t('configView.plugin') }}</div>
         </div>
-        <el-select v-model="defaultPluginType.value" placeholder="配置类型" size="large"
+        <el-select v-model="defaultPluginType.value" :placeholder="$t('configView.configType')" size="large"
                    @change="handlerChangePluginType">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item v-if="configCenterInfo.dynamicConfigType == 'nacos'" prop="namespace">
-        <el-input size="large" v-model.trim="requestParam.namespace" placeholder="请输入命名空间">
+        <el-input size="large" v-model.trim="requestParam.namespace" :placeholder="$t('configView.inputProjectName')">
           <template #prepend>
-            <span color="#606266">命名空间</span>
+            <span color="#606266">{{ $t('configView.project') }}</span>
           </template>
         </el-input>
       </el-form-item>
       <el-form-item v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'">
-        <el-input size="large" v-model.trim="requestParam.appName" placeholder="请输入应用名称">
-          <template #prepend><span color="#606266">应用名称</span></template>
+        <el-input size="large" v-model.trim="requestParam.appName" :placeholder="$t('configView.inputApplicationName')">
+          <template #prepend><span color="#606266">{{ $t('configView.application') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item v-if="requestParam.pluginType != 'other'">
-        <el-input size="large" v-model.trim="requestParam.serviceName" placeholder="请输入服务名称">
-          <template #prepend><span color="#606266">服务名称</span></template>
+        <el-input size="large" v-model.trim="requestParam.serviceName" :placeholder="$t('configView.inputServiceName')">
+          <template #prepend><span color="#606266">{{ $t('configView.service') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'">
-        <el-input size="large" v-model.trim="requestParam.environment" placeholder="请输入环境名称">
-          <template #prepend><span color="#606266">环境名称</span></template>
+        <el-input size="large" v-model.trim="requestParam.environment" :placeholder="$t('configView.inputEnvironmentName')">
+          <template #prepend><span color="#606266">{{ $t('configView.environment') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item
           v-if="requestParam.pluginType == 'mq-consume-prohibition' || requestParam.pluginType == 'database-write-prohibition'">
-        <el-input size="large" v-model.trim="requestParam.zone" placeholder="请输入区域名称">
-          <template #prepend><span color="#606266">区域名称</span></template>
+        <el-input size="large" v-model.trim="requestParam.zone" :placeholder="$t('configView.inputZoneName')">
+          <template #prepend><span color="#606266">{{ $t('configView.zone') }}</span></template>
         </el-input>
       </el-form-item>
       <el-form-item v-if="requestParam.pluginType == 'other'">
-        <el-input size="large" v-model.trim="requestParam.group" placeholder="请输入group">
+        <el-input size="large" v-model.trim="requestParam.group" :placeholder="$t('configView.inputGroup')">
           <template #prepend><span color="#606266">group</span></template>
         </el-input>
       </el-form-item>
       <el-form-item v-if="requestParam.pluginType == 'other'">
-        <el-input size="large" v-model.trim="requestParam.key" placeholder="请输入key">
+        <el-input size="large" v-model.trim="requestParam.key" :placeholder="$t('configView.inputKey')">
           <template #prepend><span color="#606266">key</span></template>
         </el-input>
       </el-form-item>
@@ -85,36 +85,37 @@
 
     <el-table :data="configInfos.configInfos" border style="width: 100%;" :header-cell-style="{'background':'#f5f7fa'}">
       <el-table-column v-if="configCenterInfo.dynamicConfigType == 'nacos'"
-                       column-key="namespace" align="center" prop="namespace" width="150px" label="命名空间"/>
-      <el-table-column column-key="appName" align="center" prop="appName" width="150px" label="应用名称"
+                       column-key="namespace" align="center" prop="namespace" width="150px" :label="$t('configView.project')"/>
+      <el-table-column column-key="appName" align="center" prop="appName" width="150px" :label="$t('configView.application')"
                        :filters="appNames"
                        :filter-method="filterHandler"/>
-      <el-table-column column-key="serviceName" align="center" prop="serviceName" width="300px" label="服务名称"
+      <el-table-column column-key="serviceName" align="center" prop="serviceName" width="300px" :label="$t('configView.service')"
                        :filters="serviceNames"
                        :filter-method="filterHandler"/>
-      <el-table-column column-key="environment" align="center" prop="environment" width="150px" label="环境名称"
+      <el-table-column column-key="environment" align="center" prop="environment" width="150px" :label="$t('configView.environment')"
                        :filters="environments"
                        :filter-method="filterHandler"/>
       <el-table-column
           v-if="currentPluginType.value == 'mq-consume-prohibition' || currentPluginType.value == 'database-write-prohibition'"
-          column-key="zone" align="center" prop="zone" width="150px" label="区域名称"
+          column-key="zone" align="center" prop="zone" width="150px" :label="$t('configView.zone')"
           style="background-color: rgba(147,197,253,.5)"/>
       <el-table-column column-key="group" align="center" prop="group" label="group"/>
       <el-table-column column-key="key" align="center" prop="key" label="key"/>
-      <el-table-column fixed="right" align="center" label="操作类型" width="120px">
+      <el-table-column fixed="right" align="center" :label="$t('configView.operation')" width="120px">
         <template #default="scope">
-          <el-tooltip content="查看" effect="light">
+          <el-tooltip :content="$t('configView.view')" effect="light">
             <el-button type="primary" @click="toModifyConfig(scope.row)" circle>
               <el-icon>
                 <View/>
               </el-icon>
             </el-button>
           </el-tooltip>
-          <el-popconfirm confirm-button-text="是" cancel-button-text="否" :icon="InfoFilled" icon-color="#626AEF"
-                         title="是否确认删除当前配置项?" @confirm="deleteConfig(scope.row, scope.$index)">
+          <el-popconfirm :confirm-button-text="$t('configView.yes')" :cancel-button-text="$t('configView.no')"
+                         :icon="InfoFilled" icon-color="#626AEF"
+                         :title="$t('configView.areYouSureToDeleteTheCurrentConfiguration')" @confirm="deleteConfig(scope.row, scope.$index)">
             <template #reference>
               <div style="display: inline;">
-                <el-tooltip content="删除" effect="light">
+                <el-tooltip :content="$t('configView.delete')" effect="light">
                   <el-button type="danger" :icon="Delete" style="margin-left: 12px;" circle/>
                 </el-tooltip>
               </div>
@@ -125,7 +126,7 @@
     </el-table>
     <div style="display: flex;align-items: center; margin-top: 30px; width:100%;">
       <el-button type="primary" size="large" style="margin-left: 42.5%; width: 15%;" shouldAddSpace="true"
-                 @click="toAddConfig()">新增
+                 @click="toAddConfig()">{{$t('configView.create')}}
       </el-button>
     </div>
     <div class="pagination-div" style="margin-top: 30px;">
@@ -149,6 +150,7 @@ import axios from "axios";
 import {Delete, InfoFilled, Search} from '@element-plus/icons-vue'
 import {ElMessage, TableColumnCtx} from 'element-plus'
 import {resultCodeMap, options} from '../composables/config'
+import i18n from "~/composables/translations";
 
 const requestParam = reactive<ConfigInfo>({
   appName: "",
@@ -277,14 +279,14 @@ const fillEnvironments = () => {
 const getConfigList = () => {
   if (configCenterInfo.dynamicConfigType == 'nacos' && !requestParam.namespace) {
     ElMessage({
-      message: "命名空间不能为空",
+      message: i18n.global.t('configView.theProjectCannotBeEmpty'),
       type: "error",
     });
     return;
   }
   if (requestParam.pluginType == 'other' && !requestParam.group) {
     ElMessage({
-      message: "group不能为空",
+      message: i18n.global.t('configView.theGroupCannotBeEmpty'),
       type: "error",
     });
     return;
@@ -329,7 +331,7 @@ const getConfigList = () => {
         fillEnvironments();
       }
       ElMessage({
-        message: "获取配置成功",
+        message: i18n.global.t('configView.successfullyObtainedConfiguration'),
         type: "success",
       });
     } else {
@@ -341,7 +343,7 @@ const getConfigList = () => {
     }
   }).catch(function () {
     ElMessage({
-      message: "获取配置失败",
+      message: i18n.global.t('configView.failedObtainedConfiguration'),
       type: "error",
     });
   });
@@ -442,7 +444,7 @@ const deleteConfig = (row: ConfigInfo, index: number) => {
     const data = response.data;
     if (data.code == "00") {
       ElMessage({
-        message: "删除配置成功",
+        message: i18n.global.t('configView.successfullyDeletedConfiguration'),
         type: "success",
       });
       deleteRow(index);
@@ -454,7 +456,7 @@ const deleteConfig = (row: ConfigInfo, index: number) => {
     }
   }).catch(function () {
     ElMessage({
-      message: "删除配置失败",
+      message: i18n.global.t('configView.failedDeletedConfiguration'),
       type: "error",
     });
   });

@@ -1,8 +1,8 @@
 <template>
-  <el-config-provider namespace="ep">
-    <BaseHeader />
+  <el-config-provider namespace="ep" :locale="localeLanguage.value">
+    <BaseHeader/>
     <div class="main">
-      <RouterView />
+      <RouterView/>
     </div>
   </el-config-provider>
 </template>
@@ -17,3 +17,7 @@
   margin: 1vh;
 }
 </style>
+
+<script lang="ts" setup>
+import {localeLanguage} from '~/composables/translations';
+</script>

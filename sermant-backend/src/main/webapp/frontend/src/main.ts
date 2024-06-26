@@ -5,7 +5,8 @@ import router from "./router"
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import ElementPlus from 'element-plus'
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import translations from './composables/translations';
+import i18n from './composables/translations';
 
 
 import "~/styles/index.scss";
@@ -20,9 +21,11 @@ const app = createApp(App);
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
-
-app.use(ElementPlus, {
-    locale: zhCn,
-})
+app.use(translations);
+app.use(i18n)
+app.use(ElementPlus);
 app.use(router);
+
+app.config.globalProperties.$t = i18n.global.t;
+
 app.mount("#app");
