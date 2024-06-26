@@ -16,6 +16,7 @@
     "moment": "^2.29.4",
     "qs": "^6.11.1",
     "vue": "^3.2.36",
+    "vue-i18n": "^9.13.1",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
