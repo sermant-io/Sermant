@@ -114,10 +114,11 @@ public class BootArgsBuilderTest {
     @Test
     public void testParseArgs() {
         String agentArgs = "appName=test,command=INSTALL_PLUGIN:monitor/flowcontrol,server.port=9000";
-        Map<String, Object> argsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
-        BootArgsBuilder.build(argsMap, PathDeclarer.getAgentPath());
-        Assert.assertEquals("test", argsMap.get("appName"));
-        Assert.assertEquals("9000", argsMap.get("server.port"));
-        Assert.assertEquals("INSTALL_PLUGIN:monitor/flowcontrol", argsMap.get("command"));
+        Map<String, String> agentArgsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
+        Map<String, Object> bootArgsMap = new HashMap<>(agentArgsMap);
+        BootArgsBuilder.build(bootArgsMap, PathDeclarer.getAgentPath());
+        Assert.assertEquals("test", bootArgsMap.get("appName"));
+        Assert.assertEquals("9000", bootArgsMap.get("server.port"));
+        Assert.assertEquals("INSTALL_PLUGIN:monitor/flowcontrol", bootArgsMap.get("command"));
     }
 }

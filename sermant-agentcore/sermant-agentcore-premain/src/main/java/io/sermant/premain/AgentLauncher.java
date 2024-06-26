@@ -32,6 +32,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
@@ -75,22 +76,23 @@ public class AgentLauncher {
     private static void launchAgent(String agentArgs, Instrumentation instrumentation, boolean isDynamic) {
         try {
             // Resolve agent arguments
-            final Map<String, Object> argsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
+            final Map<String, String> agentArgsMap = AgentArgsResolver.resolveAgentArgs(agentArgs);
 
             installGodLibs(instrumentation);
 
             // Initialize bootstrap arguments via configuration file
             LOGGER.info("Building argument map by agent arguments.");
-            String agentPath = (String) argsMap.get(BootConstant.AGENT_PATH_KEY);
-            BootArgsBuilder.build(argsMap, agentPath);
+            String agentPath = agentArgsMap.get(BootConstant.AGENT_PATH_KEY);
+            Map<String, Object> bootArgsMap = new HashMap<>(agentArgsMap);
+            BootArgsBuilder.build(bootArgsMap, agentPath);
 
-            String artifact = (String) argsMap.get(BootConstant.ARTIFACT_NAME_KEY);
+            String artifact = (String) bootArgsMap.get(BootConstant.ARTIFACT_NAME_KEY);
 
             // Install agent
-            installAgent(instrumentation, isDynamic, artifact, argsMap, agentPath);
+            installAgent(instrumentation, isDynamic, artifact, bootArgsMap, agentPath);
 
             // Execute the command in the agent arguments
-            executeCommand(artifact, (String) argsMap.get(BootConstant.COMMAND_KEY));
+            executeCommand(artifact, agentArgsMap);
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Loading sermant agent failed: " + exception.getMessage());
         }
@@ -134,8 +136,9 @@ public class AgentLauncher {
         }
     }
 
-    private static void executeCommand(String artifact, String command) {
+    private static void executeCommand(String artifact, Map<String, String> agentArgsMap) {
         // Process command in agent arguments
+        String command = agentArgsMap.get(BootConstant.COMMAND_KEY);
         if (command == null || command.isEmpty()) {
             return;
         }
@@ -148,7 +151,7 @@ public class AgentLauncher {
                 return;
             }
             sermantClassLoader.loadClass(BootConstant.COMMAND_PROCESSOR_CLASS)
-                    .getDeclaredMethod(BootConstant.COMMAND_PROCESS_METHOD, String.class).invoke(null, command);
+                    .getDeclaredMethod(BootConstant.COMMAND_PROCESS_METHOD, Map.class).invoke(null, agentArgsMap);
         } catch (InvocationTargetException invocationTargetException) {
             LOGGER.log(Level.SEVERE,
                     "Execute command failed: " + invocationTargetException.getTargetException().getMessage());
