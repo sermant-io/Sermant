@@ -22,7 +22,6 @@ import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;

@@ -46,8 +46,6 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
 
     private static final ReentrantLock LOCK = new ReentrantLock();
 
-    private final XdsClient client;
-
     private EdsHandler edsHandler;
 
     /**
@@ -56,7 +54,6 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
      * @param client xds client
      */
     public XdsServiceDiscoveryImpl(XdsClient client) {
-        this.client = client;
         CdsHandler cdsHandler = new CdsHandler(client);
         edsHandler = new EdsHandler(client);
         cdsHandler.subscribe(XdsConstant.CDS_ALL_RESOURCE, null);

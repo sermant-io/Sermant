@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * @since 2023-09-26
  */
 public class AgentLoader {
-    private static Logger logger = Logger.getLogger("io.sermant.script.AgentLoader");
+    private static final Logger logger = Logger.getLogger("io.sermant.script.AgentLoader");
 
     private AgentLoader() {
     }

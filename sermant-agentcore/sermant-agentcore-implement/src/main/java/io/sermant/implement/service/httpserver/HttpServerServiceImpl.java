@@ -18,6 +18,7 @@ package io.sermant.implement.service.httpserver;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
+import io.sermant.core.exception.SermantRuntimeException;
 import io.sermant.core.service.BaseService;
 import io.sermant.core.service.httpserver.HttpServerService;
 import io.sermant.core.service.httpserver.config.HttpServerConfig;
@@ -56,7 +57,7 @@ public class HttpServerServiceImpl implements HttpServerService {
             this.httpServerProvider.start();
         } catch (Exception e) {
             LOGGER.warning("HttpServerService start failed, " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new SermantRuntimeException(e);
         }
         LOGGER.info("HttpServerService started.");
     }
@@ -70,7 +71,7 @@ public class HttpServerServiceImpl implements HttpServerService {
             this.httpServerProvider.stop();
         } catch (Exception e) {
             LOGGER.warning("HttpServerService stop failed, " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new SermantRuntimeException(e);
         }
         LOGGER.info("HttpServerService stopped.");
     }

@@ -49,6 +49,7 @@ public class ZooKeeperClient implements ConfigClient {
      */
     public static final char ZK_PATH_SEPARATOR = '/';
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClient.class.getName());
+
     /**
      * ZK client
      */

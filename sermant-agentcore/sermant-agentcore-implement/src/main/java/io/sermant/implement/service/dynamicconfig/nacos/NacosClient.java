@@ -56,6 +56,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class NacosClient implements ConfigClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(NacosClient.class.getName());
+
     /**
      * HTTP protocol
      */

@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -138,7 +139,7 @@ public class LabelGroupUtils {
             curGroup = LabelGroupUtils.createLabelGroup(Collections.singletonMap(DEFAULT_GROUP_KEY, curGroup));
         }
         try {
-            final String decode = URLDecoder.decode(curGroup, "UTF-8");
+            final String decode = URLDecoder.decode(curGroup, StandardCharsets.UTF_8.name());
             final String[] labels = decode.split("&");
             for (String label : labels) {
                 final String[] labelKv = label.split("=");
@@ -180,7 +181,7 @@ public class LabelGroupUtils {
 
     private static String buildSingleLabel(String key, String value) {
         try {
-            return URLEncoder.encode(key + LABEL_QUERY_SEPARATOR + value, "UTF-8");
+            return URLEncoder.encode(key + LABEL_QUERY_SEPARATOR + value, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             LOGGER.warn("UnsupportedEncodingException, msg is {0}.", e.getMessage());
             return DynamicConstants.EMPTY_STRING;

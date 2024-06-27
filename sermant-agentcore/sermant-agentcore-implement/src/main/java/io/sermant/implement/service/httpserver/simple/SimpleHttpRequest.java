@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.net.httpserver.HttpExchange;
 
+import io.sermant.core.exception.SermantRuntimeException;
 import io.sermant.core.service.httpserver.api.HttpRequest;
 import io.sermant.core.service.httpserver.exception.HttpServerException;
 import io.sermant.core.utils.CollectionUtils;
@@ -53,12 +54,9 @@ public class SimpleHttpRequest implements HttpRequest {
     private static final int BODY_BYTE_SIZE = 512;
 
     private final HttpExchange exchange;
-
-    private String originalPath;
-
-    private String path;
-
     private final Map<String, String> params = new HashMap<>();
+    private String originalPath;
+    private String path;
 
     /**
      * Create a SimpleHttpRequest object.
@@ -160,7 +158,7 @@ public class SimpleHttpRequest implements HttpRequest {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new SermantRuntimeException(e);
         }
         return params;
     }
@@ -202,17 +200,18 @@ public class SimpleHttpRequest implements HttpRequest {
 
     @Override
     public byte[] getBodyAsBytes() throws HttpServerException {
-        try (InputStream ins = getBodyAsStream()) {
+        try (InputStream ins = getBodyAsStream();) {
             if (ins == null) {
                 return new byte[0];
             }
-            ByteArrayOutputStream outs = new ByteArrayOutputStream();
-            int len;
-            byte[] buf = new byte[BODY_BYTE_SIZE];
-            while ((len = ins.read(buf)) != -1) {
-                outs.write(buf, 0, len);
+            try (ByteArrayOutputStream outs = new ByteArrayOutputStream()) {
+                int len;
+                byte[] buf = new byte[BODY_BYTE_SIZE];
+                while ((len = ins.read(buf)) != -1) {
+                    outs.write(buf, 0, len);
+                }
+                return outs.toByteArray();
             }
-            return outs.toByteArray();
         } catch (Exception e) {
             throw new HttpServerException(HttpCodeEnum.SERVER_ERROR.getCode(), e);
         }

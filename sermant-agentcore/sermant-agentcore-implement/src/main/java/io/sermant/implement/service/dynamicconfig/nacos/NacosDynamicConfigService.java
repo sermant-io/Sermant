@@ -72,6 +72,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
     private final ServiceMeta serviceMeta;
 
     private final List<NacosListener> listeners;
+
     /**
      * The thread pool for updating listeners periodically
      */

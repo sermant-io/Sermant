@@ -16,6 +16,8 @@
 
 package io.sermant.implement.config;
 
+import io.sermant.core.exception.SermantRuntimeException;
+
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -52,11 +54,11 @@ public class SermantYamlConstructor extends Constructor {
      * set classLoader
      *
      * @param classLoader the classLoader for config object
-     * @throws NullPointerException no classloader is provided
+     * @throws SermantRuntimeException no classloader is provided
      */
     public void setLoader(ClassLoader classLoader) {
         if (classLoader == null) {
-            throw new NullPointerException("classLoader must be provided.");
+            throw new SermantRuntimeException("classLoader must be provided.");
         }
         this.loader = classLoader;
     }
