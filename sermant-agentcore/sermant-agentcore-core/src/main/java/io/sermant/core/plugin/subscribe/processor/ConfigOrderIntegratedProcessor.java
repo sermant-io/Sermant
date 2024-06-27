@@ -22,14 +22,15 @@ import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 /**
@@ -112,9 +113,7 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
         final Map<String, Object> result = new HashMap<>(CAP_SIZE);
         for (ConfigDataHolder dataHolder : dataHolders) {
             for (Map<String, Object> data : dataHolder.getHolder().values()) {
-                if (data != null) {
-                    result.putAll(data);
-                }
+                handleConfig(result, data);
             }
         }
         return result;
@@ -125,10 +124,32 @@ public class ConfigOrderIntegratedProcessor implements ConfigProcessor {
         dataHolders.forEach(dataHolder -> {
             final Map<String, Object> curContent = dataHolder.getHolder().get(originEvent.getKey());
             if (curContent != null) {
-                result.putAll(curContent);
+                handleConfig(result, curContent);
             }
         });
         return result;
+    }
+
+    private void handleConfig(Map<String, Object> result, Map<String, Object> config) {
+        if (config == null || config.isEmpty()) {
+            return;
+        }
+        for (Entry<String, Object> entry : config.entrySet()) {
+            String key = entry.getKey();
+            final Object value = entry.getValue();
+            if (value instanceof Map) {
+                Object resultValue = result.get(key);
+                Map<String, Object> map = resultValue instanceof Map ? (Map<String, Object>) resultValue
+                        : new HashMap<>();
+                handleConfig(map, (Map<String, Object>) value);
+                result.put(key, map);
+            } else if (value instanceof Collection) {
+                result.put(key, value);
+            } else {
+                // Other types are reserved directly
+                result.put(key, value == null ? "" : value);
+            }
+        }
     }
 
     private boolean updateHolder(ConfigDataHolder targetHolder, DynamicConfigEvent originEvent) {
