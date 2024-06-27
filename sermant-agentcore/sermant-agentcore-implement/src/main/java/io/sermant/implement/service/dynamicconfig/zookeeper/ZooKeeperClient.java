@@ -48,7 +48,9 @@ public class ZooKeeperClient implements ConfigClient {
      * ZK path separator
      */
     public static final char ZK_PATH_SEPARATOR = '/';
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClient.class.getName());
+
     /**
      * ZK client
      */
@@ -166,33 +168,38 @@ public class ZooKeeperClient implements ConfigClient {
         if (!ifNodeExist(parentNodePath)) {
             return configList;
         }
-        List<String> childList = this.zkClient.getChildren(parentNodePath, false);
-        for (String child : childList) {
+        fillChildrenInfo(parentNodePath, configList, nodeName, key);
+        return configList;
+    }
+
+    private void fillChildrenInfo(String path, Map<String, List<String>> configMap, String nodeName,
+                                  String key) throws InterruptedException, KeeperException {
+        List<String> children = this.zkClient.getChildren(path, false);
+        children.parallelStream().forEach(child -> {
+            List<String> subChild;
             if (!child.contains(nodeName)) {
-                continue;
+                return;
             }
-            String childPath;
-            if (parentNodePath.endsWith(String.valueOf(ZK_PATH_SEPARATOR))) {
-                childPath = parentNodePath + child;
-            } else {
-                childPath = parentNodePath + ZK_PATH_SEPARATOR + child;
+            String childPath = toPath(child, path);
+            try {
+                subChild = this.zkClient.getChildren(childPath, false);
+            } catch (KeeperException | InterruptedException e) {
+                return;
             }
-            List<String> subChild = this.zkClient.getChildren(childPath, false);
             if (subChild == null || subChild.isEmpty()) {
-                continue;
+                return;
             }
             if (key == null || key.isEmpty()) {
-                configList.put(childPath.substring(1), subChild);
-                continue;
+                configMap.put(childPath.substring(1), subChild);
+                return;
             }
             List<String> matchSubChild = subChild.stream().filter(value -> value.contains(key))
                     .collect(Collectors.toList());
             if (matchSubChild.isEmpty()) {
-                continue;
+                return;
             }
-            configList.put(childPath.substring(1), matchSubChild);
-        }
-        return configList;
+            configMap.put(childPath.substring(1), matchSubChild);
+        });
     }
 
     private Map<String, List<String>> accurateGetConfigListByGroupAndKey(String key, String group)

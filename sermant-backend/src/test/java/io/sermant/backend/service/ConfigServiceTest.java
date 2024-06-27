@@ -77,6 +77,7 @@ public class ConfigServiceTest {
         PowerMockito.when(configClient.getConfig(KEY, GROUP)).thenReturn(CONTENT);
         PowerMockito.when(configClient.publishConfig(KEY, GROUP, CONTENT)).thenReturn(true);
         PowerMockito.when(configClient.removeConfig(KEY, GROUP)).thenReturn(true);
+        PowerMockito.when(dynamicConfig.isEnable()).thenReturn(true);
     }
 
     @Test

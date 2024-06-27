@@ -21,6 +21,7 @@ import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieConfigEntity;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieResponse;
+import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
 import io.sermant.implement.service.dynamicconfig.kie.listener.SubscriberManager;
 import io.sermant.implement.utils.LabelGroupUtils;
 
@@ -84,8 +85,8 @@ public class KieDynamicConfigService extends DynamicConfigService {
         String newGroup = group;
         if (!LabelGroupUtils.isLabelGroup(group)) {
             // Add label group judgment to adapt irregular groups
-            newGroup = LabelGroupUtils
-                    .createLabelGroup(Collections.singletonMap(fixSeparator(group, true), fixSeparator(key, false)));
+            newGroup = LabelGroupUtils.createLabelGroup(Collections.singletonMap(KieConstants.DEFAULT_GROUP,
+                    fixSeparator(group, true)));
         }
         return subscriberManager.addConfigListener(key, newGroup, listener, ifNotify);
     }

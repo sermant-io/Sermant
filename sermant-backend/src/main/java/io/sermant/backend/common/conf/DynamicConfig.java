@@ -91,6 +91,6 @@ public class DynamicConfig {
     /**
      * Switch for configuration management
      */
-    @Value("${dynamic.config.dynamicConfigEnable}")
-    private boolean dynamicConfigEnable;
+    @Value("${dynamic.config.enable}")
+    private boolean enable;
 }

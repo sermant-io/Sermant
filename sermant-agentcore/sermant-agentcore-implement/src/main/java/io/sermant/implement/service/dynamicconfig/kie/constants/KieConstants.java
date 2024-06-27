@@ -28,6 +28,26 @@ public class KieConstants {
      */
     public static final String DEFAULT_GROUP_KEY = "_DEFAULT_GROUP_KEY";
 
+    /**
+     * Unsupported delimiter in Group
+     */
+    public static final String SEPARATOR = "/";
+
+    /**
+     * Supported connectors in Group
+     */
+    public static final String CONNECTOR = ".";
+
+    /**
+     * The default key for the label
+     */
+    public static final String DEFAULT_LABEL_PRE = "GROUP=";
+
+    /**
+     * The default key for the label
+     */
+    public static final String DEFAULT_GROUP = "GROUP";
+
     private KieConstants() {
     }
 }

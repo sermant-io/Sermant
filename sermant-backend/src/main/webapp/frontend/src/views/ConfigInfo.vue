@@ -226,7 +226,7 @@ import {onMounted, reactive, ref, watch} from "vue";
 import {LocationQuery, useRouter} from "vue-router";
 import axios from "axios";
 import TooltipIcon from '../components/layouts/TooltipIcon.vue'
-import {ElMessage, FormInstance, FormRules} from "element-plus";
+import {ElMessage, FormInstance} from "element-plus";
 import {options, resultCodeMap} from '~/composables/config'
 import i18n from "~/composables/translations";
 
@@ -315,7 +315,11 @@ const goBack = () => {
 
 const getConfig = () => {
   axios.get(`${window.location.origin}/sermant/config`, {
-    params: requestParam,
+    params : {
+      key: requestParam.key,
+      group: requestParam.group,
+      namespace: requestParam.namespace
+    }
   }).then(function (response) {
     if (response.data.code == "00") {
       requestParam.content = response.data.data.content;
