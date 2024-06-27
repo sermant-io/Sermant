@@ -25,7 +25,7 @@
             Curator 3.x.x only compatible with Zookeeper 3.5.x -->
         <!--zk  3.4.x, Upward compatible-->
         <curator.x.version>2.13.0</curator.x.version>
-        <zk.version>3.8.3</zk.version>
+        <zk.version>3.8.4</zk.version>
     </properties>
 
     <dependencies>

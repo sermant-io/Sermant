@@ -42,7 +42,7 @@
         <http.client.version>4.5.13</http.client.version>
         <http.core.version>4.4.13</http.core.version>
         <Java-WebSocket.version>1.5.1</Java-WebSocket.version>
-        <netty.version>4.1.100.Final</netty.version>
+        <netty.version>4.1.108.Final</netty.version>
         <protobuf.version>3.19.6</protobuf.version>
         <fastjson.version>1.2.83</fastjson.version>
         <xml.apis.version>1.4.01</xml.apis.version>
