@@ -18,6 +18,7 @@ package io.sermant.backend.service;
 
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.client.auth.impl.NacosAuthLoginConstant;
 
 import io.sermant.backend.common.conf.DynamicConfig;
 import io.sermant.backend.entity.config.ConfigCenterType;
@@ -31,6 +32,7 @@ import io.sermant.backend.util.AesUtil;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieClient;
+import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosClient;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosUtils;
 import io.sermant.implement.service.dynamicconfig.zookeeper.ZooKeeperClient;
@@ -108,6 +110,9 @@ public class ConfigService {
             String group = entry.getKey();
             if (client instanceof NacosClient) {
                 group = NacosUtils.convertGroup(group);
+            } else if (client instanceof KieClient) {
+                group = group.replace(KieConstants.CONNECTOR, KieConstants.SEPARATOR);
+                group = group.replace(KieConstants.DEFAULT_LABEL_PRE, StringUtils.EMPTY);
             }
             if (!exactMatchFlag && !handler.verifyConfigurationGroup(group)) {
                 continue;
@@ -202,7 +207,7 @@ public class ConfigService {
      */
     @PostConstruct
     public void init() {
-        if (!dynamicConfig.isDynamicConfigEnable()) {
+        if (!dynamicConfig.isEnable()) {
             return;
         }
         EXECUTOR_SERVICE.scheduleAtFixedRate(this::reConnection, dynamicConfig.getConnectTimeout(),
@@ -262,7 +267,6 @@ public class ConfigService {
         try {
             client = new NacosClient(properties);
             CONFIG_CLIENT_MAP.put(namespace, client);
-            return client;
         } catch (NacosException e) {
             LOGGER.error("Nacos connection exception", e);
         }
@@ -280,6 +284,7 @@ public class ConfigService {
             properties.setProperty(PropertyKeyConst.USERNAME, userName);
             properties.setProperty(PropertyKeyConst.PASSWORD, password);
         }
+        properties.setProperty(NacosAuthLoginConstant.SERVER, dynamicConfig.getServerAddress());
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, dynamicConfig.getServerAddress());
         properties.setProperty(PropertyKeyConst.NAMESPACE, namespace);
         properties.setProperty(PropertyKeyConst.CONFIG_LONG_POLL_TIMEOUT,
@@ -294,6 +299,9 @@ public class ConfigService {
      * @return Configuration Center Client
      */
     public Result<Boolean> checkConnection(ConfigInfo request) {
+        if (!dynamicConfig.isEnable()) {
+            return new Result<>(ResultCodeType.NOT_ENABLE.getCode(), ResultCodeType.NOT_ENABLE.getMessage());
+        }
         ConfigClient client = getConfigClient(request.getNamespace());
         if (client == null || !client.isConnect()) {
             return new Result<>(ResultCodeType.CONNECT_FAIL.getCode(), ResultCodeType.CONNECT_FAIL.getMessage());

@@ -17,6 +17,7 @@
 package io.sermant.implement.utils;
 
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
+import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,8 @@ public class LabelGroupUtils {
         if (group.length() == 0) {
             return DynamicConstants.EMPTY_STRING;
         }
-        return group.deleteCharAt(group.length() - 1).toString();
+        String groupString = group.deleteCharAt(group.length() - 1).toString();
+        return groupString.replace(KieConstants.SEPARATOR, KieConstants.CONNECTOR);
     }
 
     /**
@@ -132,7 +134,7 @@ public class LabelGroupUtils {
         if (group == null) {
             return result;
         }
-        String curGroup = group;
+        String curGroup = group.replace(KieConstants.SEPARATOR, KieConstants.SEPARATOR);
         if (!isLabelGroup(curGroup)) {
             // If the label is not a group (applicable to the ZK configuration center scenario), create a label for
             // the group
@@ -176,7 +178,8 @@ public class LabelGroupUtils {
                     .append(buildSingleLabel(entry.getKey(), entry.getValue()))
                     .append(GROUP_SEPARATOR);
         }
-        return finalGroup.deleteCharAt(finalGroup.length() - 1).toString();
+        String finalGroupStr = finalGroup.deleteCharAt(finalGroup.length() - 1).toString();
+        return finalGroupStr.replace(KieConstants.SEPARATOR, KieConstants.CONNECTOR);
     }
 
     private static String buildSingleLabel(String key, String value) {

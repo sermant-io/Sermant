@@ -12,6 +12,7 @@ const resultCodes = [
     {code: '07', key: 'common.configurationDoesNotExist'},
     {code: '08', key: 'common.missingRequestParameters'},
     {code: '09', key: 'common.failedToRequest'},
+    {code: '10', key: 'common.notEnable'},
 ];
 
 export const resultCodeMap = new Map(resultCodes.map(item => [item.code, i18n.global.t(item.key)]));

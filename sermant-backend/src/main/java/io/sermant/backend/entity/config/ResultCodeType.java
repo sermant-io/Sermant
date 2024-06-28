@@ -74,7 +74,12 @@ public enum ResultCodeType {
     /**
      * Interface call failed
      */
-    FAIL("09", "Failure.");
+    FAIL("09", "Failure."),
+
+    /**
+     * Dynamic configuration switch not turned on
+     */
+    NOT_ENABLE("10", "Dynamic configuration switch not turned on.");
 
     private final String code;
 

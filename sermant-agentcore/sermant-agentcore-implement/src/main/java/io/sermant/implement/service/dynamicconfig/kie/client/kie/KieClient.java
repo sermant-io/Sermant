@@ -22,6 +22,7 @@ import io.sermant.implement.service.dynamicconfig.kie.client.AbstractClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.http.HttpClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.http.HttpResult;
+import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
 import io.sermant.implement.utils.LabelGroupUtils;
 
 import org.apache.http.HttpStatus;
@@ -220,8 +221,9 @@ public class KieClient extends AbstractClient implements ConfigClient {
     @Override
     public Map<String, List<String>> getConfigList(String key, String group, boolean exactMatchFlag) {
         final KieResponse kieResponse;
+        String covertGroup = group.replace(KieConstants.SEPARATOR, KieConstants.CONNECTOR);
         if (exactMatchFlag) {
-            kieResponse = getKieResponse(key, group, exactMatchFlag);
+            kieResponse = getKieResponse(key, covertGroup, exactMatchFlag);
         } else {
             kieResponse = getKieResponse(key, null, exactMatchFlag);
         }
@@ -236,7 +238,7 @@ public class KieClient extends AbstractClient implements ConfigClient {
                 configList.add(entity.getKey());
             } else {
                 String currentConfigGroup = LabelGroupUtils.createLabelGroup(entity.getLabels());
-                if (currentConfigGroup.contains(group)) {
+                if (currentConfigGroup.contains(covertGroup)) {
                     List<String> configList = result.computeIfAbsent(
                             LabelGroupUtils.createLabelGroup(entity.getLabels()), configKey -> new ArrayList<>());
                     configList.add(entity.getKey());
