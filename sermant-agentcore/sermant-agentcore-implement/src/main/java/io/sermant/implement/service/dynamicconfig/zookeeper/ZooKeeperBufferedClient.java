@@ -16,7 +16,6 @@
 
 package io.sermant.implement.service.dynamicconfig.zookeeper;
 
-
 import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;

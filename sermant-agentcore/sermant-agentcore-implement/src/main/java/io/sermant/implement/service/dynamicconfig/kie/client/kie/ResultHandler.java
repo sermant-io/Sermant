@@ -22,7 +22,6 @@ import io.sermant.implement.service.dynamicconfig.kie.client.http.HttpResult;
 
 import org.apache.http.HttpStatus;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**

@@ -16,6 +16,7 @@
 
 package io.sermant.core.utils;
 
+import io.sermant.core.exception.SermantRuntimeException;
 import io.sermant.core.service.httpserver.annotation.HttpRouteMapping;
 
 import org.kohsuke.MetaInfServices;
@@ -118,7 +119,7 @@ public class ServicesMetaInfUtils extends AbstractProcessor {
                 pw.println(service);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed to write generated files: " + e);
+            throw new SermantRuntimeException("Failed to write generated files: " + e);
         } finally {
             if (pw != null) {
                 pw.close();
