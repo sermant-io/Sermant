@@ -26,10 +26,11 @@
     </scm>
     <developers>
         <developer>
-            <name>luanwenfei</name>
-            <id>luanwenfei-venus</id>
-            <email>luanwenfei@outlook.com</email>
+            <name>sermant</name>
+            <id>sermant</id>
+            <email>zhanghaopeng4@huawei.com</email>
             <roles>
+                <role>Project Manager</role>
                 <role>Developer</role>
             </roles>
             <timezone>+8</timezone>
