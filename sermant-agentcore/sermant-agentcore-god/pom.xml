@@ -11,6 +11,33 @@
 
     <artifactId>sermant-agentcore-god</artifactId>
 
+    <description>The core interface package of Sermant.</description>
+    <url>https://github.com/sermant-io/Sermant</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/sermant-io/Sermant</url>
+        <connection>scm:git:git://github.com/sermant-io/Sermant.git</connection>
+        <developerConnection>scm:git:ssh://github.com:sermant-io/Sermant.git</developerConnection>
+    </scm>
+    <developers>
+        <developer>
+            <name>sermant</name>
+            <id>sermant</id>
+            <email>zhanghaopeng4@huawei.com</email>
+            <roles>
+                <role>Project Manager</role>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

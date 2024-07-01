@@ -1,5 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.sermant</groupId>
     <artifactId>sermant</artifactId>
@@ -22,9 +22,10 @@
     </scm>
     <developers>
         <developer>
-            <name>luanwenfei</name>
-            <id>luanwenfei-venus</id>
-            <email>luanwenfei@outlook.com</email>
+            <name>sermant</name>
+            <id>sermant</id>
+            <email>zhanghaopeng4@huawei.com</email>
+            <url>https://github.com/sermant-io/Sermant</url>
             <roles>
                 <role>Developer</role>
             </roles>
@@ -81,6 +82,7 @@
         <gpg.plugin.version>3.0.1</gpg.plugin.version>
         <javadoc.plugin.version>3.3.2</javadoc.plugin.version>
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
+        <central.publishing.maven.plugin.version>0.5.0</central.publishing.maven.plugin.version>
         <frontend.plugin.version>1.12.1</frontend.plugin.version>
 
         <sermant.name>sermant-agent</sermant.name>
@@ -436,14 +438,14 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${nexus.staging.plugin.version}</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central.publishing.maven.plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            <publishingServerId>sermant</publishingServerId>
+                            <autoPublish>false</autoPublish>
+                            <tokenAuth>true</tokenAuth>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -456,16 +458,6 @@
                     </plugins>
                 </pluginManagement>
             </build>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
         </profile>
     </profiles>
     <build>
