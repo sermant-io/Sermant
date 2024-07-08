@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The classloader of the core capabilities of framework
@@ -122,6 +120,13 @@ public class FrameworkClassLoader extends URLClassLoader {
         if ("org/slf4j/impl/StaticLoggerBinder.class".equals(name)) {
             return findResources(name);
         }
+
+        // Due to class isolation, the service loader does not obtain the service provider from the parent
+        // classloader, but returns only the resources in the classloader
+        if (name.startsWith("META-INF/services/")) {
+            return findResources(name);
+        }
+
         return super.getResources(name);
     }
 }
