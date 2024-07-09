@@ -91,7 +91,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 打开浏览器并导航到URL`http://localhost:8900`，如下图所示：
 
 
-![pic](docs/binary-docs/backend_sermant_info.jpg)
+![pic](docs/binary-docs/backend_sermant_info.png)
 
 ## License
 
