@@ -3,25 +3,6 @@ description: "Auto test for Backend"
 runs:
   using: "composite"
   steps:
-    - name: Set up JDK ${{ env.javaVersion }}
-      uses: actions/setup-java@v2
-      with:
-        java-version: ${{ env.javaVersion }}
-        distribution: 'adopt'
-        cache: maven
-    - name: Set up python
-      uses: actions/setup-python@v3.1.3
-      with:
-        python-version: '3.10'
-    - name: download middlewares
-      uses: actions/cache@v3
-      with:
-        path: |
-          apache-zookeeper-*/
-        key: ${{ runner.os }}-middlewares-${{ github.run_id }}
-    - name: start zookeeper
-      shell: bash
-      run: bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
     - name: download agent
       uses: actions/cache@v3
       with:

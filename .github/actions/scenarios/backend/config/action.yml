@@ -1,0 +1,62 @@
+name: "Test the configuration management of Backend"
+description: "Auto test for Backend"
+runs:
+  using: "composite"
+  steps:
+    - name: start backend with zookeeper
+      shell: bash
+      env:
+        DYNAMIC_CONFIG_SERVERADDRESS: 127.0.0.1:2181
+        DYNAMIC_CONFIG_DYNAMICCONFIGTYPE: ZOOKEEPER
+        DYNAMIC_CONFIG_ENABLE: true
+        NETTY_PORT: 6889
+        SERVER_PORT: 8901
+      run: |
+        nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+    - name: start backend with kie
+      shell: bash
+      env:
+        DYNAMIC_CONFIG_SERVERADDRESS: 127.0.0.1:30110
+        DYNAMIC_CONFIG_DYNAMICCONFIGTYPE: KIE
+        DYNAMIC_CONFIG_ENABLE: true
+        NETTY_PORT: 6890
+        SERVER_PORT: 8902
+      run: |
+        nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+    - name: start backend with nacos
+      shell: bash
+      env:
+        DYNAMIC_CONFIG_SERVERADDRESS: 127.0.0.1:8848
+        DYNAMIC_CONFIG_DYNAMICCONFIGTYPE: NACOS
+        DYNAMIC_CONFIG_ENABLE: true
+        NETTY_PORT: 6891
+        SERVER_PORT: 8903
+      run: |
+        nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+    - name: waiting for backend start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8901/sermant/event/webhooks 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8902/sermant/event/webhooks 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8903/sermant/event/webhooks 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8848/nacos/v2/console/namespace/list 20
+    - name: start test
+      shell: bash
+      run: |
+        python -m unittest ./sermant-integration-tests/scripts/test_configuration_management_of_backend.py
+    - name: stop backend
+      shell: bash
+      run: |
+        netstat -nlp | grep :8901 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
+        netstat -nlp | grep :8902 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
+        netstat -nlp | grep :8903 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-backend-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2
