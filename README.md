@@ -90,7 +90,7 @@ java -javaagent:${path}\sermant-agent-x.x.x\agent\sermant-agent.jar -jar spring-
 
 Check running status of Sermant. In this example, open the browser and navigate to the URL `http://localhost:8900`.
 
-![pic](docs/binary-docs/backend_sermant_info.jpg)
+![pic](docs/binary-docs/backend_sermant_info_en.png)
 
 ## License
 
