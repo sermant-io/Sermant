@@ -44,8 +44,8 @@ Below is a simple demo that guides new users to use Sermant in just 4 steps.
 
 ### Preparation
 
-- [Download](https://github.com/sermant-io/Sermant/releases/download/v1.4.0/sermant-1.4.0.tar.gz) Sermant Release package (The current version recommended is 1.4.0)
-- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v1.4.0/sermant-examples-flowcontrol-demo-1.4.0.tar.gz) Demo binary product compression package
+- [Download](https://github.com/sermant-io/Sermant/releases/download/v2.0.0/sermant-2.0.0.tar.gz) Sermant Release package (The current version recommended is 2.0.0)
+- [Download](https://github.com/sermant-io/Sermant-examples/releases/download/v2.0.0/sermant-examples-flowcontrol-demo-2.0.0.tar.gz) Demo binary product compression package
 - [Download](https://zookeeper.apache.org/releases#download) and start zookeeper
 
 ### Obtain Demo binary products
