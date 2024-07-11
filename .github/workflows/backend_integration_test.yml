@@ -32,6 +32,28 @@ jobs:
           export ROOT_PATH=$(pwd)
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
           tar -zxf apache-zookeeper-3.6.3-bin.tar.gz
+      - name: cache local cse
+        uses: actions/cache@v3
+        with:
+          path: Local-CSE-2.1.3-linux-amd64.zip
+          key: ${{ runner.os }}-local-cse
+          restore-keys: |
+            ${{ runner.os }}-local-cse
+      - name: download cse
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh cse
+      - name: cache nacos server
+        uses: actions/cache@v3
+        with:
+          path: nacos-server-2.1.0.tar.gz
+          key: ${{ runner.os }}-nacos-server-2.1.0
+          restore-keys: |
+            ${{ runner.os }}-nacos-server-2.1.0
+      - name: download nacos
+        run: |
+          export ROOT_PATH=$(pwd)
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh nacos210
   build-agent-and-cache:
     name: build agent and cache
     runs-on: ubuntu-latest
@@ -63,9 +85,13 @@ jobs:
       - name: set java version to environment
         run: |
           echo "javaVersion=8" >> $GITHUB_ENV
+      - name: start backend common test
+        uses: ./.github/actions/common/backend
       - name: start backend use memory test
         uses: ./.github/actions/scenarios/backend/memory
       - name: start backend use redis test
         uses: ./.github/actions/scenarios/backend/redis
+      - name: start config manager test
+        uses: ./.github/actions/scenarios/backend/config
 
 

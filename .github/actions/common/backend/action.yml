@@ -1,0 +1,48 @@
+name: "Common operations"
+description: "do something common for Backend Test"
+runs:
+  using: "composite"
+  steps:
+    - name: Set up JDK ${{ env.javaVersion }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ env.javaVersion }}
+        distribution: 'adopt'
+        cache: maven
+    - name: download middlewares
+      uses: actions/cache@v3
+      with:
+        path: |
+          apache-zookeeper-*/
+        key: ${{ runner.os }}-middlewares-${{ github.run_id }}
+    - name: start zookeeper
+      shell: bash
+      run: bash apache-zookeeper-3.6.3-bin/bin/zkServer.sh start apache-zookeeper-3.6.3-bin/conf/zoo_sample.cfg
+    - name: download local cse
+      uses: actions/cache@v3
+      with:
+        path: Local-CSE-2.1.3-linux-amd64.zip
+        key: ${{ runner.os }}-local-cse
+        restore-keys: |
+          ${{ runner.os }}-local-cse
+    - name: start cse
+      shell: bash
+      run: |
+        export ROOT_PATH=$(pwd)
+        bash ./sermant-integration-tests/scripts/startCse.sh
+    - name: download nacos server
+      uses: actions/cache@v3
+      with:
+        path: nacos-server-2.1.0.tar.gz
+        key: ${{ runner.os }}-nacos-server-2.1.0
+        restore-keys: |
+          ${{ runner.os }}-nacos-server-2.1.0
+    - name: start nacos server
+      shell: bash
+      run: |
+        tar -zxf nacos-server-2.1.0.tar.gz
+        bash nacos/bin/startup.sh -m standalone
+    - name: Set up python
+      uses: actions/setup-python@v3.1.3
+      with:
+        python-version: '3.10'
