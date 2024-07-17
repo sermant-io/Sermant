@@ -1,0 +1,58 @@
+name: "xDS Service Discovery Test with Server Using Envoy"
+description: "Auto test for xds service discovery with server using envoy"
+runs:
+  using: composite
+  steps:
+    - name: build docker image
+      shell: bash
+      run: |
+        cd sermant-integration-tests/xds-service-test/product/spring-server/
+        minikube image build -t spring-server:1.0.0 .
+        cd ../spring-client/
+        minikube image build -t spring-client:1.0.0 .
+        eval $(minikube docker-env)
+        docker images
+    - name: start spring-client
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-open.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-client --timeout=10s
+        kubectl port-forward svc/spring-client 8080:8080 &
+    - name: start spring-server with envoy
+      shell: bash
+      run: |
+        kubectl label namespace default istio-injection=enabled
+        sleep 5s
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
+    - name: test one server
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=DISCOVERY_ONE_SERVER_INSTANCE --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: stop spring-server
+      shell: bash
+      run: |
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-server.yaml
+        sleep 3s
+    - name: test the number of spring-server instances changes from 1 to 0
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=DISCOVERY_ZERO_SERVER_INSTANCE --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: start spring-server with 2 replicas
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-2-replicas.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
+        sleep 2s
+    - name: test the number of spring-server instances changes from 0 to 2
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=DISCOVERY_TWO_SERVER_INSTANCE --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: close all service
+      shell: bash
+      run: |
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-open.yaml
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-2-replicas.yaml
