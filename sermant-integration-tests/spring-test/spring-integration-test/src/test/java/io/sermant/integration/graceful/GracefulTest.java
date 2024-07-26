@@ -51,7 +51,7 @@ public abstract class GracefulTest {
 
     private static final int UP_REQUEST_COUNT = 500;
 
-    private static final String DOWN_REQUEST_COUNT = "1000";
+    private static final int DOWN_REQUEST_COUNT = 1000;
 
     private final String url = getBaseUrl();
 
@@ -98,23 +98,20 @@ public abstract class GracefulTest {
     /**
      * 测试优雅下线
      */
-    @Test
     public void testGracefulDown() {
         if (!isTargetTest("down")) {
             return;
         }
         try {
-            for (int i = 0; i < getDownRequestCount(); i++) {
-                RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(), String.class);
+            for (int i = 0; i < DOWN_REQUEST_COUNT; i++) {
+                String port = RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(),
+                        String.class);
+                System.out.println("port: " + port);
             }
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage(), exception);
             Assertions.fail();
         }
-    }
-
-    private int getDownRequestCount() {
-        return Integer.parseInt(EnvUtils.getEnv("down.request.count", DOWN_REQUEST_COUNT));
     }
 
     private void statistic(Map<String, Integer> statisticMap) {

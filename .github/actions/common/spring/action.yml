@@ -55,8 +55,6 @@ runs:
       with:
         path: sermant-agent-*/
         key: ${{ runner.os }}-agent-${{ github.run_id }}
-    - name: plugin change check
-      uses: ./.github/actions/common/plugin-change-check
     - name: change file version
       # For build feign client ssl call config, according to springCloud version discriminate high and low config.
       if: matrix.springCloudVersion == '2020.0.0' || matrix.springCloudVersion == '2021.0.0' || matrix.springCloudVersion == '2021.0.3'

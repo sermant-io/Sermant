@@ -8,7 +8,7 @@ on:
       - '*'
     paths:
       - 'sermant-agentcore/**'
-      - 'sermant-integration-tests/**'
+      - 'sermant-integration-tests/dubbo-test/**'
       - 'sermant-plugins/sermant-dynamic-config/**'
       - 'sermant-plugins/sermant-flowcontrol/**'
       - 'sermant-plugins/sermant-loadbalancer/**'
@@ -17,12 +17,46 @@ on:
       - 'sermant-plugins/sermant-springboot-registry/**'
       - 'sermant-plugins/sermant-monitor/**'
       - 'sermant-plugins/sermant-service-visibility/**'
-      - '.github/workflows/dubbo_integration*.yml'
-      - '.github/actions/**'
+      - '.github/workflows/dubbo_integration_test.yml'
+      - '.github/actions/common/dubbo/action.yml'
+      - '.github/actions/scenarios/dubbo/**'
+      - '.github/actions/common/plugin-change-check/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 jobs:
+  set-execution-conditions:
+    name: set-execution-conditions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: plugin-change-check
+        id: plugin-change-check
+        uses: ./.github/actions/common/plugin-change-check
+      - name: set-outputs
+        id: set-outputs
+        run: |
+          echo "enableDubboRouter=${{env.enableDubboRouter}}" >> $GITHUB_OUTPUT
+          echo "enableDubboMonitor=${{env.enableDubboMonitor}}" >> $GITHUB_OUTPUT
+          echo "enableDubboVisibility=${{env.enableDubboVisibility}}" >> $GITHUB_OUTPUT
+          echo "enableDubboCommon=${{env.enableDubboCommon}}" >> $GITHUB_OUTPUT
+          echo "enableDubboLane=${{env.enableDubboLane}}" >> $GITHUB_OUTPUT
+          echo "enableDubboRemoval=${{env.enableDubboRemoval}}" >> $GITHUB_OUTPUT
+          echo "enableDubbo3Router=${{env.enableDubbo3Router}}" >> $GITHUB_OUTPUT
+          echo "enableDubbo3Lane=${{env.enableDubbo3Lane}}" >> $GITHUB_OUTPUT
+    outputs:
+      enableDubboRouter: ${{ steps.set-outputs.outputs.enableDubboRouter }}
+      enableDubboMonitor: ${{ steps.set-outputs.outputs.enableDubboMonitor }}
+      enableDubboVisibility: ${{ steps.set-outputs.outputs.enableDubboVisibility }}
+      enableDubboCommon: ${{ steps.set-outputs.outputs.enableDubboCommon }}
+      enableDubboLane: ${{ steps.set-outputs.outputs.enableDubboLane }}
+      enableDubboRemoval: ${{ steps.set-outputs.outputs.enableDubboRemoval }}
+      enableDubbo3Router: ${{ steps.set-outputs.outputs.enableDubbo3Router }}
+      enableDubbo3Lane: ${{ steps.set-outputs.outputs.enableDubbo3Lane }}
   download-midwares-and-cache:
     name: download and cache middlewares
     runs-on: ubuntu-latest
@@ -59,14 +93,19 @@ jobs:
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
         run: |
-          sed -i '/sermant-backend-lite/d' pom.xml
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
           mvn package -DskipTests -Ptest --file pom.xml
   test-for-dubbo:
     name: Test for dubbo
     runs-on: ubuntu-latest
-    needs: [download-midwares-and-cache, build-agent-and-cache]
+    if: needs.set-execution-conditions.outputs.enableDubboRouter == 'true'
+      || needs.set-execution-conditions.outputs.enableDubboMonitor  == 'true'
+      || needs.set-execution-conditions.outputs.enableDubboVisibility == 'true'
+      || needs.set-execution-conditions.outputs.enableDubboCommon == 'true'
+      || needs.set-execution-conditions.outputs.enableDubboLane == 'true'
+      || needs.set-execution-conditions.outputs.enableDubboRemoval == 'true'
+    needs: [set-execution-conditions, download-midwares-and-cache, build-agent-and-cache]
     strategy:
       matrix:
         dubbo-version: ['2-5','2-6','2-7']
@@ -94,27 +133,28 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/dubbo
       - name: (dubbo router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboRouter == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboRouter == 'true'
         uses: ./.github/actions/scenarios/dubbo/router
       - name: monitor test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableMonitor == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboMonitor == 'true'
         uses: ./.github/actions/scenarios/dubbo/monitor
       - name: visibility test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableVisibility == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboVisibility == 'true'
         uses: ./.github/actions/scenarios/dubbo/visibility
       - name: (dubbo common) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboCommon == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboCommon == 'true'
         uses: ./.github/actions/scenarios/dubbo/dubbo-common
       - name: (dubbo lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboLane == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboLane == 'true'
         uses: ./.github/actions/scenarios/dubbo/lane
       - name: removal test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableRemoval == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubboRemoval == 'true'
         uses: ./.github/actions/scenarios/dubbo/removal
   test-for-dubbo3:
     name: Test for dubbo3.x
+    if: needs.set-execution-conditions.outputs.enableDubbo3Router == 'true' || needs.set-execution-conditions.outputs.enableDubbo3Lane == 'true'
     runs-on: ubuntu-latest
-    needs: [ download-midwares-and-cache, build-agent-and-cache ]
+    needs: [set-execution-conditions, download-midwares-and-cache, build-agent-and-cache ]
     strategy:
       matrix:
         registry-model: [ 'all','interface','instance' ]
@@ -196,8 +236,8 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/dubbo
       - name: (dubbo3.x router) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboRouter == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubbo3Router == 'true'
         uses: ./.github/actions/scenarios/dubbo/router-dubbo3
       - name: (dubbo3.x lane) test for ${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }}
-        if: env.enableDubboLane == 'true'
+        if: needs.set-execution-conditions.outputs.enableDubbo3Lane == 'true'
         uses: ./.github/actions/scenarios/dubbo/lane-dubbo3

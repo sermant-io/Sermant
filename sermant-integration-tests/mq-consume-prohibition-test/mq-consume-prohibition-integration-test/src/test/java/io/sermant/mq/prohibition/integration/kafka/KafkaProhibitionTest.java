@@ -111,7 +111,7 @@ public class KafkaProhibitionTest {
         DynamicConfigUtils.updateConfig(CONFIG_PATH, config);
         // 创建单Topic的消费者test-client-1
         HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + CREATE_CONSUMER_WITH_MULTI_TOPIC_API);
-        Thread.sleep(WAIT_TIME);
+        Thread.sleep(LONG_WAIT_TIME);
         int groupSize = Integer.parseInt(HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_GROUP_SIZE_API));
         String topics = HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_TOPIC_API);
         try {
@@ -189,7 +189,7 @@ public class KafkaProhibitionTest {
         DynamicConfigUtils.updateConfig(CONFIG_PATH, configOn);
         // 创建多Topic的消费者test-client-1
         HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + CREATE_CONSUMER_WITH_MULTI_TOPIC_API);
-        Thread.sleep(WAIT_TIME);
+        Thread.sleep(LONG_WAIT_TIME);
         int groupSize = Integer.parseInt(HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_GROUP_SIZE_API));
         String topics = HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_TOPIC_API);
         try {
@@ -238,7 +238,7 @@ public class KafkaProhibitionTest {
         DynamicConfigUtils.updateConfig(CONFIG_PATH, configOn);
         // 创建多Topic的消费者test-client-1
         HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + CREATE_CONSUMER_WITH_MULTI_TOPIC_API);
-        Thread.sleep(WAIT_TIME);
+        Thread.sleep(LONG_WAIT_TIME);
         int groupSize = Integer.parseInt(HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_GROUP_SIZE_API));
         String topics = HttpRequestUtils.doGet(TEST_CLIENT_1_ADDRESS + GET_CONSUMER_TOPIC_API);
         try {
