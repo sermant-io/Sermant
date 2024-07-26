@@ -9,16 +9,40 @@ on:
       - '*'
     paths:
       - 'sermant-agentcore/**'
-      - 'sermant-integration-tests/**'
+      - 'sermant-integration-tests/spring-test/**'
       - 'sermant-plugins/sermant-router/**'
       - 'sermant-plugins/sermant-service-registry/**'
       - 'sermant-plugins/sermant-springboot-registry/**'
-      - '.github/workflows/spring_integration*.yml'
-      - '.github/actions/**'
+      - '.github/workflows/spring_integration_test_2.yml'
+      - '.github/actions/common/spring/action.yml'
+      - '.github/actions/scenarios/spring/router/**'
+      - '.github/actions/common/plugin-change-check/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 jobs:
+  set-execution-conditions:
+    name: set-execution-conditions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: plugin-change-check
+        id: plugin-change-check
+        uses: ./.github/actions/common/plugin-change-check
+      - name: set-outputs
+        id: set-outputs
+        run: |
+          echo "enableSpringRouter=${{env.enableSpringRouter}}" >> $GITHUB_OUTPUT
+          echo "enableSpringTagRouter=${{env.enableSpringTagRouter}}" >> $GITHUB_OUTPUT
+          echo "enableSpringLane=${{env.enableSpringLane}}" >> $GITHUB_OUTPUT
+    outputs:
+      enableSpringRouter: ${{ steps.set-outputs.outputs.enableSpringRouter }}
+      enableSpringTagRouter: ${{ steps.set-outputs.outputs.enableSpringTagRouter }}
+      enableSpringLane: ${{ steps.set-outputs.outputs.enableSpringLane }}
   download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
@@ -76,14 +100,16 @@ jobs:
       - name: package agent
         run: |
           sed -i '/sermant-backend/d' pom.xml
-          sed -i '/sermant-backend-lite/d' pom.xml
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
           mvn package -DskipTests -Ptest --file pom.xml
   test-for-spring:
     name: Test for spring
     runs-on: ubuntu-latest
-    needs: [ build-agent-and-cache, download-midwares-and-cache ]
+    if: needs.set-execution-conditions.outputs.enableSpringRouter == 'true'
+      || needs.set-execution-conditions.outputs.enableSpringTagRouter == 'true'
+      || needs.set-execution-conditions.outputs.enableSpringLane == 'true'
+    needs: [ set-execution-conditions, build-agent-and-cache, download-midwares-and-cache ]
     strategy:
       matrix:
         include:
@@ -128,14 +154,14 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/spring
       - name: (spring router) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
-        if: env.enableSpringRouter == 'true'
+        if: needs.set-execution-conditions.outputs.enableSpringRouter == 'true'
         uses: ./.github/actions/scenarios/spring/router/spring-router
       - name: (spring tag router) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
-        if: env.enableSpringTagRouter == 'true'
+        if: needs.set-execution-conditions.outputs.enableSpringTagRouter == 'true'
         uses: ./.github/actions/scenarios/spring/router/spring-tag-router
       - name: (spring tag az router) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
-        if: env.enableSpringTagRouter == 'true'
+        if: needs.set-execution-conditions.outputs.enableSpringTagRouter == 'true'
         uses: ./.github/actions/scenarios/spring/router/spring-tag-az-router
       - name: (spring lane) test for springboot=${{ matrix.springBootVersion }} springCloudVersion=${{ matrix.springCloudVersion }}
-        if: env.enableSpringLane == 'true'
+        if: needs.set-execution-conditions.outputs.enableSpringLane == 'true'
         uses: ./.github/actions/scenarios/spring/lane

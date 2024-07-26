@@ -42,6 +42,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -55,6 +56,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -68,6 +70,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -81,6 +84,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -94,6 +98,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -107,6 +112,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -120,6 +126,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -133,6 +140,7 @@ runs:
       shell: bash
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -147,6 +155,7 @@ runs:
       if: matrix.springCloudVersion != 'Edgware.SR2'
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -161,6 +170,7 @@ runs:
       if: matrix.springCloudVersion == 'Edgware.SR2' || matrix.springCloudVersion == 'Finchley.RELEASE' || matrix.springCloudVersion == 'Greenwich.RELEASE' || matrix.springCloudVersion == 'Hoxton.RELEASE'
       env:
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development

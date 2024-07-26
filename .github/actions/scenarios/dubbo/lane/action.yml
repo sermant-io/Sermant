@@ -33,6 +33,7 @@ runs:
       env:
         servicecomb.service.enableDubboRegister: true
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -48,6 +49,7 @@ runs:
       env:
         servicecomb.service.enableDubboRegister: true
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -68,6 +70,7 @@ runs:
       env:
         servicecomb.service.enableDubboRegister: true
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -83,6 +86,7 @@ runs:
       env:
         servicecomb.service.enableDubboRegister: true
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -103,6 +107,7 @@ runs:
       env:
         servicecomb.service.enableDubboRegister: true
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development

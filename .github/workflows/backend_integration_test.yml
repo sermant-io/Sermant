@@ -9,9 +9,12 @@ on:
     paths:
       - 'sermant-agentcore/**'
       - 'sermant-backend/**'
+      - 'sermant-integration-tests/scripts/test_backend*.py'
       - '.github/workflows/backend*.yml'
-      - '.github/actions/scenarios/backend/memory/action.yml'
-      - '.github/actions/scenarios/backend/redis/action.yml'
+      - '.github/actions/scenarios/backend/**'
+      - '.github/actions/common/backend/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
@@ -72,7 +75,6 @@ jobs:
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
         run: |
-          sed -i '/sermant-backend-lite/d' pom.xml
           sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
           mvn package -DskipTests -Ptest --file pom.xml
@@ -88,9 +90,9 @@ jobs:
       - name: start backend common test
         uses: ./.github/actions/common/backend
       - name: start backend use memory test
-        uses: ./.github/actions/scenarios/backend/memory
+        uses: ./.github/actions/scenarios/backend/event/memory
       - name: start backend use redis test
-        uses: ./.github/actions/scenarios/backend/redis
+        uses: ./.github/actions/scenarios/backend/event/redis
       - name: start config manager test
         uses: ./.github/actions/scenarios/backend/config
 

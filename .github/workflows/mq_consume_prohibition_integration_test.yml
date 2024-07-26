@@ -13,10 +13,31 @@ on:
       - '.github/workflows/mq_consume_prohibition_integration_test.yml'
       - '.github/actions/common/mq-consume-prohibition/**'
       - '.github/actions/scenarios/mq-consume-prohibition/**'
+      - '.github/actions/common/plugin-change-check/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 jobs:
+  set-execution-conditions:
+    name: set-execution-conditions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: plugin-change-check
+        id: plugin-change-check
+        uses: ./.github/actions/common/plugin-change-check
+      - name: set-outputs
+        id: set-outputs
+        run: |
+          echo "enableKafkaConsumeProhibitionAction=${{env.enableKafkaConsumeProhibitionAction}}" >> $GITHUB_OUTPUT
+          echo "enableRocketmqConsumeProhibitionAction=${{env.enableRocketmqConsumeProhibitionAction}}" >> $GITHUB_OUTPUT
+    outputs:
+      enableKafkaConsumeProhibitionAction: ${{ steps.set-outputs.outputs.enableKafkaConsumeProhibitionAction }}
+      enableRocketmqConsumeProhibitionAction: ${{ steps.set-outputs.outputs.enableRocketmqConsumeProhibitionAction }}
   download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
@@ -80,7 +101,8 @@ jobs:
   test-for-mq-consume-prohibition-kafka:
     name: Test for mq-consume-prohibition kafka
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableKafkaConsumeProhibitionAction == 'true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -115,7 +137,8 @@ jobs:
   test-for-rocketmq-one-topic:
     name: Test for rocketmq consumer with one topic
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableRocketmqConsumeProhibitionAction == 'true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -140,7 +163,8 @@ jobs:
   test-for-rocketmq-two-topic:
     name: Test for rocketmq consumer with two topic
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableRocketmqConsumeProhibitionAction == 'true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -164,8 +188,9 @@ jobs:
         uses: ./.github/actions/scenarios/mq-consume-prohibition/rocketmq/rocketmq-two-topic
   test-for-rocketmq-two-consumer:
     name: Test for rocketmq consumer with two consumer
+    if: needs.set-execution-conditions.outputs.enableRocketmqConsumeProhibitionAction == 'true'
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:

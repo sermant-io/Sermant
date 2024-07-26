@@ -52,7 +52,7 @@ public class RocketMqProhibitionTest {
         DynamicConfigUtils.updateConfig(configOn);
 
         // 等待动态配置生效
-        Thread.sleep(3000);
+        Thread.sleep(10000);
 
         // 消费者生产消息
         HttpRequestUtils.doGet("http://127.0.0.1:9059/produce?topic=topic-push-1");
@@ -64,41 +64,27 @@ public class RocketMqProhibitionTest {
         HttpRequestUtils.doGet("http://127.0.0.1:9057/initAndStart");
         HttpRequestUtils.doGet("http://127.0.0.1:9056/initAndStart");
 
-        // 等待消费者启动
-        Thread.sleep(50000);
-
         // 判断消费者是否退出消费者组
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9056/messageQueue"));
+        checkConsumerAndQueue("0","0", "0", "消费者未退出消费者组.");
 
         // 消费者开启消费
         DynamicConfigUtils.updateConfig(configOff);
 
         // 等待动态配置生效
-        Thread.sleep(120000);
+        Thread.sleep(5000);
 
         // 判断消费者是否加入消费者组
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
-        Assertions.assertEquals("4", HttpRequestUtils.doGet("http://127.0.0.1:9056/messageQueue"));
+        checkConsumerAndQueue("1","1", "4", "消费者未加入消费者组.");
+
 
         // 运行时禁止消费，下发禁止消费配置
         DynamicConfigUtils.updateConfig(configOn);
 
         // 等待动态配置生效
-        Thread.sleep(10000);
+        Thread.sleep(5000);
 
         // 判断消费者是否退出消费者组
-        Assertions.assertEquals("0",
-                HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("0", HttpRequestUtils
-                .doGet("http://127.0.0.1:9057/consumerIdList?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9056/messageQueue"));
+        checkConsumerAndQueue("0","0", "0", "消费者未退出消费者组.");
     }
 
     /**
@@ -129,36 +115,22 @@ public class RocketMqProhibitionTest {
         Thread.sleep(5000);
 
         // 判断消费者是否加入消费者组
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
+        checkConsumer("1", "1", "消费者未加入消费者组.");
 
         // 消费者订阅新的Topic
         HttpRequestUtils.doGet("http://127.0.0.1:9058/subscribe?topic=topic-push-2");
         HttpRequestUtils.doGet("http://127.0.0.1:9057/subscribe?topic=topic-pull-subscribe-2");
 
-        // 等待消费者退出消费者组
-        Thread.sleep(25000);
 
         // 判断消费者是否退出消费者组
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-2&&group=push-group"));
-        Assertions.assertEquals("0", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-2&&group=pull-subscribe-group"));
+        checkConsumer("0", "0", "消费者未退出消费者组.");
 
         // 消费者取消订阅新的Topic
         HttpRequestUtils.doGet("http://127.0.0.1:9058/unsubscribe?topic=topic-push-2");
         HttpRequestUtils.doGet("http://127.0.0.1:9057/unsubscribe?topic=topic-pull-subscribe-2");
 
-        // 等待消费者加入消费者组
-        Thread.sleep(25000);
-
         // 判断消费者是否加入消费者组
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
+        checkConsumer("1", "1", "消费者未加入消费者组.");
     }
 
     /**
@@ -189,38 +161,81 @@ public class RocketMqProhibitionTest {
         HttpRequestUtils.doGet("http://127.0.0.1:9056/initAndStart");
         HttpRequestUtils.doGet("http://127.0.0.1:9057/initAndStart");
 
-        // 等待消费者启动
-        Thread.sleep(50000);
-
         // 判断消费者是否加入消费者组
-        Assertions.assertEquals("2", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("2", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
+        checkConsumer("2","2", "消费者未加入消费者组.");
 
         // 开启禁消费
         DynamicConfigUtils.updateConfig(configOn);
 
         // 等待动态配置生效
-        Thread.sleep(25000);
+        Thread.sleep(5000);
 
         // 判断消费者是否退出消费者组
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("1", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
+        checkConsumer("1","1", "消费者未退出消费者组.");
 
 
         // 消费者开启消费
         DynamicConfigUtils.updateConfig(configOff);
 
         // 等待动态配置生效
-        Thread.sleep(25000);
+        Thread.sleep(5000);
 
         // 判断消费者是否加入消费者组
-        Assertions.assertEquals("2", HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
-                + "?topic=topic-push-1&&group=push-group"));
-        Assertions.assertEquals("2", HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
-                + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group"));
+        checkConsumer("2","2", "消费者未加入消费者组.");
+    }
+
+    /**
+     * 校验消费者数量
+     *
+     * @param pushGroupConsumerCount group为push-group的消费者数量
+     * @param pullSubscribeGroupConsumerCount group为pull-subscribe-group的消费者数量
+     * @param message 失败信息
+     * @throws InterruptedException 线程中断异常
+     */
+    private void checkConsumer(String pushGroupConsumerCount, String pullSubscribeGroupConsumerCount, String message)
+            throws InterruptedException {
+        for (int i = 0; i < 15; i++) {
+            Thread.sleep(20000);
+            String consumerIdListCount1 = HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList"
+                    + "?topic=topic-push-1&&group=push-group");
+            String consumerIdListCount2 = HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList"
+                    + "?topic=topic-pull-subscribe-1&&group=pull-subscribe-group");
+            if (pushGroupConsumerCount.equals(consumerIdListCount1)
+                    && pullSubscribeGroupConsumerCount.equals(consumerIdListCount2)) {
+                break;
+            }
+            if (i == 14) {
+                Assertions.fail(message);
+            }
+        }
+    }
+
+    /**
+     * 校验消费者数量
+     *
+     * @param pushGroupConsumerCount group为push-group的消费者数量
+     * @param pullSubscribeGroupConsumerCount group为pull-subscribe-group的消费者数量
+     * @param queueCount 消息队列数量
+     * @param message 失败信息
+     * @throws InterruptedException 线程中断异常
+     */
+    private void checkConsumerAndQueue(String pushGroupConsumerCount, String pullSubscribeGroupConsumerCount,
+                                       String queueCount, String message) throws InterruptedException {
+        for (int i = 0; i < 25; i++) {
+            Thread.sleep(20000);
+            String consumerIdListCount1 = HttpRequestUtils.doGet("http://127.0.0.1:9058/consumerIdList?" +
+                    "topic=topic-push-1&&group=push-group");
+            String consumerIdListCount2 = HttpRequestUtils.doGet("http://127.0.0.1:9057/consumerIdList?" +
+                    "topic=topic-pull-subscribe-1&&group=pull-subscribe-group");
+            String messageQueueCount = HttpRequestUtils.doGet("http://127.0.0.1:9056/messageQueue");
+            if (pushGroupConsumerCount.equals(consumerIdListCount1)
+                    && pullSubscribeGroupConsumerCount.equals(consumerIdListCount2)
+                    && queueCount.equals(messageQueueCount)) {
+                break;
+            }
+            if (i == 19) {
+                Assertions.fail(message);
+            }
+        }
     }
 }

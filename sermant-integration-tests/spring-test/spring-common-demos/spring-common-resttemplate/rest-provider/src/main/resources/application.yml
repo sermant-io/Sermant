@@ -12,6 +12,9 @@ spring:
   cloud:
     zookeeper:
       enabled: true
+      discovery:
+        preferIpAddress: true
+        register: true
 
 management:
   endpoint:
