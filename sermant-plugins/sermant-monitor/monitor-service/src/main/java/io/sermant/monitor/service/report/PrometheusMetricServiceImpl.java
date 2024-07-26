@@ -64,10 +64,9 @@ public class PrometheusMetricServiceImpl implements MetricReportService {
             String key = monitorServiceConfig.getKey();
             if (StringUtils.isNoneBlank(key) && StringUtils.isNoneBlank(monitorServiceConfig.getUserName())
                     && StringUtils.isNoneBlank(monitorServiceConfig.getPassword())) {
-                Optional<String> userNameOptional = AesUtil.decrypt(key, monitorServiceConfig.getUserName());
                 Optional<String> passwordOptional = AesUtil.decrypt(key, monitorServiceConfig.getPassword());
-                if (userNameOptional.isPresent() && passwordOptional.isPresent()) {
-                    builder.withAuthenticator(new MonitorAuthenticator("", userNameOptional.get(),
+                if (passwordOptional.isPresent()) {
+                    builder.withAuthenticator(new MonitorAuthenticator("", monitorServiceConfig.getUserName(),
                             passwordOptional.get()));
                 }
             }

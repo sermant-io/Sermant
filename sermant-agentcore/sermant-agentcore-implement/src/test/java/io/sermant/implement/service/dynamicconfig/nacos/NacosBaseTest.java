@@ -68,7 +68,7 @@ public class NacosBaseTest {
         dynamicConfig.setTimeoutValue(30000);
         Optional<String> optional = AesUtil.generateKey();
         dynamicConfig.setPrivateKey(optional.orElse(""));
-        dynamicConfig.setUserName(AesUtil.encrypt(optional.get(), "nacos").orElse(""));
+        dynamicConfig.setUserName("nacos");
         dynamicConfig.setPassword(AesUtil.encrypt(optional.get(), "nacos").orElse(""));
         serviceMeta.setProject("testProject2");
         serviceMeta.setApplication("testApplication");
