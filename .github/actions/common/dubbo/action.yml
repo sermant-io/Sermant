@@ -36,8 +36,6 @@ runs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-    - name: plugin change check
-      uses: ./.github/actions/common/plugin-change-check
     - name: adaptation for dubbo 2.5.0 - 2.5.6
       shell: bash
       if: matrix.dubbo-version == '2-5' && matrix.dubbo-versions < 7

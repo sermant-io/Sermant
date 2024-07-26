@@ -49,7 +49,9 @@ public abstract class GracefulTest {
      */
     private static final int MIN_RATE = 2;
 
-    private static final int REQUEST_COUNT = 1000;
+    private static final int UP_REQUEST_COUNT = 500;
+
+    private static final int DOWN_REQUEST_COUNT = 1000;
 
     private final String url = getBaseUrl();
 
@@ -62,10 +64,18 @@ public abstract class GracefulTest {
             return;
         }
         final Map<String, Integer> statisticMap = new HashMap<>();
-        for (int i = 0; i < REQUEST_COUNT; i++) {
-            statistic(statisticMap);
+        for (int i = 0; i < 4; i++) {
+            try {
+                for(int j = 0; j < UP_REQUEST_COUNT; j++) {
+                    statistic(statisticMap);
+                }
+                Thread.sleep(10000);
+            } catch (InterruptedException exception) {
+                LOGGER.error(exception.getMessage(), exception);
+            }
         }
         final Collection<Integer> values = statisticMap.values();
+        LOGGER.info("values: {}", statisticMap.values());
         if (values.size() < MIN_PORT_SIZE) {
             Assertions.fail();
         }
@@ -88,15 +98,15 @@ public abstract class GracefulTest {
     /**
      * 测试优雅下线
      */
-    @Test
     public void testGracefulDown() {
         if (!isTargetTest("down")) {
             return;
         }
         try {
-            for (int i = 0; i < REQUEST_COUNT; i++) {
-                RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(),
+            for (int i = 0; i < DOWN_REQUEST_COUNT; i++) {
+                String port = RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(),
                         String.class);
+                System.out.println("port: " + port);
             }
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage(), exception);

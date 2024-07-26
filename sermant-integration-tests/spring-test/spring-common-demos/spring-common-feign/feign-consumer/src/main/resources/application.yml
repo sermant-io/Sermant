@@ -8,6 +8,9 @@ spring:
   cloud:
     zookeeper:
       enabled: true
+      discovery:
+        preferIpAddress: true
+        register: true
 feign:
   client:
     config:

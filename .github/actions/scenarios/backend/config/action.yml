@@ -43,7 +43,7 @@ runs:
     - name: start test
       shell: bash
       run: |
-        python -m unittest ./sermant-integration-tests/scripts/test_configuration_management_of_backend.py
+        python -m unittest ./sermant-integration-tests/scripts/test_backend_configuration_management.py
     - name: stop backend
       shell: bash
       run: |

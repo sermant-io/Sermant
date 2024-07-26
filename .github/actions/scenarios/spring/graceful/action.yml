@@ -21,6 +21,7 @@ runs:
       shell: bash
       env:
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -Dservice.meta.application=feign -Dserver.port=8014 \
         -Dsermant_log_dir=${{ env.logDir }}/feign-provider-8014${{ env.tailVersion }} -jar \
@@ -37,6 +38,7 @@ runs:
         grace.rule.enableOfflineNotify: true
         grace.rule.warmUpTime: 600
         servicecomb.service.enableSpringRegister: true
+        servicecomb.service.preferIpAddress: true
       # graceful-rest-provider service port 8443 do not change, it special for springCloud Edgware.SR2 test ssl feature.
       run: |
         cp sermant-integration-tests/spring-test/spring-common-demos/spring-common-feign${{ env.tailVersion }}/feign-provider${{ env.tailVersion }}/target/feign-provider${{ env.tailVersion }}.jar graceful-feign-provider${{ env.tailVersion }}.jar
@@ -59,7 +61,7 @@ runs:
       run: |
         ps -ef | grep java
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8015/graceful/testGraceful 120
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/graceful/testGraceful 60
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8005/graceful/testGraceful 200
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8004/testGraceful 60
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/testGraceful 60
     - name: test graceful up

@@ -1,23 +1,22 @@
-name: "Backend Test Use Redis"
+name: "Backend Test Use Memory"
 description: "Auto test for Backend"
 runs:
   using: "composite"
   steps:
+    - name: download agent
+      uses: actions/cache@v3
+      with:
+        path: sermant-agent-*/
+        key: ${{ runner.os }}-agent-${{ github.run_id }}
+    - name: package dubbo 2.6.0 tests
+      shell: bash
+      run: mvn package -Dalibaba.dubbo.version=2.6.0 -DskipTests -P260 --file sermant-integration-tests/dubbo-test/pom.xml
     - name: entry
       uses: ./.github/actions/common/entry
       with:
         log-dir: ./logs/backend
-    - name: install redis
+    - name: start backend with memory
       shell: bash
-      run: |
-        sudo apt install redis-server -y
-        sudo service redis restart
-    - name: start backend with redis
-      shell: bash
-      env:
-        DATABASE_TYPE: REDIS
-        DATABASE_VERSION: "6.0"
-        DATABASE_PASSWORD: ""
       run: |
         nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
     - name: start demo
@@ -29,7 +28,6 @@ runs:
         AGENT_SERVICE_GATEWAY_ENABLE: "true"
         EVENT_ENABLE: "true"
         EVENT_OFFERWARNLOG: "true"
-        EVENT_OFFERERRORLOG: "true"
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=backend-demo -jar sermant-integration-tests/dubbo-test/dubbo-2-6-integration-provider/target/dubbo-integration-provider.jar &
     - name: waiting for demo start
@@ -41,10 +39,18 @@ runs:
       shell: bash
       run: |
         netstat -nlp | grep :28021 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
+    - name: install requests
+      shell: bash
+      run: |
+        pip install requests
     - name: start test
       shell: bash
       run: |
-        python -m unittest ./sermant-integration-tests/scripts/test_backend.py
+        python -m unittest ./sermant-integration-tests/scripts/test_backend_event.py
+    - name: stop backend
+      shell: bash
+      run: |
+        netstat -nlp | grep :8900 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
     - name: if failure then upload error log
       uses: actions/upload-artifact@v3
       if: ${{ failure() || cancelled() }}

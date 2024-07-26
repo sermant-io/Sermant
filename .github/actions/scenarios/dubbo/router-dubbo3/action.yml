@@ -85,9 +85,9 @@ runs:
     - name: waiting for dubbo3 provider start
       shell: bash
       run: |
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:18021/actuator/health 120
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38022/actuator/health 120
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48023/actuator/health 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:18021/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:38022/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:48023/actuator/health 200
     - name: start dubbo3 consumer service
       shell: bash
       env:

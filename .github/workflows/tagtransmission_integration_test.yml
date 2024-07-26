@@ -13,10 +13,55 @@ on:
       - '.github/workflows/tagtransmission_integration_test.yml'
       - '.github/actions/common/tag-transmission/**'
       - '.github/actions/scenarios/tag-transmission/**'
+      - '.github/actions/common/plugin-change-check/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
 jobs:
+  set-execution-conditions:
+    name: set-execution-conditions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - name: plugin-change-check
+        id: plugin-change-check
+        uses: ./.github/actions/common/plugin-change-check
+      - name: set-outputs
+        id: set-outputs
+        run: |
+          echo "enableHttpclientV3TagTransmissionAction=${{env.enableHttpclientV3TagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableHttpclientV4TagTransmissionAction=${{env.enableHttpclientV4TagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableOkhttpTagTransmissionAction=${{env.enableOkhttpTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableGrpcTagTransmissionAction=${{env.enableGrpcTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableSofarpcTagTransmissionAction=${{env.enableSofarpcTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableServicecombTagTransmissionAction=${{env.enableServicecombTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableAlibabaDubboTagTransmissionAction=${{env.enableAlibabaDubboTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableApacheDubboTagTransmissionAction=${{env.enableApacheDubboTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableCrossthreadTagTransmissionAction=${{env.enableCrossthreadTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableConfigTagTransmissionAction=${{env.enableConfigTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableKafkaTagTransmissionAction=${{env.enableKafkaTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableRocketmqTagTransmissionAction=${{env.enableRocketmqTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableJettyTagTransmissionAction=${{env.enableJettyTagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableTomcatTagTransmissionAction=${{env.enableTomcatTagTransmissionAction}}" >> $GITHUB_OUTPUT
+    outputs:
+      enableHttpclientV3TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV3TagTransmissionAction }}
+      enableHttpclientV4TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV4TagTransmissionAction }}
+      enableOkhttpTagTransmissionAction: ${{ steps.set-outputs.outputs.enableOkhttpTagTransmissionAction }}
+      enableGrpcTagTransmissionAction: ${{ steps.set-outputs.outputs.enableGrpcTagTransmissionAction }}
+      enableSofarpcTagTransmissionAction: ${{ steps.set-outputs.outputs.enableSofarpcTagTransmissionAction }}
+      enableServicecombTagTransmissionAction: ${{ steps.set-outputs.outputs.enableServicecombTagTransmissionAction }}
+      enableAlibabaDubboTagTransmissionAction: ${{ steps.set-outputs.outputs.enableAlibabaDubboTagTransmissionAction }}
+      enableApacheDubboTagTransmissionAction: ${{ steps.set-outputs.outputs.enableApacheDubboTagTransmissionAction }}
+      enableCrossthreadTagTransmissionAction: ${{ steps.set-outputs.outputs.enableCrossthreadTagTransmissionAction }}
+      enableConfigTagTransmissionAction: ${{ steps.set-outputs.outputs.enableConfigTagTransmissionAction }}
+      enableKafkaTagTransmissionAction: ${{ steps.set-outputs.outputs.enableKafkaTagTransmissionAction }}
+      enableRocketmqTagTransmissionAction: ${{ steps.set-outputs.outputs.enableRocketmqTagTransmissionAction }}
+      enableJettyTagTransmissionAction: ${{ steps.set-outputs.outputs.enableJettyTagTransmissionAction }}
+      enableTomcatTagTransmissionAction: ${{ steps.set-outputs.outputs.enableTomcatTagTransmissionAction }}
   download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
@@ -103,7 +148,8 @@ jobs:
   test-for-tag-transmission-httpclientv3:
     name: Test for tag transmission httpclientv3
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableHttpclientV3TagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -124,7 +170,8 @@ jobs:
   test-for-tag-transmission-httpclientv4:
     name: Test for tag transmission httpclientv4
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableHttpclientV4TagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -146,7 +193,8 @@ jobs:
   test-for-tag-transmission-okhttp:
     name: Test for tag transmission okhttp
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableOkhttpTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -173,7 +221,8 @@ jobs:
   test-for-tag-transmission-grpc:
     name: Test for tag transmission grpc
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableGrpcTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -201,7 +250,8 @@ jobs:
   test-for-tag-transmission-sofarpc:
     name: Test for tag transmission sofarpc
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableSofarpcTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -229,7 +279,8 @@ jobs:
   test-for-tag-transmission-servicecomb:
     name: Test for tag transmission servicecomb
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableServicecombTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -255,7 +306,8 @@ jobs:
   test-for-tag-transmission-alibabadubbo:
     name: Test for tag transmission alibabadubbo
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableAlibabaDubboTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -279,7 +331,8 @@ jobs:
   test-for-tag-transmission-apachedubbo:
     name: Test for tag transmission apachedubbo
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableApacheDubboTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -304,7 +357,8 @@ jobs:
   test-for-tag-transmission-crossthread:
     name: Test for tag transmission crossthread
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableCrossthreadTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -319,7 +373,8 @@ jobs:
   test-for-tag-transmission-config:
     name: Test for tag transmission config
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableConfigTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -334,7 +389,8 @@ jobs:
   test-for-tag-transmission-kafka:
     name: Test for tag transmission kafka
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableKafkaTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -357,11 +413,11 @@ jobs:
   test-for-tag-transmission-rocketmq:
     name: Test for tag transmission rocketmq
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableRocketmqTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
-          - rocketMqVersion: "4.8.0"
           - rocketMqVersion: "4.9.7"
           - rocketMqVersion: "5.0.0"
           - rocketMqVersion: "5.1.4"
@@ -380,7 +436,8 @@ jobs:
   test-for-tag-transmission-jdkhttp-jetty:
     name: Test for tag transmission jdkhttp and jetty
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableJettyTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
@@ -407,7 +464,8 @@ jobs:
   test-for-tag-transmission-jdkhttp-tomcat:
     name: Test for tag transmission jdkhttp and tomcat
     runs-on: ubuntu-latest
-    needs: [build-agent-and-cache, download-midwares-and-cache]
+    if: needs.set-execution-conditions.outputs.enableTomcatTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
         include:
