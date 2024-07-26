@@ -1,0 +1,51 @@
+name: "xDS Service Common Test"
+description: "Auto common test for xds service"
+runs:
+  using: composite
+  steps:
+    - name: start minikube
+      uses: medyagh/setup-minikube@latest
+      id: minikube
+      with:
+        minikube-version: 1.31.2
+        driver: docker
+        container-runtime: docker
+    - name: Delay for 10 seconds to ready k8s
+      shell: bash
+      run: sleep 10s
+    - name: check k8s
+      shell: bash
+      run: |
+        kubectl cluster-info
+        kubectl get pods -n kube-system
+        echo "k8s version:" $(kubectl version)
+    - name: deploy istio
+      shell: bash
+      run: |
+        curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.21.4 sh -
+        istio-1.21.4/bin/istioctl install -f sermant-integration-tests/xds-service-test/script/istio-operator.yaml --skip-confirmation
+    - name: Delay for 10 seconds to ready istio
+      shell: bash
+      run: |
+        sleep 10s
+        kubectl get pods -n istio-system
+    - name: Set up JDK ${{ env.javaVersion }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ env.javaVersion }}
+        distribution: 'adopt'
+        cache: maven
+    - name: get cached agent
+      uses: actions/cache@v3
+      with:
+        path: sermant-agent-*/
+        key: ${{ runner.os }}-agent-${{ github.run_id }}
+    - name: remove xds service product
+      shell: bash
+      run: |
+        rm -rf sermant-integration-tests/xds-service-test/product
+    - name: get cached xds service package
+      uses: actions/cache@v3
+      with:
+        path: sermant-integration-tests/xds-service-test/product/
+        key: ${{ runner.os }}-xds-service-product-${{ github.run_id }}

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-server
+  template:
+    metadata:
+      labels:
+        app: spring-server
+    spec:
+      containers:
+      - name: spring-server
+        image: spring-server:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+        - name: default-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-server
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: spring-server

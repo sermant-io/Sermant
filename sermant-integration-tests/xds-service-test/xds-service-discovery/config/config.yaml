@@ -1,0 +1,4 @@
+xds.service.discovery:
+  enabled: true
+  upstreamServiceName: spring-server
+  type: get
