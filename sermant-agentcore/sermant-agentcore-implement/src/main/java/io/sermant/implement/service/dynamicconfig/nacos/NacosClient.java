@@ -30,7 +30,7 @@ import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
 
-import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -296,12 +296,12 @@ public class NacosClient implements ConfigClient {
     private String getToken() {
         if ((System.currentTimeMillis() - lastRefreshTime) >= TimeUnit.SECONDS
                 .toMillis(tokenTtl - TOKEN_REFRESH_WINDOW)) {
+            lastRefreshTime = System.currentTimeMillis();
             HttpLoginProcessor httpLoginProcessor = new HttpLoginProcessor(
                     NamingHttpClientManager.getInstance().getNacosRestTemplate());
             LoginIdentityContext loginIdentityContext = httpLoginProcessor.getResponse(properties);
             lastToken = loginIdentityContext.getParameter(KEY_ACCESS_TOKEN);
             tokenTtl = Long.parseLong(loginIdentityContext.getParameter(KEY_TOKEN_TTL));
-            lastRefreshTime = System.currentTimeMillis();
         }
         return lastToken;
     }
@@ -314,7 +314,6 @@ public class NacosClient implements ConfigClient {
      * @throws IOException IO exception during service invocation process
      */
     private String doRequest(String url) throws IOException {
-        String result;
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             int timeOut = Integer.parseInt(properties.getProperty(PropertyKeyConst.CONFIG_LONG_POLL_TIMEOUT));
             RequestConfig requestConfig = RequestConfig.custom()
@@ -325,10 +324,13 @@ public class NacosClient implements ConfigClient {
             HttpGet httpGet = new HttpGet(url);
             httpGet.setConfig(requestConfig);
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                HttpEntity entity = response.getEntity();
-                result = EntityUtils.toString(entity);
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    return EntityUtils.toString(response.getEntity());
+                }
+                LOGGER.error("Http request for getting all nacos keys error, the message is: {}",
+                        EntityUtils.toString(response.getEntity()));
+                return "";
             }
         }
-        return result;
     }
 }

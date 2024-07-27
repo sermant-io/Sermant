@@ -393,14 +393,13 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             LOGGER.log(Level.SEVERE, "Nacos username, password or privateKey is Empty");
             return properties;
         }
-        Optional<String> userName = AesUtil.decrypt(CONFIG.getPrivateKey(), CONFIG.getUserName());
         Optional<String> passWord = AesUtil.decrypt(CONFIG.getPrivateKey(), CONFIG.getPassword());
-        if (!userName.isPresent() || !passWord.isPresent()) {
-            LOGGER.log(Level.SEVERE, "Nacos username and password parsing failed");
+        if (!passWord.isPresent()) {
+            LOGGER.log(Level.SEVERE, "Nacos password parsing failed");
             return properties;
         }
         properties.setProperty(KEY_SERVER, CONFIG.getServerAddress());
-        properties.setProperty(PropertyKeyConst.USERNAME, userName.get());
+        properties.setProperty(PropertyKeyConst.USERNAME, CONFIG.getUserName());
         properties.setProperty(PropertyKeyConst.PASSWORD, passWord.get());
         return properties;
     }

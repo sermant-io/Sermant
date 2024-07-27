@@ -215,13 +215,12 @@ public class NacosBufferedClient implements Closeable {
             LOGGER.log(Level.SEVERE, "Nacos username, password or privateKey is Empty");
             return properties;
         }
-        Optional<String> userNameOptinal = AesUtil.decrypt(CONFIG.getPrivateKey(), userName);
         Optional<String> passWordOptinal = AesUtil.decrypt(CONFIG.getPrivateKey(), password);
-        if (!userNameOptinal.isPresent() || !passWordOptinal.isPresent()) {
-            LOGGER.log(Level.SEVERE, "Nacos username and password parsing failed");
+        if (!passWordOptinal.isPresent()) {
+            LOGGER.log(Level.SEVERE, "Nacos password parsing failed");
             return properties;
         }
-        properties.setProperty(PropertyKeyConst.USERNAME, userNameOptinal.get());
+        properties.setProperty(PropertyKeyConst.USERNAME, userName);
         properties.setProperty(PropertyKeyConst.PASSWORD, passWordOptinal.get());
         return properties;
     }
