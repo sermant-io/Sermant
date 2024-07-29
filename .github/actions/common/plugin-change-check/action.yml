@@ -12,6 +12,33 @@ runs:
       run: |
         echo "sermantAgentCoreChanged=${{ steps.changed-sermant-agentcore.outputs.changed }}" >> $GITHUB_ENV
     - uses: marceloprado/has-changed-path@v1.0.1
+      id: changed-sermant-agentcore-dynamic-config
+      with:
+        paths: sermant-agentcore/sermant-agentcore-implement/src/main/java/io/sermant/implement/service/dynamicconfig
+          sermant-agentcore/sermant-agentcore-core
+          sermant-integration-tests/agentcore-test/agentcore-test-application
+          sermant-integration-tests/agentcore-test/agentcore-integration-test
+          ./.github/workflows/agentcore_service_test.yml
+          ./.github/actions/common/agentcore
+          ./.github/actions/scenarios/agentcore/dynamic-config
+    - name: env sermant-agentcore-dynamic-config
+      shell: bash
+      run: |
+        echo "sermantAgentCoreDynamicConfigServiceChanged=${{ steps.changed-sermant-agentcore-dynamic-config.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1.0.1
+      id: changed-sermant-agentcore-xds
+      with:
+        paths: sermant-agentcore/sermant-agentcore-implement/src/main/java/io/sermant/implement/service/xds
+          sermant-agentcore/sermant-agentcore-core
+          sermant-integration-tests/xds-service-test
+          ./.github/workflows/agentcore_service_test.yml
+          ./.github/actions/common/xds-service
+          ./.github/actions/scenarios/xds-service
+    - name: env sermant-agentcore-xds
+      shell: bash
+      run: |
+        echo "sermantAgentCoreXdsServiceChanged=${{ steps.changed-sermant-agentcore-xds.outputs.changed }}" >> $GITHUB_ENV
+    - uses: marceloprado/has-changed-path@v1.0.1
       id: changed-sermant-router
       with:
         paths: sermant-plugins/sermant-router
@@ -746,48 +773,56 @@ runs:
         
         # ==========mongodb DataBase Write Prohibition is needed to test?==========
         if [ ${{ env.mongodbDataBaseWriteProhibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableMongodbDataBaseWriteProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========mysql DataBase Write Prohibition is needed to test?==========
         if [ ${{ env.mysqlDataBaseWriteProhibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableMysqlDataBaseWriteProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========opengauss DataBase Write Prohibition is needed to test?==========
         if [ ${{ env.opengaussDataBaseWritePprohibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableOpengaussDataBaseWriteProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========opengauss And Postgresql DataBase Write Prohibition is needed to test?==========
         if [ ${{ env.opengaussAndPostgresqlDataBaseWritePprohibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableOpengaussAndPostgresqlDataBaseWriteProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========kafka consume Prohibition is needed to test?==========
         if [ ${{ env.kafkaConsumeProhibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableKafkaConsumeProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========rocketmq consume Prohibition is needed to test?==========
         if [ ${{ env.rocketmqConsumeProhibitionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableRocketmqConsumeProhibitionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========alibaba Dubbo Tag Transmission is needed to test?==========
         if [ ${{ env.alibabaDubboTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableAlibabaDubboTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========apache Dubbo Tag Transmission is needed to test?==========
         if [ ${{ env.apacheDubboTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableApacheDubboTagTransmissionAction=true" >> $GITHUB_ENV
         fi
@@ -800,6 +835,7 @@ runs:
         
         # ==========httpclientV3 Tag Transmission is needed to test?==========
         if [ ${{ env.httpclientV3TagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableHttpclientV3TagTransmissionAction=true" >> $GITHUB_ENV
         fi
@@ -812,54 +848,75 @@ runs:
         
         # ==========tomcat Tag Transmission is needed to test?==========
         if [ ${{ env.tomcatTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableTomcatTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========jetty Tag Transmission is needed to test?==========
         if [ ${{ env.jettyTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableJettyTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========kafka Tag Transmission is needed to test?==========
         if [ ${{ env.kafkaTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableKafkaTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========okhttp Tag Transmission is needed to test?==========
         if [ ${{ env.okhttpTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableOkhttpTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========rocketmq Tag Transmission is needed to test?==========
         if [ ${{ env.rocketmqTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableRocketmqTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========servicecomb Tag Transmission is needed to test?==========
         if [ ${{ env.servicecombTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableServicecombTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========sofarpc Tag Transmission is needed to test?==========
         if [ ${{ env.sofarpcTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableSofarpcTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========config Tag Transmission is needed to test?==========
         if [ ${{ env.configTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableConfigTagTransmissionAction=true" >> $GITHUB_ENV
         fi
         
         # ==========crossthread Tag Transmission is needed to test?==========
         if [ ${{ env.crossthreadTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableCrossthreadTagTransmissionAction=true" >> $GITHUB_ENV
+        fi
+        
+        # ==========dynamic config service is needed to test?==========
+        if [ ${{ env.sermantAgentCoreDynamicConfigServiceChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableDynamicConfigServicAction=true" >> $GITHUB_ENV
+        fi
+        
+        # ==========xds service is needed to test?==========
+        if [ ${{ env.sermantAgentCoreXdsServiceChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableXdsServicAction=true" >> $GITHUB_ENV
         fi

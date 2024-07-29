@@ -25,7 +25,7 @@ runs:
       run: |
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-sermant-xds-open.yaml
         kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
-        sleep 5s
+        sleep 10s
     - name: test one server
       shell: bash
       run: |
@@ -35,7 +35,7 @@ runs:
       shell: bash
       run: |
         kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-sermant-xds-open.yaml
-        sleep 3s
+        sleep 10s
     - name: test the number of spring-server instances changes from 1 to 0
       shell: bash
       run: |

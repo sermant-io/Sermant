@@ -22,9 +22,10 @@ runs:
       shell: bash
       run: |
         kubectl label namespace default istio-injection=enabled
-        sleep 5s
+        sleep 10s
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server.yaml
         kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
+        sleep 10s
     - name: test one server
       shell: bash
       run: |
@@ -34,7 +35,7 @@ runs:
       shell: bash
       run: |
         kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-server.yaml
-        sleep 3s
+        sleep 10s
     - name: test the number of spring-server instances changes from 1 to 0
       shell: bash
       run: |
@@ -45,7 +46,7 @@ runs:
       run: |
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-2-replicas.yaml
         kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
-        sleep 2s
+        sleep 10s
     - name: test the number of spring-server instances changes from 0 to 2
       shell: bash
       run: |
