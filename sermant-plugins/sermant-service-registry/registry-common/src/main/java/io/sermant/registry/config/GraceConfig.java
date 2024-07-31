@@ -115,6 +115,11 @@ public class GraceConfig implements PluginConfig, Cloneable {
     private long upstreamAddressExpiredTime = GraceConstants.UPSTREAM_ADDRESS_DEFAULT_EXPIRED_TIME;
 
     /**
+     * Cache the wait time of notifying upstream addresses
+     */
+    private long waitNotifyTime = GraceConstants.WAIT_NOTIFY_TIME;
+
+    /**
      * Correct the relevant switch attributes according to the aggregation switch,
      * and turn on all functions of elegant online and offline with one click
      */
@@ -260,6 +265,14 @@ public class GraceConfig implements PluginConfig, Cloneable {
 
     public void setUpstreamAddressExpiredTime(long upstreamAddressExpiredTime) {
         this.upstreamAddressExpiredTime = upstreamAddressExpiredTime;
+    }
+
+    public long getWaitNotifyTime() {
+        return waitNotifyTime;
+    }
+
+    public void setWaitNotifyTime(long waitNotifyTime) {
+        this.waitNotifyTime = waitNotifyTime;
     }
 
     /**

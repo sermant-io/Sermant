@@ -66,7 +66,7 @@ public abstract class GracefulTest {
         final Map<String, Integer> statisticMap = new HashMap<>();
         for (int i = 0; i < 4; i++) {
             try {
-                for(int j = 0; j < UP_REQUEST_COUNT; j++) {
+                for (int j = 0; j < UP_REQUEST_COUNT; j++) {
                     statistic(statisticMap);
                 }
                 Thread.sleep(10000);
@@ -98,15 +98,14 @@ public abstract class GracefulTest {
     /**
      * 测试优雅下线
      */
+    @Test
     public void testGracefulDown() {
         if (!isTargetTest("down")) {
             return;
         }
         try {
             for (int i = 0; i < DOWN_REQUEST_COUNT; i++) {
-                String port = RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(),
-                        String.class);
-                System.out.println("port: " + port);
+                RequestUtils.get(buildUrl("testGraceful"), Collections.emptyMap(), String.class);
             }
         } catch (Exception exception) {
             LOGGER.error(exception.getMessage(), exception);

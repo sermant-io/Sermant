@@ -37,6 +37,7 @@ runs:
         grace.rule.enableGraceShutdown: true
         grace.rule.enableOfflineNotify: true
         grace.rule.warmUpTime: 600
+        grace.rule.upstreamAddressExpiredTime: 600
         servicecomb.service.enableSpringRegister: true
         servicecomb.service.preferIpAddress: true
       # graceful-rest-provider service port 8443 do not change, it special for springCloud Edgware.SR2 test ssl feature.

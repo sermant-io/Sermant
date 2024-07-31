@@ -56,6 +56,8 @@ public class GraceShutdownBehavior implements Runnable {
     }
 
     private void graceShutDown() {
+        // wait notify consumer complete
+        CommonUtils.sleep(graceConfig.getWaitNotifyTime() * ConfigConstants.SEC_DELTA);
         long shutdownWaitTime = graceConfig.getShutdownWaitTime() * ConfigConstants.SEC_DELTA;
         final long shutdownCheckTimeUnit = graceConfig.getShutdownCheckTimeUnit() * ConfigConstants.SEC_DELTA;
         while (GraceContext.INSTANCE.getGraceShutDownManager().getRequestCount() > 0 && shutdownWaitTime > 0) {

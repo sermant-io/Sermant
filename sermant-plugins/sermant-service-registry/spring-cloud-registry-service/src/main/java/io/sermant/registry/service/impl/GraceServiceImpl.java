@@ -18,6 +18,7 @@ package io.sermant.registry.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.core.utils.ReflectUtils;
@@ -27,6 +28,7 @@ import io.sermant.registry.config.grace.GraceContext;
 import io.sermant.registry.context.RegisterContext;
 import io.sermant.registry.context.RegisterContext.ClientInfo;
 import io.sermant.registry.service.cache.AddressCache;
+import io.sermant.registry.service.utils.HttpClientResult;
 import io.sermant.registry.service.utils.HttpClientUtils;
 import io.sermant.registry.services.GraceService;
 import io.sermant.registry.services.RegisterCenterService;
@@ -39,6 +41,8 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Offline notification service
@@ -47,6 +51,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 2022-05-26
  */
 public class GraceServiceImpl implements GraceService {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final Executor EXECUTOR = Executors.newFixedThreadPool(10);
 
     private static final AtomicBoolean SHUTDOWN = new AtomicBoolean();
@@ -56,6 +62,8 @@ public class GraceServiceImpl implements GraceService {
     private static final String GRACE_HTTP_SERVER_PROTOCOL = "http://";
 
     private static final String REQUEST_BODY = JSONObject.toJSONString(new Object());
+
+    private static final int RETRY_TIME = 3;
 
     /**
      * Offline notifications
@@ -70,10 +78,10 @@ public class GraceServiceImpl implements GraceService {
             ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
             Map<String, Collection<String>> header = new HashMap<>();
             header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME,
-                Collections.singletonList(clientInfo.getServiceName()));
+                    Collections.singletonList(clientInfo.getServiceName()));
             header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
-                Arrays.asList(clientInfo.getIp() + ":" + clientInfo.getPort(),
-                    clientInfo.getHost() + ":" + clientInfo.getPort()));
+                    Arrays.asList(clientInfo.getIp() + ":" + clientInfo.getPort(),
+                            clientInfo.getHost() + ":" + clientInfo.getPort()));
             AddressCache.INSTANCE.getAddressSet().forEach(address -> notifyToGraceHttpServer(address, header));
         }
     }
@@ -83,8 +91,15 @@ public class GraceServiceImpl implements GraceService {
     }
 
     private void execute(String address, Map<String, Collection<String>> header) {
-        HttpClientUtils.INSTANCE.doPost(GRACE_HTTP_SERVER_PROTOCOL + address + GraceConstants.GRACE_NOTIFY_URL_PATH,
-                REQUEST_BODY, header);
+        for (int i = 0; i < RETRY_TIME; i++) {
+            HttpClientResult result = HttpClientUtils.INSTANCE.doPost(
+                    GRACE_HTTP_SERVER_PROTOCOL + address + GraceConstants.GRACE_NOTIFY_URL_PATH,
+                    REQUEST_BODY, header);
+            if (result.getCode() == GraceConstants.GRACE_HTTP_SUCCESS_CODE) {
+                break;
+            }
+            LOGGER.log(Level.WARNING, "Failed to notify before shutdown, address: {0}", address);
+        }
     }
 
     /**
