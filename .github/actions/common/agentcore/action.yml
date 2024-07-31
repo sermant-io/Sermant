@@ -55,5 +55,3 @@ runs:
       with:
         path: sermant-agent-*/
         key: ${{ runner.os }}-agent-${{ github.run_id }}
-    - name: plugin change check
-      uses: ./.github/actions/common/plugin-change-check
