@@ -61,7 +61,7 @@ public class LaneTest {
     }
 
     @Test
-    public void testDubbo() {
+    public void testDubbo() throws InterruptedException {
         if (isExecuteSpringTest){
             testBySpring("Dubbo");
         }
@@ -121,7 +121,7 @@ public class LaneTest {
     }
 
     @Test
-    public void testFeign() {
+    public void testFeign() throws InterruptedException {
         if (isExecuteSpringTest){
             testBySpring("Feign");
             testByDubbo("Feign");
@@ -129,7 +129,7 @@ public class LaneTest {
     }
 
     @Test
-    public void testRest() {
+    public void testRest() throws InterruptedException {
         if (isExecuteSpringTest){
             testBySpring("Rest");
             testByDubbo("Rest");
@@ -200,7 +200,8 @@ public class LaneTest {
      *
      * @param path 路径
      */
-    private void testByDubbo(String path) {
+    private void testByDubbo(String path) throws InterruptedException {
+        Thread.sleep(10000);
         // 正常染色
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
