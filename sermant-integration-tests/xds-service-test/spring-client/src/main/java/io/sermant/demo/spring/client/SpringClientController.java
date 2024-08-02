@@ -85,6 +85,16 @@ public class SpringClientController {
         return httpGet(urlBuilder.toString());
     }
 
+    /**
+     * check service status
+     *
+     * @return result
+     */
+    @RequestMapping("checkStatus")
+    public String checkStatus() {
+        return "ok";
+    }
+
     private String httpGet(String url) {
         HttpGet httpGet = new HttpGet(url);
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {

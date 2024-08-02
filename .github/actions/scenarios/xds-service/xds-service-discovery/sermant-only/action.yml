@@ -17,13 +17,19 @@ runs:
       run: |
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-open.yaml
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server.yaml
-    - name: Wait for spring-client pod to be ready
+    - name: Wait for spring-client pod and spring-server pod to be ready
       shell: bash
       run: |
         kubectl wait --for=condition=ready pod -l app=spring-client --timeout=10s
         kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
-        kubectl port-forward svc/spring-client 8080:8080 &
         sleep 10s
+        nohup kubectl port-forward svc/spring-client 8080:8080 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8080/checkStatus 150
+        nohup kubectl port-forward svc/spring-server 8081:8081 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/hello 150
+        pkill -f "kubectl port-forward svc/spring-server"
     - name: test one server
       shell: bash
       run: |
@@ -45,6 +51,10 @@ runs:
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-2-replicas.yaml
         kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
         sleep 10s
+        nohup kubectl port-forward svc/spring-server 8081:8081 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/hello 150
+        pkill -f "kubectl port-forward svc/spring-server"
     - name: test the number of spring-server instances changes from 0 to 2
       shell: bash
       run: |
@@ -66,9 +76,11 @@ runs:
         sleep 10s
         kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-subscribe-secure.yaml
         kubectl wait --for=condition=ready pod -l app=spring-client --timeout=10s
-        pkill -f "kubectl port-forward svc/spring-client"
-        kubectl port-forward svc/spring-client 8080:8080 &
         sleep 10s
+        pkill -f "kubectl port-forward svc/spring-client"
+        nohup kubectl port-forward svc/spring-client 8080:8080 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8080/checkStatus 150
     - name: test sermant xds service use security mode
       shell: bash
       run: |
