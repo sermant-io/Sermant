@@ -16,13 +16,11 @@
 
 package io.sermant.core.event.collector;
 
-import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.Event;
 import io.sermant.core.event.EventCollector;
 import io.sermant.core.event.EventLevel;
 import io.sermant.core.event.EventType;
 import io.sermant.core.event.LogInfo;
-import io.sermant.core.event.config.EventConfig;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.LogRecord;
@@ -35,8 +33,6 @@ import java.util.logging.LogRecord;
  */
 public class LogEventCollector extends EventCollector {
     private static LogEventCollector logEventCollector;
-
-    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
     private final ConcurrentHashMap<LogInfo, Long> logInfoOfferTimeCache = new ConcurrentHashMap<>();
 
@@ -61,7 +57,7 @@ public class LogEventCollector extends EventCollector {
      * @param record log record
      */
     public void offerWarning(LogRecord record) {
-        if (!eventConfig.isEnable() || !eventConfig.isOfferWarnLog()) {
+        if (!isEnableEvent() || !eventConfig.isOfferWarnLog()) {
             return;
         }
         LogInfo logInfo = new LogInfo(record);
@@ -77,7 +73,7 @@ public class LogEventCollector extends EventCollector {
      * @param record log record
      */
     public void offerError(LogRecord record) {
-        if (!eventConfig.isEnable() || !eventConfig.isOfferErrorLog()) {
+        if (!isEnableEvent() || !eventConfig.isOfferErrorLog()) {
             return;
         }
         LogInfo logInfo = new LogInfo(record);
