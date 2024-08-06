@@ -37,11 +37,14 @@ import java.util.logging.Logger;
 public class EventCollector {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    /**
+     * Event configuration. Set as protected for easy use by subclasses
+     */
+    protected EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
+
     // BlockingQueue for event cache. If the queue is not full, event is reported periodically. If
     // the queue is full, event is reported automatically
     private final BlockingQueue<Event> eventQueue = new ArrayBlockingQueue<>(100);
-
-    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
     private final ConcurrentHashMap<EventInfo, Long> eventInfoOfferTimeCache = new ConcurrentHashMap<>();
 
@@ -69,7 +72,7 @@ public class EventCollector {
      * @return result
      */
     public boolean offerEvent(Event event) {
-        if (!eventConfig.isEnable()) {
+        if (!isEnableEvent()) {
             return false;
         }
         if (event.getEventInfo() != null) {
@@ -125,5 +128,17 @@ public class EventCollector {
                 eventInfoOfferTimeCache.remove(eventInfo);
             }
         }
+    }
+
+    /**
+     * Check if the event is enabled
+     *
+     * @return Verification results
+     */
+    protected boolean isEnableEvent() {
+        if (eventConfig == null) {
+            eventConfig = ConfigManager.getConfig(EventConfig.class);
+        }
+        return eventConfig != null && eventConfig.isEnable();
     }
 }

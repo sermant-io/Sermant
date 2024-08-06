@@ -16,11 +16,9 @@
 
 package io.sermant.core.event.collector;
 
-import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.Event;
 import io.sermant.core.event.EventCollector;
 import io.sermant.core.event.EventInfo;
-import io.sermant.core.event.config.EventConfig;
 
 /**
  * Framework event collector
@@ -30,8 +28,6 @@ import io.sermant.core.event.config.EventConfig;
  */
 public class FrameworkEventCollector extends EventCollector {
     private static FrameworkEventCollector frameworkEventCollector;
-
-    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
     private FrameworkEventCollector() {
     }

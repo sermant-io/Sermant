@@ -16,12 +16,10 @@
 
 package io.sermant.discovery.event;
 
-import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.Event;
 import io.sermant.core.event.EventCollector;
 import io.sermant.core.event.EventInfo;
 import io.sermant.core.event.EventManager;
-import io.sermant.core.event.config.EventConfig;
 import io.sermant.discovery.entity.DefaultServiceInstance;
 
 /**
@@ -32,8 +30,6 @@ import io.sermant.discovery.entity.DefaultServiceInstance;
  */
 public class SpringBootRegistryEventCollector extends EventCollector {
     private static volatile SpringBootRegistryEventCollector collector;
-
-    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
     private SpringBootRegistryEventCollector() {
     }
