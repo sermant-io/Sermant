@@ -96,7 +96,7 @@ public class XdsServiceDiscoveryTest {
             "DISCOVERY_ONE_SERVER_INSTANCE_ENVOY")
     public void testDiscoveryWithClientUsingEnvoyAndOneInstance() {
         Assertions.assertEquals("hello", HttpRequestUtils.doGet("http://127.0.0.1:8080/hello?address=spring-server"
-                + ".default.svc.cluster.local:8080"));
+                + ".default.svc.cluster.local:8081"));
     }
 
     /**
@@ -107,7 +107,7 @@ public class XdsServiceDiscoveryTest {
             "DISCOVERY_ZERO_SERVER_INSTANCE_ENVOY")
     public void testDiscoveryWithClientUsingEnvoyAndZeroInstance() {
         Assertions.assertEquals("", HttpRequestUtils.doGet("http://127.0.0.1:8080/hello?address=spring-server"
-                + ".default.svc.cluster.local:8080"));
+                + ".default.svc.cluster.local:8081"));
     }
 
     private String[] splitResult(String result) {

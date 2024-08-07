@@ -17,7 +17,7 @@ spec:
         image: spring-server:1.0.0
         imagePullPolicy: Never
         ports:
-        - containerPort: 8080
+        - containerPort: 8081
         env:
         - name: JAVA_TOOL_OPTIONS
           value: "-javaagent:/home/agent/sermant-agent.jar"
@@ -31,8 +31,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: 8081
+    targetPort: 8081
     protocol: TCP
     name: http
   selector:
