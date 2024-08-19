@@ -16,12 +16,10 @@
 
 package io.sermant.router.common.event;
 
-import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.Event;
 import io.sermant.core.event.EventCollector;
 import io.sermant.core.event.EventInfo;
 import io.sermant.core.event.EventManager;
-import io.sermant.core.event.config.EventConfig;
 
 /**
  * Routing plugin event collector
@@ -31,8 +29,6 @@ import io.sermant.core.event.config.EventConfig;
  */
 public class RouterEventCollector extends EventCollector {
     private static volatile RouterEventCollector routerEventCollector;
-
-    private final EventConfig eventConfig = ConfigManager.getConfig(EventConfig.class);
 
     private RouterEventCollector() {
     }
