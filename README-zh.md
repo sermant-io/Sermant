@@ -101,6 +101,9 @@ Sermant 采用 [Apache 2.0 License.](/LICENSE)
 
 请阅读 [贡献指南](CONTRIBUTING.md) 以了解如何贡献项目。
 
+## 会议
+[Sermant社区兴趣讨论会会议纪要](https://docs.google.com/document/d/11Ln1MzOil0JjkM8SEeaJPukumIFyM_eG_u9WMQyke4c/edit)
+
 ## 更多文档
 
 [Sermant官网](https://sermant.io) | [RoadMap](RoadMap.md) | [Membership](community-membership.md)
