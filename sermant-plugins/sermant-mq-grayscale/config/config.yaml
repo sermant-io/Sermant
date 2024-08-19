@@ -1,0 +1,33 @@
+# Configuration of MQ message grayscale
+grayscale.mq.config:
+  # Whether to enable message grayscale. The default value is false
+  enabled: false
+  # Gray group information definition, each group contains consumerGroupTag、serviceMeta、trafficTag info.
+  grayscale:
+    # Gray consumer group tag. example, base group is basic_group, then gray group is basic_group_${consumerGroupTag}
+    - consumerGroupTag: gray
+      serviceMeta:
+        # ServiceMeta match tag, if service_meta_parameters set x_lane_tag:gray, then current consumer is gray node.
+        # If using service_meta_version for match info, config key must is 'version', as version:1.0.1
+        x_lane_tag: gray
+        version: 1.0.1
+      trafficTag:
+        # Traffic match info, this config effective with sermant-tag-transmission plugin, if request header has
+        # x_lane_canary=gray and tag.transmission.config.matchRule.exact: ['x_lane_canary'], then will set as gray message
+        x_lane_canary: gray
+      # The relationship between serviceMeta and trafficTag is as follows:
+      #   If service_meta_parameters set x_lane_tag:gray when service started, then will match as gray instance.
+      #     1、As producer, produce message will put 'x_lane_canary: gray' in message property as gray message.
+      #     2、As consumer, only consume with 'x_lane_canary: gray' property messages.
+  # Base group information definition
+  base:
+    # Base group consume message mode, contains BASE/AUTO, default 'AUTO'
+    # BASE mode consumer will consume message that out of excludeGroupTags corresponding consumer group
+    # AUTO mode consumer will consume message that out of excludeGroupTags corresponding consumer group and other
+    # Running gray consumer group
+    consumeMode: AUTO
+    # Interval for checking gray consumer group information in auto consumer type
+    autoCheckDelayTime: 15
+    # Tag of the gray consumer group to be excluded, corresponding value is above consumerGroupTag value
+    # Auto/base consume mode all effective
+    excludeGroupTags: ["gray"]
