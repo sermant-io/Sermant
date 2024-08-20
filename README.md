@@ -100,6 +100,9 @@ Sermant adopts [Apache 2.0 License.](/LICENSE)
 
 Please read  [Contribute Guide](CONTRIBUTING.md) to refer how to join the contribution.
 
+## Meeting
+[Sermant Community Interest Discussion Meeting Minute Book](https://docs.google.com/document/d/11Ln1MzOil0JjkM8SEeaJPukumIFyM_eG_u9WMQyke4c/edit)
+
 ## More Documents to Follow
 
 [Sermant website](https://sermant.io) | [RoadMap](RoadMap.md) | [Membership](community-membership.md)
