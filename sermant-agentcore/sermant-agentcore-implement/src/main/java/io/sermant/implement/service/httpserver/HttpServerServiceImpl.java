@@ -19,13 +19,10 @@ package io.sermant.implement.service.httpserver;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.exception.SermantRuntimeException;
-import io.sermant.core.service.BaseService;
 import io.sermant.core.service.httpserver.HttpServerService;
 import io.sermant.core.service.httpserver.config.HttpServerConfig;
 import io.sermant.core.service.httpserver.config.HttpServerTypeEnum;
 import io.sermant.core.utils.SpiLoadUtils;
-
-import org.kohsuke.MetaInfServices;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -37,7 +34,6 @@ import java.util.stream.Collectors;
  * @author zwmagic
  * @since 2024-02-02
  */
-@MetaInfServices(BaseService.class)
 public class HttpServerServiceImpl implements HttpServerService {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
