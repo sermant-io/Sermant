@@ -58,6 +58,7 @@
         <nacos.version>2.1.2</nacos.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
         <envoyproxy.controlplane.version>0.1.32</envoyproxy.controlplane.version>
+        <micrometer.version>1.9.5</micrometer.version>
     </properties>
 
     <dependencies>
@@ -172,6 +173,11 @@
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
             <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

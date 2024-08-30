@@ -10,3 +10,4 @@ io.sermant.core.plugin.config.ServiceMeta
 io.sermant.core.notification.config.NotificationConfig
 io.sermant.core.service.httpserver.config.HttpServerConfig
 io.sermant.core.service.xds.config.XdsConfig
+io.sermant.core.service.metric.config.MetricConfig

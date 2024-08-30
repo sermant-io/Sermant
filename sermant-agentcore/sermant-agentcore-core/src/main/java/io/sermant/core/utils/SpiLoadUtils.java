@@ -52,7 +52,7 @@ public class SpiLoadUtils {
         }
         list.sort(Comparator.comparingInt(obj -> {
             SpiWeight weight = obj.getClass().getAnnotation(SpiWeight.class);
-            return weight.value();
+            return weight == null ? 0 : weight.value();
         }));
         return list;
     }
@@ -150,7 +150,6 @@ public class SpiLoadUtils {
      * WeightEqualHandler
      *
      * @param <T> type
-     *
      * @since 2021-11-16
      */
     public interface WeightEqualHandler<T> {

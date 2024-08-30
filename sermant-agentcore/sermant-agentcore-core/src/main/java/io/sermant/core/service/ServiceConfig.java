@@ -52,6 +52,9 @@ public class ServiceConfig implements BaseConfig {
     @ConfigFieldKey("hot.plugging.service.enable")
     private boolean hotPluggingServiceEnable = false;
 
+    @ConfigFieldKey("metric.enable")
+    private boolean metricEnable = false;
+
     public boolean isHeartBeatEnable() {
         return heartBeatEnable;
     }
@@ -116,6 +119,14 @@ public class ServiceConfig implements BaseConfig {
         this.hotPluggingServiceEnable = hotPluggingServiceEnable;
     }
 
+    public boolean isMetricEnable() {
+        return metricEnable;
+    }
+
+    public void setMetricEnable(boolean metricEnable) {
+        this.metricEnable = metricEnable;
+    }
+
     /**
      * Check whether the service of the given class name is enabled.
      *
@@ -143,6 +154,9 @@ public class ServiceConfig implements BaseConfig {
         }
         if (ServiceManager.XDS_CORE_SERVICE_IMPL.equals(serviceName)) {
             return isXdsServiceEnable();
+        }
+        if (ServiceManager.METRIC_SERVICE_IMPL.equals(serviceName)) {
+            return isMetricEnable();
         }
         if (ServiceManager.HOT_PLUGGING_SERVICE_IMPL.equals(serviceName)) {
             return isHotPluggingServiceEnable();
