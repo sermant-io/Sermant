@@ -41,19 +41,25 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>sermant-mq-grayscale-plugin</module>
+                <module>mq-grayscale-rocketmq-plugin</module>
+                <module>mq-config-common</module>
+                <module>mq-config-service</module>
             </modules>
         </profile>
         <profile>
             <id>test</id>
             <modules>
-                <module>sermant-mq-grayscale-plugin</module>
+                <module>mq-grayscale-rocketmq-plugin</module>
+                <module>mq-config-common</module>
+                <module>mq-config-service</module>
             </modules>
         </profile>
         <profile>
             <id>release</id>
             <modules>
-                <module>sermant-mq-grayscale-plugin</module>
+                <module>mq-grayscale-rocketmq-plugin</module>
+                <module>mq-config-common</module>
+                <module>mq-config-service</module>
             </modules>
         </profile>
     </profiles>
