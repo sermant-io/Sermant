@@ -246,10 +246,19 @@ public class ConfigService {
     /**
      * Get Configuration Center Client
      *
+     * @return Configuration Center Client
+     */
+    public ConfigClient getConfigClient() {
+        return getConfigClient(null);
+    }
+
+    /**
+     * Get Configuration Center Client
+     *
      * @param namespace Configuration namespace
      * @return Configuration Center Client
      */
-    private ConfigClient getConfigClient(String namespace) {
+    public ConfigClient getConfigClient(String namespace) {
         if (!ConfigCenterType.NACOS.name().equals(dynamicConfig.getDynamicConfigType())
                 || StringUtils.isEmpty(namespace)) {
             return configClient;

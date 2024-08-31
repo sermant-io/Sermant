@@ -87,6 +87,7 @@ public class DbUtils {
      * @return event correspondence field
      */
     public static String getEventField(InstanceMeta agentInstanceMeta, Event event) {
+        String name = getEventDisplayName(event);
         String field = String.join(CommonConst.JOIN_REDIS_KEY,
                 getField(agentInstanceMeta.getService()),
                 getField(agentInstanceMeta.getNode().getIp()),
@@ -94,12 +95,29 @@ public class DbUtils {
                 getField(event.getEventLevel().toString().toLowerCase(Locale.ROOT)),
                 getField(event.getScope()),
                 getField(agentInstanceMeta.getInstanceId()),
+                getField(name),
                 agentInstanceMeta.getCluster() != null ? getField(agentInstanceMeta.getCluster().getCluster()) : "",
                 agentInstanceMeta.getEnvironment() != null ? getField(agentInstanceMeta.getEnvironment().getEnv()) : "",
                 getField(agentInstanceMeta.getAz()),
                 getField(event.getMetaHash()),
                 getField(String.valueOf(event.getTime())));
         return field;
+    }
+
+    /**
+     * Obtain event display name, Regarding log events, the event name displayed on the front end is the log level
+     *
+     * @param event event
+     * @return event display name
+     */
+    private static String getEventDisplayName(Event event) {
+        String name = "";
+        if (event.getEventType() == EventType.LOG && event.getLogInfo() != null) {
+            name = event.getLogInfo().getLogLevel();
+        } else if (event.getEventType() != EventType.LOG && event.getEventInfo() != null) {
+            name = event.getEventInfo().getName();
+        }
+        return name;
     }
 
     /**
@@ -133,6 +151,7 @@ public class DbUtils {
         HashMap<String, String> meta = new HashMap<>();
         meta.put("service", agentInstanceMeta.getService());
         meta.put("ip", agentInstanceMeta.getNode().getIp());
+        meta.put("instanceId", agentInstanceMeta.getInstanceId());
         queryResultEventInfoEntity.setMeta(meta);
         return queryResultEventInfoEntity;
     }
@@ -150,6 +169,8 @@ public class DbUtils {
         patterns.add(getListPattern(event.getType() == null ? new ArrayList<>() : event.getType()));
         patterns.add(getListPattern(event.getLevel() == null ? new ArrayList<>() : event.getLevel()));
         patterns.add(getListPattern(event.getScope()));
+        patterns.add(getListPattern(event.getInstanceIds()));
+        patterns.add(getListPattern(event.getName()));
         patterns.add(CommonConst.FULL_MATCH_KEY);
         return patterns.stream().map(String::valueOf).collect(Collectors.joining(CommonConst.JOIN_REDIS_KEY));
     }

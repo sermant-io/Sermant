@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Sermant Authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,42 @@
  * limitations under the License.
  */
 
-package io.sermant.backend.entity;
+package io.sermant.backend.entity.hotplugging;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Event Level
+ * Hot Plugging configuration
  *
- * @author xuezechao
- * @since 2023-03-02
+ * @author zhp
+ * @since 2024-08-22
  */
-public enum EventLevel {
+@Getter
+@Setter
+public class HotPluggingConfig {
     /**
-     * EMERGENCY Level
+     * Plugin Names
      */
-    EMERGENCY(300),
-
-    /**
-     * IMPORTANT Level
-     */
-    IMPORTANT(200),
+    private String pluginNames;
 
     /**
-     * NORMAL Level
+     * JavaAgent Path
      */
-    NORMAL(100);
+    private String agentPath;
 
-    private final int levelThreshold;
+    /**
+     * parameter information
+     */
+    private String params;
 
-    EventLevel(int levelThreshold) {
-        this.levelThreshold = levelThreshold;
-    }
+    /**
+     * Command type
+     */
+    private String commandType;
 
-    public int getLevelThreshold() {
-        return levelThreshold;
-    }
+    /**
+     * Instance ID
+     */
+    private String instanceIds;
 }

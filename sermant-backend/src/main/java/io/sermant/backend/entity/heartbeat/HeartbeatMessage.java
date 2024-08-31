@@ -54,6 +54,14 @@ public class HeartbeatMessage {
 
     private Map<String, PluginInfo> pluginInfoMap = new HashMap<>();
 
+    private String appName;
+
+    private String artifact;
+
+    private String processId;
+
+    private boolean dynamicInstall;
+
     public String getHostName() {
         return hostName;
     }
@@ -145,5 +153,37 @@ public class HeartbeatMessage {
      */
     public void setHealth(boolean health) {
         this.health.compareAndSet(!health, health);
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getArtifact() {
+        return artifact;
+    }
+
+    public void setArtifact(String artifact) {
+        this.artifact = artifact;
+    }
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public boolean isDynamicInstall() {
+        return dynamicInstall;
+    }
+
+    public void setDynamicInstall(boolean dynamicInstall) {
+        this.dynamicInstall = dynamicInstall;
+    }
+
+    public void setProcessId(String processId) {
+        this.processId = processId;
     }
 }

@@ -73,6 +73,16 @@
             >
               IP: {{ tag }}
             </el-tag>
+            <el-tag
+                v-for="tag in requestParam.instanceIds"
+                :key="tag"
+                class="mx-1"
+                closable
+                :disable-transitions="false"
+                @close="handleCloseInstanceIdTag(tag)"
+            >
+              {{ $t('eventViews.instanceId') }}: {{ tag }}
+            </el-tag>
           </template>
           <template #prepend>
             <el-dropdown>
@@ -85,6 +95,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item @click="currentOption = 0">{{ $t('eventViews.service') }}</el-dropdown-item>
                   <el-dropdown-item @click="currentOption = 1">IP</el-dropdown-item>
+                  <el-dropdown-item @click="currentOption = 2">{{ $t('eventViews.instanceId') }}</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -176,11 +187,12 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="eventInfo.name" :label="$t('eventViews.event')" width="150">
+      <el-table-column prop="eventInfo.name" :filters="eventNames" :filtered-value="eventNameFilterValue"
+                       :label="$t('eventViews.event')" width="150" column-key="name">
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <span v-if="scope.row.type === 'log'">
-              {{ eventName[scope.row.info.logLevel] }}
+              {{ eventName[scope.row.info.logLevel ? scope.row.info.logLevel.toString().toUpperCase() : scope.row.info.logLevel] }}
             </span>
             <span v-if="scope.row.type !== 'log'">{{
                 eventName[scope.row.info.name]
@@ -196,15 +208,9 @@
           width="150"
       >
         <template #default="scope">
-          <div style="display: flex; align-items: center">
-            <span v-if="scope.row.level === 'emergency'">
-              <el-tag class="ml-2" type="danger">{{ $t('eventViews.emergency') }}</el-tag>
-            </span>
-            <span v-if="scope.row.level === 'important'">
-              <el-tag class="ml-2" type="warning">{{ $t('eventViews.important') }}</el-tag>
-            </span>
-            <span v-if="scope.row.level === 'normal'">
-              <el-tag class="ml-2" type="info">{{ $t('eventViews.normal') }}</el-tag>
+          <div style="display: flex; align-items: center" v-for="(item, index) in eventLevel" :key="index">
+            <span v-if="scope.row.level === item.value">
+              <el-tag class="ml-2" type="danger">{{ item.text }}</el-tag>
             </span>
           </div>
         </template>
@@ -217,10 +223,8 @@
           width="150"
       >
         <template #default="scope">
-          <div style="display: flex; align-items: center">
-            <span v-if="scope.row.type === 'log'"> {{ $t('eventViews.log') }} </span>
-            <span v-if="scope.row.type === 'operation'">{{ $t('eventViews.operation') }}</span>
-            <span v-if="scope.row.type === 'governance'">{{ $t('eventViews.governance') }}</span>
+          <div style="display: flex; align-items: center" v-for="(item, index) in eventType" :key="index">
+            <span v-if="scope.row.type === item.value"> {{ item.text }} </span>
           </div>
         </template>
       </el-table-column>
@@ -231,6 +235,7 @@
           width="150"
       />
       <el-table-column column-key="ip" prop="meta.ip" label="IP" width="150"/>
+      <el-table-column column-key="instanceId" prop="meta.instanceId" label="Instance Id" width="300"/>
       <el-table-column column-key="scope" prop="scope" :label="$t('eventViews.area')">
         <template #default="scope">
           <div style="display: flex; align-items: center">
@@ -264,7 +269,7 @@
 
 <script lang="ts" setup>
 import {onBeforeMount, reactive, ref, watch} from "vue";
-import {useRouter} from "vue-router";
+import {LocationQuery, useRouter} from "vue-router";
 import qs from "qs";
 import moment from "moment";
 import axios from "axios";
@@ -274,12 +279,22 @@ onBeforeMount(() => {
   const time = new Date().getTime();
   const range = [time - 3600 * 1000 * 0.5, time];
   timeRange.timeRange = range;
-
+  if (params?.instanceId && params?.eventName) {
+    currentOption.value = 2
+    requestParam.instanceIds.push(<string>params.instanceId)
+    requestParam.name = params.eventName
+    eventNameFilterValue.value = params.eventName
+    router.replace({ path: 'events' });
+  }
   getEvents();
 });
 
+const eventNameFilterValue = ref<string[]>([]);
+
 // 路由
 const router = useRouter();
+
+const params: LocationQuery = router.currentRoute.value.query;
 
 const goBack = () => {
   router.push("/");
@@ -297,7 +312,7 @@ const logScope = (classNmae, method) => {
 };
 
 // 处理筛选标签
-const searchOption = ref([i18n.global.t('eventViews.service'), "IP"]);
+const searchOption = ref([i18n.global.t('eventViews.service'), "IP", i18n.global.t('eventViews.instanceId')]);
 const currentOption = ref(0);
 const inputValue = ref("");
 
@@ -312,6 +327,11 @@ const handleCloseIpTag = (tag: string) => {
   getEvents();
 };
 
+const handleCloseInstanceIdTag = (tag: string) => {
+  requestParam.instanceIds.splice(requestParam.instanceIds.indexOf(tag), 1);
+  getEvents();
+};
+
 const handleInputConfirm = () => {
   if (inputValue.value === "") {
     return;
@@ -322,6 +342,9 @@ const handleInputConfirm = () => {
     }
     if (currentOption.value === 1) {
       requestParam.ip.push(inputValue.value);
+    }
+    if (currentOption.value === 2) {
+      requestParam.instanceIds.push(inputValue.value);
     }
   }
   inputValue.value = "";
@@ -338,6 +361,7 @@ const eventType = ref([
   {text: i18n.global.t('eventViews.log'), value: "log"},
   {text: i18n.global.t('eventViews.governance'), value: "governance"},
   {text: i18n.global.t('eventViews.operation'), value: "operation"},
+  {text: i18n.global.t('eventViews.hotPlugging'), value: "hot-plugging"},
 ]);
 
 const filterChange = (event: any) => {
@@ -345,11 +369,25 @@ const filterChange = (event: any) => {
     requestParam.type = event.type;
     getEvents();
   }
+  if (typeof event.name != "undefined") {
+    requestParam.name = event.name;
+    addLogQueryConditionForCaseSensitivity(requestParam)
+    getEvents();
+  }
   if (typeof event.level != "undefined") {
     requestParam.level = event.level;
     getEvents();
   }
 };
+
+function addLogQueryConditionForCaseSensitivity(requestParam) {
+  if (requestParam.name?.includes('WARNING') && !requestParam.name?.includes('warning')) {
+    requestParam.name.push("warning")
+  }
+  if (requestParam.name?.includes('SEVERE') && !requestParam.name?.includes('severe')) {
+    requestParam.name.push("severe")
+  }
+}
 
 // 时间选择快照
 const shortcuts = ref([
@@ -501,12 +539,13 @@ const eventName = reactive({
   SERMANT_TRANSFORM_FAILURE: i18n.global.t('eventViews.enhanceFail'),
   SERMANT_SERVICE_STOP: i18n.global.t('eventViews.serviceStop'),
   SERMANT_SERVICE_START: i18n.global.t('eventViews.serviceStart'),
-  SERMANT_PLUGIN_LOAD: i18n.global.t('eventViews.pluginInstall'),
+  SERMANT_PLUGIN_LOAD: i18n.global.t('eventViews.pluginLoad'),
+  SERMANT_PLUGIN_INSTALL: i18n.global.t('eventViews.pluginInstall'),
+  SERMANT_PLUGIN_UNINSTALL: i18n.global.t('eventViews.pluginUninstall'),
+  SERMANT_PLUGIN_UPDATE: i18n.global.t('eventViews.pluginUpdate'),
   // 日志事件
   WARNING: i18n.global.t('eventViews.warningLog'),
   SEVERE: i18n.global.t('eventViews.errorLog'),
-  warning: i18n.global.t('eventViews.warningLog'),
-  severe: i18n.global.t('eventViews.errorLog'),
   // Flowcontrol事件
   TRAFFIC_LIMITING: i18n.global.t('eventViews.rateLimiting'),
   CIRCUIT_BREAKER: i18n.global.t('eventViews.circuitBreaker'),
@@ -527,6 +566,11 @@ const eventName = reactive({
   SPRINGBOOT_GRAY_CONFIG_REFRESH: i18n.global.t('eventViews.springbootGrayConfigRefresh'),
 });
 
+const eventNames = ref(Object.entries(eventName).map(([key, value]) => ({
+  text: value,
+  value: key
+})));
+
 const displayState = reactive({
   currentPage: 1,
   totalPage: 1,
@@ -541,10 +585,12 @@ const requestParam = reactive({
   service: [],
   ip: [],
   scop: [],
-  type: [],
+  type: [] as string[],
   level: [],
+  name: [] as string[],
   startTime: timeRange.timeRange[0],
   endTime: timeRange.timeRange[1],
+  instanceIds: [] as string[],
 });
 
 const pageChange = (pageNubmber: number) => {
@@ -596,7 +642,7 @@ const getEvents = () => {
 };
 
 watch(() => i18n.global.locale, (newLocale, oldLocale) => {
-  searchOption.value = [i18n.global.t('eventViews.service'), "IP"];
+  searchOption.value = [i18n.global.t('eventViews.service'), "IP", i18n.global.t('eventViews.instanceId')];
   eventLevel.value = [
     {text: i18n.global.t('eventViews.emergency'), value: "emergency"},
     {text: i18n.global.t('eventViews.important'), value: "important"},
@@ -606,6 +652,7 @@ watch(() => i18n.global.locale, (newLocale, oldLocale) => {
     {text: i18n.global.t('eventViews.log'), value: "log"},
     {text: i18n.global.t('eventViews.governance'), value: "governance"},
     {text: i18n.global.t('eventViews.operation'), value: "operation"},
+    {text: i18n.global.t('eventViews.hotPlugging'), value: "hot-plugging"},
   ];
   eventName.SERMANT_START=i18n.global.t('eventViews.agentStartup');
   eventName.SERMANT_STOP=i18n.global.t('eventViews.agentShutdown');
@@ -613,11 +660,12 @@ watch(() => i18n.global.locale, (newLocale, oldLocale) => {
   eventName.SERMANT_TRANSFORM_FAILURE=i18n.global.t('eventViews.enhanceFail');
   eventName.SERMANT_SERVICE_STOP=i18n.global.t('eventViews.serviceStop');
   eventName.SERMANT_SERVICE_START=i18n.global.t('eventViews.serviceStart');
-  eventName.SERMANT_PLUGIN_LOAD=i18n.global.t('eventViews.pluginInstall');
+  eventName.SERMANT_PLUGIN_LOAD=i18n.global.t('eventViews.pluginLoad');
+  eventName.SERMANT_PLUGIN_INSTALL=i18n.global.t('eventViews.pluginInstall');
+  eventName.SERMANT_PLUGIN_UNINSTALL=i18n.global.t('eventViews.pluginUninstall');
+  eventName.SERMANT_PLUGIN_UPDATE=i18n.global.t('eventViews.pluginUpdate');
   eventName.WARNING=i18n.global.t('eventViews.warningLog');
   eventName.SEVERE=i18n.global.t('eventViews.errorLog');
-  eventName.warning=i18n.global.t('eventViews.warningLog');
-  eventName.severe=i18n.global.t('eventViews.errorLog');
   eventName.TRAFFIC_LIMITING=i18n.global.t('eventViews.rateLimiting');
   eventName.CIRCUIT_BREAKER=i18n.global.t('eventViews.circuitBreaker');
   eventName.ADAPTIVE_OVERLOAD_PROTECTION=i18n.global.t('eventViews.adaptiveOverloadProtection');
@@ -633,6 +681,10 @@ watch(() => i18n.global.locale, (newLocale, oldLocale) => {
   eventName.SPRINGBOOT_REGISTRY=i18n.global.t('eventViews.springbootRegistry');
   eventName.SPRINGBOOT_UNREGISTRY=i18n.global.t('eventViews.springbootUnRegistry');
   eventName.SPRINGBOOT_GRAY_CONFIG_REFRESH=i18n.global.t('eventViews.springbootGrayConfigRefresh');
+  eventNames.value = Object.entries(eventName).map(([key, value]) => ({
+    text: value,
+    value: key
+  }));
   shortcuts.value = [
     {
       text: i18n.global.t('eventViews.lastHalfHour'),
@@ -680,7 +732,6 @@ watch(() => i18n.global.locale, (newLocale, oldLocale) => {
       },
     },
   ];
-  eventName
 });
 </script>
 

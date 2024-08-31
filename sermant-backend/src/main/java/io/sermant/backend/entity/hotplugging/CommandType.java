@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2024-2024 Sermant Authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,44 +14,35 @@
  * limitations under the License.
  */
 
-package io.sermant.backend.entity;
+package io.sermant.backend.entity.hotplugging;
 
 /**
- * Event Type
+ * Enumeration of instructions for dynamic installation and uninstallation
  *
- * @author xuezechao
- * @since 2023-03-02
+ * @author zhp
+ * @since 2024-08-22
  */
-public enum EventType {
+public enum CommandType {
     /**
-     * OPERATION event
+     * Install plugin instruction
      */
-    OPERATION(0, "operation"),
-
+    INSTALL_PLUGINS("INSTALL-PLUGINS"),
     /**
-     * GOVERNANCE event
+     * Update plugin instruction
      */
-    GOVERNANCE(1, "governance"),
-
+    UPDATE_PLUGINS("UPDATE-PLUGINS"),
     /**
-     * LOG event
+     * Uninstall plugin instruction
      */
-    LOG(2, "log");
+    UNINSTALL_PLUGINS("UNINSTALL-PLUGINS");
 
-    private final int type;
+    private final String value;
 
-    private final String description;
-
-    EventType(int type, String description) {
-        this.type = type;
-        this.description = description;
+    CommandType(String value) {
+        this.value = value;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public String getDescription() {
-        return description;
+    public String getValue() {
+        return value;
     }
 }
