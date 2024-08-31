@@ -37,6 +37,11 @@ public class EventsRequestEntity {
     private List<String> service = new ArrayList<>();
 
     /**
+     * event name
+     */
+    private List<String> name = new ArrayList<>();
+
+    /**
      * address
      */
     private List<String> ip = new ArrayList<>();
@@ -70,4 +75,9 @@ public class EventsRequestEntity {
      * session id
      */
     private String sessionId;
+
+    /**
+     * instance id
+     */
+    private List<String> instanceIds = new ArrayList<>();
 }

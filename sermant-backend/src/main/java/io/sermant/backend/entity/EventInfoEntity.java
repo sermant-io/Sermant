@@ -16,6 +16,8 @@
 
 package io.sermant.backend.entity;
 
+import io.sermant.backend.entity.event.EventLevel;
+import io.sermant.backend.entity.event.EventType;
 import lombok.Getter;
 import lombok.Setter;
 
