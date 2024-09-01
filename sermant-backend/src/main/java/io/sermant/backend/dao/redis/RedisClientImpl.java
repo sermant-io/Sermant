@@ -105,7 +105,7 @@ public class RedisClientImpl implements EventDao {
 
     @Override
     public boolean addInstanceMeta(InstanceMeta instanceMeta) {
-        redisOperation.setex(instanceMeta.getMetaHash(), backendConfig.getHeartbeatEffectiveTime(),
+        redisOperation.psetex(instanceMeta.getMetaHash(), backendConfig.getHeartbeatEffectiveTime(),
                 JSONObject.toJSONString(instanceMeta));
         return true;
     }
