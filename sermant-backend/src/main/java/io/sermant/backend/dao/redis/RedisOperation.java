@@ -47,6 +47,16 @@ public interface RedisOperation {
     String setex(String key, long seconds, String value);
 
     /**
+     * Store key values and specify expiration time
+     *
+     * @param key Data stored in Redis key
+     * @param milliseconds expiration time
+     * @param value Stored values
+     * @return Return execution result
+     */
+    String psetex(String key, long milliseconds, String value);
+
+    /**
      * Set the specified hash field to the specified value.
      *
      * @param key Data stored in Redis key
