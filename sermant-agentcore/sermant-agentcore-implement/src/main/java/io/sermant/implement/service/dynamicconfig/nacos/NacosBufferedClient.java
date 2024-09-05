@@ -45,10 +45,6 @@ import java.util.logging.Logger;
  * @since 2023-08-17
  */
 public class NacosBufferedClient implements Closeable {
-    /**
-     * configService connection status type
-     */
-    public static final String KEY_CONNECTED = "UP";
 
     /**
      * logger
@@ -234,44 +230,16 @@ public class NacosBufferedClient implements Closeable {
      * @throws NacosInitException Connect to Nacos failed
      */
     private void createNacosClient(String connectString, Properties properties) {
+        ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
         try {
-            if (!connect(properties)) {
-                LOGGER.log(Level.SEVERE, "Nacos connection reaches the maximum number of retries");
-                throw new NacosInitException(connectString);
-            }
+            nacosClient = new NacosClient(properties);
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, "Nacos connection exception, msg is: {0}", e.getMessage());
             throw new NacosInitException(connectString);
-        }
-    }
-
-    /**
-     * Connect to Nacos
-     *
-     * @param properties Nacos Client connection configuration
-     * @return Nacos connection status
-     * @throws NacosException Nacos initialization exception
-     */
-    private boolean connect(Properties properties) throws NacosException {
-        int tryNum = 0;
-        while (tryNum++ <= CONFIG.getConnectRetryTimes()) {
-            // Nacos client initialization gets the current thread's classloader, which needs to be changed and then
-            // changed back to the original classloader
-            ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-            nacosClient = new NacosClient(properties);
+        } finally {
             Thread.currentThread().setContextClassLoader(tempClassLoader);
-            if (KEY_CONNECTED.equals(nacosClient.getServerStatus())) {
-                return true;
-            }
-            try {
-                Thread.sleep(CONFIG.getConnectTimeout());
-                LOGGER.log(Level.INFO, "The {0} times to retry to connect to nacos", tryNum);
-            } catch (InterruptedException e) {
-                LOGGER.log(Level.SEVERE, "Nacos connection sleep exception, msg is: {0}", e.getMessage());
-            }
         }
-        return false;
     }
 
     @Override
