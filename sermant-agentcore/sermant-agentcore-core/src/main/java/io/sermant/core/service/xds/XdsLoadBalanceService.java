@@ -31,7 +31,7 @@ public interface XdsLoadBalanceService {
      * @param clusterName cluster name
      * @return route rules
      */
-    XdsLbPolicy getClusterLbPolicy(String clusterName);
+    XdsLbPolicy getLbPolicyOfCluster(String clusterName);
 
     /**
      * get lb policy of service (base cluster)
@@ -39,5 +39,5 @@ public interface XdsLoadBalanceService {
      * @param serviceName service name
      * @return route rules
      */
-    XdsLbPolicy getServiceLbPolicy(String serviceName);
+    XdsLbPolicy getBaseLbPolicyOfService(String serviceName);
 }

@@ -19,6 +19,14 @@ package io.sermant.implement.service.xds.cache;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.grpc.stub.StreamObserver;
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
+import io.sermant.core.service.xds.entity.XdsHttpConnectionManager;
+import io.sermant.core.service.xds.entity.XdsLbPolicy;
+import io.sermant.core.service.xds.entity.XdsRoute;
+import io.sermant.core.service.xds.entity.XdsRouteConfiguration;
+import io.sermant.core.service.xds.entity.XdsServiceCluster;
+import io.sermant.core.service.xds.entity.XdsServiceClusterLoadAssigment;
+import io.sermant.core.service.xds.entity.XdsVirtualHost;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 
 import java.util.ArrayList;
@@ -27,8 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * xDS data cache
@@ -40,7 +50,7 @@ public class XdsDataCache {
     /**
      * key:service name value:instances
      */
-    private static final Map<String, Set<ServiceInstance>> SERVICE_INSTANCES =
+    private static final Map<String, XdsServiceClusterLoadAssigment> SERVICE_INSTANCES =
             new ConcurrentHashMap<>();
 
     /**
@@ -55,9 +65,19 @@ public class XdsDataCache {
     private static final Map<String, StreamObserver<DiscoveryRequest>> REQUEST_OBSERVERS = new ConcurrentHashMap<>();
 
     /**
-     * key:service name value:cluster map
+     * key:service name value:XdsServiceCluster
      */
-    private static Map<String, Set<String>> serviceNameMapping = new HashMap<>();
+    private static Map<String, XdsServiceCluster> serviceClusterMap = new HashMap<>();
+
+    /**
+     * HttpConnectionManager
+     */
+    private static List<XdsHttpConnectionManager> httpConnectionManagers = new ArrayList<>();
+
+    /**
+     * XdsRouteConfiguration
+     */
+    private static List<XdsRouteConfiguration> routeConfigurations = new ArrayList<>();
 
     private XdsDataCache() {
     }
@@ -66,10 +86,11 @@ public class XdsDataCache {
      * update ServiceInstance
      *
      * @param serviceName service name
-     * @param instances service instance
+     * @param serviceClusterInstance all cluster instance of service
      */
-    public static void updateServiceInstance(String serviceName, Set<ServiceInstance> instances) {
-        SERVICE_INSTANCES.put(serviceName, instances);
+    public static void updateServiceInstance(String serviceName,
+            XdsServiceClusterLoadAssigment serviceClusterInstance) {
+        SERVICE_INSTANCES.put(serviceName, serviceClusterInstance);
     }
 
     /**
@@ -79,7 +100,27 @@ public class XdsDataCache {
      * @return ServiceInstance
      */
     public static Set<ServiceInstance> getServiceInstance(String serviceName) {
-        return SERVICE_INSTANCES.getOrDefault(serviceName, Collections.EMPTY_SET);
+        XdsServiceClusterLoadAssigment serviceClusterInstance = SERVICE_INSTANCES.get(serviceName);
+        if (serviceClusterInstance == null) {
+            return Collections.EMPTY_SET;
+        }
+        return serviceClusterInstance.getServiceInstance();
+    }
+
+    /**
+     * get ServiceInstance of cluster
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @return ServiceInstance
+     */
+    public static Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String serviceName,
+            String clusterName) {
+        XdsServiceClusterLoadAssigment serviceClusterInstance = SERVICE_INSTANCES.get(serviceName);
+        if (serviceClusterInstance == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(serviceClusterInstance.getXdsClusterLoadAssigment(clusterName));
     }
 
     /**
@@ -151,13 +192,13 @@ public class XdsDataCache {
     }
 
     /**
-     * get request observer by service name
+     * get request observer by request key
      *
-     * @param serviceName service name
+     * @param requestKey request key
      * @return request observer
      */
-    public static StreamObserver<DiscoveryRequest> getRequestObserver(String serviceName) {
-        return REQUEST_OBSERVERS.get(serviceName);
+    public static StreamObserver<DiscoveryRequest> getRequestObserver(String requestKey) {
+        return REQUEST_OBSERVERS.get(requestKey);
     }
 
     /**
@@ -172,31 +213,139 @@ public class XdsDataCache {
     /**
      * update the mapping between service and cluster
      *
-     * @param mapping the mapping between service and cluster
+     * @param clusterMap the map between service and cluster
      */
-    public static void updateServiceNameMapping(Map<String, Set<String>> mapping) {
-        if (mapping == null) {
-            serviceNameMapping = new HashMap<>();
+    public static void updateServiceClusterMap(Map<String, XdsServiceCluster> clusterMap) {
+        if (clusterMap == null) {
+            serviceClusterMap = new HashMap<>();
+            return;
         }
-        serviceNameMapping = mapping;
+        serviceClusterMap = clusterMap;
     }
 
     /**
      * get cluster set for service
      *
-     * @param serviceName
+     * @param serviceName service name
      * @return cluster set for service
      */
     public static Set<String> getClustersByServiceName(String serviceName) {
-        return serviceNameMapping.getOrDefault(serviceName, Collections.EMPTY_SET);
+        XdsServiceCluster xdsServiceCluster = serviceClusterMap.get(serviceName);
+        if (xdsServiceCluster == null) {
+            return Collections.EMPTY_SET;
+        }
+        return xdsServiceCluster.getClusterResources();
     }
 
     /**
-     * get serviceNameMapping
+     * get serviceClusterMap
      *
-     * @return serviceNameMapping
+     * @return serviceClusterMap
      */
-    public static Map<String, Set<String>> getServiceNameMapping() {
-        return serviceNameMapping;
+    public static Map<String, XdsServiceCluster> getServiceClusterMap() {
+        return serviceClusterMap;
+    }
+
+    /**
+     * update HttpConnectionManager
+     *
+     * @param hcms httpConnectionManager list
+     */
+    public static void updateHttpConnectionManagers(List<XdsHttpConnectionManager> hcms) {
+        if (hcms == null) {
+            httpConnectionManagers = new ArrayList<>();
+            return;
+        }
+        httpConnectionManagers = hcms;
+    }
+
+    /**
+     * get RouteResources
+     *
+     * @return RouteConfig names
+     */
+    public static Set<String> getRouteResources() {
+        return httpConnectionManagers.stream()
+                .map(XdsHttpConnectionManager::getRouteConfigName)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * update XdsRouteConfiguration
+     *
+     * @param configurations XdsRouteConfiguration list
+     */
+    public static void updateRouteConfigurations(List<XdsRouteConfiguration> configurations) {
+        if (configurations == null) {
+            routeConfigurations = new ArrayList<>();
+            return;
+        }
+        routeConfigurations = configurations;
+    }
+
+    /**
+     * get service route rule
+     *
+     * @param serviceName service name
+     * @return xds route
+     */
+    public static List<XdsRoute> getServiceRoute(String serviceName) {
+        for (XdsRouteConfiguration routeConfiguration : routeConfigurations) {
+            Map<String, XdsVirtualHost> virtualHosts = routeConfiguration.getVirtualHosts();
+            if (virtualHosts.containsKey(serviceName)) {
+                return virtualHosts.get(serviceName).getRoutes();
+            }
+        }
+        return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * cluster locality lb policy
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @return boolean
+     */
+    public static boolean isLocalityLb(String serviceName, String clusterName) {
+        XdsServiceCluster serviceCluster = serviceClusterMap.get(serviceName);
+        return serviceCluster != null && serviceCluster.isClusterLocalityLb(clusterName);
+    }
+
+    /**
+     * cluster lb policy
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @return boolean
+     */
+    public static XdsLbPolicy getLbPolicyOfCluster(String serviceName, String clusterName) {
+        XdsServiceCluster serviceCluster = serviceClusterMap.get(serviceName);
+        if (serviceCluster == null) {
+            return XdsLbPolicy.UNRECOGNIZED;
+        }
+        return serviceCluster.getLbPolicyOfCluster(clusterName);
+    }
+
+    /**
+     * get service(base cluster) lb policy
+     *
+     * @param serviceName service name
+     * @return boolean
+     */
+    public static XdsLbPolicy getBaseLbPolicyOfService(String serviceName) {
+        XdsServiceCluster serviceCluster = serviceClusterMap.get(serviceName);
+        if (serviceCluster == null) {
+            return XdsLbPolicy.UNRECOGNIZED;
+        }
+        return serviceCluster.getBaseLbPolicyOfService();
+    }
+
+    /**
+     * getRouteConfigurations
+     *
+     * @return XdsRouteConfiguration list
+     */
+    public static List<XdsRouteConfiguration> getRouteConfigurations() {
+        return routeConfigurations;
     }
 }

@@ -39,6 +39,16 @@ public class XdsConstant {
     public static final String CDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.cluster.v3.Cluster";
 
     /**
+     * lds resource type
+     */
+    public static final String LDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.listener.v3.Listener";
+
+    /**
+     * rds resource type
+     */
+    public static final String RDS_RESOURCE_TYPE = "type.googleapis.com/envoy.config.route.v3.RouteConfiguration";
+
+    /**
      * sidecar string
      */
     public static final String SIDECAR = "sidecar";
@@ -62,6 +72,16 @@ public class XdsConstant {
      * cds request cache key for subscribe all resource
      */
     public static final String CDS_ALL_RESOURCE = "CLUSTER_ALL";
+
+    /**
+     * lds request cache key for subscribe all resource
+     */
+    public static final String LDS_ALL_RESOURCE = "LISTENER_ALL";
+
+    /**
+     * rds request cache key for subscribe all route resource
+     */
+    public static final String RDS_ALL_RESOURCE = "ROUTE_CONFIG_ALL";
 
     /**
      * the namespace file path of k8s pod

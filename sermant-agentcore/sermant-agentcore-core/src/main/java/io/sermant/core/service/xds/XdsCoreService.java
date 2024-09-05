@@ -31,4 +31,18 @@ public interface XdsCoreService extends BaseService {
      * @return XdsServiceDiscovery
      */
     XdsServiceDiscovery getXdsServiceDiscovery();
+
+    /**
+     * get xDS route service
+     *
+     * @return XdsRoute
+     */
+    XdsRouteService getXdsRouteService();
+
+    /**
+     * get xDS lb service
+     *
+     * @return XdsRoute
+     */
+    XdsLoadBalanceService getLoadBalanceService();
 }

@@ -22,6 +22,9 @@
 
 package io.sermant.implement.service.xds.handler;
 
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
+
 import io.envoyproxy.envoy.config.core.v3.Node;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
@@ -33,6 +36,8 @@ import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.xds.client.XdsClient;
 import io.sermant.implement.service.xds.env.XdsConstant;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -46,10 +51,11 @@ import java.util.logging.Logger;
 /**
  * abstract xds protocol handler
  *
+ * @param <T> xds resource type
  * @author daizhenyu
  * @since 2024-05-13
  **/
-public abstract class XdsHandler implements XdsServiceAction {
+public abstract class XdsHandler<T> implements XdsServiceAction {
     protected static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int DELAY_TIME = 3000;
@@ -102,6 +108,29 @@ public abstract class XdsHandler implements XdsServiceAction {
         }
         builder.addAllResourceNames(resourceName);
         return builder.build();
+    }
+
+    /**
+     * decode xds resource
+     *
+     * @param response response
+     * @param clazz resource type
+     * @return decoded xds resource
+     */
+    protected List<T> decodeResources(DiscoveryResponse response, Class clazz) {
+        List<T> resources = new ArrayList<>();
+        for (Any any : response.getResourcesList()) {
+            try {
+                if (any == null) {
+                    continue;
+                }
+                resources.add((T) any.unpack(clazz));
+            } catch (InvalidProtocolBufferException e) {
+                LOGGER.log(Level.SEVERE, "Decode {0} resource failed, the error message is {1}",
+                        new Object[]{clazz.getSimpleName(), e});
+            }
+        }
+        return resources;
     }
 
     /**

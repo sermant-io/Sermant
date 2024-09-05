@@ -29,7 +29,6 @@ import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 import io.sermant.implement.service.xds.BaseXdsTest;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
-import io.sermant.implement.service.xds.env.XdsConstant;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -48,7 +47,7 @@ import java.util.Set;
  * @author daizhenyu
  * @since 2024-05-25
  **/
-public class EdsXdsTest extends BaseXdsTest {
+public class EdsHandlerTest extends BaseXdsTest {
     private static String serviceName = "serviceA";
 
     private String clusterName = "outbound|8080||serviceA.default.svc.cluster.local";
@@ -60,8 +59,6 @@ public class EdsXdsTest extends BaseXdsTest {
         handler = new EdsHandler(client);
         Mockito.doReturn(requestStreamObserver).when(client)
                 .getDiscoveryRequestObserver(handler.getResponseStreamObserver(serviceName, null));
-
-        handler.subscribe(serviceName, null);
         XdsDataCache.addServiceDiscoveryListener(serviceName, new XdsServiceDiscoveryListenerImpl());
     }
 
@@ -70,10 +67,13 @@ public class EdsXdsTest extends BaseXdsTest {
         Mockito.clearAllCaches();
         XdsDataCache.removeRequestObserver(serviceName);
         XdsDataCache.removeServiceDiscoveryListeners(serviceName);
+        XdsDataCache.removeServiceInstance(serviceName);
     }
 
     @Test
     public void testHandleResponse() {
+        handler.subscribe(serviceName, null);
+
         // first update service instance of serviceA
         handler.handleResponse(serviceName, buildDiscoveryResponse("127.0.0.1", 8080));
         assertHandleResponseLogic(1, 1, "127.0.0.1", 8080);
