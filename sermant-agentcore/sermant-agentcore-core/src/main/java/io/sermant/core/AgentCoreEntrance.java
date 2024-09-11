@@ -97,7 +97,7 @@ public class AgentCoreEntrance {
         LoggerFactory.init(artifact);
 
         // Build the path index by startup configuration
-        BootArgsIndexer.build(argsMap);
+        BootArgsIndexer.build(argsMap, isDynamic);
 
         // Initialize the unified configuration
         ConfigManager.initialize(argsMap);

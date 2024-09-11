@@ -17,6 +17,8 @@
 package io.sermant.core.command;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.event.collector.FrameworkEventCollector;
+import io.sermant.core.event.collector.FrameworkEventDefinitions;
 import io.sermant.core.plugin.PluginManager;
 import io.sermant.core.utils.StringUtils;
 
@@ -42,5 +44,8 @@ public class PluginsInstallCommandExecutor implements CommandExecutor {
         }
         String[] pluginNames = args.split("/");
         PluginManager.install(Arrays.stream(pluginNames).collect(Collectors.toSet()));
+        FrameworkEventCollector.getInstance().collectdHotPluggingEvent(FrameworkEventDefinitions.SERMANT_PLUGIN_INSTALL,
+                "Hot plugging command[INSTALL-PLUGINS] has been processed. Installed plugins are "
+                        + Arrays.toString(pluginNames) + ".");
     }
 }

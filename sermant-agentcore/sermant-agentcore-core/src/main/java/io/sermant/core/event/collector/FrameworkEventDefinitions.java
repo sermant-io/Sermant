@@ -59,7 +59,22 @@ public enum FrameworkEventDefinitions {
     /**
      * Sermant stop event definition
      */
-    SERMANT_STOP("SERMANT_STOP", EventType.OPERATION, EventLevel.NORMAL);
+    SERMANT_STOP("SERMANT_STOP", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * Sermant plugin installation event definition
+     */
+    SERMANT_PLUGIN_INSTALL("SERMANT_PLUGIN_INSTALL", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * Sermant plugin uninstallation event definition
+     */
+    SERMANT_PLUGIN_UNINSTALL("SERMANT_PLUGIN_UNINSTALL", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * Sermant plugin update event definition
+     */
+    SERMANT_PLUGIN_UPDATE("SERMANT_PLUGIN_UPDATE", EventType.OPERATION, EventLevel.NORMAL);
 
     /**
      * event name

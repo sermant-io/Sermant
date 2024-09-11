@@ -149,4 +149,19 @@ public class FrameworkEventCollector extends EventCollector {
                 FrameworkEventDefinitions.SERMANT_TRANSFORM_FAILURE.getEventType(),
                 new EventInfo(FrameworkEventDefinitions.SERMANT_TRANSFORM_FAILURE.getName(), transformDescription)));
     }
+
+    /**
+     * Collect hot plugging events
+     *
+     * @param frameworkEventDefinitions Event definition for framework events
+     * @param description description
+     */
+    public void collectdHotPluggingEvent(FrameworkEventDefinitions frameworkEventDefinitions, String description) {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        offerEvent(new Event(frameworkEventDefinitions.getScope(), frameworkEventDefinitions.getEventLevel(),
+                frameworkEventDefinitions.getEventType(),
+                new EventInfo(frameworkEventDefinitions.getName(), description)));
+    }
 }
