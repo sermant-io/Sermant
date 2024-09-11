@@ -19,13 +19,13 @@ package io.sermant.implement.service.xds.discovery;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.service.xds.XdsServiceDiscovery;
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
-import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
-import io.sermant.implement.service.xds.handler.CdsHandler;
 import io.sermant.implement.service.xds.handler.EdsHandler;
+import io.sermant.implement.service.xds.utils.XdsCommonUtils;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -51,16 +51,14 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
     /**
      * constructor
      *
-     * @param client xds client
+     * @param edsHandler eds handler
      */
-    public XdsServiceDiscoveryImpl(XdsClient client) {
-        CdsHandler cdsHandler = new CdsHandler(client);
-        edsHandler = new EdsHandler(client);
-        cdsHandler.subscribe(XdsConstant.CDS_ALL_RESOURCE, null);
+    public XdsServiceDiscoveryImpl(EdsHandler edsHandler) {
+        this.edsHandler = edsHandler;
     }
 
     /**
-     * subscribe service instance by service name, the listener will be triggered when the service instance changes
+     * get service all instance
      *
      * @param serviceName service name
      * @return service instances
@@ -94,6 +92,46 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
     }
 
     /**
+     * get service instance of service cluster
+     *
+     * @param clusterName cluster name
+     * @return XdsClusterInstance
+     */
+    @Override
+    public Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String clusterName) {
+        Optional<String> serviceNameOptional = XdsCommonUtils.getServiceNameFromCluster(clusterName);
+        if (!serviceNameOptional.isPresent()) {
+            return Optional.empty();
+        }
+
+        String serviceName = serviceNameOptional.get();
+
+        // first check the cache and return if service instance exists
+        if (XdsDataCache.isContainsRequestObserver(serviceName)) {
+            return XdsDataCache.getClusterServiceInstance(serviceName, clusterName);
+        }
+
+        // locking ensures that a service only creates one stream
+        LOCK.lock();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        try {
+            // check the cache again after locking and return if service instance exists
+            if (XdsDataCache.isContainsRequestObserver(serviceName)) {
+                return XdsDataCache.getClusterServiceInstance(serviceName, clusterName);
+            }
+            edsHandler.subscribe(serviceName, countDownLatch);
+        } finally {
+            LOCK.unlock();
+        }
+        try {
+            countDownLatch.await(TIMEOUT, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.WARNING, "Occur InterruptedException when wait server send message.", e);
+        }
+        return XdsDataCache.getClusterServiceInstance(serviceName, clusterName);
+    }
+
+    /**
      * subscribe service instance by service name, the listener will be triggered when the service instance changes
      *
      * @param serviceName service name
@@ -120,7 +158,7 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
             }
 
             // subscribe service instance
-            edsHandler.subscribe(serviceName, null);
+            edsHandler.subscribe(serviceName);
         } finally {
             LOCK.unlock();
         }

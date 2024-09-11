@@ -35,6 +35,29 @@ public class XdsLocality {
 
     private int localityPriority;
 
+    /**
+     * constructor
+     */
+    public XdsLocality() {
+    }
+
+    /**
+     * parameterized constructor
+     *
+     * @param region region
+     * @param zone zone
+     * @param subZone sub zone
+     * @param loadBalanceWeight load balance weigh
+     * @param localityPriority locality priority
+     */
+    public XdsLocality(String region, String zone, String subZone, int loadBalanceWeight, int localityPriority) {
+        this.region = region;
+        this.zone = zone;
+        this.subZone = subZone;
+        this.loadBalanceWeight = loadBalanceWeight;
+        this.localityPriority = localityPriority;
+    }
+
     public String getRegion() {
         return region;
     }

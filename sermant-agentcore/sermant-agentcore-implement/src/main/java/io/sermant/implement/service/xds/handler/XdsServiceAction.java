@@ -26,10 +26,17 @@ import java.util.concurrent.CountDownLatch;
  **/
 public interface XdsServiceAction {
     /**
-     * subscribe
+     * when countDownLatch is null, it is an asynchronous subscription; otherwise, it is a synchronous subscription
      *
      * @param requestKey request key to get the xds data from cache
      * @param countDownLatch Used to notify the xds requesting thread to obtain data
      */
     void subscribe(String requestKey, CountDownLatch countDownLatch);
+
+    /**
+     * async subscribe
+     *
+     * @param requestKey request key to get the xds data from cache
+     */
+    void subscribe(String requestKey);
 }

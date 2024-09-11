@@ -16,11 +16,13 @@
 
 package io.sermant.implement.service.xds.utils;
 
-import io.envoyproxy.envoy.config.cluster.v3.Cluster;
+import io.envoyproxy.envoy.config.core.v3.Locality;
 import io.envoyproxy.envoy.config.endpoint.v3.ClusterLoadAssignment;
 import io.envoyproxy.envoy.config.endpoint.v3.LbEndpoint;
 import io.envoyproxy.envoy.config.endpoint.v3.LocalityLbEndpoints;
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsLocality;
+import io.sermant.core.service.xds.entity.XdsServiceClusterLoadAssigment;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +31,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -37,27 +40,7 @@ import java.util.Set;
  * @author daizhenyu
  * @since 2024-05-11
  **/
-public class XdsProtocolTransformerTest {
-
-    @Test
-    public void testGetService2ClusterMapping() {
-        List<Cluster> clusters = Arrays.asList(
-                null,
-                createCluster("outbound|8080||serviceA.default.svc.cluster.local"),
-                createCluster("outbound|8080|subset1|serviceB.default.svc.cluster.local"),
-                createCluster("outbound|8080|subset2|serviceB.default.svc.cluster.local"),
-                createCluster("outbound|8080|serviceC.default.svc.cluster.local"),
-                createCluster(null)
-        );
-
-        Map<String, Set<String>> result = XdsProtocolTransformer.getService2ClusterMapping(clusters);
-        Assert.assertEquals(2, result.size());
-        Assert.assertTrue(result.containsKey("serviceA"));
-        Assert.assertTrue(result.containsKey("serviceB"));
-        Assert.assertEquals(1, result.get("serviceA").size());
-        Assert.assertEquals(2, result.get("serviceB").size());
-    }
-
+public class EdsProtocolTransformerTest {
     @Test
     public void testGetServiceInstances() {
         List<ClusterLoadAssignment> assignments = Arrays.asList(
@@ -67,31 +50,42 @@ public class XdsProtocolTransformerTest {
                 createLoadAssignment("outbound|8080|serviceB.default.svc.cluster.local")
         );
 
-        Set<ServiceInstance> result = XdsProtocolTransformer.getServiceInstances(assignments);
-        Assert.assertEquals(2, result.size());
-        Iterator<ServiceInstance> iterator = result.iterator();
+        XdsServiceClusterLoadAssigment result = EdsProtocolTransformer.getServiceInstances(assignments);
+        Assert.assertEquals(2, result.getClusterLoadAssigments().size());
+        Iterator<ServiceInstance> iterator = result.getServiceInstance().iterator();
         while (iterator.hasNext()) {
             ServiceInstance next = iterator.next();
             Assert.assertEquals("serviceB", next.getServiceName());
         }
-    }
+        Assert.assertEquals(2, result.getClusterLoadAssigments().size());
+        Assert.assertEquals("outbound|8080|subset1|serviceB.default.svc.cluster.local",
+                result.getXdsClusterLoadAssigment("outbound|8080|subset1|serviceB.default.svc.cluster.local")
+                        .getClusterName());
+        Assert.assertEquals("serviceB",
+                result.getXdsClusterLoadAssigment("outbound|8080|subset1|serviceB.default.svc.cluster.local")
+                        .getServiceName());
 
-    private Cluster createCluster(String name) {
-        Cluster.Builder builder = Cluster.newBuilder();
-        if (name != null) {
-            builder.setName(name);
+        Map<XdsLocality, Set<ServiceInstance>> localityInstances = result
+                .getXdsClusterLoadAssigment("outbound|8080|subset1|serviceB.default.svc.cluster.local")
+                .getLocalityInstances();
+        Assert.assertEquals(1,
+                localityInstances.size());
+        for (Entry<XdsLocality, Set<ServiceInstance>> xdsLocalitySetEntry : localityInstances.entrySet()) {
+            Assert.assertEquals("test-region", xdsLocalitySetEntry.getKey().getRegion());
+            Assert.assertEquals("test-zone", xdsLocalitySetEntry.getKey().getZone());
+            Assert.assertEquals("test-subzone", xdsLocalitySetEntry.getKey().getSubZone());
         }
-        return builder.build();
     }
 
     private ClusterLoadAssignment createLoadAssignment(String clusterName) {
         ClusterLoadAssignment.Builder assignmentBuilder = ClusterLoadAssignment.newBuilder();
-
-        LocalityLbEndpoints.Builder localityBuilder = LocalityLbEndpoints.newBuilder();
         LbEndpoint.Builder endpointBuilder = LbEndpoint.newBuilder();
-        localityBuilder.addLbEndpoints(endpointBuilder.build());
+        Locality.Builder localityBuilder = Locality.newBuilder();
+        localityBuilder.setRegion("test-region").setZone("test-zone").setSubZone("test-subzone");
+        LocalityLbEndpoints.Builder localityEndpointBuilder = LocalityLbEndpoints.newBuilder();
+        localityEndpointBuilder.addLbEndpoints(endpointBuilder.build()).setLocality(localityBuilder.build());
         assignmentBuilder.setClusterName(clusterName);
-        assignmentBuilder.addEndpoints(localityBuilder.build());
+        assignmentBuilder.addEndpoints(localityEndpointBuilder.build());
 
         return assignmentBuilder.build();
     }

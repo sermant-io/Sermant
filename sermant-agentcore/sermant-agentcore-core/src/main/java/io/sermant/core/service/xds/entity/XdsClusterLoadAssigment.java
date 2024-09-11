@@ -32,6 +32,26 @@ public class XdsClusterLoadAssigment {
 
     private Map<XdsLocality, Set<ServiceInstance>> localityInstances;
 
+    /**
+     * constructor
+     */
+    public XdsClusterLoadAssigment() {
+    }
+
+    /**
+     * parameterized constructor
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @param localityInstances service instances sorted by locality
+     */
+    public XdsClusterLoadAssigment(String serviceName, String clusterName,
+            Map<XdsLocality, Set<ServiceInstance>> localityInstances) {
+        this.serviceName = serviceName;
+        this.clusterName = clusterName;
+        this.localityInstances = localityInstances;
+    }
+
     public String getServiceName() {
         return serviceName;
     }

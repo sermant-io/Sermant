@@ -17,8 +17,10 @@
 package io.sermant.core.service.xds;
 
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -29,7 +31,7 @@ import java.util.Set;
  **/
 public interface XdsServiceDiscovery {
     /**
-     * get service instance by service name
+     * get all the service instance by service name with base cluster
      *
      * @param serviceName service name
      * @return service instances
@@ -37,7 +39,16 @@ public interface XdsServiceDiscovery {
     Set<ServiceInstance> getServiceInstance(String serviceName);
 
     /**
-     * subscribe service instance by service name, the listener will be triggered when the service instance changes
+     * get service instance of service cluster
+     *
+     * @param clusterName cluster name
+     * @return XdsClusterInstance
+     */
+    Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String clusterName);
+
+    /**
+     * subscribe service instance without tag by service name, the listener will be triggered when the service instance
+     * changes
      *
      * @param serviceName service name
      * @param listener listener

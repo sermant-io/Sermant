@@ -18,9 +18,18 @@ package io.sermant.implement.service.xds;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.service.xds.XdsCoreService;
+import io.sermant.core.service.xds.XdsLoadBalanceService;
+import io.sermant.core.service.xds.XdsRouteService;
 import io.sermant.core.service.xds.XdsServiceDiscovery;
 import io.sermant.implement.service.xds.client.XdsClient;
 import io.sermant.implement.service.xds.discovery.XdsServiceDiscoveryImpl;
+import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.handler.CdsHandler;
+import io.sermant.implement.service.xds.handler.EdsHandler;
+import io.sermant.implement.service.xds.handler.LdsHandler;
+import io.sermant.implement.service.xds.handler.RdsHandler;
+import io.sermant.implement.service.xds.loadbalance.XdsLoadBalanceServiceImpl;
+import io.sermant.implement.service.xds.route.XdsRouteServiceImpl;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -37,12 +46,31 @@ public class XdsCoreServiceImpl implements XdsCoreService {
 
     private XdsServiceDiscovery xdsServiceDiscovery;
 
+    private XdsRouteService xdsRouteService;
+
+    private XdsLoadBalanceService xdsLoadBalanceService;
+
     private XdsClient client;
 
     @Override
     public void start() {
         client = new XdsClient();
-        xdsServiceDiscovery = new XdsServiceDiscoveryImpl(client);
+
+        // create xdsHandler
+        RdsHandler rdsHandler = new RdsHandler(client);
+        LdsHandler ldsHandler = new LdsHandler(client);
+        CdsHandler cdsHandler = new CdsHandler(client);
+
+        // start to subscribe lds、rds、cds
+        rdsHandler.subscribe(XdsConstant.RDS_ALL_RESOURCE);
+        ldsHandler.subscribe(XdsConstant.LDS_ALL_RESOURCE);
+        cdsHandler.subscribe(XdsConstant.CDS_ALL_RESOURCE);
+
+        // create xds service
+        EdsHandler edsHandler = new EdsHandler(client);
+        xdsServiceDiscovery = new XdsServiceDiscoveryImpl(edsHandler);
+        xdsRouteService = new XdsRouteServiceImpl();
+        xdsLoadBalanceService = new XdsLoadBalanceServiceImpl();
     }
 
     @Override
@@ -57,5 +85,15 @@ public class XdsCoreServiceImpl implements XdsCoreService {
     @Override
     public XdsServiceDiscovery getXdsServiceDiscovery() {
         return xdsServiceDiscovery;
+    }
+
+    @Override
+    public XdsRouteService getXdsRouteService() {
+        return xdsRouteService;
+    }
+
+    @Override
+    public XdsLoadBalanceService getLoadBalanceService() {
+        return xdsLoadBalanceService;
     }
 }

@@ -32,6 +32,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ import java.util.Set;
  * @author daizhenyu
  * @since 2024-05-24
  **/
-public class CdsXdsTest extends BaseXdsTest {
+public class CdsHandlerTest extends BaseXdsTest {
     private static CdsHandler handler;
 
     private static String serviceName = "serviceA";
@@ -49,8 +50,6 @@ public class CdsXdsTest extends BaseXdsTest {
         handler = new CdsHandler(client);
         Mockito.doReturn(requestStreamObserver).when(client).getDiscoveryRequestObserver(handler
                 .getResponseStreamObserver(XdsConstant.CDS_ALL_RESOURCE, null));
-
-        handler.subscribe(XdsConstant.CDS_ALL_RESOURCE, null);
         XdsDataCache.updateRequestObserver(serviceName, requestStreamObserver);
     }
 
@@ -58,14 +57,18 @@ public class CdsXdsTest extends BaseXdsTest {
     public static void tearDown() {
         Mockito.clearAllCaches();
         XdsDataCache.removeRequestObserver(serviceName);
+        XdsDataCache.removeRequestObserver(XdsConstant.CDS_ALL_RESOURCE);
+        XdsDataCache.updateServiceClusterMap(new HashMap<>());
     }
 
     @Test
     public void testHandleResponse() {
+        handler.subscribe(XdsConstant.CDS_ALL_RESOURCE, null);
+
         // cluster is empty
         handler.handleResponse(XdsConstant.CDS_ALL_RESOURCE,
                 buildDiscoveryResponse(new ArrayList<>()));
-        Assert.assertEquals(0, XdsDataCache.getServiceNameMapping().size());
+        Assert.assertEquals(0, XdsDataCache.getServiceClusterMap().size());
 
         // service with one cluster
         handler.handleResponse(XdsConstant.CDS_ALL_RESOURCE,

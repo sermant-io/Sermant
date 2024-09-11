@@ -35,6 +35,24 @@ public class XdsServiceClusterLoadAssigment {
 
     private String baseClusterName;
 
+    /**
+     * constructor
+     */
+    public XdsServiceClusterLoadAssigment() {
+    }
+
+    /**
+     * parameterized constructor
+     *
+     * @param clusterLoadAssigments cluster load assigments
+     * @param baseClusterName base cluster name
+     */
+    public XdsServiceClusterLoadAssigment(
+            Map<String, XdsClusterLoadAssigment> clusterLoadAssigments, String baseClusterName) {
+        this.clusterLoadAssigments = clusterLoadAssigments;
+        this.baseClusterName = baseClusterName;
+    }
+
     public Map<String, XdsClusterLoadAssigment> getClusterLoadAssigments() {
         return clusterLoadAssigments;
     }
