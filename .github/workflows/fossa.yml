@@ -1,0 +1,33 @@
+name: FOSSA analysis
+on:
+  push:
+    branches:
+      - '*'
+    paths-ignore:
+      - '**.md'
+      - '**/NOTICE'
+      - '**/LICENSE'
+  pull_request:
+    branches:
+      - 'develop'
+    paths-ignore:
+      - '**.md'
+      - '**/NOTICE'
+      - '**/LICENSE'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: run FOSSA analysis
+        uses: fossas/fossa-action@main
+        with:
+          # FOSSA Push-Only API Token
+          api-key: '91dd4c4fcf9069d8463c1f00c6664724'
+      - name: run FOSSA test
+        uses: fossas/fossa-action@main
+        with:
+          # FOSSA Push-Only API Token
+          api-key: '91dd4c4fcf9069d8463c1f00c6664724'
+          run-tests: true
