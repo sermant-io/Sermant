@@ -45,6 +45,7 @@ public class CommandProcessor {
         COMMAND_EXECUTOR_MAP.put(Command.INSTALL_PLUGINS.getValue(), new PluginsInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UNINSTALL_AGENT.getValue(), new AgentUnInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UNINSTALL_PLUGINS.getValue(), new PluginsUnInstallCommandExecutor());
+        COMMAND_EXECUTOR_MAP.put(Command.UPDATE_PLUGINS.getValue(), new PluginsUpdateCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.CHECK_ENHANCEMENT.getValue(), new CheckEnhancementsCommandExecutor());
     }
 

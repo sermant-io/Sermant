@@ -22,9 +22,11 @@ import io.sermant.core.utils.JarFileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.UUID;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -78,6 +80,12 @@ public class BootArgsIndexer {
 
     private static String instanceId;
 
+    private static String artifact;
+
+    private static String processId;
+
+    private static boolean dynamicInstall;
+
     private BootArgsIndexer() {
     }
 
@@ -121,12 +129,25 @@ public class BootArgsIndexer {
         return instanceId;
     }
 
+    public static String getArtifact() {
+        return artifact;
+    }
+
+    public static String getProcessId() {
+        return processId;
+    }
+
+    public static boolean isDynamicInstall() {
+        return dynamicInstall;
+    }
+
     /**
-     * 构建路径索引器
+     * Build Path Indexer
      *
-     * @param argsMap 启动参数
+     * @param argsMap Startup Parameters
+     * @param isDynamic is Dynamic installation
      */
-    public static void build(Map<String, Object> argsMap) {
+    public static void build(Map<String, Object> argsMap, boolean isDynamic) {
         implementDir = new File(FileUtils.validatePath(argsMap.get(CommonConstant.CORE_IMPLEMENT_DIR_KEY).toString()));
         if (!implementDir.isDirectory()) {
             LOGGER.warning("Implement directory not found! ");
@@ -158,6 +179,17 @@ public class BootArgsIndexer {
         serviceName = argsMap.get(CommonConstant.SERVICE_NAME_KEY).toString();
 
         instanceId = UUID.randomUUID().toString();
+
+        artifact = argsMap.get(CommonConstant.ARTIFACT_NAME_KEY).toString();
+
+        setProcessId();
+
+        BootArgsIndexer.dynamicInstall = isDynamic;
+    }
+
+    private static void setProcessId() {
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        processId = name.split("@")[0];
     }
 
     static {
@@ -165,7 +197,7 @@ public class BootArgsIndexer {
         try (JarFile jarFile = new JarFile(currentFile)) {
             CORE_VERSION = JarFileUtils.getManifestAttr(jarFile, CommonConstant.CORE_VERSION_KEY).toString();
         } catch (IOException e) {
-            LOGGER.severe("Failed to read the core version from the manifest file: " + currentFile);
+            LOGGER.log(Level.SEVERE, "Failed to read the core version from the manifest file: " + currentFile, e);
             throw new SchemaException(SchemaException.MISSING_VERSION, currentFile);
         }
     }

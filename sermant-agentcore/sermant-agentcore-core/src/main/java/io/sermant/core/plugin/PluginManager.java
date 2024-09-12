@@ -52,6 +52,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Plugin manager, where plugin-related resources or operations are managed
@@ -88,17 +89,18 @@ public class PluginManager {
      */
     public static void uninstall(Set<String> pluginNames) {
         if (CollectionUtils.isEmpty(pluginNames)) {
-            LOGGER.log(Level.WARNING, "No plugin is configured to be uninstall.");
+            LOGGER.log(Level.WARNING, "[UNINSTALL-PLUGINS] No plugin is configured to be uninstall.");
             return;
         }
         for (String name : pluginNames) {
             Plugin plugin = PLUGIN_MAP.get(name);
             if (plugin == null) {
-                LOGGER.log(Level.INFO, "Plugin {0} has not been installed.", name);
+                LOGGER.log(Level.INFO, "[UNINSTALL-PLUGINS] [{0}] Plugin {0} has not been installed.", name);
                 continue;
             }
             if (!plugin.isDynamic()) {
-                LOGGER.log(Level.INFO, "Plugin {0} is static-support-plugin,can not be uninstalled.", name);
+                LOGGER.log(Level.INFO, "[UNINSTALL-PLUGINS] [{0}] Plugin {0} is static-support-plugin,can not be "
+                        + "uninstalled.", name);
                 continue;
             }
 
@@ -156,20 +158,22 @@ public class PluginManager {
      */
     public static void initPlugins(Set<String> pluginNames, boolean isDynamic) {
         if (CollectionUtils.isEmpty(pluginNames)) {
-            LOGGER.log(Level.WARNING, "Non plugin is configured to be initialized.");
+            LOGGER.log(Level.WARNING, "[INSTALL-PLUGINS] Non plugin is configured to be initialized.");
             return;
         }
         final String pluginPackage;
         try {
             pluginPackage = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
         } catch (IOException ioException) {
-            LOGGER.log(Level.SEVERE, "Resolve plugin package failed.", ioException);
+            String names = pluginNames.stream().map(String::valueOf).collect(Collectors.joining(", "));
+            LOGGER.log(Level.SEVERE, "[INSTALL-PLUGINS] [{0}] Resolve plugin package failed.", names);
+            LOGGER.log(Level.SEVERE, "An exception occurred while parsing the plugin package.", ioException);
             return;
         }
         for (String pluginName : pluginNames) {
             if (PLUGIN_MAP.containsKey(pluginName)) {
-                LOGGER.log(Level.WARNING, "Plugin: {0} has bean installed. It cannot be installed repeatedly.",
-                        pluginName);
+                LOGGER.log(Level.WARNING, "[INSTALL-PLUGINS] [{0}] Plugin: {0} has bean installed. "
+                        + "It cannot be installed repeatedly.", pluginName);
                 continue;
             }
             executeInit(isDynamic, pluginPackage, pluginName);
@@ -181,14 +185,15 @@ public class PluginManager {
             // Remove the copy tag of the plugin name to obtain the actual resource directory
             final String pluginPath = pluginPackage + File.separatorChar + getRealPluginName(pluginName);
             if (!new File(pluginPath).exists()) {
-                LOGGER.log(Level.WARNING, "Plugin directory {0} does not exist, so skip initializing {1}. ",
-                        new String[]{pluginPath, pluginName});
+                LOGGER.log(Level.WARNING, "[INSTALL-PLUGINS] [{0}] Plugin directory {1} does not exist, so skip "
+                        + "initializing {0}. ", new String[]{pluginName, pluginPath});
                 return;
             }
             doInitPlugin(
                     new Plugin(pluginName, pluginPath, isDynamic, ClassLoaderManager.createPluginClassLoader()));
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Load plugin failed, plugin name: " + pluginName, ex);
+            LOGGER.log(Level.SEVERE, "[INSTALL-PLUGINS] [{0}] Load plugin failed, plugin name: {0}.", pluginName);
+            LOGGER.log(Level.SEVERE, "An exception occurred while loading plugin.", ex);
         }
     }
 
@@ -382,7 +387,8 @@ public class PluginManager {
                 serviceClassLoader.close();
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Failed to close ServiceClassLoader for plugin:{0}", plugin.getName());
+            LOGGER.log(Level.SEVERE, "[UNINSTALL-PLUGIN] [{0}] Failed to close ServiceClassLoader for plugin:{0}",
+                    plugin.getName());
         }
         try {
             PluginClassLoader pluginClassLoader = plugin.getPluginClassLoader();
@@ -390,7 +396,8 @@ public class PluginManager {
                 pluginClassLoader.close();
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Failed to close PluginClassLoader for plugin:{0}", plugin.getName());
+            LOGGER.log(Level.SEVERE, "[UNINSTALL-PLUGIN] [{0}] Failed to close PluginClassLoader for plugin:{0}",
+                    plugin.getName());
         }
     }
 

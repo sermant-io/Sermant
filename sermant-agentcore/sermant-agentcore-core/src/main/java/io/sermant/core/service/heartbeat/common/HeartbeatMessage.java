@@ -34,6 +34,14 @@ public class HeartbeatMessage {
 
     private List<String> ip;
 
+    private final String appName;
+
+    private final String artifact;
+
+    private final String processId;
+
+    private final boolean dynamicInstall;
+
     private final String service;
 
     private final String appType;
@@ -60,6 +68,10 @@ public class HeartbeatMessage {
         this.lastHeartbeatTime = System.currentTimeMillis();
         this.version = BootArgsIndexer.getCoreVersion();
         this.instanceId = BootArgsIndexer.getInstanceId();
+        this.appName = BootArgsIndexer.getAppName();
+        this.artifact = BootArgsIndexer.getArtifact();
+        this.processId = BootArgsIndexer.getProcessId();
+        this.dynamicInstall = BootArgsIndexer.isDynamicInstall();
     }
 
     /**
@@ -106,5 +118,21 @@ public class HeartbeatMessage {
 
     public String getInstanceId() {
         return instanceId;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getArtifact() {
+        return artifact;
+    }
+
+    public String getProcessId() {
+        return processId;
+    }
+
+    public boolean isDynamicInstall() {
+        return dynamicInstall;
     }
 }

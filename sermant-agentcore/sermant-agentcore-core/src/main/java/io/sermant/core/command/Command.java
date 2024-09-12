@@ -37,6 +37,10 @@ public enum Command {
     UNINSTALL_PLUGINS("UNINSTALL-PLUGINS"),
 
     /**
+     * Update plugin instruction
+     */
+    UPDATE_PLUGINS("UPDATE-PLUGINS"),
+    /**
      * Enhancement query instruction
      */
     CHECK_ENHANCEMENT("CHECK-ENHANCEMENT");

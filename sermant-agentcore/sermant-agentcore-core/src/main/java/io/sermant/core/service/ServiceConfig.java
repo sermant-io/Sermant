@@ -49,6 +49,9 @@ public class ServiceConfig implements BaseConfig {
     @ConfigFieldKey("xds.service.enable")
     private boolean xdsServiceEnable = false;
 
+    @ConfigFieldKey("hot.plugging.service.enable")
+    private boolean hotPluggingServiceEnable = false;
+
     public boolean isHeartBeatEnable() {
         return heartBeatEnable;
     }
@@ -105,6 +108,14 @@ public class ServiceConfig implements BaseConfig {
         this.xdsServiceEnable = xdsServiceEnable;
     }
 
+    public boolean isHotPluggingServiceEnable() {
+        return hotPluggingServiceEnable;
+    }
+
+    public void setHotPluggingServiceEnable(boolean hotPluggingServiceEnable) {
+        this.hotPluggingServiceEnable = hotPluggingServiceEnable;
+    }
+
     /**
      * Check whether the service of the given class name is enabled.
      *
@@ -132,6 +143,9 @@ public class ServiceConfig implements BaseConfig {
         }
         if (ServiceManager.XDS_CORE_SERVICE_IMPL.equals(serviceName)) {
             return isXdsServiceEnable();
+        }
+        if (ServiceManager.HOT_PLUGGING_SERVICE_IMPL.equals(serviceName)) {
+            return isHotPluggingServiceEnable();
         }
         return false;
     }

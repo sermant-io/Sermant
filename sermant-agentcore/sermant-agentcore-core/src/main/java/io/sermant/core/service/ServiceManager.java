@@ -92,6 +92,12 @@ public class ServiceManager {
             "io.sermant.implement.service.xds.XdsCoreServiceImpl";
 
     /**
+     * Hot plugging service
+     */
+    public static final String HOT_PLUGGING_SERVICE_IMPL =
+            "io.sermant.implement.service.hotplugging.HotPluggingServiceImpl";
+
+    /**
      * logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();

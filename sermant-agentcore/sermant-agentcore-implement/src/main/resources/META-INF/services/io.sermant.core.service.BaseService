@@ -5,3 +5,4 @@ io.sermant.implement.service.tracing.TracingServiceImpl
 io.sermant.implement.service.inject.InjectServiceImpl
 io.sermant.implement.service.xds.XdsCoreServiceImpl
 io.sermant.implement.service.httpserver.HttpServerServiceImpl
+io.sermant.implement.service.hotplugging.HotPluggingServiceImpl

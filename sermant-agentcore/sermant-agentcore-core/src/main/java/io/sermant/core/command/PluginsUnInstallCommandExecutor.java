@@ -17,6 +17,8 @@
 package io.sermant.core.command;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.event.collector.FrameworkEventCollector;
+import io.sermant.core.event.collector.FrameworkEventDefinitions;
 import io.sermant.core.plugin.PluginManager;
 import io.sermant.core.utils.StringUtils;
 
@@ -42,5 +44,9 @@ public class PluginsUnInstallCommandExecutor implements CommandExecutor {
         }
         String[] pluginNames = args.split("/");
         PluginManager.uninstall(Arrays.stream(pluginNames).collect(Collectors.toSet()));
+        FrameworkEventCollector.getInstance().collectdHotPluggingEvent(
+                FrameworkEventDefinitions.SERMANT_PLUGIN_UNINSTALL,
+                "Hot plugging command[UNINSTALL-PLUGINS] has been processed. Uninstalled plugins are "
+                        + Arrays.toString(pluginNames) + ".");
     }
 }
