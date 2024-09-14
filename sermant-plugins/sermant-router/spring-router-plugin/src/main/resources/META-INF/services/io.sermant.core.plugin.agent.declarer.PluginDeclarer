@@ -12,6 +12,7 @@ io.sermant.router.spring.declarer.ServiceInstanceListSupplierDeclarer
 io.sermant.router.spring.declarer.ServiceRegistryDeclarer
 io.sermant.router.spring.declarer.OkHttp3ClientDeclarer
 io.sermant.router.spring.declarer.OkHttpClientDeclarer
+io.sermant.router.spring.declarer.OkHttpClientInterceptorChainDeclarer
 io.sermant.router.spring.declarer.HttpClient4xDeclarer
 io.sermant.router.spring.declarer.HttpUrlConnectionConnectDeclarer
 io.sermant.router.spring.declarer.RestTemplateDeclarer

@@ -1,6 +1,10 @@
 router.plugin:
   # whether compatible with the sermant-springboot-registry plugin
   enabled-registry-plugin-adaptation: false
+  # whether to use xds route
+  enabled-xds-route: false
+  # whether to use secure protocol to invoke spring cloud downstream service with xds route, example: http or https
+  enabled-springcloud-xds-route-secure: false
   # Whether to use request information for routing
   use-request-router: false
   # Use request information as tags when routing

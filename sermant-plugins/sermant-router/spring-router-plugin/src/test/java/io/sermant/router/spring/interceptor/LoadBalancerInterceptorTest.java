@@ -17,7 +17,9 @@
 package io.sermant.router.spring.interceptor;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.ThreadLocalUtils;
 import io.sermant.router.spring.BaseTransmitConfigTest;
@@ -66,6 +68,8 @@ public class LoadBalancerInterceptorTest extends BaseTransmitConfigTest {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LoadBalancerService.class))
                 .thenReturn(new TestLoadBalancerService());
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+                .thenReturn(new RouterConfig());
     }
 
     /**

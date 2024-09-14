@@ -67,6 +67,18 @@ public class RouterConfig implements PluginConfig {
     private boolean enabledRegistryPluginAdaptation;
 
     /**
+     * whether to use xds route
+     */
+    @ConfigFieldKey("enabled-xds-route")
+    private boolean enabledXdsRoute;
+
+    /**
+     * whether to use secure protocol to invoke downstream service with xds route, example: http or https
+     */
+    @ConfigFieldKey("enabled-springcloud-xds-route-secure")
+    private boolean enabledSpringCloudXdsRouteSecure;
+
+    /**
      * whether to use the request information for routing
      */
     @ConfigFieldKey("use-request-router")
@@ -196,5 +208,21 @@ public class RouterConfig implements PluginConfig {
 
     public void setEnabledPreviousRule(boolean enabledPreviousRule) {
         this.enabledPreviousRule = enabledPreviousRule;
+    }
+
+    public boolean isEnabledXdsRoute() {
+        return enabledXdsRoute;
+    }
+
+    public void setEnabledXdsRoute(boolean enabledXdsRoute) {
+        this.enabledXdsRoute = enabledXdsRoute;
+    }
+
+    public boolean isEnabledSpringCloudXdsRouteSecure() {
+        return enabledSpringCloudXdsRouteSecure;
+    }
+
+    public void setEnabledSpringCloudXdsRouteSecure(boolean enabledSpringCloudXdsRouteSecure) {
+        this.enabledSpringCloudXdsRouteSecure = enabledSpringCloudXdsRouteSecure;
     }
 }

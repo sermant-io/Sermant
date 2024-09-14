@@ -32,7 +32,8 @@ public class OkHttp3ClientDeclarer extends BaseRegistryPluginAdaptationDeclarer 
      * The fully qualified name of the enhanced okhttp request
      */
     private static final String[] ENHANCE_CLASSES = {
-            "okhttp3.RealCall"
+            "okhttp3.RealCall",
+            "okhttp3.internal.connection.RealCall"
     };
 
     /**
