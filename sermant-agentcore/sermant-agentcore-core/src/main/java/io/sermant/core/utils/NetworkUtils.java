@@ -80,6 +80,22 @@ public class NetworkUtils {
         return allNetworkIps;
     }
 
+    /**
+     * getKubernetesPodIp
+     *
+     * @return pod ip
+     */
+    public static String getKubernetesPodIp() {
+        String podIp = "";
+        try {
+            InetAddress ipAddress = InetAddress.getLocalHost();
+            podIp = ipAddress.getHostAddress();
+        } catch (UnknownHostException e) {
+            LOGGER.severe("Failed to get IP address of the pod: " + e.getMessage());
+        }
+        return podIp;
+    }
+
     private static void parseNetworkIp(List<String> result, Enumeration<InetAddress> nii) {
         InetAddress ip;
         while (nii.hasMoreElements()) {
