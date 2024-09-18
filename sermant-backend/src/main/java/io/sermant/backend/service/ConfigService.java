@@ -339,12 +339,6 @@ public class ConfigService {
         if (ConfigCenterType.ZOOKEEPER.name().equals(dynamicConfig.getDynamicConfigType())
                 && !configClient.isConnect()) {
             configClient = new ZooKeeperClient(dynamicConfig.getServerAddress(), dynamicConfig.getTimeout(), watcher);
-            return;
-        }
-        if (ConfigCenterType.NACOS.name().equals(dynamicConfig.getDynamicConfigType()) && !configClient.isConnect()) {
-            for (Map.Entry<String, ConfigClient> entry : CONFIG_CLIENT_MAP.entrySet()) {
-                createNacosClient(entry.getKey());
-            }
         }
     }
 }
