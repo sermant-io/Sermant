@@ -118,7 +118,7 @@ public class RocketMqGrayscaleConfigUtils {
             return;
         }
         for (Map.Entry<String, String> entry : grayTags.entrySet()) {
-            if (!message.getProperties().containsKey(entry.getKey())) {
+            if (message.getProperties() == null || !message.getProperties().containsKey(entry.getKey())) {
                 message.putUserProperty(entry.getKey(), entry.getValue());
             }
         }
