@@ -41,19 +41,19 @@ import static org.mockito.Mockito.*;
  * @since 2024-09-02
  */
 public class FrameworkEventCollectorTest {
-    private static final MockedStatic<ConfigManager> CONFIG_MANAGER_MOCKED_STATIC = Mockito.mockStatic(ConfigManager.class);
+    private final MockedStatic<ConfigManager> configManagerMockedStatic = Mockito.mockStatic(ConfigManager.class);
 
-    private static final MockedConstruction<JarFile> MOCKED_CONSTRUCTION = mockConstruction(JarFile.class,
+    private final MockedConstruction<JarFile> mockedConstruction = mockConstruction(JarFile.class,
             (mock, context) -> when(mock.getManifest()).thenReturn(new Manifest()));
 
-    private static final MockedStatic<JarFileUtils> JAR_FILE_UTILS_MOCKED_STATIC = Mockito.mockStatic(JarFileUtils.class);
+    private final MockedStatic<JarFileUtils> jarFileUtilsMockedStatic = Mockito.mockStatic(JarFileUtils.class);
 
     private static final EventConfig EVENT_CONFIG = new EventConfig();
     
-    @BeforeClass
-    public static void setUp() throws Exception {
-        CONFIG_MANAGER_MOCKED_STATIC.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(EVENT_CONFIG);
-        JAR_FILE_UTILS_MOCKED_STATIC.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
+    @Before
+    public void setUp() throws Exception {
+        configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(EVENT_CONFIG);
+        jarFileUtilsMockedStatic.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
     }
 
     @Test
@@ -79,10 +79,10 @@ public class FrameworkEventCollectorTest {
         eventQueue.clear();
     }
 
-    @AfterClass
-    public static void closeMock() {
-        CONFIG_MANAGER_MOCKED_STATIC.close();
-        MOCKED_CONSTRUCTION.close();
-        JAR_FILE_UTILS_MOCKED_STATIC.close();
+    @After
+    public void closeMock() {
+        configManagerMockedStatic.close();
+        mockedConstruction.close();
+        jarFileUtilsMockedStatic.close();
     }
 }
