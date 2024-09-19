@@ -28,8 +28,8 @@ import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.operation.converter.YamlConverterImpl;
 import io.sermant.implement.service.hotplugging.entity.HotPluggingConfig;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.when;
 
 
 /**
- * Unit Tests for  HotPluggingListener
+ * Unit Tests for HotPluggingListener
  *
  * @author zhp
  * @since 2024-09-02
@@ -65,25 +65,25 @@ public class HotPluggingListenerTest {
 
     private static final String GROUP = "sermant-hot-plugging";
 
-    private static final MockedStatic<OperationManager> OPERATION_MANAGER_MOCKED_STATIC = Mockito.mockStatic(OperationManager.class);
-
     private static final YamlConverter YAML_CONVERTER = new YamlConverterImpl();
 
-    private static final MockedStatic<CommandProcessor> COMMAND_PROCESSOR_MOCKED_STATIC = Mockito.mockStatic(CommandProcessor.class);
+    private final MockedStatic<OperationManager> operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
 
-    private static final MockedStatic<JarFileUtils> JAR_FILE_UTILS_MOCKED_STATIC = Mockito.mockStatic(JarFileUtils.class);
+    private final MockedStatic<CommandProcessor> commandProcessorMockedStatic = Mockito.mockStatic(CommandProcessor.class);
 
-    private static final MockedConstruction<JarFile> MOCKED_CONSTRUCTION = mockConstruction(JarFile.class,
+    private final MockedStatic<JarFileUtils> jarFileUtilsMockedStatic = Mockito.mockStatic(JarFileUtils.class);
+
+    private final MockedConstruction<JarFile> mockedConstruction = mockConstruction(JarFile.class,
             (mock, context) -> when(mock.getManifest()).thenReturn(new Manifest()));
 
     private final Yaml yaml = new Yaml();
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        OPERATION_MANAGER_MOCKED_STATIC.when(() -> OperationManager.getOperation(YamlConverter.class))
+    @Before
+    public void setUp() throws Exception {
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
                 .thenReturn(YAML_CONVERTER);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(0));
-        JAR_FILE_UTILS_MOCKED_STATIC.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
+        jarFileUtilsMockedStatic.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
         Map<String, Object> argsMap = new HashMap<>();
         argsMap.put(CommonConstant.CORE_IMPLEMENT_DIR_KEY, StringUtils.EMPTY);
         argsMap.put(CommonConstant.CORE_CONFIG_FILE_KEY, StringUtils.EMPTY);
@@ -102,7 +102,7 @@ public class HotPluggingListenerTest {
         HotPluggingListener hotPluggingListener = new HotPluggingListener();
         DynamicConfigEvent event = new DynamicConfigEvent(KEY, GROUP, CONTENT, DynamicConfigEventType.INIT);
         hotPluggingListener.process(event);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(0));
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class HotPluggingListenerTest {
         HotPluggingListener hotPluggingListener = new HotPluggingListener();
         DynamicConfigEvent event = new DynamicConfigEvent(KEY, GROUP, CONTENT, DynamicConfigEventType.DELETE);
         hotPluggingListener.process(event);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(0));
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class HotPluggingListenerTest {
         HotPluggingListener hotPluggingListener = new HotPluggingListener();
         DynamicConfigEvent event = new DynamicConfigEvent(KEY, GROUP, "", DynamicConfigEventType.CREATE);
         hotPluggingListener.process(event);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(0));
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class HotPluggingListenerTest {
         DynamicConfigEvent event = new DynamicConfigEvent(KEY, GROUP, yaml.dumpAsMap(hotPluggingConfig),
                 DynamicConfigEventType.CREATE);
         hotPluggingListener.process(event);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(0));
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
     }
 
     @Test
@@ -144,15 +144,15 @@ public class HotPluggingListenerTest {
         DynamicConfigEvent event = new DynamicConfigEvent(KEY, GROUP, yaml.dumpAsMap(hotPluggingConfig),
                 DynamicConfigEventType.CREATE);
         hotPluggingListener.process(event);
-        COMMAND_PROCESSOR_MOCKED_STATIC.verify(() -> CommandProcessor.process(any()), times(1));
-        COMMAND_PROCESSOR_MOCKED_STATIC.clearInvocations();
+        commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(1));
+        commandProcessorMockedStatic.clearInvocations();
     }
 
-    @AfterClass
-    public static void closeMock() {
-        COMMAND_PROCESSOR_MOCKED_STATIC.close();
-        OPERATION_MANAGER_MOCKED_STATIC.close();
-        MOCKED_CONSTRUCTION.close();
-        JAR_FILE_UTILS_MOCKED_STATIC.close();
+    @After
+    public void closeMock() {
+        commandProcessorMockedStatic.close();
+        operationManagerMockedStatic.close();
+        mockedConstruction.close();
+        jarFileUtilsMockedStatic.close();
     }
 }
