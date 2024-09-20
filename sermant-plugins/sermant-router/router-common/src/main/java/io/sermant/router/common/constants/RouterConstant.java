@@ -183,10 +183,15 @@ public class RouterConstant {
             LANE_KEY_PREFIX);
 
     /**
-     * 全局级兼容的key
+     * a globally compatible key
      */
     public static final List<String> GLOBAL_COMPATIBILITY_KEY_LIST = Arrays.asList(GLOBAL_ROUTER_KEY, GLOBAL_TAG_KEY,
             GLOBAL_LANE_KEY);
+
+    /**
+     * point
+     */
+    public static final String ESCAPED_POINT = "\\.";
 
     private RouterConstant() {
     }

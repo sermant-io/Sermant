@@ -23,6 +23,7 @@ import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.FlowContextUtils;
@@ -136,7 +137,8 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split("\\.")[0], uri.getPath(), getHeaders(httpRequest));
+                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
+                        getHeaders(httpRequest));
         if (!serviceInstanceOptional.isPresent()) {
             return;
         }
