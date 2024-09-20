@@ -21,13 +21,19 @@ import com.netflix.zuul.context.RequestContext;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
+import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.request.RequestTag;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.ReflectUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
+import io.sermant.router.common.xds.XdsRouterHandler;
 import io.sermant.router.spring.service.LoadBalancerService;
+import io.sermant.router.spring.utils.BaseHttpRouterUtils;
+import io.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,28 +57,37 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
 
     private final boolean canLoadZuul;
 
+    private final RouterConfig routerConfig;
+
     /**
      * Constructor
      */
     public BaseLoadBalancerInterceptor() {
         loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);
         canLoadZuul = canLoadZuul();
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
         Object object = context.getObject();
-        if (object instanceof BaseLoadBalancer) {
-            List<Object> serverList = getServerList(context.getMethod().getName(), object);
-            if (CollectionUtils.isEmpty(serverList)) {
-                return context;
-            }
-            BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
-            String name = loadBalancer.getName();
-            RequestData requestData = getRequestData().orElse(null);
-            List<Object> targetInstances = loadBalancerService.getTargetInstances(name, serverList, requestData);
-            context.skip(Collections.unmodifiableList(targetInstances));
+        if (!(object instanceof BaseLoadBalancer)) {
+            return context;
         }
+        BaseLoadBalancer loadBalancer = (BaseLoadBalancer) object;
+        String name = loadBalancer.getName();
+        RequestData requestData = getRequestData().orElse(null);
+
+        if (handleXdsRouterAndUpdateServiceInstance(name, requestData, context)) {
+            return context;
+        }
+        List<Object> serverList = getServerList(context.getMethod().getName(), object);
+        if (CollectionUtils.isEmpty(serverList)) {
+            return context;
+        }
+
+        List<Object> targetInstances = loadBalancerService.getTargetInstances(name, serverList, requestData);
+        context.skip(Collections.unmodifiableList(targetInstances));
         return context;
     }
 
@@ -104,6 +120,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             header.putAll(requestTag.getTag());
         }
         HttpServletRequest request = context.getRequest();
+        String scheme = request.getScheme();
         Enumeration<?> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String name = (String) headerNames.nextElement();
@@ -129,6 +146,24 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
         } catch (NoClassDefFoundError | ClassNotFoundException error) {
             return false;
         }
+        return true;
+    }
+
+    private boolean handleXdsRouterAndUpdateServiceInstance(String serviceName, RequestData requestData,
+            ExecuteContext context) {
+        if (requestData == null || (!routerConfig.isEnabledXdsRoute())) {
+            return false;
+        }
+
+        // use xds route to find service instances
+        Set<ServiceInstance> serviceInstanceByXdsRoute = XdsRouterHandler.INSTANCE
+                .getServiceInstanceByXdsRoute(serviceName, requestData.getPath(),
+                        BaseHttpRouterUtils.processHeaders(requestData.getTag()));
+        if (CollectionUtils.isEmpty(serviceInstanceByXdsRoute)) {
+            return false;
+        }
+        context.skip(Collections.unmodifiableList(SpringRouterUtils
+                .getSpringCloudServiceInstanceByXds(serviceInstanceByXdsRoute)));
         return true;
     }
 }

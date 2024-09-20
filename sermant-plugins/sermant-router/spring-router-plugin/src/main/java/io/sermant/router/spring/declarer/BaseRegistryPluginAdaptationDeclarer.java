@@ -38,6 +38,6 @@ public abstract class BaseRegistryPluginAdaptationDeclarer extends AbstractPlugi
 
     @Override
     public boolean isEnabled() {
-        return routerConfig.isEnabledRegistryPluginAdaptation();
+        return routerConfig.isEnabledXdsRoute() || routerConfig.isEnabledRegistryPluginAdaptation();
     }
 }

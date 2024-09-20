@@ -18,16 +18,23 @@ package io.sermant.router.spring.interceptor;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.ReflectUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
+import io.sermant.router.common.xds.XdsRouterHandler;
 import io.sermant.router.spring.service.LoadBalancerService;
+import io.sermant.router.spring.utils.BaseHttpRouterUtils;
+import io.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * spring cloud loadbalancer Interception points
@@ -38,11 +45,14 @@ import java.util.Optional;
 public class LoadBalancerInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
+    private final RouterConfig routerConfig;
+
     /**
      * Constructor
      */
     public LoadBalancerInterceptor() {
         loadBalancerService = ServiceManager.getService(LoadBalancerService.class);
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
@@ -57,8 +67,11 @@ public class LoadBalancerInterceptor extends AbstractInterceptor {
         if (CollectionUtils.isEmpty(instances)) {
             return context;
         }
-        RequestData requestData = ThreadLocalUtils.getRequestData();
-        List<Object> targetInstances = loadBalancerService.getTargetInstances(serviceId, instances, requestData);
+        if (handleXdsRouterAndUpdateServiceInstance(serviceId, arguments)) {
+            return context;
+        }
+        List<Object> targetInstances = loadBalancerService
+                .getTargetInstances(serviceId, instances, ThreadLocalUtils.getRequestData());
         arguments[0] = targetInstances;
         return context;
     }
@@ -70,5 +83,23 @@ public class LoadBalancerInterceptor extends AbstractInterceptor {
 
     private Optional<String> getServiceId(Object object) {
         return ReflectUtils.getFieldValue(object, "serviceId").map(obj -> (String) obj);
+    }
+
+    private boolean handleXdsRouterAndUpdateServiceInstance(String serviceName, Object[] arguments) {
+        RequestData requestData = ThreadLocalUtils.getRequestData();
+        if (requestData == null || (!routerConfig.isEnabledXdsRoute())) {
+            return false;
+        }
+
+        // use xds route to find service instances
+        Set<ServiceInstance> serviceInstanceByXdsRoute = XdsRouterHandler.INSTANCE
+                .getServiceInstanceByXdsRoute(serviceName, requestData.getPath(),
+                        BaseHttpRouterUtils.processHeaders(requestData.getTag()));
+        if (CollectionUtils.isEmpty(serviceInstanceByXdsRoute)) {
+            return false;
+        }
+        arguments[0] = SpringRouterUtils
+                .getSpringCloudServiceInstanceByXds(serviceInstanceByXdsRoute);
+        return true;
     }
 }

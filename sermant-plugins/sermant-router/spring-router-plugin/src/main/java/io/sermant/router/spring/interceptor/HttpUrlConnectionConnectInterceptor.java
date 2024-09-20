@@ -16,22 +16,29 @@
 
 package io.sermant.router.spring.interceptor;
 
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.FlowContextUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
-import sun.net.www.MessageHeader;
+import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An enhanced interceptor for java.net.HttpURLConnection in JDK version 1.8<br>
@@ -40,33 +47,37 @@ import java.util.Optional;
  * @since 2022-10-25
  */
 public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         LogUtils.printHttpRequestBeforePoint(context);
-        if (context.getObject() instanceof HttpURLConnection) {
-            HttpURLConnection connection = (HttpURLConnection) context.getObject();
-            Optional<Object> requests = ReflectUtils.getFieldValue(connection, "requests");
-            if (!requests.isPresent()) {
-                return context;
-            }
-            Map<String, List<String>> headers = ((MessageHeader) requests.get()).getHeaders(null);
-            String method = connection.getRequestMethod();
-            if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
-                    .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
-                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
-                return context;
-            }
-            String encodeTag = headers.get(FlowContextUtils.getTagName()).get(0);
-            if (StringUtils.isBlank(encodeTag)) {
-                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
-                return context;
-            }
-            Map<String, List<String>> tags = FlowContextUtils.decodeTags(encodeTag);
-            if (!tags.isEmpty()) {
-                ThreadLocalUtils.setRequestData(new RequestData(tags, getPath(connection), method));
-            } else {
-                ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
-            }
+        if (!(context.getObject() instanceof HttpURLConnection)) {
+            return context;
+        }
+        HttpURLConnection connection = (HttpURLConnection) context.getObject();
+        Map<String, List<String>> headers = connection.getRequestProperties();
+
+        handleXdsRouterAndUpdateHttpRequest(connection);
+
+        String method = connection.getRequestMethod();
+        if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
+                .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
+            ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
+            return context;
+        }
+        String encodeTag = headers.get(FlowContextUtils.getTagName()).get(0);
+        if (StringUtils.isBlank(encodeTag)) {
+            ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
+            return context;
+        }
+        Map<String, List<String>> tags = FlowContextUtils.decodeTags(encodeTag);
+        if (!tags.isEmpty()) {
+            ThreadLocalUtils.setRequestData(new RequestData(tags, getPath(connection), method));
+        } else {
+            ThreadLocalUtils.setRequestData(new RequestData(headers, getPath(connection), method));
         }
         return context;
     }
@@ -87,5 +98,32 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
         return super.onThrow(context);
+    }
+
+    private void handleXdsRouterAndUpdateHttpRequest(HttpURLConnection connection) {
+        if (!routerConfig.isEnabledXdsRoute()) {
+            return;
+        }
+        Map<String, List<String>> headers = connection.getRequestProperties();
+        URL url = connection.getURL();
+        String host = url.getHost();
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
+            return;
+        }
+
+        // use xds route to find a service instance, and modify url by it
+        Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
+                .chooseServiceInstanceByXds(host.split("\\.")[0], url.getPath(),
+                        BaseHttpRouterUtils.processHeaders(headers));
+        if (!serviceInstanceOptional.isPresent()) {
+            return;
+        }
+        ServiceInstance instance = serviceInstanceOptional.get();
+        try {
+            ReflectUtils.setFieldValue(connection, "url",
+                    new URL(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(url, instance)));
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.WARNING, "Create url using xds service instance failed.", e.getMessage());
+        }
     }
 }

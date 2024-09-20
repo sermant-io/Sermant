@@ -17,16 +17,22 @@
 package io.sermant.router.spring.interceptor;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.FlowContextUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
+import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.Request;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +46,8 @@ import java.util.Optional;
 public class OkHttp3ClientInterceptor extends MarkInterceptor {
     private static final String FIELD_NAME = "originalRequest";
 
+    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+
     /**
      * Pre-trigger point
      *
@@ -51,12 +59,18 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
         LogUtils.printHttpRequestBeforePoint(context);
         final Optional<Request> rawRequest = getRequest(context);
-        if (!rawRequest.isPresent() || StringUtils.isBlank(FlowContextUtils.getTagName())) {
+        if (!rawRequest.isPresent()) {
             return context;
         }
         Request request = rawRequest.get();
         URI uri = request.url().uri();
         Headers headers = request.headers();
+
+        handleXdsRouterAndUpdateHttpRequest(context.getObject(), request);
+
+        if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
+            return context;
+        }
         String str = headers.get(FlowContextUtils.getTagName());
         Map<String, List<String>> decodeTags = FlowContextUtils.decodeTags(str);
         if (decodeTags.size() > 0) {
@@ -92,5 +106,42 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
             return Optional.of((Request) originalRequest.get());
         }
         return Optional.empty();
+    }
+
+    private Map<String, String> getHeaders(Headers headers) {
+        Map<String, String> headerMap = new HashMap<>();
+        for (String name : headers.names()) {
+            headerMap.putIfAbsent(name, headers.get(name));
+        }
+        return headerMap;
+    }
+
+    private Request rebuildRequest(Request request, ServiceInstance serviceInstance) {
+        return request.newBuilder()
+                .url(HttpUrl
+                        .parse(BaseHttpRouterUtils
+                                .rebuildUrlByXdsServiceInstance(request.url().uri(), serviceInstance)))
+                .build();
+    }
+
+    private void handleXdsRouterAndUpdateHttpRequest(Object obj, Request request) {
+        if (!routerConfig.isEnabledXdsRoute()) {
+            return;
+        }
+        Headers headers = request.headers();
+        URI uri = request.url().uri();
+        String host = uri.getHost();
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
+            return;
+        }
+
+        // use xds route to find a service instance, and modify url by it
+        Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
+                .chooseServiceInstanceByXds(host.split("\\.")[0], uri.getPath(), getHeaders(headers));
+        if (!serviceInstanceOptional.isPresent()) {
+            return;
+        }
+        ServiceInstance instance = serviceInstanceOptional.get();
+        ReflectUtils.setFieldValue(obj, "originalRequest", rebuildRequest(request, instance));
     }
 }

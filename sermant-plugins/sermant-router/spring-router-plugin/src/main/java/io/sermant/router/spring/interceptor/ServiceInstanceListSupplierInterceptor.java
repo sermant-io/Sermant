@@ -18,12 +18,18 @@ package io.sermant.router.spring.interceptor;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
+import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
+import io.sermant.router.common.xds.XdsRouterHandler;
 import io.sermant.router.spring.service.LoadBalancerService;
+import io.sermant.router.spring.utils.BaseHttpRouterUtils;
+import io.sermant.router.spring.utils.SpringRouterUtils;
 import reactor.core.publisher.Flux;
 
 import org.springframework.cloud.loadbalancer.core.DiscoveryClientServiceInstanceListSupplier;
@@ -32,6 +38,7 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * CachingServiceInstance List Supplier/DiscoveryClientServiceInstance List Supplier enhanced class, filtering
@@ -43,11 +50,14 @@ import java.util.Optional;
 public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor {
     private final LoadBalancerService loadBalancerService;
 
+    private final RouterConfig routerConfig;
+
     /**
      * Constructor
      */
     public ServiceInstanceListSupplierInterceptor() {
         loadBalancerService = PluginServiceManager.getPluginService(LoadBalancerService.class);
+        routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
     }
 
     @Override
@@ -57,14 +67,17 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
         if (StringUtils.isBlank(serviceId)) {
             return context;
         }
+        if (handleXdsRouterAndUpdateServiceInstance(serviceId, context)) {
+            return context;
+        }
         Object obj = context.getMemberFieldValue("serviceInstances");
         if (obj instanceof Flux<?>) {
             List<Object> instances = getInstances((Flux<Object>) obj, object);
             if (CollectionUtils.isEmpty(instances)) {
                 return context;
             }
-            RequestData requestData = ThreadLocalUtils.getRequestData();
-            List<Object> targetInstances = loadBalancerService.getTargetInstances(serviceId, instances, requestData);
+            List<Object> targetInstances = loadBalancerService
+                    .getTargetInstances(serviceId, instances, ThreadLocalUtils.getRequestData());
             context.skip(Flux.just(targetInstances));
         }
         return context;
@@ -92,5 +105,23 @@ public class ServiceInstanceListSupplierInterceptor extends AbstractInterceptor 
             return Collections.emptyList();
         }
         return (List<Object>) flux.next().toProcessor().block();
+    }
+
+    private boolean handleXdsRouterAndUpdateServiceInstance(String serviceName, ExecuteContext context) {
+        RequestData requestData = ThreadLocalUtils.getRequestData();
+        if (requestData == null || (!routerConfig.isEnabledXdsRoute())) {
+            return false;
+        }
+
+        // use xds route to find service instances
+        Set<ServiceInstance> serviceInstanceByXdsRoute = XdsRouterHandler.INSTANCE
+                .getServiceInstanceByXdsRoute(serviceName, requestData.getPath(),
+                        BaseHttpRouterUtils.processHeaders(requestData.getTag()));
+        if (CollectionUtils.isEmpty(serviceInstanceByXdsRoute)) {
+            return false;
+        }
+        context.skip(Flux.just(SpringRouterUtils
+                .getSpringCloudServiceInstanceByXds(serviceInstanceByXdsRoute)));
+        return true;
     }
 }
