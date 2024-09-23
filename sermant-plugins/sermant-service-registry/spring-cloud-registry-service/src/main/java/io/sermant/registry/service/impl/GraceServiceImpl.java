@@ -22,6 +22,8 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.core.utils.ReflectUtils;
+import io.sermant.registry.config.ConfigConstants;
+import io.sermant.registry.config.GraceConfig;
 import io.sermant.registry.config.RegisterConfig;
 import io.sermant.registry.config.grace.GraceConstants;
 import io.sermant.registry.config.grace.GraceContext;
@@ -32,12 +34,16 @@ import io.sermant.registry.service.utils.HttpClientResult;
 import io.sermant.registry.service.utils.HttpClientUtils;
 import io.sermant.registry.services.GraceService;
 import io.sermant.registry.services.RegisterCenterService;
+import io.sermant.registry.utils.CommonUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,25 +71,72 @@ public class GraceServiceImpl implements GraceService {
 
     private static final int RETRY_TIME = 3;
 
+    private final GraceConfig graceConfig;
+
+    private CountDownLatch latch;
+
+    /**
+     * Constructor
+     */
+    public GraceServiceImpl() {
+        this.graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
+    }
+
     /**
      * Offline notifications
      */
     @Override
     public void shutdown() {
         if (SHUTDOWN.compareAndSet(false, true)) {
-            Object registration = GraceContext.INSTANCE.getGraceShutDownManager().getRegistration();
-            ReflectUtils.invokeMethodWithNoneParameter(registration, REGISTRATION_DEREGISTER_METHOD_NAME);
-            checkAndCloseSc();
             GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(true);
-            ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
-            Map<String, Collection<String>> header = new HashMap<>();
-            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME,
-                    Collections.singletonList(clientInfo.getServiceName()));
-            header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
-                    Arrays.asList(clientInfo.getIp() + ":" + clientInfo.getPort(),
-                            clientInfo.getHost() + ":" + clientInfo.getPort()));
-            AddressCache.INSTANCE.getAddressSet().forEach(address -> notifyToGraceHttpServer(address, header));
+            notifyToGraceHttpServer();
+            graceShutDown();
         }
+    }
+
+    private boolean isCompleteNotify() {
+        return latch != null && latch.getCount() == 0;
+    }
+
+    private void graceShutDown() {
+        if (!graceConfig.isEnableSpring() || !graceConfig.isEnableGraceShutdown()) {
+            return;
+        }
+
+        // wait notify consumer complete
+        CommonUtils.sleep(ConfigConstants.SEC_DELTA);
+        long shutdownWaitTime = graceConfig.getShutdownWaitTime() * ConfigConstants.SEC_DELTA;
+        final long shutdownCheckTimeUnit = graceConfig.getShutdownCheckTimeUnit() * ConfigConstants.SEC_DELTA;
+        while ((GraceContext.INSTANCE.getGraceShutDownManager().getRequestCount() > 0 && shutdownWaitTime > 0)
+                || !isCompleteNotify()) {
+            LOGGER.info(String.format(Locale.ENGLISH, "Wait all request complete , remained count [%s]",
+                    GraceContext.INSTANCE.getGraceShutDownManager().getRequestCount()));
+            CommonUtils.sleep(shutdownCheckTimeUnit);
+            shutdownWaitTime -= shutdownCheckTimeUnit;
+        }
+        final int requestCount = GraceContext.INSTANCE.getGraceShutDownManager().getRequestCount();
+        if (requestCount > 0) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Request num that does not completed is [%s] ", requestCount));
+        } else {
+            LOGGER.info("Graceful shutdown completed!");
+        }
+    }
+
+    private void notifyToGraceHttpServer() {
+        Object registration = GraceContext.INSTANCE.getGraceShutDownManager().getRegistration();
+        ReflectUtils.invokeMethodWithNoneParameter(registration, REGISTRATION_DEREGISTER_METHOD_NAME);
+        checkAndCloseSc();
+        GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(true);
+        ClientInfo clientInfo = RegisterContext.INSTANCE.getClientInfo();
+        Map<String, Collection<String>> header = new HashMap<>();
+        header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_NAME,
+                Collections.singletonList(clientInfo.getServiceName()));
+        header.put(GraceConstants.MARK_SHUTDOWN_SERVICE_ENDPOINT,
+                Arrays.asList(clientInfo.getIp() + ":" + clientInfo.getPort(),
+                        clientInfo.getHost() + ":" + clientInfo.getPort()));
+        Set<String> addressSet = AddressCache.INSTANCE.getAddressSet();
+        latch = new CountDownLatch(AddressCache.INSTANCE.size());
+        addressSet.forEach(address -> notifyToGraceHttpServer(address, header));
     }
 
     private void notifyToGraceHttpServer(String address, Map<String, Collection<String>> header) {
@@ -100,6 +153,7 @@ public class GraceServiceImpl implements GraceService {
             }
             LOGGER.log(Level.WARNING, "Failed to notify before shutdown, address: {0}", address);
         }
+        latch.countDown();
     }
 
     /**

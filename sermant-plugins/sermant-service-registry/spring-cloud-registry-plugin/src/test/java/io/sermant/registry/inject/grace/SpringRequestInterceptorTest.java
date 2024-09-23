@@ -16,13 +16,12 @@
 
 package io.sermant.registry.inject.grace;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.registry.config.GraceConfig;
 import io.sermant.registry.config.grace.GraceConstants;
 import io.sermant.registry.config.grace.GraceContext;
 import io.sermant.registry.services.GraceService;
-
-import io.sermant.core.plugin.config.PluginConfigManager;
-import io.sermant.core.plugin.service.PluginServiceManager;
 
 import org.junit.After;
 import org.junit.Assert;

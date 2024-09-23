@@ -157,11 +157,6 @@ public class GraceConstants {
     public static final long UPSTREAM_ADDRESS_DEFAULT_EXPIRED_TIME = 60L;
 
     /**
-     * The default wait time of notifying upstream addresses
-     */
-    public static final long WAIT_NOTIFY_TIME = 20L;
-
-    /**
      * Maximum port
      */
     public static final int MAX_HTTP_SERVER_PORT = 65535;
