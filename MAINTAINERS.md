@@ -12,3 +12,4 @@ Please keep the below list sorted in ascending order.
 | Haopeng Zhang | @hanbingleixue | Huawei      | hanbingleixue@hotmail.com |
 | Yuyi Peng     | @provenceee    | Huawei      | provenceee@foxmail.com    |
 | Zhenyu Dai    | @daizhenyu     | Huawei      | daizhenyu10@gmail.com     |
+| Wenming Zhang | @zwmagic       | iFLYTEK     | zwming.zhang@gmail.com    |
