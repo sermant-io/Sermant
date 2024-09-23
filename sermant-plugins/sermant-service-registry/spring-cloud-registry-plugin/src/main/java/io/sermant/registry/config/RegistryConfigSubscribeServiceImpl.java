@@ -25,7 +25,6 @@ import io.sermant.core.plugin.subscribe.CseGroupConfigSubscriber;
 import io.sermant.core.plugin.subscribe.DefaultGroupConfigSubscriber;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
-import io.sermant.registry.entity.GraceShutdownHook;
 
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -66,9 +65,6 @@ public class RegistryConfigSubscribeServiceImpl implements PluginService {
         // and this configuration has the highest priority
         final GraceConfig graceConfig = PluginConfigManager.getPluginConfig(GraceConfig.class);
         graceConfig.fixGraceSwitch();
-        if (graceConfig.isEnableSpring() && graceConfig.isEnableGraceShutdown()) {
-            Runtime.getRuntime().addShutdownHook(new GraceShutdownHook());
-        }
     }
 
     /**

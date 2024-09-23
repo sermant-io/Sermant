@@ -24,7 +24,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
  * @author zhouss
  * @since 2022-11-15
  */
-@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "GRACEFUL")
+@EnabledIfSystemProperty(named = "sermant.integration.test.type", matches = "GRACEFUL_REST")
 public class RestGracefulTest extends GracefulTest {
     @Override
     protected String getBaseUrl() {

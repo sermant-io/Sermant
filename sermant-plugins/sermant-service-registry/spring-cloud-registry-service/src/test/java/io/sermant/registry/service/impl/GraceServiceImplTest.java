@@ -19,8 +19,10 @@ package io.sermant.registry.service.impl;
 
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.ReflectUtils;
+import io.sermant.registry.config.ConfigConstants;
 import io.sermant.registry.config.GraceConfig;
 import io.sermant.registry.config.RegisterConfig;
+import io.sermant.registry.config.grace.GraceContext;
 import io.sermant.registry.service.cache.AddressCache;
 
 import org.junit.After;
@@ -45,11 +47,13 @@ public class GraceServiceImplTest {
      */
     public MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
 
+    private final GraceConfig graceConfig = new GraceConfig();
+
     @Before
     public void setUp() {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
-                .thenReturn(new GraceConfig());
+                .thenReturn(graceConfig);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
                 .thenReturn(new RegisterConfig());
     }
@@ -66,8 +70,13 @@ public class GraceServiceImplTest {
     @Test
     public void testShutDown() {
         final GraceServiceImpl spy = Mockito.spy(new GraceServiceImpl());
-        spy.shutdown();
+        graceConfig.setEnableSpring(true);
+        graceConfig.setEnableGraceShutdown(true);
+        graceConfig.setShutdownWaitTime(1);
+        final long start = System.currentTimeMillis();
+        GraceContext.INSTANCE.getGraceShutDownManager().increaseRequestCount();
         spy.addAddress("test");
+        spy.shutdown();
         Mockito.doCallRealMethod().when(spy).shutdown();
         Mockito.verify(spy, Mockito.times(1)).shutdown();
         Mockito.verify(spy, Mockito.times(1)).addAddress("test");
@@ -75,5 +84,10 @@ public class GraceServiceImplTest {
         final Optional<Object> shutdown = ReflectUtils.getFieldValue(spy, "SHUTDOWN");
         Assert.assertTrue(shutdown.isPresent() && shutdown.get() instanceof AtomicBoolean);
         Assert.assertTrue(((AtomicBoolean) shutdown.get()).get());
+        Assert.assertTrue(System.currentTimeMillis() - start
+                >= graceConfig.getShutdownWaitTime() * ConfigConstants.SEC_DELTA);
+        Assert.assertTrue(GraceContext.INSTANCE.getGraceShutDownManager().isShutDown());
+        GraceContext.INSTANCE.getGraceShutDownManager().setShutDown(false);
+        GraceContext.INSTANCE.getGraceShutDownManager().decreaseRequestCount();
     }
 }

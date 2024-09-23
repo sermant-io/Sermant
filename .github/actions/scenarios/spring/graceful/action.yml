@@ -37,7 +37,6 @@ runs:
         grace.rule.enableGraceShutdown: true
         grace.rule.enableOfflineNotify: true
         grace.rule.warmUpTime: 600
-        grace.rule.upstreamAddressExpiredTime: 600
         servicecomb.service.enableSpringRegister: true
         servicecomb.service.preferIpAddress: true
       # graceful-rest-provider service port 8443 do not change, it special for springCloud Edgware.SR2 test ssl feature.
@@ -67,15 +66,24 @@ runs:
         bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8014/testGraceful 60
     - name: test graceful up
       shell: bash
-      run: mvn test -Dsermant.integration.test.type=GRACEFUL -Dgraceful.test.type=up --file sermant-integration-tests/spring-test/pom.xml
-    - name: test graceful down
+      run: |
+        mvn test -Dsermant.integration.test.type=GRACEFUL_FEIGN -Dgraceful.test.type=up --file sermant-integration-tests/spring-test/pom.xml
+        mvn test -Dsermant.integration.test.type=GRACEFUL_REST -Dgraceful.test.type=up --file sermant-integration-tests/spring-test/pom.xml
+    - name: test rest graceful down
       shell: bash
       run: |
-        jps -l | grep graceful-feign-provider | awk '{print $1}' | xargs -n 1 kill
         jps -l | grep graceful-rest-provider | awk '{print $1}' | xargs -n 1 kill
-        echo "========start test graceful======="
+        echo "========start test rest graceful======="
         jps -l
-        mvn test -Dsermant.integration.test.type=GRACEFUL -Dgraceful.test.type=down --file sermant-integration-tests/spring-test/pom.xml
+        mvn test -Dsermant.integration.test.type=GRACEFUL_REST -Dgraceful.test.type=down --file sermant-integration-tests/spring-test/pom.xml
+    - name: test feign graceful down
+      shell: bash
+      run: |
+        mvn test -Dsermant.integration.test.type=GRACEFUL_FEIGN -Ddown.request.count=100 -Dgraceful.test.type=down --file sermant-integration-tests/spring-test/pom.xml
+        jps -l | grep graceful-feign-provider | awk '{print $1}' | xargs -n 1 kill
+        echo "========start test feign graceful======="
+        jps -l
+        mvn test -Dsermant.integration.test.type=GRACEFUL_FEIGN -Dgraceful.test.type=down --file sermant-integration-tests/spring-test/pom.xml
     - name: exit
       if: always()
       uses: ./.github/actions/common/exit
