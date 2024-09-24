@@ -126,7 +126,7 @@ public class RocketMqSubscriptionDataUtils {
         if (!StringUtils.isBlank(originSubDataBak)) {
             originSubDataBak = rebuildWithoutGrayTagSubData(originSubDataBak);
         }
-        String sql92Expression = buildSql92Expression(subscribeScope);
+        String sql92Expression = buildSql92Expression(subscribeScope, StringUtils.isBlank(originSubDataBak));
         if (StringUtils.isBlank(sql92Expression)) {
             return originSubDataBak;
         }
@@ -134,26 +134,26 @@ public class RocketMqSubscriptionDataUtils {
                 ? sql92Expression : originSubDataBak + AND_SPLICE_STR + sql92Expression;
     }
 
-    private static String buildSql92Expression(String subscribeScope) {
+    private static String buildSql92Expression(String subscribeScope, boolean isOriginSubEmpty) {
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isEmpty(RocketMqGrayscaleConfigUtils.getGrayGroupTag())) {
             // base model return without exclude group message
             if (RocketMqGrayscaleConfigUtils.getConsumeType() == ConsumeModeEnum.BASE) {
                 List<GrayTagItem> items = RocketMqGrayscaleConfigUtils.getGrayTagItemByExcludeGroupTags();
                 if (!items.isEmpty()) {
-                    sb.append(buildBaseConsumerSql92Expression(items));
+                    sb.append(buildBaseConsumerSql92Expression(items, isOriginSubEmpty));
                 }
                 return sb.toString();
             }
 
             // auto model return without exclude group and current consume message gray group message
-            sb.append(buildBaseConsumerSql92Expression(getAutoTypeGrayTagItems(subscribeScope)));
+            sb.append(buildBaseConsumerSql92Expression(getAutoTypeGrayTagItems(subscribeScope), isOriginSubEmpty));
         } else {
             MqGrayscaleConfig mqGrayscaleConfig = MqGrayConfigCache.getCacheConfig();
             Optional<GrayTagItem> grayTagItem
                     = mqGrayscaleConfig.getGrayTagByGroupTag(RocketMqGrayscaleConfigUtils.getGrayGroupTag());
             if (grayTagItem.isPresent()) {
-                sb.append(buildGrayConsumerSql92Expression(grayTagItem.get()));
+                sb.append(buildGrayConsumerSql92Expression(grayTagItem.get(), isOriginSubEmpty));
             } else {
                 LOGGER.warning(String.format(Locale.ENGLISH, "current gray group [%s] had not set grayscale, set it "
                         + "and restart service to valid.", RocketMqGrayscaleConfigUtils.getGrayGroupTag()));
@@ -171,13 +171,13 @@ public class RocketMqSubscriptionDataUtils {
         return excludeItems;
     }
 
-    private static String buildGrayConsumerSql92Expression(GrayTagItem item) {
+    private static String buildGrayConsumerSql92Expression(GrayTagItem item, boolean isOriginSubEmpty) {
         Map<String, List<String>> trafficTagMap = new HashMap<>();
         for (Map.Entry<String, String> entry : item.getTrafficTag().entrySet()) {
             buildTrafficTagMap(trafficTagMap, entry);
         }
         StringBuilder builder = new StringBuilder();
-        if (trafficTagMap.size() > 1) {
+        if (trafficTagMap.size() > 1 || (!trafficTagMap.isEmpty() && !isOriginSubEmpty)) {
             builder.append(LEFT_BRACKET);
         }
         for (Map.Entry<String, List<String>> envEntry : trafficTagMap.entrySet()) {
@@ -190,13 +190,13 @@ public class RocketMqSubscriptionDataUtils {
                     .append(getStrForSets(new HashSet<>(envEntry.getValue())))
                     .append(RIGHT_BRACKET);
         }
-        if (trafficTagMap.size() > 1) {
+        if (trafficTagMap.size() > 1 || (!trafficTagMap.isEmpty() && !isOriginSubEmpty)) {
             builder.append(RIGHT_BRACKET);
         }
         return builder.toString();
     }
 
-    private static String buildBaseConsumerSql92Expression(List<GrayTagItem> items) {
+    private static String buildBaseConsumerSql92Expression(List<GrayTagItem> items, boolean isOriginSubEmpty) {
         Map<String, List<String>> trafficTagMap = new HashMap<>();
         for (GrayTagItem item : items) {
             for (Map.Entry<String, String> entry : item.getTrafficTag().entrySet()) {
@@ -204,7 +204,7 @@ public class RocketMqSubscriptionDataUtils {
             }
         }
         StringBuilder builder = new StringBuilder();
-        if (trafficTagMap.size() > 1) {
+        if (trafficTagMap.size() > 1 || (!trafficTagMap.isEmpty() && !isOriginSubEmpty)) {
             builder.append(LEFT_BRACKET);
         }
         for (Map.Entry<String, List<String>> envEntry : trafficTagMap.entrySet()) {
@@ -228,7 +228,7 @@ public class RocketMqSubscriptionDataUtils {
                 builder.append(RIGHT_BRACKET);
             }
         }
-        if (trafficTagMap.size() > 1) {
+        if (trafficTagMap.size() > 1 || (!trafficTagMap.isEmpty() && !isOriginSubEmpty)) {
             builder.append(RIGHT_BRACKET);
         }
         return builder.toString();

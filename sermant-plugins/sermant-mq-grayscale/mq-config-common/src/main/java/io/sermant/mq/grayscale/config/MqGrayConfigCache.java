@@ -56,7 +56,7 @@ public class MqGrayConfigCache {
         }
         boolean isAllowRefresh = isAllowRefreshChangeFlag(cacheConfig, config);
         if (isAllowRefresh) {
-            cacheConfig.updateGrayscaleConfig(MqGrayConfigCache.getCacheConfig());
+            cacheConfig.updateGrayscaleConfig(config);
             RocketMqConfigUtils.updateChangeFlag();
             RocketMqConfigUtils.recordTrafficTagsSet(config);
         }

@@ -318,6 +318,16 @@
         </dependency>
         <dependency>
             <groupId>io.sermant</groupId>
+            <artifactId>mq-config-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sermant</groupId>
+            <artifactId>mq-grayscale-rocketmq-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sermant</groupId>
             <artifactId>sermant-backend</artifactId>
             <version>${project.version}</version>
         </dependency>
