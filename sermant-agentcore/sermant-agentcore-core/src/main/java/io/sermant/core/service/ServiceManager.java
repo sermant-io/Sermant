@@ -92,6 +92,12 @@ public class ServiceManager {
             "io.sermant.implement.service.xds.XdsCoreServiceImpl";
 
     /**
+     * Metric Service Discover
+     */
+    public static final String METRIC_SERVICE_IMPL =
+            "io.sermant.implement.service.metric.MeterMetricServiceImpl";
+
+    /**
      * Hot plugging service
      */
     public static final String HOT_PLUGGING_SERVICE_IMPL =

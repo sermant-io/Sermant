@@ -301,6 +301,36 @@ public class ReflectUtils {
     }
 
     /**
+     * Set static field value
+     *
+     * @param clazz target class
+     * @param fieldName field name
+     * @param value value
+     * @return set result
+     */
+    public static boolean setStaticFieldValue(Class<?> clazz, String fieldName, Object value) {
+        if (clazz == null || StringUtils.isBlank(fieldName)) {
+            return false;
+        }
+
+        Field field = getField(clazz, fieldName);
+        if (field == null) {
+            return false;
+        }
+        if (isFinalField(field)) {
+            updateFinalModifierField(field);
+        }
+        try {
+            field.set(null, value);
+            return true;
+        } catch (IllegalAccessException ex) {
+            LOGGER.warning(String.format(Locale.ENGLISH, "Set value for static field [%s] failed! %s", fieldName,
+                    ex.getMessage()));
+            return false;
+        }
+    }
+
+    /**
      * Set field value
      *
      * @param target target object

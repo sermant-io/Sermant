@@ -102,6 +102,7 @@ api (io.envoyproxy.controlplane:api) - https://github.com/envoyproxy/java-contro
 grpc-netty (io.grpc:grpc-netty) https://github.com/grpc/grpc-java
 grpc-stub (io.grpc:grpc-stub) https://github.com/grpc/grpc-java
 grpc-protobuf (io.grpc:grpc-protobuf) https://github.com/grpc/grpc-java
+micrometer-registry-prometheus (io.micrometer:micrometer-registry-prometheus) https://docs.micrometer.io/micrometer/reference/implementations/prometheus.html
 
 - The works of other projects included in this project.
 
