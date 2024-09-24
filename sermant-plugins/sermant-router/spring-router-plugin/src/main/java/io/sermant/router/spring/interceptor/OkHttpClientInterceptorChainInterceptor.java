@@ -26,6 +26,7 @@ import io.sermant.core.plugin.agent.interceptor.Interceptor;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import java.io.IOException;
@@ -112,7 +113,8 @@ public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split("\\.")[0], uri.getPath(), getHeaders(request));
+                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
+                        getHeaders(request));
         if (!serviceInstanceOptional.isPresent()) {
             return;
         }

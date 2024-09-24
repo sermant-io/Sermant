@@ -23,6 +23,7 @@ import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.FlowContextUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
@@ -137,7 +138,8 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split("\\.")[0], uri.getPath(), getHeaders(headers));
+                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
+                        getHeaders(headers));
         if (!serviceInstanceOptional.isPresent()) {
             return;
         }
