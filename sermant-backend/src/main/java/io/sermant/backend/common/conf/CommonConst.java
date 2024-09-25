@@ -64,11 +64,6 @@ public class CommonConst {
     public static final int DEFAULT_REDIS_PORT = 6379;
 
     /**
-     * redis hash key of instance meta
-     */
-    public static final String REDIS_HASH_KEY_OF_INSTANCE_META = "sermant_meta";
-
-    /**
      * redis event key
      */
     public static final String REDIS_EVENT_KEY = "sermant_events_hash";
