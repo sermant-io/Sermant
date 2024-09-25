@@ -3,7 +3,7 @@ import zh from 'element-plus/lib/locale/lang/zh-cn'
 import en from 'element-plus/lib/locale/lang/en'
 import {reactive} from "vue";
 
-const messages = {
+export const messages = {
     en: {
         header: {
             instanceStatus: 'Instance Status',
@@ -193,6 +193,7 @@ const messages = {
             failedToDeleteConfiguration: 'Failed to delete configuration',
             configurationDoesNotExist: 'Configuration does not exist',
             missingRequestParameters: 'Missing request parameters',
+            failedToObtainTemplate: 'Failed to obtain template',
             failedToRequest: 'Failed to request',
             notEnable: 'Dynamic configuration switch not turned on',
             router: 'router',
@@ -205,6 +206,7 @@ const messages = {
             mqConsumeProhibition: 'mq-consume-prohibition',
             databaseWriteProhibition: 'database-write-prohibition',
             other: 'other',
+            common: 'common',
         },
         configInfo: {
             configurationManagement: 'Configuration Management',
@@ -255,6 +257,14 @@ const messages = {
             failedToUpdateConfiguration: 'Failed to update configuration',
             failedToObtainConfiguration: 'Failed to obtain configuration',
             submit: 'Submit',
+            configElement: 'Configuration Element Information',
+            configRule: 'Configuration Item Generation Rules',
+            groupRule: 'Group Rules',
+            keyRule: 'Key Rules',
+            groupRulePlaceholder: 'Please select the generation rule for group',
+            keyRulePlaceholder: 'Please select the generation rule for key',
+            groupRuleNotice: 'Generation rule for group',
+            keyRuleNotice: 'Generation rule for key',
         }
     },
     zh: {
@@ -446,6 +456,7 @@ const messages = {
             failedToDeleteConfiguration: '删除配置失败',
             configurationDoesNotExist: '配置不存在',
             missingRequestParameters: '缺少请求参数',
+            failedToObtainTemplate: '获取模板失败',
             failedToRequest: '请求失败',
             notEnable: '动态配置开关未开启',
             router: '路由插件',
@@ -458,6 +469,7 @@ const messages = {
             mqConsumeProhibition: '消息队列禁止消费插件',
             databaseWriteProhibition: '数据库禁写插件',
             other: '其他',
+            common: '通用',
         },
         configInfo: {
             configurationManagement: '配置管理',
@@ -508,6 +520,14 @@ const messages = {
             failedToUpdateConfiguration: '更新配置失败',
             failedToObtainConfiguration: '获取配置失败',
             submit: '提交',
+            configElement: '配置元素信息',
+            configRule: '配置项的生成规则',
+            groupRule: 'Group规则',
+            keyRule: 'key规则',
+            groupRulePlaceholder: '请选择group的生成规则',
+            keyRulePlaceholder: '请选择key的生成规则',
+            groupRuleNotice: 'group的生成规则',
+            keyRuleNotice: 'key的生成规则',
         }
     },
 };

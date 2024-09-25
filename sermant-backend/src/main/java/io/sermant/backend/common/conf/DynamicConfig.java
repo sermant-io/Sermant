@@ -93,4 +93,10 @@ public class DynamicConfig {
      */
     @Value("${dynamic.config.enable}")
     private boolean enable;
+
+    /**
+     * Path to the template file
+     */
+    @Value("${dynamic.config.template.path}")
+    private String templatePath;
 }

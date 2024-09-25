@@ -139,14 +139,19 @@ public class CommonConst {
                     + "---  " + System.lineSeparator();
 
     /**
-     * Service name for global configuration
+     * Common Template Name
      */
-    public static final String GLOBAL_CONFIGURATION_SERVICE_NAME = "ALL_SERVICE";
+    public static final String COMMON_TEMPLATE = "common";
 
     /**
-     * Default regular expression for configuration item Group
+     * Wildcard characters in regular expressions
      */
-    public static final String CONFIGURATION_DEFAULT_PATTERN = "^(app=[^&]*+&environment=[^&]*+(&service=[^&]*)?)?$";
+    public static final String PATTERN_WILDCARD = ".*";
+
+    /**
+     * Wildcard characters in regular expressions
+     */
+    public static final String QUERY_WILDCARD = "*";
 
     private CommonConst() {
 

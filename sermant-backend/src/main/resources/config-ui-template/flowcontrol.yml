@@ -1,0 +1,93 @@
+plugin:
+  name-zh: 流控插件
+  name-en: flowcontrol
+groupRule:
+  - service=${service}
+  - app=${application}&environment=${environment}&service=${service}
+  - app=${application}&environment=${environment}
+keyRule:
+  - servicecomb.${ruleType}.${sceneName}
+elements:
+  - name: ruleType
+    desc-zh: 规则类型
+    desc-en: Rule Type
+    values:
+      - desc-zh: 流量匹配规则
+        desc-en: Traffic Matching Rule
+        name: matchGroup
+      - desc-zh: 限流规则
+        desc-en: Rate Limiting Rule
+        name: rateLimiting
+      - desc-zh: 熔断规则
+        desc-en: Circuit Breaker Rule
+        name: circuitBreaker
+      - desc-zh: 隔离规则
+        desc-en: Bulkhead Rule
+        name: bulkhead
+      - desc-zh: 错误注入
+        desc-en: Fault Injection Rule
+        name: faultInjection
+      - desc-zh: 重试
+        desc-en: Retry Rule
+        name: retry
+      - desc-zh: 系统级流控
+        desc-en: System Level Flow Control
+        name: system
+    placeholder:
+      desc-zh: 请选择规则类型
+      desc-en: Please select a rule type
+    required: true
+    notice:
+      desc-zh: 流控插件支持的规则类型
+      desc-en: Rule types supported by the flow control plugin
+  - name: sceneName
+    desc-zh: 规则场景名称
+    desc-en: Scene Name
+    placeholder:
+      desc-zh: 请输入场景名称
+      desc-en: Please enter the scene name
+    required: true
+    notice:
+      desc-zh: 流量匹配规则和具体流控规则的场景名称一致时流控规则才会生效
+      desc-en: The flow control rule will only take effect when the scene name matches the traffic matching rule
+  - name: application
+    placeholder:
+      desc-zh: 请输入应用名称
+      desc-en: Please enter the application name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.application
+      desc-en: This configuration corresponds to the service.meta.application  in the sermant configuration file
+  - name: environment
+    placeholder:
+      desc-zh: 请输入环境名称
+      desc-en: Please enter the environment name
+    required: false
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.environment
+      desc-en: This configuration corresponds to the service.meta.environment in the sermant configuration file
+  - name: service
+    desc-zh: service
+    desc-en: service
+    placeholder:
+      desc-zh: 请输入服务名称
+      desc-en: Please enter the service name
+    required: true
+    notice:
+      desc-zh: 微服务的名称，由微服务配置文件的dubbo.application.name、spring.applicaton.name确定
+      desc-en: The name of the microservice is determined by the dubbo.application.name and spring.application.name in the microservice configuration file
+configTemplates:
+  - key: servicecomb.matchGroup.*
+    value: "matches:\n  - apiPath:\n      exact: /degrade\n    headers:\n      key:\n        exact: value\n    method:\n      - GET\n    name: degrade"
+  - key: servicecomb.rateLimiting.*
+    value: "limitRefreshPeriod: 1000\nrate: 2"
+  - key: servicecomb.circuitBreaker.*
+    value: "failureRateThreshold: 90\nminimumNumberOfCalls: 3\nslidingWindowSize: 10S\nslidingWindowType: time\nslowCallRateThreshold: 80"
+  - key: servicecomb.bulkhead.*
+    value: "maxConcurrentCalls: 5\nmaxWaitDuration: 10S"
+  - key: servicecomb.faultInjection.*
+    value: "type: abort\npercentage: 100\nfallbackType: ReturnNull\nforceClosed: false\nerrorCode: 503"
+  - key: servicecomb.retry.*
+    value: "waitDuration: 2000\nretryStrategy: FixedInterval\nmaxAttempts: 2\nretryOnResponseStatus:\n  - 500"
+  - key: servicecomb.system.*
+    value: "systemLoad: 5\ncpuUsage: 0.6\nqps: 1000\naveRt: 100\nthreadNum: 200"

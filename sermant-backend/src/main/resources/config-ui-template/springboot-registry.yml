@@ -1,0 +1,36 @@
+plugin:
+  name-zh: springboot注册插件
+  name-en: springboot-registry
+groupRule:
+  - app=${application}&environment=${environment}&=service=${service}
+  - app=${application}&environment=${environment}
+keyRule:
+  - sermant.plugin.registry
+elements:
+  - name: application
+    placeholder:
+      desc-zh: 请输入应用名称
+      desc-en: Please enter the application name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.application
+      desc-en: This configuration corresponds to the service.meta.application  in the sermant configuration file
+  - name: environment
+    placeholder:
+      desc-zh: 请输入环境名称
+      desc-en: Please enter the environment name
+    required: false
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.environment
+      desc-en: This configuration corresponds to the service.meta.environment in the sermant configuration file
+  - name: service
+    placeholder:
+      desc-zh: 请输入服务名称
+      desc-en: Please enter the service name
+    required: true
+    notice:
+      desc-zh: 微服务的名称，由微服务配置文件的dubbo.application.name、spring.applicaton.name确定
+      desc-en: The name of the microservice is determined by the dubbo.application.name and spring.application.name in the microservice configuration file
+configTemplates:
+  - key: sermant.plugin.registry
+    value: "strategy: all\nvalue: service-b"

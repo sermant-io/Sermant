@@ -16,9 +16,9 @@
 
 package io.sermant.backend.controller;
 
+import io.sermant.backend.common.conf.CommonConst;
 import io.sermant.backend.entity.config.ConfigInfo;
 import io.sermant.backend.entity.config.ConfigServerInfo;
-import io.sermant.backend.entity.config.PluginType;
 import io.sermant.backend.entity.config.Result;
 import io.sermant.backend.entity.config.ResultCodeType;
 import io.sermant.backend.service.ConfigService;
@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -63,19 +62,11 @@ public class ConfigController {
         if (StringUtils.isEmpty(configInfo.getPluginType())) {
             return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
         }
-        Optional<PluginType> optionalPluginType = PluginType.getPluginType(configInfo.getPluginType());
-        if (!optionalPluginType.isPresent()) {
-            return new Result<>(ResultCodeType.FAIL.getCode(), "Invalid plugin name.");
+        if (StringUtils.equals(configInfo.getPluginType(), CommonConst.COMMON_TEMPLATE)
+                && StringUtils.isEmpty(configInfo.getGroupRule())) {
+            return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
         }
-        PluginType pluginType = optionalPluginType.get();
-        boolean exactMatchFlag = false;
-        if (pluginType == PluginType.OTHER) {
-            if (StringUtils.isEmpty(configInfo.getGroup())) {
-                return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
-            }
-            exactMatchFlag = true;
-        }
-        return configService.getConfigList(configInfo, pluginType, exactMatchFlag);
+        return configService.getConfigList(configInfo);
     }
 
     /**
@@ -104,7 +95,8 @@ public class ConfigController {
                 || StringUtils.isEmpty(configInfo.getContent())) {
             return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
         }
-        Result<List<ConfigInfo>> result = configService.getConfigList(configInfo, PluginType.OTHER, true);
+        Result<List<ConfigInfo>> result = configService.getConfigList(new ConfigInfo(configInfo.getKey(),
+                configInfo.getGroup(), CommonConst.COMMON_TEMPLATE, true, configInfo.getNamespace()));
         if (CollectionUtils.isEmpty(result.getData())) {
             return configService.publishConfig(configInfo);
         }
@@ -123,7 +115,8 @@ public class ConfigController {
                 || StringUtils.isEmpty(configInfo.getContent())) {
             return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
         }
-        Result<List<ConfigInfo>> result = configService.getConfigList(configInfo, PluginType.OTHER, true);
+        Result<List<ConfigInfo>> result = configService.getConfigList(new ConfigInfo(configInfo.getKey(),
+                configInfo.getGroup(), CommonConst.COMMON_TEMPLATE, true, configInfo.getNamespace()));
         if (result.isSuccess() && CollectionUtils.isEmpty(result.getData())) {
             return new Result<>(ResultCodeType.NOT_EXISTS.getCode(), ResultCodeType.NOT_EXISTS.getMessage());
         }
@@ -141,7 +134,8 @@ public class ConfigController {
         if (StringUtils.isEmpty(configInfo.getGroup()) || StringUtils.isEmpty(configInfo.getKey())) {
             return new Result<>(ResultCodeType.MISS_PARAM.getCode(), ResultCodeType.MISS_PARAM.getMessage());
         }
-        Result<List<ConfigInfo>> result = configService.getConfigList(configInfo, PluginType.OTHER, true);
+        Result<List<ConfigInfo>> result = configService.getConfigList(new ConfigInfo(configInfo.getKey(),
+                configInfo.getGroup(), CommonConst.COMMON_TEMPLATE, true, configInfo.getNamespace()));
         if (result.isSuccess() && CollectionUtils.isEmpty(result.getData())) {
             return new Result<>(ResultCodeType.NOT_EXISTS.getCode(), ResultCodeType.NOT_EXISTS.getMessage());
         }

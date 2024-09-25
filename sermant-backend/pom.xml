@@ -416,6 +416,26 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-external-file</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${package.output.dir}/config-ui-template</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources/config-ui-template</directory>
+                                    <includes>
+                                        <include>*.yml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -473,9 +493,11 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>config-ui-template/*</exclude>
+                </excludes>
                 <filtering>true</filtering>
             </resource>
-
             <resource>
                 <directory>src/main/webapp/</directory>
                 <excludes>

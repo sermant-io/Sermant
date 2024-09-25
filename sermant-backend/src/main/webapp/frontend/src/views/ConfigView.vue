@@ -24,16 +24,17 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <el-descriptions :title=" $t('configView.configurationInformation')" style="margin-top: 15px; width: 800px;font-weight:600;"></el-descriptions>
+    <el-descriptions :title=" $t('configView.configurationInformation')"
+                     style="margin-top: 15px; width: 800px;font-weight:600;"></el-descriptions>
     <el-form :inline="true" style="margin: 15px 0 15px 0">
       <el-form-item>
         <div data-v-6e4bcd7a="" class="ep-input ep-input--large ep-input-group ep-input-group--prepend"
              style="width: auto;">
           <div class="ep-input-group__prepend" color="#606266">{{ $t('configView.plugin') }}</div>
         </div>
-        <el-select v-model="defaultPluginType.value" :placeholder="$t('configView.configType')" size="large"
+        <el-select v-model="requestParam.pluginType" :placeholder="$t('configView.configType')" size="large"
                    @change="handlerChangePluginType">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
+          <el-option v-for="item in options" :label="language == 'zh' ? item.label:item.value" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item v-if="configCenterInfo.dynamicConfigType == 'nacos'" prop="namespace">
@@ -43,36 +44,37 @@
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'">
-        <el-input size="large" v-model.trim="requestParam.appName" :placeholder="$t('configView.inputApplicationName')">
-          <template #prepend><span color="#606266">{{ $t('configView.application') }}</span></template>
-        </el-input>
+      <el-form-item v-if="currentTemplate" prop="groupRule">
+        <div class="ep-input ep-input--large ep-input-group ep-input-group--prepend">
+          <div class="ep-input-group__prepend form-text" color="#606266">{{ $t('configInfo.groupRule') }}</div>
+          <el-select v-model="requestParam.groupRule" :placeholder=" $t('configInfo.groupRulePlaceholder')"
+                     size="large">
+            <el-option v-for="item in currentTemplate.groupRule" :label="item" :value="item"/>
+          </el-select>
+        </div>
       </el-form-item>
-      <el-form-item v-if="requestParam.pluginType != 'other'">
-        <el-input size="large" v-model.trim="requestParam.serviceName" :placeholder="$t('configView.inputServiceName')">
-          <template #prepend><span color="#606266">{{ $t('configView.service') }}</span></template>
-        </el-input>
+      <el-form-item v-if="currentTemplate" prop="keyRule">
+        <div class="ep-input ep-input--large ep-input-group ep-input-group--prepend">
+          <div class="ep-input-group__prepend form-text" color="#606266">{{ $t('configInfo.keyRule') }}</div>
+          <el-select v-model="requestParam.keyRule" :placeholder=" $t('configInfo.keyRulePlaceholder')"
+                     size="large">
+            <el-option v-for="item in currentTemplate.keyRule" :label="item" :value="item"/>
+          </el-select>
+        </div>
       </el-form-item>
-      <el-form-item v-if="requestParam.pluginType != 'other' && requestParam.pluginType != 'flowcontrol'">
-        <el-input size="large" v-model.trim="requestParam.environment" :placeholder="$t('configView.inputEnvironmentName')">
-          <template #prepend><span color="#606266">{{ $t('configView.environment') }}</span></template>
-        </el-input>
-      </el-form-item>
-      <el-form-item
-          v-if="requestParam.pluginType == 'mq-consume-prohibition' || requestParam.pluginType == 'database-write-prohibition'">
-        <el-input size="large" v-model.trim="requestParam.zone" :placeholder="$t('configView.inputZoneName')">
-          <template #prepend><span color="#606266">{{ $t('configView.zone') }}</span></template>
-        </el-input>
-      </el-form-item>
-      <el-form-item v-if="requestParam.pluginType == 'other'">
+      <el-form-item v-if="requestParam.pluginType == 'common'">
         <el-input size="large" v-model.trim="requestParam.group" :placeholder="$t('configView.inputGroup')">
           <template #prepend><span color="#606266">group</span></template>
         </el-input>
       </el-form-item>
-      <el-form-item v-if="requestParam.pluginType == 'other'">
+      <el-form-item v-if="requestParam.pluginType == 'common'">
         <el-input size="large" v-model.trim="requestParam.key" :placeholder="$t('configView.inputKey')">
           <template #prepend><span color="#606266">key</span></template>
         </el-input>
+      </el-form-item>
+      <el-form-item v-if="requestParam.pluginType != 'common'">
+        <el-switch v-model="exactMatchFlag" inline-prompt active-text="精确匹配" inactive-text="模糊匹配"
+                   class="ml-2" style="--ep-switch-on-color: #13ce66; --ep-switch-off-color: #13ce66"/>
       </el-form-item>
       <el-form-item>
         <el-button size="large" @click="getConfigList">
@@ -81,24 +83,42 @@
           </el-icon>
         </el-button>
       </el-form-item>
+      <div>
+        <el-form-item v-if="exactMatchFlag && currentTemplate" v-for="element in currentTemplate.elements">
+          <el-input v-if="!element.values?.length" size="large"
+                    :placeholder="language == 'zh' ? element.placeholder?.chineseDesc: element.placeholder?.englishDesc"
+                    v-model="requestParam[element.name]">
+            <template #prepend>
+                <span color="#606266" class="form-text">{{
+                    language == 'zh' && element.chineseDesc ? element.chineseDesc : element.name
+                  }}</span>
+            </template>
+          </el-input>
+          <div v-else class="ep-input ep-input--large ep-input-group ep-input-group--prepend">
+            <div class="ep-input-group__prepend form-text" color="#606266">{{ $t('configInfo.ruleType') }}</div>
+            <el-select v-model="requestParam[element.name]"
+                       :placeholder="language == 'zh'?element.placeholder?.chineseDesc:element.placeholder?.englishDesc"
+                       size="large">
+              <el-option v-for="item in element.values" :label="language == 'zh'?item.chineseDesc:item.englishDesc"
+                         :value="item.name"/>
+            </el-select>
+          </div>
+        </el-form-item>
+      </div>
     </el-form>
 
-    <el-table :data="configInfos.configInfos" border style="width: 100%;" :header-cell-style="{'background':'#f5f7fa'}">
+    <el-table :data="configInfos" border style="width: 100%;" :header-cell-style="{'background':'#f5f7fa'}">
       <el-table-column v-if="configCenterInfo.dynamicConfigType == 'nacos'"
-                       column-key="namespace" align="center" prop="namespace" width="150px" :label="$t('configView.project')"/>
-      <el-table-column column-key="appName" align="center" prop="appName" width="150px" :label="$t('configView.application')"
-                       :filters="appNames"
-                       :filter-method="filterHandler"/>
-      <el-table-column column-key="serviceName" align="center" prop="serviceName" width="300px" :label="$t('configView.service')"
-                       :filters="serviceNames"
-                       :filter-method="filterHandler"/>
-      <el-table-column column-key="environment" align="center" prop="environment" width="150px" :label="$t('configView.environment')"
-                       :filters="environments"
-                       :filter-method="filterHandler"/>
-      <el-table-column
-          v-if="currentPluginType.value == 'mq-consume-prohibition' || currentPluginType.value == 'database-write-prohibition'"
-          column-key="zone" align="center" prop="zone" width="150px" :label="$t('configView.zone')"
-          style="background-color: rgba(147,197,253,.5)"/>
+                       column-key="namespace" align="center" prop="namespace" width="150px"
+                       :label="$t('configView.project')"/>
+      <el-table-column v-for="element in currentConfigTemplate?.elements" align="center" :prop="element.name"
+                       :label="language == 'zh' && element.chineseDesc ? element.chineseDesc : element.name">
+        <template v-slot="scope">
+          <span>{{
+              element.values ? getLabelByValue(scope.row[element.name], element.values) : scope.row[element.name]
+            }}</span>
+        </template>
+      </el-table-column>
       <el-table-column column-key="group" align="center" prop="group" label="group"/>
       <el-table-column column-key="key" align="center" prop="key" label="key"/>
       <el-table-column fixed="right" align="center" :label="$t('configView.operation')" width="120px">
@@ -112,7 +132,8 @@
           </el-tooltip>
           <el-popconfirm :confirm-button-text="$t('configView.yes')" :cancel-button-text="$t('configView.no')"
                          :icon="InfoFilled" icon-color="#626AEF"
-                         :title="$t('configView.areYouSureToDeleteTheCurrentConfiguration')" @confirm="deleteConfig(scope.row, scope.$index)">
+                         :title="$t('configView.areYouSureToDeleteTheCurrentConfiguration')"
+                         @confirm="deleteConfig(scope.row, scope.$index)">
             <template #reference>
               <div style="display: inline;">
                 <el-tooltip :content="$t('configView.delete')" effect="light">
@@ -126,7 +147,7 @@
     </el-table>
     <div style="display: flex;align-items: center; margin-top: 30px; width:100%;">
       <el-button type="primary" size="large" style="margin-left: 42.5%; width: 15%;" shouldAddSpace="true"
-                 @click="toAddConfig()">{{$t('configView.create')}}
+                 @click="toAddConfig()">{{ $t('configView.create') }}
       </el-button>
     </div>
     <div class="pagination-div" style="margin-top: 30px;">
@@ -144,36 +165,130 @@
 </template>
 
 <script lang="ts" setup>
-import {onBeforeMount, reactive} from "vue";
+import {ref, onBeforeMount, reactive, watch} from "vue";
 import {RouteParamsRaw, useRouter} from "vue-router";
 import axios from "axios";
-import {Delete, InfoFilled, Search} from '@element-plus/icons-vue'
-import {ElMessage, TableColumnCtx} from 'element-plus'
-import {resultCodeMap, options} from '../composables/config'
+import {Delete, InfoFilled, Search, View} from '@element-plus/icons-vue'
+import {ElMessage} from 'element-plus'
+import {resultCodeMap} from '~/composables/config'
 import i18n from "~/composables/translations";
 
-const requestParam = reactive<ConfigInfo>({
+const language = ref(i18n.global.locale.toString());
+type stringMap = Record<string, string>;
+const templates = ref<pluginTemplate[]>([]);
+const currentTemplate = ref<pluginTemplate>();
+const currentConfigTemplate = ref<pluginTemplate>();
+
+interface pluginTemplate {
+  plugin: {
+    chineseName: string,
+    englishName: string
+  },
+  groupRule: string[],
+  keyRule: string[]
+  elements: element[],
+  configTemplates: [{
+    key: string,
+    value: string
+  }]
+}
+
+interface element {
+  englishDesc: string,
+  chineseDesc: string,
+  name: string,
+  values: [{
+    name: string
+    englishDesc: string,
+    chineseDesc: string,
+  }],
+  placeholder: {
+    englishDesc: string,
+    chineseDesc: string,
+  },
+  notice: {
+    englishDesc: string,
+    chineseDesc: string,
+  },
+  required: boolean
+}
+
+const getCurrentTemplate = (pluginType: string) => {
+  return templates.value?.find(template => template.plugin.englishName === pluginType);
+}
+
+interface option {
+  label: string,
+  value: string
+}
+
+const options = ref<option[]>([]);
+
+watch(() => i18n.global.locale, () => {
+  language.value = i18n.global.locale.toString();
+})
+
+const getLabelByValue = (name: string, mapArray: stringMap[]) => {
+  let map = mapArray.find(map => map['name'] === name);
+  if (!map) {
+    return name;
+  }
+  return language.value == 'zh' ? map['chineseDesc'] : map['englishDesc'];
+}
+
+const getTemplate = async () => {
+  axios.get(`${window.location.origin}/sermant/templates`).then(function (response) {
+    if (response.data.code == "00") {
+      templates.value = response.data.data;
+      console.log(templates.value)
+      templates.value?.forEach(template => {
+        options.value.push({
+          label: template.plugin?.chineseName,
+          value: template.plugin?.englishName
+        });
+      });
+      options.value.push({
+        label: i18n.global.t('common.common'),
+        value: 'common'
+      });
+      currentTemplate.value = getCurrentTemplate(requestParam.value.pluginType);
+      if (templates.value && templates.value.length != 0) {
+        getConfigList();
+      } else {
+        intiRequestParam.value.pluginType = 'common'
+      }
+    } else {
+      ElMessage({
+        message: i18n.global.t('common.failedToObtainTemplate'),
+        type: "error",
+      });
+      intiRequestParam.value.pluginType = 'common'
+    }
+  }).catch(function () {
+    ElMessage({
+      message: i18n.global.t('common.failedToObtainTemplate'),
+      type: "error",
+    });
+    intiRequestParam.value.pluginType = 'common'
+  });
+};
+
+const intiRequestParam = ref<stringMap>({
   appName: "",
   environment: "",
   group: "",
   key: "",
   namespace: "",
-  pluginType: "",
+  pluginType: "router",
   serviceName: "",
-  zone: ""
+  zone: "",
+  groupRule: '',
+  keyRule: '',
 });
 
-const appNames = reactive([
-  {text: '', value: ''},
-]);
+const requestParam = ref<stringMap>(intiRequestParam.value);
 
-const serviceNames = reactive([
-  {text: '', value: ''},
-]);
-
-const environments = reactive([
-  {text: '', value: ''},
-]);
+const exactMatchFlag = ref<boolean>(false);
 
 const configCenterInfo = reactive({
   dynamicConfigType: "",
@@ -182,31 +297,10 @@ const configCenterInfo = reactive({
   namespace: ""
 });
 
-onBeforeMount(() => {
-  requestParam.pluginType = 'router';
-  requestParam.group = "app"
-  requestParam.key = "servicecomb."
-  getConfigList();
+onBeforeMount(async () => {
+  await getTemplate();
   getConfigurationCenter();
 });
-
-const defaultPluginType = reactive({
-  value: 'router'
-});
-
-const currentPluginType = reactive({
-  value: 'router'
-});
-
-const filterHandler = (
-    value: string,
-    row: ConfigInfo,
-    column: TableColumnCtx<ConfigInfo>
-) => {
-  const property = column['property']
-  return row[property] == value;
-}
-
 // 路由
 const router = useRouter();
 
@@ -214,9 +308,7 @@ const goBack = () => {
   router.push("/");
 };
 
-const configInfos = reactive({
-  configInfos: [] as ConfigInfo[]
-});
+const configInfos = ref<stringMap[]>([]);
 
 const displayState = reactive({
   currentPage: 1,
@@ -234,108 +326,81 @@ const pageInfo = {
     zone: "",
     group: "",
     key: "",
-  }], // The current paginated data list
-  currentPage: 1, // Current page number
-  pageSize: 10, // Number of data displayed per page
-  totalDataCount: 0 // Total number of data entries
+  }] as stringMap[],
+  currentPage: 1,
+  pageSize: 10,
+  totalDataCount: 0
 };
 
-const fillAppNames = () => {
-  appNames.splice(0, appNames.length);
-  configInfos.configInfos.forEach(info => {
-    if (info.appName) {
-      const existingObj = appNames.find(item => item.value === info.appName);
-      if (!existingObj) {
-        appNames.push({text: info.appName, value: info.appName});
-      }
-    }
-  });
-}
-
-const fillServiceNames = () => {
-  serviceNames.splice(0, serviceNames.length);
-  configInfos.configInfos.forEach(info => {
-    if (info.serviceName) {
-      const existingObj = serviceNames.find(item => item.value === info.serviceName);
-      if (!existingObj) {
-        serviceNames.push({text: info.serviceName, value: info.serviceName});
-      }
-    }
-  });
-}
-
-const fillEnvironments = () => {
-  environments.splice(0, environments.length);
-  configInfos.configInfos.forEach(info => {
-    if (info.environment) {
-      const existingObj = appNames.find(item => item.value === info.environment);
-      if (!existingObj) {
-        environments.push({text: info.environment, value: info.environment});
-      }
-    }
-  });
-}
-
 const getConfigList = () => {
-  if (configCenterInfo.dynamicConfigType == 'nacos' && !requestParam.namespace) {
+  if (configCenterInfo.dynamicConfigType == 'nacos' && !requestParam.value.namespace) {
     ElMessage({
       message: i18n.global.t('configView.theProjectCannotBeEmpty'),
       type: "error",
     });
     return;
   }
-  if (requestParam.pluginType == 'other' && !requestParam.group) {
+  if (requestParam.value.pluginType == 'common' && !requestParam.value.group) {
     ElMessage({
       message: i18n.global.t('configView.theGroupCannotBeEmpty'),
       type: "error",
     });
     return;
   }
+  let pluginType = requestParam.value.pluginType
+  let params = {
+    pluginType: requestParam.value.pluginType,
+    group: requestParam.value.group,
+    key: requestParam.value.key,
+    groupRule: requestParam.value.groupRule,
+    keyRule: requestParam.value.keyRule,
+    exactMatchFlag: exactMatchFlag.value,
+    namespace: requestParam.value.namespace
+  }
+  if (params.groupRule && exactMatchFlag) {
+    params.group = replaceTemplate(params.groupRule, requestParam.value)
+  }
+  if (params.keyRule && exactMatchFlag) {
+    params.key = replaceTemplate(params.keyRule, requestParam.value)
+  }
+  if (pluginType == 'common') {
+    params.groupRule = params.group
+    params.keyRule = params.key
+    params.exactMatchFlag = true
+  }
   axios.get(`${window.location.origin}/sermant/configs`, {
-    params: requestParam,
+    params: params
   }).then(function (response) {
-    currentPluginType.value = requestParam.pluginType;
     const data = response.data;
     if (data.code == "00") {
-      configInfos.configInfos = data.data;
+      currentConfigTemplate.value = getCurrentTemplate(pluginType)
+      configInfos.value = data.data;
+      if (params.pluginType != 'common') {
+        configInfos.value.forEach(configInfo => {
+          extractVariables(configInfo['keyRule'], <string>configInfo['key'], configInfo);
+          extractVariables(configInfo['groupRule'], <string>configInfo['group'], configInfo);
+        });
+        if (currentConfigTemplate.value?.elements) {
+          configInfos.value = configInfos.value.filter(configInfo => {
+            let flag = true;
+            currentConfigTemplate.value?.elements.forEach(e => {
+              if (e.values && !e.values.some(value => value.name == configInfo[e.name])) {
+                flag = false;
+                return
+              }
+            })
+            return flag;
+          });
+        }
+      }
       displayState.totalPage = Math.ceil(data.data.length / displayState.pageSize);
       displayState.currentPage = 1;
-      if (configInfos.configInfos.length > 0) {
-        configInfos.configInfos.forEach(info => {
-          if (info.group.includes("&environment=") && !info.environment) {
-            info.environment = "-";
-          } else if (!info.group.includes("&environment=") && !info.environment) {
-            info.environment = "N/A";
-          }
-          if (info.group.includes("&service=") && !info.serviceName) {
-            info.serviceName = "-";
-          } else if (!info.group.includes("&service=") && !info.serviceName) {
-            info.serviceName = "N/A";
-          }
-          if (info.group.includes("&zone=") && !info.zone) {
-            info.zone = "-";
-          } else if (!info.group.includes("&zone=") && !info.zone) {
-            info.zone = "N/A";
-          }
-          if (info.group.includes("app=") && !info.appName) {
-            info.appName = "-";
-          } else if (!info.group.includes("app=") && !info.appName) {
-            info.appName = "N/A";
-          }
-          if (info.group.includes("GROUP=") && configCenterInfo.dynamicConfigType == 'kie') {
-            info.group = info.group.replace("GROUP=", "");
-          }
-        });
-        fillAppNames();
-        fillServiceNames();
-        fillEnvironments();
-      }
       ElMessage({
         message: i18n.global.t('configView.successfullyObtainedConfiguration'),
         type: "success",
       });
     } else {
-      configInfos.configInfos = [];
+      configInfos.value = [];
       ElMessage({
         message: resultCodeMap.get(data.code),
         type: "error",
@@ -349,90 +414,72 @@ const getConfigList = () => {
   });
 };
 
+function extractVariables(template: string, instance: string, configInfo: stringMap) {
+  const regex = /\$\{(\w+)\}/g;
+  let match: RegExpExecArray | null;
+  let name = '';
+  let currantTemplate = template;
+  while ((match = regex.exec(template)) !== null) {
+    if (name) {
+      let str = currantTemplate.substring(3 + name.length, match.index + currantTemplate.length - template.length)
+      configInfo[name] = instance.substring(0, instance.indexOf(str));
+      instance = instance.substring(instance.indexOf(str) + str.length)
+      currantTemplate = currantTemplate.substring(match.index + currantTemplate.length - template.length)
+      name = match[1]
+    } else {
+      name = match[1]
+      instance = instance.substring(match.index)
+      currantTemplate = currantTemplate.substring(match.index)
+    }
+  }
+  if (3 + name.length <= currantTemplate.length && !name) {
+    let str = currantTemplate.substring(3 + name.length)
+    configInfo[name] = instance.substring(0, instance.lastIndexOf(str))
+  } else {
+    configInfo[name] = instance
+  }
+}
+
+const replaceTemplate = (template: string, variables: stringMap) => {
+  return template.replace(/\$\{\s*(\w+)\s*\}/g, (match, p1) => variables[p1] || match);
+};
+
 const getConfigurationCenter = () => {
   axios.get(`${window.location.origin}/sermant/ConfigurationCenter`).then(function (response) {
     const data = response.data.data;
     configCenterInfo.serverAddress = data.serverAddress;
     configCenterInfo.dynamicConfigType = data.dynamicConfigType.toLowerCase();
     configCenterInfo.userName = data.userName;
-    configCenterInfo.userName = data.namespace;
-    requestParam.namespace = data.namespace;
+    configCenterInfo.namespace = data.namespace;
+    requestParam.value.namespace = data.namespace;
   }).catch(function (error) {
     console.log(error);
   });
 };
 
 const handlerChangePluginType = (value: string) => {
-  requestParam.pluginType = value;
-  if (value == "router") {
-    requestParam.group = "app="
-    requestParam.key = "servicecomb."
-  } else if (value == "springboot-registry") {
-    requestParam.group = "app="
-    requestParam.key = "sermant.plugin.registry"
-  } else if (value == "service-registry") {
-    requestParam.group = "app="
-    requestParam.key = "sermant.agent.registry"
-  } else if (value == "flowcontrol") {
-    requestParam.group = "service="
-    requestParam.key = "servicecomb."
-  } else if (value == "removal") {
-    requestParam.group = "app="
-    requestParam.key = "sermant.removal.config"
-  } else if (value == "loadbalancer") {
-    requestParam.group = "app="
-    requestParam.key = "servicecomb."
-  } else if (value == "tag-transmission") {
-    requestParam.group = "sermant/tag-transmission-plugin"
-    requestParam.key = "tag-config"
-  } else if (value == "mq-consume-prohibition") {
-    requestParam.group = "app="
-    requestParam.key = "sermant.mq.consume."
-  } else if (value == "database-write-prohibition") {
-    requestParam.group = "app="
-    requestParam.key = "sermant.database.write."
-  } else if (value == "other") {
-    requestParam.group = ""
-    requestParam.key = ""
-  }
-  requestParam.appName = "";
-  requestParam.serviceName = "";
-  requestParam.zone = "";
-  requestParam.environment = "";
-}
-
-interface ConfigInfo {
-  pluginType: string,
-  namespace: string,
-  appName: string,
-  serviceName: string,
-  environment: string,
-  zone: string,
-  group: string,
-  key: string,
+  requestParam.value = {};
+  requestParam.value.pluginType = value
+  currentTemplate.value = getCurrentTemplate(requestParam.value.pluginType);
 }
 
 const fetchData = () => {
-  // Based on the current page number and the number of displayed items per page, capture the data for the current page
-  // break
   const startIndex = (pageInfo.currentPage - 1) * pageInfo.pageSize;
   const endIndex = startIndex + pageInfo.pageSize;
-  pageInfo.pagedData = configInfos.configInfos.slice(startIndex, endIndex);
+  pageInfo.pagedData = configInfos.value.slice(startIndex, endIndex);
 };
 const handleSizeChange = (newSize: number) => {
-  // Trigger when the number of displayed items per page changes
   pageInfo.pageSize = newSize;
   pageInfo.currentPage = 1; // 回到第一页
   fetchData();
 };
 
 const handleCurrentChange = (newPage: number) => {
-  // Trigger when the current page number changes
   pageInfo.currentPage = newPage;
   fetchData();
 };
 
-const deleteConfig = (row: ConfigInfo, index: number) => {
+const deleteConfig = (row: stringMap, index: number) => {
   const params = {
     group: row.group,
     key: row.key,
@@ -470,7 +517,7 @@ const toAddConfig = () => {
   router.push({name: "configInfo", query: params});
 };
 
-const toModifyConfig = (row: ConfigInfo) => {
+const toModifyConfig = (row: stringMap) => {
   const params: RouteParamsRaw = {
     pluginType: row.pluginType,
     namespace: row.namespace,
@@ -480,6 +527,8 @@ const toModifyConfig = (row: ConfigInfo) => {
     zone: row.zone,
     group: row.group,
     key: row.key,
+    groupRule: row.groupRule,
+    keyRule: row.keyRule,
     type: "modify",
     configType: configCenterInfo.dynamicConfigType
   };
@@ -487,7 +536,7 @@ const toModifyConfig = (row: ConfigInfo) => {
 };
 
 const deleteRow = (index: number) => {
-  configInfos.configInfos.splice(index, 1)
+  configInfos.value.splice(index, 1)
 }
 </script>
 

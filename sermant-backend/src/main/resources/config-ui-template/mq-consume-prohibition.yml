@@ -1,0 +1,44 @@
+plugin:
+  name-zh: 消息队列禁止消费插件
+  name-en: mq-consume-prohibition
+groupRule:
+  - app=${application}&environment=${environment}&zone=${zone}
+keyRule:
+  - sermant.mq.consume.${serviceName}
+  - sermant.mq.consume.globalConfig
+elements:
+  - name: application
+    placeholder:
+      desc-zh: 请输入应用名称
+      desc-en: Please enter the application name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.application
+      desc-en: This configuration corresponds to the service.meta.application  in the sermant configuration file
+  - name: environment
+    placeholder:
+      desc-zh: 请输入环境名称
+      desc-en: Please enter the environment name
+    required: false
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.environment
+      desc-en: This configuration corresponds to the service.meta.environment in the sermant configuration file
+  - name: service
+    placeholder:
+      desc-zh: 请输入服务名称
+      desc-en: Please enter the service name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.service
+      desc-en: This configuration corresponds to the service.meta.service in the sermant configuration file
+  - name: zone
+    placeholder:
+      desc-zh: 请输入区域名称
+      desc-en: Please enter the zone
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.zone
+      desc-en: This configuration corresponds to the service.meta.zone in the sermant configuration file
+configTemplates:
+  - key: sermant.mq.consume.*
+    value: "enableKafkaProhibition: true\nkafkaTopics:\n - demo-kafka-topic\nenableRocketMqProhibition: true\nrocketMqTopics:\n - demo-rocketmq-topic-1\n - demo-rocketmq-topic-2"

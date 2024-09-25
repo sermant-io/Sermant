@@ -35,6 +35,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +52,11 @@ public class ZooKeeperClient implements ConfigClient {
     public static final char ZK_PATH_SEPARATOR = '/';
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClient.class.getName());
+
+    /**
+     * Regular expression map, storing regular expressions for configuration items
+     */
+    private final Map<String, Pattern> patternMap = new ConcurrentHashMap<>();
 
     /**
      * ZK client
@@ -175,9 +182,13 @@ public class ZooKeeperClient implements ConfigClient {
     private void fillChildrenInfo(String path, Map<String, List<String>> configMap, String nodeName,
                                   String key) throws InterruptedException, KeeperException {
         List<String> children = this.zkClient.getChildren(path, false);
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+        Pattern groupPattern = patternMap.computeIfAbsent(nodeName, patternKey -> Pattern.compile(nodeName));
         children.parallelStream().forEach(child -> {
             List<String> subChild;
-            if (!child.contains(nodeName)) {
+            if (!child.contains(nodeName) && !groupPattern.matcher(child).matches()) {
                 return;
             }
             String childPath = toPath(child, path);
@@ -193,7 +204,9 @@ public class ZooKeeperClient implements ConfigClient {
                 configMap.put(childPath.substring(1), subChild);
                 return;
             }
-            List<String> matchSubChild = subChild.stream().filter(value -> value.contains(key))
+            Pattern keyPattern = patternMap.computeIfAbsent(key, patternKey -> Pattern.compile(key));
+            List<String> matchSubChild = subChild.stream()
+                    .filter(value -> value.contains(key) || keyPattern.matcher(value).matches())
                     .collect(Collectors.toList());
             if (matchSubChild.isEmpty()) {
                 return;

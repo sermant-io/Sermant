@@ -1,0 +1,27 @@
+plugin:
+  name-zh: 离群实例摘除插件
+  name-en: removal
+groupRule:
+  - app=${application}&environment=${environment}
+keyRule:
+  - sermant.removal.config
+elements:
+  - name: application
+    placeholder:
+      desc-zh: 请输入应用名称
+      desc-en: Please enter the application name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.application
+      desc-en: This configuration corresponds to the service.meta.application  in the sermant configuration file
+  - name: environment
+    placeholder:
+      desc-zh: 请输入环境名称
+      desc-en: Please enter the environment name
+    required: false
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.environment
+      desc-en: This configuration corresponds to the service.meta.environment in the sermant configuration file
+configTemplates:
+  - key: servicecomb.matchGroup.*
+    value: "expireTime: 60000\nexceptions:\n  - com.alibaba.dubbo.remoting.TimeoutException\n  - org.apache.dubbo.remoting.TimeoutException\n  - java.util.concurrent.TimeoutException\n  - java.net.SocketTimeoutException\nenableRemoval: false\nrecoveryTime: 30000\nrules:\n  - { key: default-rule, scaleUpLimit: 0.6, minInstanceNum: 1, errorRate: 0.6 }"

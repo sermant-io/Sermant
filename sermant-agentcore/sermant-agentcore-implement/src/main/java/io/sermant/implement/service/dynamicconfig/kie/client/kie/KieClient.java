@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 /**
  * Kie Client
@@ -54,6 +56,11 @@ public class KieClient extends AbstractClient implements ConfigClient {
     private static final String KIE_API_TEMPLATE = "/v1/%s/kie/kv?";
 
     private final ResultHandler<KieResponse> defaultHandler = new ResultHandler.DefaultResultHandler();
+
+    /**
+     * Regular expression map, storing regular expressions for configuration items
+     */
+    private final Map<String, Pattern> patternMap = new ConcurrentHashMap<>();
 
     private String kieApi;
 
@@ -221,9 +228,9 @@ public class KieClient extends AbstractClient implements ConfigClient {
     @Override
     public Map<String, List<String>> getConfigList(String key, String group, boolean exactMatchFlag) {
         final KieResponse kieResponse;
-        String covertGroup = group.replace(KieConstants.SEPARATOR, KieConstants.CONNECTOR);
+        String convertedGroup = group.replace(KieConstants.SEPARATOR, KieConstants.CONNECTOR);
         if (exactMatchFlag) {
-            kieResponse = getKieResponse(key, covertGroup, exactMatchFlag);
+            kieResponse = getKieResponse(key, convertedGroup, exactMatchFlag);
         } else {
             kieResponse = getKieResponse(key, null, exactMatchFlag);
         }
@@ -231,6 +238,7 @@ public class KieClient extends AbstractClient implements ConfigClient {
             return Collections.emptyMap();
         }
         Map<String, List<String>> result = new HashMap<>();
+        Pattern pattern = patternMap.computeIfAbsent(convertedGroup, patternKey -> Pattern.compile(convertedGroup));
         for (KieConfigEntity entity : kieResponse.getData()) {
             if (exactMatchFlag) {
                 List<String> configList = result.computeIfAbsent(LabelGroupUtils.createLabelGroup(entity.getLabels()),
@@ -238,7 +246,7 @@ public class KieClient extends AbstractClient implements ConfigClient {
                 configList.add(entity.getKey());
             } else {
                 String currentConfigGroup = LabelGroupUtils.createLabelGroup(entity.getLabels());
-                if (currentConfigGroup.contains(covertGroup)) {
+                if (currentConfigGroup.contains(convertedGroup) || pattern.matcher(currentConfigGroup).matches()) {
                     List<String> configList = result.computeIfAbsent(
                             LabelGroupUtils.createLabelGroup(entity.getLabels()), configKey -> new ArrayList<>());
                     configList.add(entity.getKey());

@@ -49,8 +49,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_router_configs_param = {
-        "group": "app=",
-        "key": "servicecomb.",
+        "groupRule": "",
+        "keyRule": "",
         "namespace": "sermant",
         "pluginType": "router"
     }
@@ -93,8 +93,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_springboot_configs_param = {
-        "group": "app=",
-        "key": "sermant.plugin.registry",
+        "groupRule": "",
+        "keyRule": "sermant.plugin.registry",
         "namespace": "sermant",
         "pluginType": "springboot-registry"
     }
@@ -122,8 +122,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_service_registry_configs_param = {
-        "group": "app=",
-        "key": "sermant.agent.registry",
+        "groupRule": "",
+        "keyRule": "sermant.agent.registry",
         "namespace": "sermant",
         "pluginType": "service-registry"
     }
@@ -151,8 +151,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_flowcontrol_configs_param = {
-        "group": "service=",
-        "key": "servicecomb.",
+        "groupRule": "",
+        "keyRule": "",
         "namespace": "sermant",
         "serviceName":"flowcontrol",
         "pluginType": "flowcontrol"
@@ -190,10 +190,11 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_removal_configs_param = {
-        "group": "app=",
-        "key": "sermant.removal.config",
+        "groupRule": "",
+        "keyRule": "sermant.removal.config",
         "namespace": "sermant",
-        "pluginType": "removal"
+        "pluginType": "removal",
+        "exactMatchFlag": "false"
     }
     query_removal_config_param = {
         "key": "sermant.removal.config",
@@ -228,8 +229,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_loadbalancer_configs_param = {
-        "group": "app=",
-        "key": "servicecomb.",
+        "groupRule": "",
+        "keyRule": "",
         "namespace": "sermant",
         "pluginType": "loadbalancer"
     }
@@ -257,8 +258,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_tag_transmission_configs_param = {
-        "group": "sermant/tag-transmission-plugin",
-        "key": "tag-config",
+        "groupRule": "sermant/tag-transmission-plugin",
+        "keyRule": "tag-config",
         "namespace": "sermant",
         "pluginType": "tag-transmission"
     }
@@ -286,8 +287,8 @@ class TestConfig(unittest.TestCase):
         "namespace": "sermant"
     }
     query_mq_consume_prohibition_configs_param = {
-        "group": "app=",
-        "key": "sermant.mq.consume.",
+        "groupRule": "",
+        "keyRule": "",
         "namespace": "sermant",
         "pluginType": "mq-consume-prohibition"
     }
@@ -316,8 +317,8 @@ class TestConfig(unittest.TestCase):
     }
 
     query_database_write_prohibition_configs_param = {
-        "group": "app=",
-        "key": "sermant.database.write.",
+        "groupRule": "",
+        "keyRule": "",
         "namespace": "sermant",
         "pluginType": "database-write-prohibition"
     }
@@ -346,9 +347,11 @@ class TestConfig(unittest.TestCase):
     }
 
     query_other_configs_param = {
-        "group": "app=default&environment=&zone=default",
+        "groupRule": "app=default&environment=&zone=default",
         "namespace": "sermant",
-        "pluginType": "other"
+        "pluginType": "common",
+        "exactMatchFlag": "true"
+
     }
     query_other_config_param = {
         "key": "sermant.database.write.globalConfig",
@@ -416,12 +419,12 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_zookeeper).get("data")) == 1)
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_kie).get("data")) == 1)
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_nacos).get("data")) == 1)
-        group = queryConfigsParam.get("group")
-        queryConfigsParam["group"] = "bpp="
+        groupRule = queryConfigsParam.get("groupRule")
+        queryConfigsParam["groupRule"] = "bpp="
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_zookeeper).get("data")) == 0)
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_kie).get("data")) == 0)
         self.assertTrue(len(self.get_configs(queryConfigsParam, self.backend_server_address_use_nacos).get("data")) == 0)
-        queryConfigsParam["group"] = group
+        queryConfigsParam["groupRule"] = groupRule
         self.assertTrue(self.get_config(queryConfigParam, self.backend_server_address_use_zookeeper).get("data").get(
             "content") == addConfigParam.get("content"))
         self.assertTrue(self.get_config(queryConfigParam, self.backend_server_address_use_kie).get("data").get(

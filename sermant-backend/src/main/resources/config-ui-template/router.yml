@@ -1,0 +1,38 @@
+plugin:
+  name-zh: 路由插件
+  name-en: router
+groupRule:
+  - app=${application}&environment=${environment}
+keyRule:
+  - servicecomb.routeRule.${service}
+  - servicecomb.globalRouteRule
+elements:
+  - name: application
+    placeholder:
+      desc-zh: 请输入应用名称
+      desc-en: Please enter the application name
+    required: true
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.application
+      desc-en: This configuration corresponds to the service.meta.application  in the sermant configuration file
+  - name: environment
+    placeholder:
+      desc-zh: 请输入环境名称
+      desc-en: Please enter the environment name
+    required: false
+    notice:
+      desc-zh: 该配置对应sermant配置文件中的service.meta.environment
+      desc-en: This configuration corresponds to the service.meta.environment in the sermant configuration file
+  - name: service
+    placeholder:
+      desc-zh: 请输入服务名称
+      desc-en: Please enter the service name
+    required: true
+    notice:
+      desc-zh: 微服务的名称，由微服务配置文件的dubbo.application.name、spring.applicaton.name确定
+      desc-en: The name of the microservice is determined by the dubbo.application.name and spring.application.name in the microservice configuration file
+configTemplates:
+  - key: servicecomb.routeRule.*
+    value: "- kind: routematcher.sermant.io/flow\n  description: test\n  rules:\n    - precedence: 1\n      match:\n        attachments:\n          id:\n            exact: '1'\n      route:\n        - weight: 20\n          tags:\n            version: 1.0.0\n        - weight: 80\n          tags:\n            version: 1.0.1\n- kind: routematcher.sermant.io/tag\n  description: sameTag\n  rules:\n    - precedence: 1\n      match:\n        tags:\n          zone:\n            exact: 'hangzhou'\n        policy:\n          triggerThreshold: 20\n          minAllInstances: 3\n- kind: route.sermant.io/lane\n  description: lane\n  rules:\n    - precedence: 1\n      match:\n        method: getFoo\n        path: 'io.sermant.bar'\n        protocol: dubbo\n        attachments:\n          id:\n            exact: '1'\n        args:\n          args0:\n            type: .name\n            exact: 'foo'\n      route:\n        - tag-inject:\n            x-sermant-flag2: gray2\n          weight: 100"
+  - key: servicecomb.globalRouteRule
+  - value: "- kind: routematcher.sermant.io/flow\n  description: test\n  rules:\n    - precedence: 1\n      match:\n        attachments:\n          id:\n            exact: '1'\n      route:\n        - weight: 20\n          tags:\n            version: 1.0.0\n        - weight: 80\n          tags:\n            version: 1.0.1\n- kind: routematcher.sermant.io/tag\n  description: sameTag\n  rules:\n    - precedence: 1\n      match:\n        tags:\n          zone:\n            exact: 'hangzhou'\n        policy:\n          triggerThreshold: 20\n          minAllInstances: 3\n- kind: route.sermant.io/lane\n  description: lane\n  rules:\n    - precedence: 1\n      match:\n        method: getFoo\n        path: 'io.sermant.bar'\n        protocol: dubbo\n        attachments:\n          id:\n            exact: '1'\n        args:\n          args0:\n            type: .name\n            exact: 'foo'\n      route:\n        - tag-inject:\n            x-sermant-flag2: gray2\n          weight: 100"

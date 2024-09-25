@@ -16,12 +16,15 @@
 
 package io.sermant.backend.service;
 
+import io.sermant.backend.common.conf.CommonConst;
 import io.sermant.backend.common.conf.DynamicConfig;
 import io.sermant.backend.entity.config.ConfigInfo;
-import io.sermant.backend.entity.config.PluginType;
 import io.sermant.backend.entity.config.Result;
+import io.sermant.backend.entity.config.ResultCodeType;
+import io.sermant.backend.entity.template.PageTemplateInfo;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,10 +35,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Test class for ConfigService class
@@ -44,17 +44,13 @@ import java.util.Map;
  * @since 2024-06-05
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DynamicConfig.class, ConfigClient.class})
+@PrepareForTest({DynamicConfig.class, ConfigClient.class, PageTemplateService.class})
 public class ConfigServiceTest {
-    private static final String KEY = "sermant.plugin.registry";
+    private static final String KEY = ".*";
 
     private static final String GROUP = "app=default&environment=&service=rest-provider";
 
     private static final String CONTENT = "enableMongoDbWriteProhibition: true";
-
-    private static final String APP_NAME = "default";
-
-    private static final String SERVICE_NAME = "rest-provider";
 
     @Mock
     private ConfigClient configClient;
@@ -62,22 +58,30 @@ public class ConfigServiceTest {
     @Mock
     private DynamicConfig dynamicConfig;
 
+    @Mock
+    private PageTemplateService pageTemplateService;
+
     @InjectMocks
     private ConfigService configService;
 
     @Before
     public void setUp() {
-        PowerMockito.mockStatic(DynamicConfig.class, ConfigClient.class);
+        PowerMockito.mockStatic(DynamicConfig.class, ConfigClient.class, PageTemplateService.class);
         Map<String, List<String>> map = new HashMap<>();
         List<String> configList = new ArrayList<>();
         configList.add(KEY);
         map.put(GROUP, configList);
-        PowerMockito.when(configClient.getConfigList(KEY, GROUP, false)).thenReturn(map);
+        PowerMockito.when(configClient.getConfigList(StringUtils.EMPTY, GROUP, true)).thenReturn(map);
         PowerMockito.when(configClient.isConnect()).thenReturn(true);
         PowerMockito.when(configClient.getConfig(KEY, GROUP)).thenReturn(CONTENT);
         PowerMockito.when(configClient.publishConfig(KEY, GROUP, CONTENT)).thenReturn(true);
         PowerMockito.when(configClient.removeConfig(KEY, GROUP)).thenReturn(true);
         PowerMockito.when(dynamicConfig.isEnable()).thenReturn(true);
+        PageTemplateInfo pageTemplateInfo = new PageTemplateInfo();
+        pageTemplateInfo.setKeyRule(new ArrayList<>());
+        pageTemplateInfo.setGroupRule(new ArrayList<>());
+        Result<PageTemplateInfo> result = new Result<>(ResultCodeType.SUCCESS, pageTemplateInfo);
+        PowerMockito.when(pageTemplateService.getTemplate("common")).thenReturn(result);
     }
 
     @Test
@@ -85,16 +89,16 @@ public class ConfigServiceTest {
         ConfigInfo configInfo = new ConfigInfo();
         configInfo.setGroup(GROUP);
         configInfo.setKey(KEY);
-        configInfo.setPluginType(PluginType.SPRINGBOOT_REGISTRY.getPluginName());
-        Result<List<ConfigInfo>> result = configService.getConfigList(configInfo, PluginType.SPRINGBOOT_REGISTRY, false);
+        configInfo.setPluginType("common");
+        configInfo.setGroupRule(GROUP);
+        configInfo.setExactMatchFlag(true);
+        Result<List<ConfigInfo>> result = configService.getConfigList(configInfo);
         Assert.assertTrue(result.isSuccess());
         Assert.assertNotNull(result.getData());
         Assert.assertEquals(result.getData().size(), 1);
         ConfigInfo info = result.getData().get(0);
         Assert.assertEquals(info.getGroup(), GROUP);
         Assert.assertEquals(info.getKey(), KEY);
-        Assert.assertEquals(info.getServiceName(), SERVICE_NAME);
-        Assert.assertEquals(info.getAppName(), APP_NAME);
         Assert.assertNull(info.getEnvironment());
     }
 
@@ -103,7 +107,7 @@ public class ConfigServiceTest {
         ConfigInfo configInfo = new ConfigInfo();
         configInfo.setGroup(GROUP);
         configInfo.setKey(KEY);
-        configInfo.setPluginType(PluginType.SPRINGBOOT_REGISTRY.getPluginName());
+        configInfo.setPluginType("springboot-registry");
         Result<ConfigInfo> result = configService.getConfig(configInfo);
         ConfigInfo info = result.getData();
         Assert.assertEquals(info.getGroup(), GROUP);
@@ -117,7 +121,7 @@ public class ConfigServiceTest {
         configInfo.setGroup(GROUP);
         configInfo.setKey(KEY);
         configInfo.setContent(CONTENT);
-        configInfo.setPluginType(PluginType.SPRINGBOOT_REGISTRY.getPluginName());
+        configInfo.setPluginType("springboot-registry");
         Result<Boolean> result = configService.publishConfig(configInfo);
         Assert.assertTrue(result.isSuccess());
         Assert.assertTrue(result.getData());
