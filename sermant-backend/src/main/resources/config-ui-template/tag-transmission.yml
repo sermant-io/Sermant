@@ -1,0 +1,10 @@
+plugin:
+  name-zh: 标签透传插件
+  name-en: tag-transmission
+groupRule:
+  - sermant/tag-transmission-plugin
+keyRule:
+  - tag-config
+configTemplates:
+  - key: tag-config
+    value: "enabled: true\nmatchRule:\n  exact: [\"id\", \"name\"]\n  prefix: [\"x-sermant-\"]\n  suffix: [\"-sermant\"]"

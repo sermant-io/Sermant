@@ -20,19 +20,18 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.client.auth.impl.NacosAuthLoginConstant;
 
+import io.sermant.backend.common.conf.CommonConst;
 import io.sermant.backend.common.conf.DynamicConfig;
 import io.sermant.backend.entity.config.ConfigCenterType;
 import io.sermant.backend.entity.config.ConfigInfo;
 import io.sermant.backend.entity.config.ConfigServerInfo;
-import io.sermant.backend.entity.config.PluginType;
 import io.sermant.backend.entity.config.Result;
 import io.sermant.backend.entity.config.ResultCodeType;
-import io.sermant.backend.handler.config.PluginConfigHandler;
+import io.sermant.backend.entity.template.PageTemplateInfo;
 import io.sermant.backend.util.AesUtil;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieClient;
-import io.sermant.implement.service.dynamicconfig.kie.constants.KieConstants;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosClient;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosUtils;
 import io.sermant.implement.service.dynamicconfig.zookeeper.ZooKeeperClient;
@@ -46,13 +45,16 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -69,8 +71,6 @@ public class ConfigService {
 
     private static final Map<String, ConfigClient> CONFIG_CLIENT_MAP = new ConcurrentHashMap<>();
 
-    private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
-
     /**
      * ZK authorization separator
      */
@@ -78,58 +78,99 @@ public class ConfigService {
 
     private static final String SCHEME = "digest";
 
+    /**
+     * Match whether variables are included, and if so, replace them with wildcard characters for subsequent queries
+     */
+    private final Pattern variablePattern = Pattern.compile("\\$\\{\\s*\\w+\\s*\\}");
+
+    /**
+     * Regular expression map, storing regular expressions for configuration items
+     */
+    private final Map<String, Pattern> patternMap = new ConcurrentHashMap<>();
+
     @Resource
     private DynamicConfig dynamicConfig;
 
     private ConfigClient configClient;
 
-    private Watcher watcher;
+    @Resource
+    private PageTemplateService pageTemplateService;
 
     /**
      * Query Configuration List
      *
      * @param request Query criteria for configuration list
-     * @param pluginType Plugin type
-     * @param exactMatchFlag Identification of exact match
      * @return Configuration List
      */
-    public Result<List<ConfigInfo>> getConfigList(ConfigInfo request, PluginType pluginType, boolean exactMatchFlag) {
-        Result<?> result = checkConnection(request);
-        if (!result.isSuccess()) {
-            return new Result<>(result.getCode(), result.getMessage());
-        }
-        String requestGroup = request.getGroup();
+    public Result<List<ConfigInfo>> getConfigList(ConfigInfo request) {
         ConfigClient client = getConfigClient(request.getNamespace());
-        if (client instanceof NacosClient) {
-            requestGroup = NacosUtils.rebuildGroup(requestGroup);
+        if (client == null || !client.isConnect()) {
+            return new Result<>(ResultCodeType.CONNECT_FAIL);
         }
-        Map<String, List<String>> configMap = client.getConfigList(request.getKey(), requestGroup, exactMatchFlag);
-        List<ConfigInfo> configInfoList = new ArrayList<>();
-        PluginConfigHandler handler = pluginType.getHandler();
-        for (Map.Entry<String, List<String>> entry : configMap.entrySet()) {
-            String group = entry.getKey();
-            if (client instanceof NacosClient) {
-                group = NacosUtils.convertGroup(group);
-            } else if (client instanceof KieClient) {
-                group = group.replace(KieConstants.CONNECTOR, KieConstants.SEPARATOR);
-                group = group.replace(KieConstants.DEFAULT_LABEL_PRE, StringUtils.EMPTY);
-            }
-            if (!exactMatchFlag && !handler.verifyConfigurationGroup(group)) {
-                continue;
-            }
-            for (String configKey : entry.getValue()) {
-                if (!exactMatchFlag && !handler.verifyConfigurationKey(configKey)) {
-                    continue;
-                }
-                ConfigInfo configInfo = handler.parsePluginInfo(configKey, group);
-                if (!exactMatchFlag && !handler.filterConfiguration(request, configInfo)) {
-                    continue;
-                }
-                configInfo.setNamespace(request.getNamespace());
-                configInfoList.add(configInfo);
-            }
+        Result<PageTemplateInfo> templateInfoResult = pageTemplateService.getTemplate(request.getPluginType());
+        if (!StringUtils.equals(CommonConst.COMMON_TEMPLATE, request.getPluginType())
+                && !templateInfoResult.isSuccess()) {
+            return new Result<>(ResultCodeType.FAIL.getCode(), "Invalid plugin name.");
         }
+        PageTemplateInfo template = templateInfoResult.getData();
+        List<ConfigInfo> configInfoList = getConfigInfos(request, template, client);
         return new Result<>(ResultCodeType.SUCCESS.getCode(), null, configInfoList);
+    }
+
+    /**
+     * Query Configuration List
+     *
+     * @param request Query criteria for configuration list
+     * @param template template information for configuration management page
+     * @param client Configuration Center Client
+     * @return Configuration List
+     */
+    private List<ConfigInfo> getConfigInfos(ConfigInfo request, PageTemplateInfo template, ConfigClient client) {
+        List<String> keyRules;
+        if (StringUtils.isEmpty(request.getKeyRule())) {
+            keyRules = StringUtils.equals(CommonConst.COMMON_TEMPLATE, request.getPluginType())
+                    ? Collections.singletonList(CommonConst.PATTERN_WILDCARD) : template.getKeyRule();
+        } else {
+            keyRules = Collections.singletonList(request.getKeyRule());
+        }
+        List<String> groupRules = StringUtils.isEmpty(request.getGroupRule())
+                ? template.getGroupRule() : Collections.singletonList(request.getGroupRule());
+        Set<ConfigInfo> configInfoSet = new HashSet<>();
+        groupRules.forEach(groupRule -> {
+            String groupPattern = client instanceof NacosClient
+                    ? rebuildGroup(replaceVariableWithWildcard(groupRule, CommonConst.QUERY_WILDCARD))
+                    : replaceVariableWithWildcard(groupRule, CommonConst.PATTERN_WILDCARD);
+            Map<String, List<String>> configMap = client.getConfigList(StringUtils.EMPTY, groupPattern,
+                    request.isExactMatchFlag());
+            fillMatchedConfigItems(request, groupRule, configMap, keyRules, configInfoSet);
+        });
+        return new ArrayList<>(configInfoSet);
+    }
+
+    /**
+     * Fill matched configuration item information
+     *
+     * @param request Query criteria for configuration list
+     * @param groupRule Generation rules for configuration item groups
+     * @param configMap Configuration information queried from the configuration center
+     * @param keyRules Generation rules for configuration item keys
+     * @param configInfoSet Configuration List
+     */
+    private void fillMatchedConfigItems(ConfigInfo request, String groupRule, Map<String, List<String>> configMap,
+                                        List<String> keyRules, Set<ConfigInfo> configInfoSet) {
+        configMap.forEach((group, value) -> value.forEach(configItem -> {
+            Optional<String> firstMatch = keyRules.stream().filter(rule -> {
+                String keyPattern = replaceVariableWithWildcard(rule, CommonConst.PATTERN_WILDCARD);
+                Pattern pattern = patternMap.computeIfAbsent(keyPattern, key -> Pattern.compile(keyPattern));
+                return pattern.matcher(configItem).matches();
+            }).findFirst();
+            if (firstMatch.isPresent()) {
+                ConfigInfo configInfo = new ConfigInfo(configItem, convertGroup(group), firstMatch.get(),
+                        groupRule, request.getNamespace());
+                configInfo.setPluginType(request.getPluginType());
+                configInfoSet.add(configInfo);
+            }
+        }));
     }
 
     /**
@@ -139,16 +180,11 @@ public class ConfigService {
      * @return Configuration
      */
     public Result<ConfigInfo> getConfig(ConfigInfo request) {
-        Result<Boolean> result = checkConnection(request);
-        if (!result.isSuccess()) {
-            return new Result<>(result.getCode(), result.getMessage());
-        }
-        String group = request.getGroup();
         ConfigClient client = getConfigClient(request.getNamespace());
-        if (client instanceof NacosClient) {
-            group = NacosUtils.rebuildGroup(request.getGroup());
+        if (client == null || !client.isConnect()) {
+            return new Result<>(ResultCodeType.CONNECT_FAIL);
         }
-        String content = client.getConfig(request.getKey(), group);
+        String content = client.getConfig(request.getKey(), rebuildGroup(request.getGroup()));
         ConfigInfo configInfo = new ConfigInfo();
         configInfo.setGroup(request.getGroup());
         configInfo.setKey(request.getKey());
@@ -163,16 +199,12 @@ public class ConfigService {
      * @return The result of publishing configuration information
      */
     public Result<Boolean> publishConfig(ConfigInfo request) {
-        Result<Boolean> checkResult = checkConnection(request);
-        if (!checkResult.isSuccess()) {
-            return checkResult;
-        }
-        String group = request.getGroup();
         ConfigClient client = getConfigClient(request.getNamespace());
-        if (client instanceof NacosClient) {
-            group = NacosUtils.rebuildGroup(request.getGroup());
+        if (client == null || !client.isConnect()) {
+            return new Result<>(ResultCodeType.CONNECT_FAIL);
         }
-        boolean result = client.publishConfig(request.getKey(), group, request.getContent());
+        boolean result = client.publishConfig(request.getKey(), rebuildGroup(request.getGroup()),
+                request.getContent());
         if (result) {
             return new Result<>(ResultCodeType.SUCCESS.getCode(), null, true);
         }
@@ -186,16 +218,11 @@ public class ConfigService {
      * @return The result of deleting configuration information
      */
     public Result<Boolean> deleteConfig(ConfigInfo request) {
-        Result<Boolean> checkResult = checkConnection(request);
-        if (!checkResult.isSuccess()) {
-            return checkResult;
-        }
-        String group = request.getGroup();
         ConfigClient client = getConfigClient(request.getNamespace());
-        if (client instanceof NacosClient) {
-            group = NacosUtils.rebuildGroup(request.getGroup());
+        if (client == null || !client.isConnect()) {
+            return new Result<>(ResultCodeType.CONNECT_FAIL);
         }
-        boolean result = client.removeConfig(request.getKey(), group);
+        boolean result = client.removeConfig(request.getKey(), rebuildGroup(request.getGroup()));
         if (result) {
             return new Result<>(ResultCodeType.SUCCESS.getCode(), null, true);
         }
@@ -210,28 +237,10 @@ public class ConfigService {
         if (!dynamicConfig.isEnable()) {
             return;
         }
-        EXECUTOR_SERVICE.scheduleAtFixedRate(this::reConnection, dynamicConfig.getConnectTimeout(),
-                dynamicConfig.getConnectTimeout(), TimeUnit.MILLISECONDS);
         String serverAddress = dynamicConfig.getServerAddress();
         int timeout = dynamicConfig.getTimeout();
         if (ConfigCenterType.ZOOKEEPER.name().equals(dynamicConfig.getDynamicConfigType())) {
-            watcher = new Watcher() {
-                @Override
-                public void process(WatchedEvent event) {
-                    if (event.getState() == Event.KeeperState.Expired) {
-                        configClient = new ZooKeeperClient(serverAddress, timeout, this);
-                    }
-                }
-            };
-            ZooKeeperClient client = new ZooKeeperClient(serverAddress, timeout, watcher);
-            if (dynamicConfig.isEnableAuth() && StringUtils.isNotBlank(dynamicConfig.getUserName())
-                    && StringUtils.isNotBlank(dynamicConfig.getPassword())
-                    && StringUtils.isNotBlank(dynamicConfig.getSecretKey())) {
-                String authInfo = dynamicConfig.getUserName() + ZK_AUTH_SEPARATOR
-                        + AesUtil.decrypt(dynamicConfig.getSecretKey(), dynamicConfig.getPassword()).orElse(null);
-                client.addAuthInfo(SCHEME, authInfo.getBytes(StandardCharsets.UTF_8));
-            }
-            configClient = client;
+            configClient = createZookeeperClient(serverAddress, timeout);
             return;
         }
         if (ConfigCenterType.NACOS.name().equals(dynamicConfig.getDynamicConfigType())) {
@@ -241,6 +250,26 @@ public class ConfigService {
         if (ConfigCenterType.KIE.name().equals(dynamicConfig.getDynamicConfigType())) {
             configClient = new KieClient(new ClientUrlManager(serverAddress), "default", timeout);
         }
+    }
+
+    private ZooKeeperClient createZookeeperClient(String serverAddress, int timeout) {
+        Watcher watcher = new Watcher() {
+            @Override
+            public void process(WatchedEvent event) {
+                if (event.getState() == Event.KeeperState.Expired) {
+                    configClient = new ZooKeeperClient(serverAddress, timeout, this);
+                }
+            }
+        };
+        ZooKeeperClient client = new ZooKeeperClient(serverAddress, timeout, watcher);
+        if (dynamicConfig.isEnableAuth() && StringUtils.isNotBlank(dynamicConfig.getUserName())
+                && StringUtils.isNotBlank(dynamicConfig.getPassword())
+                && StringUtils.isNotBlank(dynamicConfig.getSecretKey())) {
+            String authInfo = dynamicConfig.getUserName() + ZK_AUTH_SEPARATOR
+                    + AesUtil.decrypt(dynamicConfig.getSecretKey(), dynamicConfig.getPassword()).orElse(null);
+            client.addAuthInfo(SCHEME, authInfo.getBytes(StandardCharsets.UTF_8));
+        }
+        return client;
     }
 
     /**
@@ -302,23 +331,6 @@ public class ConfigService {
     }
 
     /**
-     * Verify if a connection is established
-     *
-     * @param request Request Information
-     * @return Configuration Center Client
-     */
-    public Result<Boolean> checkConnection(ConfigInfo request) {
-        if (!dynamicConfig.isEnable()) {
-            return new Result<>(ResultCodeType.NOT_ENABLE.getCode(), ResultCodeType.NOT_ENABLE.getMessage());
-        }
-        ConfigClient client = getConfigClient(request.getNamespace());
-        if (client == null || !client.isConnect()) {
-            return new Result<>(ResultCodeType.CONNECT_FAIL.getCode(), ResultCodeType.CONNECT_FAIL.getMessage());
-        }
-        return new Result<>(ResultCodeType.SUCCESS.getCode(), ResultCodeType.SUCCESS.getMessage());
-    }
-
-    /**
      * get configuration center information
      *
      * @return Configuration Center Information
@@ -333,12 +345,40 @@ public class ConfigService {
     }
 
     /**
-     * Verify if the client is disconnected, and reconnect when disconnected
+     * Rebuild the valid group name.
+     *
+     * @param group group name
+     * @return valid group
      */
-    public void reConnection() {
-        if (ConfigCenterType.ZOOKEEPER.name().equals(dynamicConfig.getDynamicConfigType())
-                && !configClient.isConnect()) {
-            configClient = new ZooKeeperClient(dynamicConfig.getServerAddress(), dynamicConfig.getTimeout(), watcher);
+    private String rebuildGroup(String group) {
+        if (configClient instanceof NacosClient) {
+            return NacosUtils.rebuildGroup(group);
         }
+        return group;
+    }
+
+    /**
+     * convert the group name to nacos group
+     *
+     * @param group group name
+     * @return valid group
+     */
+    public String convertGroup(String group) {
+        if (configClient instanceof NacosClient) {
+            return NacosUtils.convertGroup(group);
+        }
+        return group;
+    }
+
+    /**
+     * Replace variables with wildcards for matching during queries.
+     *
+     * @param rule The generation rules for keys or groups.
+     * @param wildcard Wildcard characters
+     * @return The regular expression for key or group.
+     */
+    private String replaceVariableWithWildcard(String rule, String wildcard) {
+        Matcher matcher = variablePattern.matcher(rule);
+        return matcher.replaceAll(wildcard);
     }
 }

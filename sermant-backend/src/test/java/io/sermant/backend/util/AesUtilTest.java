@@ -28,7 +28,7 @@ import java.util.Optional;
  * @since 2024-06-05
  */
 public class AesUtilTest {
-    private static final String TEXT = "aaa";
+    private static final String TEXT = "nacos";
 
     @Test
     void generateKey() {

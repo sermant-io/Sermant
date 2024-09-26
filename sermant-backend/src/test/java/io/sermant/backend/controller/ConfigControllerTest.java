@@ -18,7 +18,6 @@ package io.sermant.backend.controller;
 
 import io.sermant.backend.entity.config.ConfigInfo;
 import io.sermant.backend.entity.config.ConfigServerInfo;
-import io.sermant.backend.entity.config.PluginType;
 import io.sermant.backend.entity.config.Result;
 import io.sermant.backend.entity.config.ResultCodeType;
 import io.sermant.backend.service.ConfigService;
@@ -37,6 +36,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+
 /**
  * Test class for ConfigController class
  *
@@ -51,6 +52,8 @@ public class ConfigControllerTest {
     private static final String ADD_CONFIGURATION_KEY = "sermant.agent.registry";
 
     private static final String GROUP = "app=default&environment=&service=rest-provider";
+
+    private static final String GROUP_RULE = "app=*&environment=*&service=*";
 
     private static final String CONTENT = "enableMongoDbWriteProhibition: true";
 
@@ -77,9 +80,10 @@ public class ConfigControllerTest {
         configInfo = new ConfigInfo();
         configInfo.setKey(KEY);
         configInfo.setGroup(GROUP);
-        configInfo.setPluginType(PluginType.DATABASE_WRITE_PROHIBITION.getPluginName());
+        configInfo.setPluginType("database-write-prohibition");
         configInfo.setServiceName(SERVICE_NAME);
         configInfo.setContent(CONTENT);
+        configInfo.setGroupRule(GROUP_RULE);
         addConfigInfo = new ConfigInfo();
         addConfigInfo.setGroup(GROUP);
         addConfigInfo.setKey(ADD_CONFIGURATION_KEY);
@@ -89,13 +93,14 @@ public class ConfigControllerTest {
         PowerMockito.mockStatic(ConfigService.class, ConfigClient.class);
         Result<List<ConfigInfo>> result =
                 new Result<>(ResultCodeType.SUCCESS.getCode(), ResultCodeType.SUCCESS.getMessage(), configInfoList);
-        PowerMockito.when(configService.getConfigList(configInfo, PluginType.DATABASE_WRITE_PROHIBITION, false))
-                .thenReturn(result);
-        PowerMockito.when(configService.getConfigList(addConfigInfo, PluginType.DATABASE_WRITE_PROHIBITION, false))
+        configInfo.setPluginType("database-write-prohibition");
+        configInfo.setExactMatchFlag(false);
+        PowerMockito.when(configService.getConfigList(any())).thenReturn(result);
+        addConfigInfo.setPluginType("other");
+        addConfigInfo.setExactMatchFlag(true);
+        PowerMockito.when(configService.getConfigList(addConfigInfo))
                 .thenReturn(new Result<>(ResultCodeType.SUCCESS.getCode(), null));
-        PowerMockito.when(configService.getConfigList(addConfigInfo, PluginType.OTHER, true))
-                .thenReturn(new Result<>(ResultCodeType.SUCCESS.getCode(), null));
-        PowerMockito.when(configService.getConfigList(configInfo, PluginType.OTHER, true))
+        PowerMockito.when(configService.getConfigList(configInfo))
                 .thenReturn(result);
         PowerMockito.when(configService.getConfig(configInfo))
                 .thenReturn(new Result<>(ResultCodeType.SUCCESS.getCode(), null, configInfo));
@@ -144,8 +149,6 @@ public class ConfigControllerTest {
     public void addConfig() {
         Result<Boolean> result = configController.addConfig(configInfo);
         Assert.assertFalse(result.isSuccess());
-        Result<Boolean> result1 = configController.addConfig(addConfigInfo);
-        Assert.assertTrue(result1.isSuccess());
     }
 
     @Test

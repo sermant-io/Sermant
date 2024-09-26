@@ -68,6 +68,18 @@ public class Result<R> {
     /**
      * Constructor
      *
+     * @param resultCodeType Result information
+     * @param data result data
+     */
+    public Result(ResultCodeType resultCodeType, R data) {
+        this.code = resultCodeType.getCode();
+        this.message = resultCodeType.getMessage();
+        this.data = data;
+    }
+
+    /**
+     * Constructor
+     *
      * @param code result code
      * @param message result message
      * @param data result data
