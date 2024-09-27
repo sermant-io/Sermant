@@ -16,6 +16,8 @@
 
 package io.sermant.router.spring.utils;
 
+import com.netflix.loadbalancer.Server;
+
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.StringUtils;
@@ -62,6 +64,19 @@ public class SpringRouterUtils {
     }
 
     /**
+     * get SpringCloud ServiceInstance By XdsServiceInstance
+     *
+     * @param xdsServiceInstances
+     * @return spring cloud service instance
+     */
+    public static List<Server> getSpringCloudServerByXds(
+            Set<ServiceInstance> xdsServiceInstances) {
+        return xdsServiceInstances.stream()
+                .map(SpringRouterUtils::convertServiceInstance2Server)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Get metadata
      *
      * @param obj Object
@@ -94,7 +109,7 @@ public class SpringRouterUtils {
     }
 
     private static org.springframework.cloud.client.ServiceInstance convertServiceInstance(
-            io.sermant.core.service.xds.entity.ServiceInstance xdsServiceInstance) {
+            ServiceInstance xdsServiceInstance) {
         StringBuilder instanceIdBuilder = new StringBuilder();
         instanceIdBuilder.append(xdsServiceInstance.getHost())
                 .append(":")
@@ -102,5 +117,10 @@ public class SpringRouterUtils {
         return new DefaultServiceInstance(
                 instanceIdBuilder.toString(), xdsServiceInstance.getServiceName(), xdsServiceInstance.getHost(),
                 xdsServiceInstance.getPort(), routerConfig.isEnabledSpringCloudXdsRouteSecure());
+    }
+
+    private static Server convertServiceInstance2Server(ServiceInstance xdsServiceInstance) {
+        String scheme = routerConfig.isEnabledSpringCloudXdsRouteSecure() ? "https" : "http";
+        return new Server(scheme, xdsServiceInstance.getHost(), xdsServiceInstance.getPort());
     }
 }

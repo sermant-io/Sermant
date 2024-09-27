@@ -163,7 +163,7 @@ public class BaseLoadBalancerInterceptor extends AbstractInterceptor {
             return false;
         }
         context.skip(Collections.unmodifiableList(SpringRouterUtils
-                .getSpringCloudServiceInstanceByXds(serviceInstanceByXdsRoute)));
+                .getSpringCloudServerByXds(serviceInstanceByXdsRoute)));
         return true;
     }
 }
