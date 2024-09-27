@@ -67,7 +67,7 @@ public class RocketMqSubscriptionDataUtils {
      */
     public static final String SELECT_ALL_MESSAGE_SQL = "(_message_tag_ is null) or (_message_tag_ is not null)";
 
-    private static final Pattern PATTERN = Pattern.compile("and|or", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN = Pattern.compile(" and | or ", Pattern.CASE_INSENSITIVE);
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 

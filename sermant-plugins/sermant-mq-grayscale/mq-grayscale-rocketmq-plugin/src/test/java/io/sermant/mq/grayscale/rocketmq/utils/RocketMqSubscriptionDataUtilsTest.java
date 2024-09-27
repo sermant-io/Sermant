@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * RocketMqSubscriptionDataUtils test
@@ -119,5 +120,39 @@ public class RocketMqSubscriptionDataUtilsTest extends RocketMqTestAbstract {
                 getPushConsumerRebalanced(pushConsumer));
 
         Assert.assertTrue(grayTagChanged);
+    }
+
+    @Test
+    public void testPatternSplit() {
+        Pattern pattern = Pattern.compile(" and | or ", Pattern.CASE_INSENSITIVE);
+        String originStr = "strorstr";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "str_or_str";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "STRORSTR";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "str or str";
+        Assert.assertSame(2, pattern.split(originStr).length);
+
+        originStr = "str OR str";
+        Assert.assertSame(2, pattern.split(originStr).length);
+
+        originStr = "strandstr";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "str_and_str";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "STRANDSTR";
+        Assert.assertSame(1, pattern.split(originStr).length);
+
+        originStr = "str and str";
+        Assert.assertSame(2, pattern.split(originStr).length);
+
+        originStr = "str AND str";
+        Assert.assertSame(2, pattern.split(originStr).length);
     }
 }
