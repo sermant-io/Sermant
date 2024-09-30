@@ -96,7 +96,7 @@ public class RefreshUtils {
                     "Can not refresh service [%s] instance cache with spring loadbalancer!", curServiceName));
             return;
         }
-        LOGGER.fine(String.format(Locale.ENGLISH,
+        LOGGER.info(String.format(Locale.ENGLISH,
                 "Start refresh target service [%s] spring loadbalancer instance cache!", curServiceName));
         final Optional<Object> cacheOptional = ReflectUtils.invokeMethod(loadBalancerCacheManager, "getCache",
                 new Class[]{String.class}, new Object[]{GraceConstants.SPRING_CACHE_MANAGER_LOADBALANCER_CACHE_NAME});
@@ -112,7 +112,7 @@ public class RefreshUtils {
 
     private static void refreshWithRibbon(Object loadbalancer) {
         final Optional<Object> serviceName = ReflectUtils.getFieldValue(loadbalancer, "name");
-        LOGGER.fine(String.format(Locale.ENGLISH,
+        LOGGER.info(String.format(Locale.ENGLISH,
                 "Start refresh target service [%s] ribbon instance cache!", serviceName.orElse("unKnow service")));
         ReflectUtils.invokeMethod(loadbalancer, "updateListOfServers", null, null);
     }

@@ -63,8 +63,17 @@ public class GraceHttpServerTest {
 
     @Before
     public void setUp() {
-        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginServiceManagerMockedStatic = Mockito.mockStatic(PluginServiceManager.class);
+        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(GraceService.class))
+                .thenReturn(new GraceServiceImpl());
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        final GraceConfig graceConfig = new GraceConfig();
+        graceConfig.setEnableSpring(true);
+        graceConfig.setEnableGraceShutdown(true);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
+                .thenReturn(new RegisterConfig());
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
+                .thenReturn(graceConfig);
     }
 
     @After
@@ -78,15 +87,6 @@ public class GraceHttpServerTest {
      */
     @Test
     public void testHttpServer() {
-        final GraceConfig graceConfig = new GraceConfig();
-        graceConfig.setEnableSpring(true);
-        graceConfig.setEnableGraceShutdown(true);
-        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(RegisterConfig.class))
-                .thenReturn(new RegisterConfig());
-        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(GraceConfig.class))
-                .thenReturn(graceConfig);
-        pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(GraceService.class))
-                .thenReturn(new GraceServiceImpl());
         final GraceHttpServer graceHttpServer = new GraceHttpServer();
         graceHttpServer.start();
         try {

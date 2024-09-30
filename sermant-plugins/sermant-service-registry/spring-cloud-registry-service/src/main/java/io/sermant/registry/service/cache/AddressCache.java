@@ -18,12 +18,17 @@ package io.sermant.registry.service.cache;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.registry.config.GraceConfig;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Upstream address caching
@@ -36,6 +41,7 @@ public enum AddressCache {
      * Singleton
      */
     INSTANCE;
+
     private final Cache<String, String> cache;
 
     AddressCache() {
@@ -43,6 +49,7 @@ public enum AddressCache {
         cache = CacheBuilder.newBuilder()
                 .maximumSize(pluginConfig.getUpstreamAddressMaxSize()) // 设置缓存的最大容量
                 .expireAfterWrite(pluginConfig.getUpstreamAddressExpiredTime(), TimeUnit.SECONDS) // 设置缓存失效时间
+                .removalListener(new CacheRemovalListener())
                 .build();
     }
 
@@ -69,5 +76,31 @@ public enum AddressCache {
      */
     public void cleanCache() {
         cache.invalidateAll();
+    }
+
+    /**
+     * get cache size
+     *
+     * @return size
+     */
+    public int size() {
+        cache.cleanUp();
+        return (int) cache.size();
+    }
+
+    /**
+     * Cache Removal Listener
+     *
+     * @author provenceee
+     * @since 2024-09-27
+     */
+    private static class CacheRemovalListener implements RemovalListener<String, String> {
+        private static final Logger LOGGER = LoggerFactory.getLogger();
+
+        @Override
+        public void onRemoval(RemovalNotification<String, String> notification) {
+            LOGGER.log(Level.INFO, "[{0}] will remove, type is [{1}]", new Object[]{notification.getKey(),
+                    notification.getCause()});
+        }
     }
 }
