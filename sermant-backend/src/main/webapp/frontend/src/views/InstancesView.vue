@@ -195,7 +195,8 @@
         <TooltipIcon :content="$t('instanceView.agentPathNotice')"/>
       </el-form-item>
       <el-form-item
-          v-if="hotPluggingConfig.commandType == 'UPDATE-AGENT' || hotPluggingConfig.commandType == 'UPDATE-PLUGINS'"
+          v-if="hotPluggingConfig.commandType == 'UPDATE-AGENT' || hotPluggingConfig.commandType == 'UPDATE-PLUGINS'
+            || hotPluggingConfig.commandType == 'INSTALL-PLUGINS'"
           :label="$t('instanceView.param')" label-width="140px"
           prop="param">
         <el-input v-model="hotPluggingConfig.params" class="input-style"
