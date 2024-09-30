@@ -15,7 +15,7 @@
         <jdk.version>1.8</jdk.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <io.netty.version>4.1.100.Final</io.netty.version>
+        <io.netty.version>4.1.108.Final</io.netty.version>
         <protobuf-java.version>3.19.6</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
@@ -30,8 +30,8 @@
         <expiringmap.version>0.5.8</expiringmap.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
         <aspectjweaver.version>1.8.4</aspectjweaver.version>
-        <tomcat-embed.version>9.0.86</tomcat-embed.version>
-        <spring-framework.version>5.3.33</spring-framework.version>
+        <tomcat-embed.version>9.0.95</tomcat-embed.version>
+        <spring-framework.version>5.3.39</spring-framework.version>
         <nacos-client-version>2.2.1</nacos-client-version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
