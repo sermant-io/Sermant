@@ -182,4 +182,3 @@ public interface HttpRequest {
      */
     InputStream getBodyAsStream();
 }
-

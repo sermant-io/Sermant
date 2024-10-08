@@ -488,7 +488,7 @@ class TestConfig(unittest.TestCase):
         self.config_test_function(self.add_other_config_param, self.query_other_configs_param,
                                   self.query_other_config_param, self.update_other_config_param,
                                   self.delete_other_config_param)
-        
+
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
 ## 组成部分
 
 ```yaml
-├─.github   	
+├─.github
 │  ├─actions                            #存放所有测试场景
 │  │  ├─common                          #存放测试场景公共目录
 │  │  │  ├─dubbo                        #dubbo测试场景公共步骤
@@ -41,7 +41,7 @@
     │  └─dubbo-integration-test
     ├─scripts                           #自动化测试脚本存放处
     └─spring-test                       #spring自动化测试demo
-        ├─spring-common					
+        ├─spring-common
         ├─spring-common-demos           #公共demo
         │  ├─spring-common-feign        #公共feign demo， 2.x
         │  ├─spring-common-feign-1.5.x  #公共feign demo, 1.5.x
@@ -586,4 +586,3 @@ concurrency:
 
 - `push`事件，该事件默认将开启所有action测试，我们可以找到路径判断的action文件，参考章节[代码目录变更检查](#代码目录变更检查)， 若为该事件，则所有的action开关都将开启。
 - `pull_request`事件，该事件则是具体判断代码变更路径，参考章节[代码目录变更检查](#代码目录变更检查)；这里将根据不同的路径确定不同的测试场景，例如`sermant-plugins/sermant-router`存在文件变更，那我则认为关联路由的场景均可开启测试，同时在自动化测试入口添加对应开关，控制自动化测试的执行。
-

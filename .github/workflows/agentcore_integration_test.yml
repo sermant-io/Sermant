@@ -150,6 +150,3 @@ jobs:
         uses: ./.github/actions/common/agentcore
       - name: start dynamic test
         uses: ./.github/actions/scenarios/agentcore/agentmain
-
-
-

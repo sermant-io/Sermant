@@ -222,4 +222,3 @@ public class SimpleHttpRequest implements HttpRequest {
         return exchange.getRequestBody();
     }
 }
-

@@ -21,6 +21,3 @@ runs:
           echo "========check process========"
           jps -l
         fi
-
-
-

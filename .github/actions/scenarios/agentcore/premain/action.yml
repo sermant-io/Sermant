@@ -9,7 +9,7 @@ runs:
         log-dir: ./logs/agentcore-test/premain
     - name: (install agent) modify plugins file
       shell: bash
-      run: |        
+      run: |
         sed -i '/dynamic-test-first-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
         sed -i '/dynamic-test-second-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
         sed -i '/plugins:/a \  - dynamic-test-first-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml

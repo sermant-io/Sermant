@@ -117,4 +117,3 @@ public interface HttpResponse {
      */
     void writeBodyAsJson(Object obj);
 }
-

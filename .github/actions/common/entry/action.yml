@@ -16,5 +16,3 @@ runs:
         echo "logDir=${log_dir}" >> $GITHUB_ENV
         echo "=======check log dir======"
         ls -l ${log_dir}
-
-

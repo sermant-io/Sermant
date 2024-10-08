@@ -1,0 +1,13 @@
+name: line lint
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  build:
+    name: line lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: linelint
+        uses: shoothzj/linelint@main
