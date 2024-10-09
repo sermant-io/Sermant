@@ -147,6 +147,25 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>copy-router-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${output.basedir}/agent/pluginPackage</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${sermant.source.dir}/pluginPackage</directory>
+                                    <includes>
+                                        <include>service-router/**</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>copy-agent</id>
                         <phase>package</phase>
                         <goals>

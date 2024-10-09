@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: spring-cloud-client
+  cloud:
+    zookeeper:
+      connect-string: ${ZOOKEEPER_IP}:2181
+      enabled: true
+server:
+  port: 8082

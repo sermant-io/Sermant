@@ -1,2 +1,3 @@
 plugins:
   - xds-service-discovery
+  - service-router

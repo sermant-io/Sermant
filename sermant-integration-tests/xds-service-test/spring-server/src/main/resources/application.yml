@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: spring-server
+  cloud:
+    zookeeper:
+      connect-string: ${ZOOKEEPER_IP}:2181
+      enabled: ${ZOOKEEPER_ENABLED:false}
+server:
+  port: 8081

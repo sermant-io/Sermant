@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <httpclient.version>4.5.13</httpclient.version>
+        <okhttp2.version>2.7.5</okhttp2.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,11 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp2.version}</version>
         </dependency>
     </dependencies>
 
