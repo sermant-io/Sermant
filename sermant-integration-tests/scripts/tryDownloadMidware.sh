@@ -107,6 +107,3 @@ if [ $num -eq 0 ];then
 else
   echo ${FILE_NAME} " exist when download " ${midleware}
 fi
-
-
-

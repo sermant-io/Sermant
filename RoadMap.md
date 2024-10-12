@@ -49,5 +49,3 @@
 - [x] Supports event reporting capability to enhance observability for Sermant
 - [x] Supports unified rule model for router plugin
 - [x] Supports outlier instance removal
-
-

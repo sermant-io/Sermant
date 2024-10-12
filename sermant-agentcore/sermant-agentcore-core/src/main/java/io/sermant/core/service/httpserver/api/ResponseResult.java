@@ -120,4 +120,3 @@ public class ResponseResult<T> {
         this.data = data;
     }
 }
-

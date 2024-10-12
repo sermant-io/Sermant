@@ -71,4 +71,3 @@ public interface Metric {
     Summary summary(String metricName, Tags tags, String description,
             DistributionStatisticConfig distributionStatisticConfig);
 }
-

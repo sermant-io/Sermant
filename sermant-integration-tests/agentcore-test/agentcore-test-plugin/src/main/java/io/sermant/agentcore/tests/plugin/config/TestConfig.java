@@ -39,4 +39,3 @@ public class TestConfig implements PluginConfig {
         this.testConfigValue = testConfigValue;
     }
 }
-

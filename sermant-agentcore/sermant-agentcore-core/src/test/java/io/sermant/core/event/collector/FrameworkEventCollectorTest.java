@@ -49,7 +49,7 @@ public class FrameworkEventCollectorTest {
     private final MockedStatic<JarFileUtils> jarFileUtilsMockedStatic = Mockito.mockStatic(JarFileUtils.class);
 
     private static final EventConfig EVENT_CONFIG = new EventConfig();
-    
+
     @Before
     public void setUp() throws Exception {
         configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(EVENT_CONFIG);

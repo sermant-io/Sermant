@@ -19,4 +19,3 @@ io.sermant.flowcontrol.res4j.service.HttpRest4jServiceImpl
 io.sermant.flowcontrol.res4j.service.DubboRest4jServiceImpl
 io.sermant.flowcontrol.res4j.service.ServiceCollectorService
 io.sermant.flowcontrol.res4j.service.SystemStatusSlidingWindow
-

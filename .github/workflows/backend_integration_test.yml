@@ -95,5 +95,3 @@ jobs:
         uses: ./.github/actions/scenarios/backend/event/redis
       - name: start config manager test
         uses: ./.github/actions/scenarios/backend/config
-
-

@@ -16,6 +16,3 @@ jobs:
           # if true, the robot account @Issues-translate-bot must have modification permissions, invite @Issues-translate-bot to your project or use your custom bot.
           CUSTOM_BOT_NOTE: Detect the issue's language is not English and translate it automatically.
           # not require. Customize the translation robot prefix message.
-
-
-

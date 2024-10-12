@@ -7,7 +7,7 @@ This document describes automated tests and how to write an automated test.。
 ## Automatic Test Components
 
 ```yaml
-├─.github   	
+├─.github
 │  ├─actions                            #stores all test scenarios.
 │  │  ├─common                          #common directory for storing test scenarios.
 │  │  │  ├─dubbo                        #dubbo common procedure in test scenarios
@@ -41,7 +41,7 @@ This document describes automated tests and how to write an automated test.。
     │  └─dubbo-integration-test
     ├─scripts                           #auto test script
     └─spring-test                       #spring automated tests demo
-        ├─spring-common					
+        ├─spring-common
         ├─spring-common-demos           #spring common demos
         │  ├─spring-common-feign        #common feign demo， 2.x
         │  ├─spring-common-feign-1.5.x  #common feign demo, 1.5.x
@@ -549,7 +549,7 @@ If two tasks have the same group, the former will cancel the workflow.
 
 The triggering of a specific action (specific test scenario) depends on the triggering of a workflow. The triggering of a workflow depends on the `push` and `pull_request` events. Therefore, the automatic test workflow mainly depends on the preceding two events. In addition, the workflow triggering and action triggering must be preferred. Only when the workflow is triggered, the action layer can be triggered. The following describes workflow triggering and action triggering based on priorities.
 
-**(1) Trigger Workflow** 
+**(1) Trigger Workflow**
 
 - `push` event, the commits. This event triggers all workflows by default, regardless of branches and paths.
 

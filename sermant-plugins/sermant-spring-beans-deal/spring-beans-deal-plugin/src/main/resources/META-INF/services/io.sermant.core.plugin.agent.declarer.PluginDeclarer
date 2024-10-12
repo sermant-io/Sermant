@@ -16,4 +16,3 @@
 #
 io.sermant.spring.beans.deal.declarers.SpringAutoBeanDeclarer
 io.sermant.spring.beans.deal.declarers.SpringComponentBeanDeclarer
-
