@@ -16,11 +16,25 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <spring.version>2.7.17</spring.version>
+        <springcloud.version>2021.0.3</springcloud.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${springcloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <modules>
         <module>spring-client</module>
         <module>spring-server</module>
         <module>xds-service-discovery</module>
+        <module>spring-cloud-client</module>
     </modules>
 </project>
