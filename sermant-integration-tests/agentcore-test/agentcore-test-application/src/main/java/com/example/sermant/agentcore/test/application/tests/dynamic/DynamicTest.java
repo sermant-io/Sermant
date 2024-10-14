@@ -31,6 +31,7 @@ public class DynamicTest {
     private static final int FIRST_PLUGIN_ENHANCE_INDEX = 0;
     private static final int SECOND_PLUGIN_ENHANCE_INDEX = 1;
     private static final int THIRD_PLUGIN_ENHANCE_INDEX = 2;
+    private static final int FIRST_PLUGIN_V2_ENHANCE_INDEX = 3;
     /**
      * 用于测试插件反射修改的回执结果：监听成功
      */
@@ -47,6 +48,16 @@ public class DynamicTest {
         boolean[] result = repeatEnhance(false, false, false);
         if (result[FIRST_PLUGIN_ENHANCE_INDEX] && result[SECOND_PLUGIN_ENHANCE_INDEX]) {
             DynamicResults.DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE.setResult(true);
+        }
+    }
+
+    /**
+     * Test dynamic upgrade plugin
+     */
+    public void testUpdatePlugin() {
+        boolean[] result = repeatEnhance(false, false, false);
+        if (result[SECOND_PLUGIN_ENHANCE_INDEX] && result[THIRD_PLUGIN_ENHANCE_INDEX]) {
+            DynamicResults.DYNAMIC_UPDATE_PLUGIN.setResult(true);
         }
     }
 

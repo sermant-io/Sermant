@@ -20,6 +20,11 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,8 +39,19 @@ public class RepeatEnhanceInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        context.getArguments()[1] = true;
-        LOGGER.log(Level.INFO, "Test repeat enhance, second plugin enhance success");
+        try {
+            String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            try (JarFile jarFile = new JarFile(path)) {
+                Manifest manifest = jarFile.getManifest();
+                Attributes attributes = manifest.getMainAttributes();
+                context.getArguments()[Integer.parseInt(attributes.getValue("paramIndex"))] = true;
+                LOGGER.log(Level.INFO, "Test repeat enhance, second plugin enhance success");
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Test repeat enhance, second plugin enhance failed", e);
+            }
+        } catch (URISyntaxException e) {
+            LOGGER.log(Level.SEVERE, "Test repeat enhance, second plugin enhance failed", e);
+        }
         return context;
     }
 

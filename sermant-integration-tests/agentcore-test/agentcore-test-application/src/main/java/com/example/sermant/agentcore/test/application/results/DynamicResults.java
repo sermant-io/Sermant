@@ -76,7 +76,12 @@ public enum DynamicResults {
     /**
      * agentmain启动，passive插件失效
      */
-    AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, passive plugin failure.");
+    AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, passive plugin failure."),
+
+    /**
+     * Dynamically update plugins
+     */
+    DYNAMIC_UPDATE_PLUGIN("Test dynamic update plugin.");
 
     /**
      * 用例描述

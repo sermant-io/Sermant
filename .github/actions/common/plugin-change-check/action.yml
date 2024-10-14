@@ -829,6 +829,7 @@ runs:
 
         # ==========grpc Tag Transmission is needed to test?==========
         if [ ${{ env.grpcTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableGrpcTagTransmissionAction=true" >> $GITHUB_ENV
         fi
@@ -842,6 +843,7 @@ runs:
 
         # ==========httpclientV4 Tag Transmission is needed to test?==========
         if [ ${{ env.httpclientV4TagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableHttpclientV4TagTransmissionAction=true" >> $GITHUB_ENV
         fi
