@@ -21,8 +21,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -38,8 +36,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /**
  * SpringRouterController
@@ -58,6 +54,16 @@ public class SpringRouterController {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    /**
+     * check service status
+     *
+     * @return result
+     */
+    @RequestMapping("checkStatus")
+    public String checkStatus() {
+        return "ok";
+    }
 
     /**
      * test httpclient routing
@@ -127,33 +133,6 @@ public class SpringRouterController {
             if (connection != null) {
                 connection.disconnect();
             }
-        }
-    }
-
-    /**
-     * test http async client routing
-     *
-     * @param host host
-     * @param version version
-     * @return result
-     */
-    @RequestMapping("httpAsyncClient")
-    public String testHttpAsyncClientRouting(String host, String version) {
-        String url = buildUrl(host);
-        try (CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault()) {
-            httpclient.start();
-            HttpGet request = new HttpGet(url);
-            request.setHeader(VERSION, version);
-            Future<HttpResponse> future = httpclient.execute(request, null);
-            HttpResponse response = future.get();
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                return EntityUtils.toString(response.getEntity());
-            } else {
-                return "";
-            }
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            return "";
         }
     }
 

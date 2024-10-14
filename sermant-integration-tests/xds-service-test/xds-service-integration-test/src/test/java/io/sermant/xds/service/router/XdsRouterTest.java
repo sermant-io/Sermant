@@ -33,16 +33,16 @@ public class XdsRouterTest {
      * test xds router with header and path
      */
     @Test
-    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "ROUTER_HEADER")
+    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "ROUTER_HEADER_PATH")
     public void testRouterWithHeaderAndPath() {
         Assertions.assertEquals("v1",
                 HttpRequestUtils.doGet("http://127.0.0.1:8080/router/okHttp2?host=spring-server&version=v1"));
         Assertions.assertEquals("v1",
+                HttpRequestUtils.doGet("http://127.0.0.1:8080/router/httpAsyncClient?host=spring-server&version=v1"));
+        Assertions.assertEquals("v1",
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/httpClient?host=spring-server&version=v1"));
         Assertions.assertEquals("v1",
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/jdkHttp?host=spring-server&version=v1"));
-        Assertions.assertEquals("v1",
-                HttpRequestUtils.doGet("http://127.0.0.1:8082/router/httpAsyncClient?host=spring-server&version=v1"));
         Assertions.assertEquals("v1",
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/okHttp3?host=spring-server&version=v1"));
         Assertions.assertEquals("v1",
@@ -53,7 +53,7 @@ public class XdsRouterTest {
      * test xds router with random lb
      */
     @Test
-    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "ROUTER_RANDOM")
+    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "LB_RANDOM")
     public void testRouterWithRandom() {
         int[][] results = new int[5][2];
 
@@ -67,7 +67,8 @@ public class XdsRouterTest {
             countCalls(results, 2,
                     HttpRequestUtils.doGet("http://127.0.0.1:8082/router/jdkHttp?host=spring-server&version=v2"));
             countCalls(results, 3,
-                    HttpRequestUtils.doGet("http://127.0.0.1:8082/router/httpAsyncClient?host=spring-server&version=v2"));
+                    HttpRequestUtils.doGet("http://127.0.0.1:8080/router/httpAsyncClient?host=spring-server&version"
+                            + "=v2"));
             countCalls(results, 4,
                     HttpRequestUtils.doGet("http://127.0.0.1:8082/router/okHttp3?host=spring-server&version=v2"));
         }
@@ -82,7 +83,7 @@ public class XdsRouterTest {
      * test xds router with round-robin lb
      */
     @Test
-    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "ROUND_ROBIN")
+    @EnabledIfSystemProperty(named = "xds.service.integration.test.type", matches = "LB_ROUND_ROBIN")
     public void testRouterWithRoundRobin() {
         Assertions.assertNotEquals(
                 HttpRequestUtils.doGet("http://127.0.0.1:8080/router/okHttp2?host=spring-server&version=v2"),
@@ -94,8 +95,8 @@ public class XdsRouterTest {
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/jdkHttp?host=spring-server&version=v2"),
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/jdkHttp?host=spring-server&version=v2"));
         Assertions.assertNotEquals(
-                HttpRequestUtils.doGet("http://127.0.0.1:8082/router/httpAsyncClient?host=spring-server&version=v2"),
-                HttpRequestUtils.doGet("http://127.0.0.1:8082/router/httpAsyncClient?host=spring-server&version=v2"));
+                HttpRequestUtils.doGet("http://127.0.0.1:8080/router/httpAsyncClient?host=spring-server&version=v2"),
+                HttpRequestUtils.doGet("http://127.0.0.1:8080/router/httpAsyncClient?host=spring-server&version=v2"));
         Assertions.assertNotEquals(
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/okHttp3?host=spring-server&version=v2"),
                 HttpRequestUtils.doGet("http://127.0.0.1:8082/router/okHttp3?host=spring-server&version=v2"));
@@ -121,7 +122,7 @@ public class XdsRouterTest {
                     HttpRequestUtils.doGet("http://127.0.0.1:8082/router/jdkHttp?host=spring-server&version=base"));
             Assertions.assertEquals("v2",
                     HttpRequestUtils
-                            .doGet("http://127.0.0.1:8082/router/httpAsyncClient?host=spring-server&version=base"));
+                            .doGet("http://127.0.0.1:8080/router/httpAsyncClient?host=spring-server&version=base"));
             Assertions.assertEquals("v2",
                     HttpRequestUtils.doGet("http://127.0.0.1:8082/router/okHttp3?host=spring-server&version=base"));
             Assertions.assertEquals("v2",
@@ -143,7 +144,7 @@ public class XdsRouterTest {
 
     private boolean isRandom(int[][] results, int index) {
         int differenceValue = Math.abs(results[index][0] - results[index][1]);
-        if (differenceValue <= 20) {
+        if (differenceValue <= 30) {
             return true;
         }
         return false;

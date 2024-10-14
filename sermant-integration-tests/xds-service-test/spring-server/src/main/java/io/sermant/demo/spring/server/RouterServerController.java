@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 public class RouterServerController {
-    @Value("${SERVER_VERSION:1.0.0}")
+    @Value("${SERVER_VERSION:v1}")
     private String version;
 
     /**

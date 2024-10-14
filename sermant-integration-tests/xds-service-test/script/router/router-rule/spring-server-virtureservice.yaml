@@ -39,7 +39,7 @@ spec:
           version:
             exact: base
         uri:
-          exact: /router
+          prefix: /
         ignoreUriCase: false
     route:
     - destination:

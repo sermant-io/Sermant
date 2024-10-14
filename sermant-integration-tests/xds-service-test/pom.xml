@@ -15,12 +15,32 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <spring.version>2.7.17</spring.version>
+        <springboot.version>2.7.17</springboot.version>
         <springcloud.version>2021.0.3</springcloud.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <okhttp2.version>2.7.5</okhttp2.version>
+        <httpclient.async.version>4.1.5</httpclient.async.version>
+        <okhttp3.version>4.9.3</okhttp3.version>
+        <snakeyaml.version>1.29</snakeyaml.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -32,9 +52,24 @@
     </dependencyManagement>
 
     <modules>
-        <module>spring-client</module>
-        <module>spring-server</module>
         <module>xds-service-discovery</module>
-        <module>spring-cloud-client</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>xds-discovery</id>
+            <modules>
+                <module>spring-client</module>
+                <module>spring-server</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>xds-router-lb</id>
+            <modules>
+                <module>spring-client</module>
+                <module>spring-server</module>
+                <module>spring-cloud-client</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

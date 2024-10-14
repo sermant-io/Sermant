@@ -14,20 +14,22 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <httpclient.version>4.5.13</httpclient.version>
-        <okhttp2.version>2.7.5</okhttp2.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+            <version>4.5.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+            <version>${httpclient.async.version}</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp</groupId>
@@ -41,7 +43,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.version}</version>
+                <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>io.sermant.demo.spring.client.SpringClientApplication</mainClass>
                     <finalName>spring-client</finalName>
