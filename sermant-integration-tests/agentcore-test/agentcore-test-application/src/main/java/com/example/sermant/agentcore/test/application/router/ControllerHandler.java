@@ -111,6 +111,8 @@ public class ControllerHandler implements HttpHandler {
                 return testController.testEnhancement();
             case RouterPath.REQUEST_PATH_RE_TRANSFORM:
                 return testController.testReTransform();
+            case RouterPath.UPDATE_PLUGIN:
+                return testController.testUpdatePlugin();
             default:
                 return REQUEST_URL_NOT_FOUND;
         }

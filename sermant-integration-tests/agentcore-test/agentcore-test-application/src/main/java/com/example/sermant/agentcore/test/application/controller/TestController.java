@@ -84,6 +84,19 @@ public class TestController {
     }
 
     /**
+     * Test dynamic installation plugins
+     *
+     * @return test result
+     */
+    public Map<String, Object> testUpdatePlugin() {
+        Map<String, Object> resultMap = new HashMap<>();
+        DynamicTest dynamicTest = new DynamicTest();
+        dynamicTest.testUpdatePlugin();
+        resultMap.put(DynamicResults.DYNAMIC_UPDATE_PLUGIN.name(), DynamicResults.DYNAMIC_UPDATE_PLUGIN.getResult());
+        return resultMap;
+    }
+
+    /**
      * 测试动态卸载插件
      *
      * @return 测试结果

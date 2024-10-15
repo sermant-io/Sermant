@@ -75,9 +75,14 @@ jobs:
           key: ${{ runner.os }}-agent-${{ github.run_id }}
       - name: package agent
         run: |
-          sed -i '/sermant-integration-tests/d' pom.xml
           sed -i '/sermant-injector/d' pom.xml
-          mvn package -DskipTests -Ptest --file pom.xml
+          mvn clean package -DskipTests -Ptest --file pom.xml -Dfirst.plugin.paramIndex=1 -Dsecond.plugin.paramIndex=2
+          mv sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-first-plugin/plugin/dynamic-test-first-plugin-1.0.0.jar ./
+          mv sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-second-plugin/plugin/dynamic-test-second-plugin-1.0.0.jar ./
+          mvn clean package -DskipTests -Ptest --file pom.xml -Dfirst.plugin.paramIndex=0 -Dsecond.plugin.paramIndex=1
+          mv ./dynamic-test-first-plugin-1.0.0.jar ./sermant-agent-${{ env.sermantVersion }}
+          mv ./dynamic-test-second-plugin-1.0.0.jar ./sermant-agent-${{ env.sermantVersion }}
+          cp ./sermant-integration-tests/agentcore-test/agentcore-test-application/target/agentcore-test-application-1.0.0-jar-with-dependencies.jar sermant-agent-${{ env.sermantVersion }}/agent/
   test-for-backend:
     name: Test for backend
     runs-on: ubuntu-latest
@@ -95,3 +100,7 @@ jobs:
         uses: ./.github/actions/scenarios/backend/event/redis
       - name: start config manager test
         uses: ./.github/actions/scenarios/backend/config
+      - name: start hot plugging test
+        uses: ./.github/actions/scenarios/backend/hot-plugging
+
+

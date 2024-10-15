@@ -20,6 +20,11 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,17 +35,24 @@ import java.util.logging.Logger;
  * @since 2023-09-27
  */
 public class RepeatEnhanceInterceptor extends AbstractInterceptor {
-    /**
-     * third测试插件增强参数下标
-     */
-    private static final int ARGS_INDEX = 2;
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
-        context.getArguments()[ARGS_INDEX] = true;
-        LOGGER.log(Level.INFO, "Test repeat enhance, third plugin enhance success");
+        try {
+            String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            try (JarFile jarFile = new JarFile(path)) {
+                Manifest manifest = jarFile.getManifest();
+                Attributes attributes = manifest.getMainAttributes();
+                context.getArguments()[Integer.parseInt(attributes.getValue("paramIndex"))] = true;
+                LOGGER.log(Level.INFO, "Test repeat enhance, third plugin enhance success");
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Test repeat enhance, third plugin enhance failed", e);
+            }
+        } catch (URISyntaxException e) {
+            LOGGER.log(Level.SEVERE, "Test repeat enhance, third plugin enhance failed", e);
+        }
         return context;
     }
 

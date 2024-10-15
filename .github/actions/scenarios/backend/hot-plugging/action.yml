@@ -1,0 +1,83 @@
+name: "Test the configuration management of Backend"
+description: "Auto test for Backend"
+runs:
+  using: "composite"
+  steps:
+    - name: compile AgentLoader
+      shell: bash
+      run: |
+        cp sermant-integration-tests/scripts/AgentLoader.java ./
+        javac -classpath ./:${{ env.JAVA_HOME}}/lib/tools.jar AgentLoader.java
+    - name: start backend with zookeeper
+      shell: bash
+      env:
+        DYNAMIC_CONFIG_SERVERADDRESS: 127.0.0.1:2181
+        DYNAMIC_CONFIG_DYNAMICCONFIGTYPE: ZOOKEEPER
+        DYNAMIC_CONFIG_ENABLE: true
+        NETTY_PORT: 6893
+        SERVER_PORT: 8910
+      run: |
+        nohup java -jar sermant-agent-${{ env.sermantVersion }}/server/sermant/sermant-backend-${{ env.sermantVersion }}.jar &
+        sleep 20
+    - name: start applications
+      shell: bash
+      env:
+        dynamic.config.serverAddress: 127.0.0.1:2181
+        dynamic.config.dynamicConfigType: ZOOKEEPER
+        service.meta.project: TestAgentCore
+      run: |
+        nohup java -jar \
+        sermant-agent-${{ env.sermantVersion }}/agent/agentcore-test-application-1.0.0-jar-with-dependencies.jar > ${{ env.logDir
+        }}/agentcore-test.log 2>&1 &
+    - name: waiting for agentcore services start
+      shell: bash
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8915/ping 120
+    - name: (install agent) modify plugins file
+      shell: bash
+      run: |
+        sed -i '/dynamic-test-first-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/dynamic-test-second-plugin/d' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/  passive:/a \  - dynamic-test-first-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+        sed -i '/  passive:/a \  - dynamic-test-second-plugin' sermant-agent-${{ env.sermantVersion }}/agent/config/plugins.yaml
+    - name: dynamic install agent
+      shell: bash
+      run: java -classpath ./:${{ env.JAVA_HOME}}/lib/tools.jar AgentLoader sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar \
+        agent.service.hot.plugging.service.enable=true,agent.service.heartbeat.enable=true,agent.service.gateway.enable=true,event.enable=true,gateway.nettyPort=6893
+    - name: Sleep for 5 Seconds
+      shell: bash
+      run: sleep 20
+    - name: test install plugin
+      shell: bash
+      run: |
+        export TEST_MODE=install
+        python -m unittest ./sermant-integration-tests/scripts/test_backend_hot_plugging.py
+    - name: test update plugin
+      shell: bash
+      run: |
+        export TEST_MODE=update
+        rm -rf sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-first-plugin/plugin/dynamic-test-first-plugin-1.0.0.jar
+        rm -rf sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-second-plugin/plugin/dynamic-test-second-plugin-1.0.0.jar
+        mv sermant-agent-${{ env.sermantVersion }}/dynamic-test-first-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-first-plugin/plugin
+        mv sermant-agent-${{ env.sermantVersion }}/dynamic-test-second-plugin-1.0.0.jar sermant-agent-${{ env.sermantVersion }}/agent/pluginPackage/dynamic-test-second-plugin/plugin
+        python -m unittest ./sermant-integration-tests/scripts/test_backend_hot_plugging.py
+    - name: test uninstall plugin
+      shell: bash
+      run: |
+        export TEST_MODE=unInstall
+        python -m unittest ./sermant-integration-tests/scripts/test_backend_hot_plugging.py
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: agentcore|backend
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-backend-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

@@ -88,6 +88,11 @@ public class RouterPath {
      */
     public static final String REQUEST_PATH_RE_TRANSFORM = "/testReTransform";
 
+    /**
+     * Test plugin upgrade
+     */
+    public static final String UPDATE_PLUGIN = "/testUpdatePlugin";
+
     private RouterPath() {
     }
 }
