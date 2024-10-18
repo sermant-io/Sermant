@@ -31,6 +31,8 @@ runs:
         paths: sermant-agentcore/sermant-agentcore-implement/src/main/java/io/sermant/implement/service/xds
           sermant-agentcore/sermant-agentcore-core
           sermant-integration-tests/xds-service-test
+          sermant-plugins/sermant-router/router-common/**
+          sermant-plugins/sermant-router/spring-router-plugin/**
           ./.github/workflows/agentcore_service_test.yml
           ./.github/actions/common/xds-service
           ./.github/actions/scenarios/xds-service

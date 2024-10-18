@@ -14,21 +14,16 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <httpclient.version>4.5.13</httpclient.version>
-        <httpclient.async.version>4.1.4</httpclient.async.version>
-        <okhttp3.version>4.9.3</okhttp3.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -44,11 +39,6 @@
             <artifactId>okhttp</artifactId>
             <version>${okhttp3.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpasyncclient</artifactId>
-            <version>${httpclient.async.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -56,7 +46,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring.version}</version>
+                <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>io.sermant.demo.springcloud.client.SpringCloudClientApplication</mainClass>
                     <finalName>spring-cloud-client</finalName>

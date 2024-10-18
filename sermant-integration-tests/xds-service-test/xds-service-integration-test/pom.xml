@@ -16,6 +16,9 @@
         <maven.compiler.target>8</maven.compiler.target>
         <httpclient4x.version>4.5.13</httpclient4x.version>
         <commons-log.version>1.2</commons-log.version>
+        <logback.version>1.2.13</logback.version>
+        <slf4j.version>1.7.35</slf4j.version>
+        <jupiter.version>5.8.1</jupiter.version>
         <maven.surefire.plugin.version>3.0.0</maven.surefire.plugin.version>
     </properties>
 
@@ -23,6 +26,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>${jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -34,16 +38,19 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

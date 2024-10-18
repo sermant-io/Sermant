@@ -12,7 +12,7 @@
     <artifactId>xds-service-discovery-plugin</artifactId>
 
     <properties>
-        <output.basedir>${pom.basedir}/../../product/spring-client</output.basedir>
+        <output.basedir>${pom.basedir}/../../product/sermant-agent-${project.version}</output.basedir>
         <package.plugin.name>xds-service-discovery</package.plugin.name>
         <package.plugin.type>plugin</package.plugin.type>
         <config.skip.flag>false</config.skip.flag>

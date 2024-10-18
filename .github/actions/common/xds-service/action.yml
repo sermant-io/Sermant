@@ -40,12 +40,8 @@ runs:
       with:
         path: sermant-agent-*/
         key: ${{ runner.os }}-agent-${{ github.run_id }}
-    - name: remove xds service product
-      shell: bash
-      run: |
-        rm -rf sermant-integration-tests/xds-service-test/product
     - name: get cached xds service package
       uses: actions/cache@v3
       with:
-        path: sermant-integration-tests/xds-service-test/product/
-        key: ${{ runner.os }}-xds-service-product-${{ github.run_id }}
+        path: sermant-integration-tests/xds-service-test/product/sermant-agent-*/
+        key: ${{ runner.os }}-xds-service-product-agent-${{ github.run_id }}

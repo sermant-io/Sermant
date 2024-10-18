@@ -23,7 +23,7 @@ spec:
           value: "false"
         - name: agent_service_xds_service_enable
           value: "true"
-        - name: router_plugin_enabled-xds-route
+        - name: router_plugin_enabled_xds_route
           value: "true"
         - name: ZOOKEEPER_IP
           value: "zookeeper.default.svc.cluster.local"

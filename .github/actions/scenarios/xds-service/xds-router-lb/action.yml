@@ -1,0 +1,115 @@
+name: "xDS router an lb Test"
+description: "Auto test for xds router and lb with router plugin"
+runs:
+  using: composite
+  steps:
+    - name: prepare image
+      shell: bash
+      run: |
+        cp -r sermant-integration-tests/xds-service-test/product/sermant-agent-*/agent sermant-integration-tests/xds-service-test/product/spring-client/
+        cp -r sermant-integration-tests/xds-service-test/product/sermant-agent-*/agent sermant-integration-tests/xds-service-test/product/spring-cloud-client/
+        cp -r sermant-integration-tests/xds-service-test/product/sermant-agent-*/agent sermant-integration-tests/xds-service-test/product/spring-server/
+        mvn package -Dspringboot.version=${{ matrix.springBootVersion }} -Dsnakeyaml.version=${{ matrix.snakeyamlVersion }} -Dspringcloud.version=${{ matrix.springCloudVersion }} -Dhttpclient.version=${{ matrix.httpClientVersion }} -Dokhttp2.version=${{ matrix.okHttp2Version }} -Dhttpclient.async.version=${{ matrix.httpAsyncClientVersion }} -Dokhttp3.version=${{ matrix.okHttp3Version }} -DskipTests -pl spring-client,spring-cloud-client,spring-server -Pxds-router-lb --file \
+        sermant-integration-tests/xds-service-test/pom.xml
+    - name: build docker image
+      shell: bash
+      run: |
+        cd sermant-integration-tests/xds-service-test/product/spring-server/
+        minikube image build -t spring-server:1.0.0 .
+        cd ../spring-client/
+        minikube image build -t spring-client:1.0.0 .
+        cd ../spring-cloud-client/
+        minikube image build -t spring-cloud-client:1.0.0 .
+        eval $(minikube docker-env)
+        docker images
+    - name: start zookeeper
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/zookeeper.yaml
+        kubectl wait --for=condition=ready pod -l app=zookeeper --timeout=10s
+        sleep 15s
+    - name: start spring-client
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-client-sermant-xds-router.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-client --timeout=10s
+        sleep 15s
+        nohup kubectl port-forward svc/spring-client 8080:8080 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8080/checkStatus 150
+    - name: start spring-cloud-client
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-cloud-client-sermant-xds-router.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-cloud-client --timeout=10s
+        sleep 15s
+        nohup kubectl port-forward svc/spring-cloud-client 8082:8082 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8082/router/checkStatus 150
+    - name: start spring-server
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-server.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
+        sleep 15s
+        nohup kubectl port-forward svc/spring-server 8081:8081 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/hello 150
+        pkill -f "kubectl port-forward svc/spring-server"
+    - name: delivering routing and round-robin lb policy
+      shell: bash
+      run: |
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/router-rule/spring-server-destination-robin.yaml
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/router-rule/spring-server-virtureservice.yaml
+        sleep 10s
+    - name: test xds router with header and path
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=ROUTER_HEADER_PATH --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: test xds router with round-robin lb policy
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=LB_ROUND_ROBIN --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: test xds router with weighted cluster
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=ROUTER_WEIGHT --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: update lb policy with randmo
+      shell: bash
+      run: |
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/router/router-rule/spring-server-destination-robin.yaml
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/router-rule/spring-server-destination-random.yaml
+        sleep 10s
+    - name: test xds router with random lb policy
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=LB_RANDOM --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: restart spring-server with envoy
+      shell: bash
+      run: |
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-server.yaml
+        sleep 10s
+        kubectl label namespace default istio-injection=enabled
+        kubectl apply -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-server.yaml
+        kubectl wait --for=condition=ready pod -l app=spring-server --timeout=10s
+        sleep 15s
+        nohup kubectl port-forward svc/spring-server 8081:8081 &
+        sleep 2s
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8081/hello 150
+        pkill -f "kubectl port-forward svc/spring-server"
+        kubectl label namespace default istio-injection-
+    - name: test xds router with envoy
+      shell: bash
+      run: |
+        mvn test -Dxds.service.integration.test.type=ROUTER_HEADER_PATH --file \
+        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
+    - name: close all service
+      shell: bash
+      run: |
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-client-sermant-xds-router.yaml
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-cloud-client-sermant-xds-router.yaml
+        kubectl delete -f sermant-integration-tests/xds-service-test/script/router/deployment/spring-server.yaml

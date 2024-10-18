@@ -20,10 +20,18 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * SpringRouterController
@@ -64,6 +72,33 @@ public class SpringRouterController {
                 return "";
             }
         } catch (IOException e) {
+            return "";
+        }
+    }
+
+    /**
+     * test http async client routing
+     *
+     * @param host host
+     * @param version version
+     * @return result
+     */
+    @RequestMapping("httpAsyncClient")
+    public String testHttpAsyncClientRouting(String host, String version) {
+        String url = buildUrl(host);
+        try (CloseableHttpAsyncClient httpclient = HttpAsyncClients.createDefault()) {
+            httpclient.start();
+            HttpGet request = new HttpGet(url);
+            request.setHeader(VERSION, version);
+            Future<HttpResponse> future = httpclient.execute(request, null);
+            HttpResponse response = future.get();
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                return EntityUtils.toString(response.getEntity());
+            } else {
+                return "";
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
             return "";
         }
     }

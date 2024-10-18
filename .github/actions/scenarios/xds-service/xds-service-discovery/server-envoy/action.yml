@@ -3,6 +3,13 @@ description: "Auto test for xds service discovery with server using envoy"
 runs:
   using: composite
   steps:
+    - name: prepare image
+      shell: bash
+      run: |
+        cp -r sermant-integration-tests/xds-service-test/product/sermant-agent-*/agent sermant-integration-tests/xds-service-test/product/spring-client/
+        cp -r sermant-integration-tests/xds-service-test/product/sermant-agent-*/agent sermant-integration-tests/xds-service-test/product/spring-server/
+        mvn package -DskipTests -pl spring-client,spring-server -Pxds-discovery --file \
+        sermant-integration-tests/xds-service-test/pom.xml
     - name: build docker image
       shell: bash
       run: |
