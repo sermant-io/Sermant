@@ -77,6 +77,17 @@ public class XdsRouterUtils {
         }
     }
 
+    /**
+     * updateServiceDiscovery
+     *
+     * @param xdsServiceDiscovery xdsServiceDiscovery
+     */
+    public static void updateServiceDiscovery(XdsServiceDiscovery xdsServiceDiscovery) {
+        if (xdsServiceDiscovery != null) {
+            serviceDiscovery = xdsServiceDiscovery;
+        }
+    }
+
     private static Optional<ServiceInstance> getMatchedServiceInstanceByPodIp(Set<ServiceInstance> serviceInstances,
             String podIp) {
         return serviceInstances.stream()

@@ -49,15 +49,13 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
+ * XdsRouterHandlerTest
+ *
  * @author daizhenyu
  * @since 2024-08-30
  **/
 public class XdsRouterHandlerTest {
     private static final String CLUSTER_NAME = "outbound|8080||serviceA.default.svc.cluster.local";
-
-    private static XdsRouteService routeService;
-
-    private static XdsServiceDiscovery serviceDiscovery;
 
     private static MockedStatic<ServiceManager> serviceManager;
 
@@ -69,8 +67,8 @@ public class XdsRouterHandlerTest {
 
     @BeforeClass
     public static void setUp() {
-        routeService = Mockito.mock(XdsRouteService.class);
-        serviceDiscovery = Mockito.mock(XdsServiceDiscovery.class);
+        XdsRouteService routeService = Mockito.mock(XdsRouteService.class);
+        XdsServiceDiscovery serviceDiscovery = Mockito.mock(XdsServiceDiscovery.class);
         XdsCoreService xdsCoreService = Mockito.mock(XdsCoreService.class);
         Mockito.when(xdsCoreService.getXdsRouteService()).thenReturn(routeService);
         Mockito.when(xdsCoreService.getXdsServiceDiscovery()).thenReturn(serviceDiscovery);
