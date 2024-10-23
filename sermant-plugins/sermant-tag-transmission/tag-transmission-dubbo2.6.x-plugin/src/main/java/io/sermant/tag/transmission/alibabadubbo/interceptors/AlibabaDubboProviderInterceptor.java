@@ -84,6 +84,10 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
 
     @Override
     protected ExecuteContext doAfter(ExecuteContext context) {
+        if (isConsumer(context)) {
+            return context;
+        }
+
         TrafficUtils.removeTrafficTag();
         return context;
     }
@@ -123,6 +127,9 @@ public class AlibabaDubboProviderInterceptor extends AbstractServerInterceptor<R
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
+        if (isConsumer(context)) {
+            return context;
+        }
         TrafficUtils.removeTrafficTag();
         return context;
     }
