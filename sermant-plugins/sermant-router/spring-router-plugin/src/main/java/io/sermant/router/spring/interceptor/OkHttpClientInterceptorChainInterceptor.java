@@ -17,7 +17,6 @@
 package io.sermant.router.spring.interceptor;
 
 import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.Request;
 
 import io.sermant.core.common.LoggerFactory;
@@ -31,6 +30,7 @@ import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -89,8 +89,15 @@ public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
     }
 
     private Request rebuildRequest(Request request, URI uri, ServiceInstance serviceInstance) {
+        URL url = null;
+        try {
+            url = new URL(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(uri, serviceInstance));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Convert url string to url failed.", e.getMessage());
+            return request;
+        }
         return request.newBuilder()
-                .url(HttpUrl.parse(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(uri, serviceInstance)))
+                .url(url)
                 .build();
     }
 
