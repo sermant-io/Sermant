@@ -48,8 +48,6 @@ import java.util.Set;
  * @since 2024-08-31
  **/
 public class XdsRouterUtilTest {
-    private static XdsServiceDiscovery serviceDiscovery;
-
     private static MockedStatic<ServiceManager> serviceManager;
 
     private static MockedStatic<NetworkUtils> networkUtils;
@@ -57,23 +55,24 @@ public class XdsRouterUtilTest {
     private static MockedStatic<ConfigManager> configManager;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         XdsCoreService xdsCoreService = Mockito.mock(XdsCoreService.class);
         serviceManager = Mockito.mockStatic(ServiceManager.class);
         Mockito.when(ServiceManager.getService(XdsCoreService.class)).thenReturn(xdsCoreService);
         networkUtils = Mockito.mockStatic(NetworkUtils.class);
         Mockito.when(NetworkUtils.getKubernetesPodIp()).thenReturn("127.0.0.1");
 
-        serviceDiscovery = Mockito.mock(XdsServiceDiscovery.class);
+        XdsServiceDiscovery serviceDiscovery = Mockito.mock(XdsServiceDiscovery.class);
         Mockito.when(xdsCoreService.getXdsServiceDiscovery()).thenReturn(serviceDiscovery);
         Mockito.when(serviceDiscovery.getServiceInstance("serviceA"))
                 .thenReturn(createServiceInstance4Service(Arrays.asList("127.0.0.1", "host", "localhost")));
 
+        XdsRouterUtils.updateServiceDiscovery(serviceDiscovery);
         configManager = Mockito.mockStatic(ConfigManager.class);
     }
 
     @AfterClass
-    public static void tearDown() throws Exception {
+    public static void tearDown() {
         serviceManager.close();
         networkUtils.close();
         configManager.close();
