@@ -18,11 +18,15 @@
 
 **Sermant** (also known as Java-mesh) is a proxyless service mesh based on Java bytecode enhancement technology. It utilizes Java bytecode enhancement to provide service governance capabilities to applications, addressing service governance issues in large-scale microservices architectures. 
 
-Sermant's vision also includes building a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code. The Sermant architecture is depicted as follows.
+Sermant's vision also includes building a plugin development ecosystem to assist developers in more easily creating service governance functionalities without interfering with the application's source code.
+
+<img src="docs/binary-docs/cncf-color.png" alt="pic" width="40%" />
+
+Sermant is a sandbox project of the Cloud Native Computing Foundation (CNCF). Please consider joining the CNCF if you are an organization that wants to take an active role in supporting the growth and evolution of the cloud native ecosystem.
 
 ![pic](docs/binary-docs/sermant-product-arch.png)
 
-As described above, Sermant's JavaAgent has two layers of functions.
+The Sermant architecture is depicted as above. Sermant's JavaAgent has two layers of functions.
 
 - Framework core layer. The core layer provides Sermant's basic framework capability, in order to ease the plugin development. The function of this layer includes heart beat, data transmit, dynamic configuration, etc.
 - Plugin service layer. The plugin provides actual governance service for the application. The developer can either develop simple plugin by directly leveraging framework core service, or can develop complex plugin by developing plugin's own complex service-governance function.
