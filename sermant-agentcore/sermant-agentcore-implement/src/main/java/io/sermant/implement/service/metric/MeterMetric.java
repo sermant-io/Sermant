@@ -138,7 +138,7 @@ public class MeterMetric implements Metric {
         for (Map.Entry<String, String> entry : tags.getTags().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+            if (StringUtils.isEmpty(key) || value == null) {
                 continue;
             }
             result.add(Tag.of(entry.getKey(), value));

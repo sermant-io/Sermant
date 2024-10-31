@@ -26,6 +26,8 @@ import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.FlowContextUtils;
@@ -50,7 +52,7 @@ import java.util.logging.Logger;
 public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
@@ -62,7 +64,7 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
         Map<String, List<String>> headers = connection.getRequestProperties();
 
         handleXdsRouterAndUpdateHttpRequest(connection);
-
+        MetricThreadLocal.setFlag(true);
         String method = connection.getRequestMethod();
         if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
                 .isEmpty(headers.get(FlowContextUtils.getTagName()))) {
@@ -89,15 +91,26 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        collectRequestCountMetric(context);
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestAfterPoint(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) {
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag()) {
+            HttpURLConnection connection = (HttpURLConnection) context.getObject();
+            MetricsManager.collectRequestCountMetric(connection.getURL());
+            context.setLocalFieldValue(RouterConstant.EXECUTE_FLAG, Boolean.TRUE);
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) throws Exception {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
+        MetricThreadLocal.removeFlag();
         return super.onThrow(context);
     }
 

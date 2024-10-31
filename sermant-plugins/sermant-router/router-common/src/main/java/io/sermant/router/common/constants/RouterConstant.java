@@ -193,6 +193,96 @@ public class RouterConstant {
      */
     public static final String ESCAPED_POINT = "\\.";
 
+    /**
+     * Metric Name for Router Request Count
+     */
+    public static final String ROUTER_REQUEST_COUNT = "router_request_count";
+
+    /**
+     * Metric Name for matched routing tag Count
+     */
+    public static final String ROUTER_DESTINATION_TAG_COUNT = "router_destination_tag_count";
+
+    /**
+     * Metric Name for unmatched routing request Count
+     */
+    public static final String ROUTER_UNMATCHED_REQUEST_COUNT = "router_unmatched_request_count";
+
+    /**
+     * Metric Name for lane Count
+     */
+    public static final String LANE_TAG_COUNT = "lane_tag_count";
+
+    /**
+     * the name for the server address tag
+     */
+    public static final String SERVER_ADDRESS = "server_address";
+
+    /**
+     * the name for the protocol tag
+     */
+    public static final String PROTOCOL = "protocol";
+
+    /**
+     * the name for the client service name tag
+     */
+    public static final String CLIENT_SERVICE_NAME = "client_service_name";
+
+    /**
+     * the name for the lane tag
+     */
+    public static final String LANE_TAG = "lane_tag";
+
+    /**
+     * Scope for metrics
+     */
+    public static final String SCOPE = "scope";
+
+    /**
+     * the name for the service.meta.parameters tag
+     */
+    public static final String SERVICE_META_PARAMETERS = "service_meta_parameters";
+
+    /**
+     * URL Connector
+     */
+    public static final String URL_CONNECTOR = ":";
+
+    /**
+     * dubbo consumer
+     */
+    public static final String DUBBO_CONSUMER = "consumer";
+
+    /**
+     * dubbo provider
+     */
+    public static final String DUBBO_PROVIDER = "provider";
+
+    /**
+     * distinguish between dubbo callers: provider or consumer
+     */
+    public static final String DUBBO_SIDE = "side";
+
+    /**
+     * Flag indicating if it has been executed
+     */
+    public static final String EXECUTE_FLAG = "executeFlag";
+
+    /**
+     * HTTP protocol
+     */
+    public static final String HTTP_PROTOCOL = "http";
+
+    /**
+     * Dubbo protocol
+     */
+    public static final String DUBBO_PROTOCOL = "dubbo";
+
+    /**
+     * XDS protocol
+     */
+    public static final String XDS_PROTOCOL = "xds";
+
     private RouterConstant() {
     }
 }

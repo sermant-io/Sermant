@@ -26,6 +26,8 @@ import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ import java.util.logging.Logger;
 public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     /**
      * Pre-trigger point
@@ -58,6 +60,10 @@ public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         Object[] arguments = context.getArguments();
+        if (!(arguments[0] instanceof Request)) {
+            return context;
+        }
+        MetricThreadLocal.setFlag(true);
         handleXdsRouterAndUpdateHttpRequest(arguments);
         return context;
     }
@@ -71,11 +77,23 @@ public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
+        collectRequestCountMetric(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) throws IOException {
+        Object[] arguments = context.getArguments();
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag() && arguments[0] instanceof Request) {
+            Request request = (Request) arguments[0];
+            MetricsManager.collectRequestCountMetric(request.uri());
+            context.setLocalFieldValue(RouterConstant.EXECUTE_FLAG, Boolean.TRUE);
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
+        MetricThreadLocal.removeFlag();
         return context;
     }
 

@@ -75,6 +75,8 @@ public class FeignClientInterceptorTest {
         mockStatic.when(() -> PluginConfigManager.getPluginConfig(Mockito.any())).thenReturn(config);
         mockStatic.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
                 .thenReturn(new TransmitConfig());
+        mockStatic.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+                .thenReturn(new RouterConfig());
     }
 
     @AfterClass

@@ -16,11 +16,17 @@
 
 package io.sermant.router.spring.handler;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.router.common.cache.AppCache;
+import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.handler.Handler;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.utils.CollectionUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +38,8 @@ import java.util.Set;
  * @since 2023-02-21
  */
 public abstract class AbstractHandler implements Handler {
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+
     /**
      * From the headers, obtain the request token that needs to be transparently transmitted
      *
@@ -50,5 +58,33 @@ public abstract class AbstractHandler implements Handler {
             }
         }
         return map;
+    }
+
+    /**
+     * Collect Lane Count Metric.
+     *
+     * @param laneTag lane tag
+     */
+    protected void collectLaneCountMetric(Map<String, List<String>> laneTag) {
+        if (!routerConfig.isEnableMetric()) {
+            return;
+        }
+        Set<String> tagValues = new HashSet<>();
+        laneTag.forEach((key, values) -> {
+            if (CollectionUtils.isEmpty(values)) {
+                return;
+            }
+            values.forEach(tagValue -> {
+                if (tagValues.contains(tagValue)) {
+                    return;
+                }
+                tagValues.add(tagValue);
+                Map<String, String> tagsMap = new HashMap<>();
+                tagsMap.put(RouterConstant.LANE_TAG, key + ":" + tagValue);
+                tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, AppCache.INSTANCE.getAppName());
+                tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.HTTP_PROTOCOL);
+                MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.LANE_TAG_COUNT, tagsMap, 1);
+            });
+        });
     }
 }

@@ -19,6 +19,8 @@ router.plugin:
   enabled-spring-zone-router: false
   # compatibility router config 1.0, default is false not support
   enabled-previous-rule: false
+  # Whether to Enable Metrics Collection
+  enable-metric: false
 transmit.plugin:
   # Whether to transmit the label on the direct new thread
   enabled-thread: true

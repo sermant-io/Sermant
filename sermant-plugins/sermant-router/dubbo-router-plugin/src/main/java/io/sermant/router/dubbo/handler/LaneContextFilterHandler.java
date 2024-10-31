@@ -17,13 +17,18 @@
 package io.sermant.router.dubbo.handler;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
+import io.sermant.router.common.cache.DubboCache;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.DubboReflectUtils;
 import io.sermant.router.dubbo.service.LaneContextFilterService;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +43,8 @@ import java.util.logging.Logger;
  */
 public class LaneContextFilterHandler extends AbstractContextFilterHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     private final LaneContextFilterService laneContextFilterService;
 
@@ -77,6 +84,19 @@ public class LaneContextFilterHandler extends AbstractContextFilterHandler {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Lane is " + requestTag);
         }
+        if (!routerConfig.isEnableMetric()) {
+            return requestTag;
+        }
+        laneTag.forEach((key, values) -> {
+            if (CollectionUtils.isEmpty(values)) {
+                return;
+            }
+            Map<String, String> tagsMap = new HashMap<>();
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, DubboCache.INSTANCE.getAppName());
+            tagsMap.put(key, values.get(0));
+            tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.DUBBO_PROTOCOL);
+            MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.LANE_TAG_COUNT, tagsMap, 1);
+        });
         return requestTag;
     }
 

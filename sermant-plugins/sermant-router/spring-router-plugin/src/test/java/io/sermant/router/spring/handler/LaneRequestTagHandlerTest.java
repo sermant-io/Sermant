@@ -16,7 +16,9 @@
 
 package io.sermant.router.spring.handler;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
 import io.sermant.router.spring.service.LaneService;
 
@@ -43,6 +45,8 @@ import java.util.Set;
 public class LaneRequestTagHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
     private static TestLaneService laneService;
 
     private final LaneRequestTagHandler handler;
@@ -56,6 +60,9 @@ public class LaneRequestTagHandlerTest {
         laneService = new TestLaneService();
         mockServiceManager.when(() -> ServiceManager.getService(LaneService.class))
                 .thenReturn(laneService);
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+                .thenReturn(new RouterConfig());
     }
 
     /**
@@ -64,6 +71,7 @@ public class LaneRequestTagHandlerTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public LaneRequestTagHandlerTest() {

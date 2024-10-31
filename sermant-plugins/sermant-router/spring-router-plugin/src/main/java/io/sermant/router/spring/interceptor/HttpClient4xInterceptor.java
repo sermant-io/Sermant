@@ -24,6 +24,8 @@ import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.FlowContextUtils;
@@ -52,17 +54,16 @@ import java.util.logging.Logger;
 public class HttpClient4xInterceptor extends MarkInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     /**
      * Pre-trigger point
      *
      * @param context Execution context
      * @return Execution context
-     * @throws Exception Execution exception
      */
     @Override
-    public ExecuteContext doBefore(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         LogUtils.printHttpRequestBeforePoint(context);
         Object[] arguments = context.getArguments();
 
@@ -73,7 +74,7 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         final HttpRequestBase httpRequest = (HttpRequestBase) httpRequestObject;
 
         handleXdsRouterAndUpdateHttpRequest(arguments);
-
+        MetricThreadLocal.setFlag(true);
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
         }
@@ -104,15 +105,29 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
      */
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
+        collectRequestCountMetric(context);
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestAfterPoint(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        Object httpRequestObject = arguments[1];
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag()
+                && httpRequestObject instanceof HttpRequestBase) {
+            final HttpRequestBase httpRequest = (HttpRequestBase) httpRequestObject;
+            MetricsManager.collectRequestCountMetric(httpRequest.getURI());
+            context.setLocalFieldValue(RouterConstant.EXECUTE_FLAG, Boolean.TRUE);
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
+        MetricThreadLocal.removeFlag();
         return context;
     }
 

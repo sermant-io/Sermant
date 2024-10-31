@@ -21,10 +21,10 @@ import com.netflix.loadbalancer.Server;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.cache.AppCache;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.ReflectUtils;
-import io.sermant.router.spring.cache.AppCache;
 
 import org.springframework.cloud.client.DefaultServiceInstance;
 

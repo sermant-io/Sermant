@@ -16,7 +16,9 @@
 
 package io.sermant.router.dubbo.handler;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.dubbo.TestDubboConfigService;
 import io.sermant.router.dubbo.service.LaneContextFilterService;
 
@@ -44,6 +46,8 @@ public class LaneContextFilterHandlerTest {
 
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
     private final LaneContextFilterHandler laneContextFilterHandler;
 
     private final TestDubboConfigService configService;
@@ -63,6 +67,9 @@ public class LaneContextFilterHandlerTest {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         mockServiceManager.when(() -> ServiceManager.getService(LaneContextFilterService.class))
                 .thenReturn(LANE_CONTEXT_FILTER_SERVICE);
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(()-> PluginConfigManager.getPluginConfig(RouterConfig.class))
+                .thenReturn(new RouterConfig());
     }
 
     /**
@@ -71,6 +78,7 @@ public class LaneContextFilterHandlerTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public LaneContextFilterHandlerTest() {

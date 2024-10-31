@@ -27,7 +27,7 @@ import io.sermant.router.config.entity.Route;
 import io.sermant.router.config.entity.RouterConfiguration;
 import io.sermant.router.config.entity.Rule;
 import io.sermant.router.config.entity.ValueMatch;
-import io.sermant.router.spring.cache.AppCache;
+import io.sermant.router.common.cache.AppCache;
 
 import org.junit.Assert;
 import org.junit.Before;

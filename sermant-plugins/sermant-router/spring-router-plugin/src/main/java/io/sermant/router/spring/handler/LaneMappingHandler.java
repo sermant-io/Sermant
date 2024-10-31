@@ -75,6 +75,7 @@ public class LaneMappingHandler extends AbstractMappingHandler {
             LOGGER.fine("Lane is empty.");
             return tags;
         }
+        collectLaneCountMetric(laneTag);
 
         // If there is a marker in the upstream transmission that is the same as the one in this staining,
         // the upstream transmission shall prevail

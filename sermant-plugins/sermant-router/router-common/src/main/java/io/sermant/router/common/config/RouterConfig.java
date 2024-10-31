@@ -108,6 +108,12 @@ public class RouterConfig implements PluginConfig {
     private boolean enabledPreviousRule = false;
 
     /**
+     * Whether to Enable Metrics Collection
+     */
+    @ConfigFieldKey("enable-metric")
+    private boolean enableMetric = false;
+
+    /**
      * Constructor
      */
     public RouterConfig() {
@@ -224,5 +230,13 @@ public class RouterConfig implements PluginConfig {
 
     public void setEnabledSpringCloudXdsRouteSecure(boolean enabledSpringCloudXdsRouteSecure) {
         this.enabledSpringCloudXdsRouteSecure = enabledSpringCloudXdsRouteSecure;
+    }
+
+    public boolean isEnableMetric() {
+        return enableMetric;
+    }
+
+    public void setEnableMetric(boolean enableMetric) {
+        this.enableMetric = enableMetric;
     }
 }

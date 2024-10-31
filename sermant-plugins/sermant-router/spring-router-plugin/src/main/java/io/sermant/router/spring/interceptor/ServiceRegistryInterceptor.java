@@ -21,10 +21,10 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
+import io.sermant.router.common.cache.AppCache;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.utils.ReflectUtils;
-import io.sermant.router.spring.cache.AppCache;
 import io.sermant.router.spring.service.SpringConfigService;
 import io.sermant.router.spring.utils.SpringRouterUtils;
 

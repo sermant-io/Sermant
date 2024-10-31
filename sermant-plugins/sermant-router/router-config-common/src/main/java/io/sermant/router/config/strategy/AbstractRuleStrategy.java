@@ -19,7 +19,14 @@ package io.sermant.router.config.strategy;
 import com.alibaba.fastjson.JSONObject;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.cache.AppCache;
+import io.sermant.router.common.cache.DubboCache;
+import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.event.PolicyEvent;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.config.entity.Match;
 import io.sermant.router.config.entity.Policy;
@@ -30,6 +37,7 @@ import io.sermant.router.config.utils.RuleUtils.RouteResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -46,6 +54,8 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     private final InstanceStrategy<I, Map<String, String>> matchInstanceStrategy;
 
@@ -182,6 +192,9 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
 
     private <T> List<I> getInstances(InstanceStrategy<I, T> instanceStrategy, T tags, String serviceName,
             List<I> instances, boolean isReturnAllInstancesWhenMismatch) {
+        if (routerConfig.isEnableMetric()) {
+            countRouteNum(tags, instanceStrategy);
+        }
         List<I> resultList = new ArrayList<>();
         for (I instance : instances) {
             if (instanceStrategy.isMatch(instance, tags, mapper)) {
@@ -209,5 +222,55 @@ public abstract class AbstractRuleStrategy<I> implements RuleStrategy<I> {
     private <T> InstanceStrategy<I, T> getStrategy(boolean isMatch) {
         return isMatch ? (InstanceStrategy<I, T>) matchInstanceStrategy
                 : (InstanceStrategy<I, T>) mismatchInstanceStrategy;
+    }
+
+    /**
+     * count Request
+     *
+     * @param tagsObject Tag information of routing rules
+     * @param strategy This is the label routing policy used to determine whether the instance matches
+     */
+    private void countRouteNum(Object tagsObject, InstanceStrategy<?, ?> strategy) {
+        if (strategy == mismatchInstanceStrategy) {
+            Map<String, String> tagsMap = new HashMap<>();
+            initProtocolAndServiceName(tagsMap);
+            MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.ROUTER_UNMATCHED_REQUEST_COUNT, tagsMap, 1);
+            return;
+        }
+        if (tagsObject instanceof Map) {
+            ((Map<String, String>) tagsObject).forEach(this::addOrUpdateMatchedRouterCounterValue);
+            return;
+        }
+        if (!(tagsObject instanceof List)) {
+            return;
+        }
+        List<Map<String, String>> tagsList = (List<Map<String, String>>) tagsObject;
+        if (CollectionUtils.isEmpty(tagsList)) {
+            return;
+        }
+        tagsList.forEach(valueMap -> valueMap.forEach(this::addOrUpdateMatchedRouterCounterValue));
+    }
+
+    private void addOrUpdateMatchedRouterCounterValue(String key, String value) {
+        Map<String, String> tagsMap = new HashMap<>();
+        MetricsManager.getAllTagKey().forEach(tagKey -> tagsMap.put(tagKey, StringUtils.EMPTY));
+        initProtocolAndServiceName(tagsMap);
+        String tagsName = MetricsManager.getTagKeyByRouteTagOrLaneTag(key);
+        if (StringUtils.isEmpty(tagsName)) {
+            tagsMap.put(RouterConstant.SERVICE_META_PARAMETERS, key + ":" + value);
+        } else {
+            tagsMap.put(tagsName, value);
+        }
+        MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.ROUTER_DESTINATION_TAG_COUNT, tagsMap, 1);
+    }
+
+    private void initProtocolAndServiceName(Map<String, String> tagsMap) {
+        if (StringUtils.equals(source, "dubbo")) {
+            tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.DUBBO_PROTOCOL);
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, DubboCache.INSTANCE.getAppName());
+            return;
+        }
+        tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.HTTP_PROTOCOL);
+        tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, AppCache.INSTANCE.getAppName());
     }
 }

@@ -33,9 +33,14 @@ import io.sermant.core.service.xds.entity.XdsRouteAction.XdsWeightedClusters;
 import io.sermant.core.service.xds.entity.XdsRouteMatch;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.cache.AppCache;
+import io.sermant.router.common.cache.DubboCache;
+import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.utils.XdsRouterUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,6 +153,16 @@ public enum XdsRouterHandler {
         if (routeAction.isWeighted()) {
             cluster = selectClusterByWeight(routeAction.getWeightedClusters());
         }
+        Map<String, String> tagsMap = new HashMap<>();
+        MetricsManager.getAllTagKey().forEach(key -> tagsMap.put(key, StringUtils.EMPTY));
+        tagsMap.put(RouterConstant.SERVICE_META_PARAMETERS, "cluster: " + cluster);
+        if (StringUtils.isEmpty(DubboCache.INSTANCE.getAppName())) {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, AppCache.INSTANCE.getAppName());
+        } else {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, DubboCache.INSTANCE.getAppName());
+        }
+        tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.XDS_PROTOCOL);
+        MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.ROUTER_DESTINATION_TAG_COUNT, tagsMap, 1);
 
         // get service instance of cluster
         Optional<XdsClusterLoadAssigment> loadAssigmentOptional =

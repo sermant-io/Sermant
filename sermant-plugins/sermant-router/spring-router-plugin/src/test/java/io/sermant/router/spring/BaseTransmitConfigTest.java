@@ -17,6 +17,7 @@
 package io.sermant.router.spring;
 
 import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.config.TransmitConfig;
 
 import org.junit.AfterClass;
@@ -41,6 +42,8 @@ public abstract class BaseTransmitConfigTest {
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
         mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(TransmitConfig.class))
                 .thenReturn(new TransmitConfig());
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
+                .thenReturn(new RouterConfig());
     }
 
     /**
