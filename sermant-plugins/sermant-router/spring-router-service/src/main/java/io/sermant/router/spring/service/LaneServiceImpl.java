@@ -16,6 +16,7 @@
 
 package io.sermant.router.spring.service;
 
+import io.sermant.router.common.cache.AppCache;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.config.cache.ConfigCache;
 import io.sermant.router.config.entity.Protocol;
@@ -23,7 +24,6 @@ import io.sermant.router.config.entity.Route;
 import io.sermant.router.config.entity.RouterConfiguration;
 import io.sermant.router.config.entity.Rule;
 import io.sermant.router.config.utils.RuleUtils;
-import io.sermant.router.spring.cache.AppCache;
 import io.sermant.router.spring.utils.RouteUtils;
 
 import java.util.Collections;

@@ -81,6 +81,7 @@ public class LaneRequestTagHandler extends AbstractRequestTagHandler {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.fine("Lane is " + tags);
         }
+        collectLaneCountMetric(laneTag);
         return tags;
     }
 

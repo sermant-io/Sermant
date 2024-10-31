@@ -24,7 +24,7 @@ import io.sermant.core.service.ServiceManager;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.spring.TestSpringConfigService;
-import io.sermant.router.spring.cache.AppCache;
+import io.sermant.router.common.cache.AppCache;
 import io.sermant.router.spring.service.SpringConfigService;
 
 import org.junit.AfterClass;

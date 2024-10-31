@@ -20,12 +20,16 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableDefault;
 
 import feign.Request;
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.config.TransmitConfig;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.request.RequestTag;
 import io.sermant.router.common.utils.CollectionUtils;
@@ -33,6 +37,8 @@ import io.sermant.router.common.utils.FlowContextUtils;
 import io.sermant.router.common.utils.ReflectUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The client enhancement class， initiates the feign request method
@@ -49,9 +57,13 @@ import java.util.Optional;
  * @since 2022-07-12
  */
 public class FeignClientInterceptor extends AbstractInterceptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
     private static final int EXPECT_LENGTH = 4;
 
     private final boolean canLoadHystrix;
+
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     /**
      * Constructor
@@ -70,21 +82,38 @@ public class FeignClientInterceptor extends AbstractInterceptor {
             setHeaders(request, headers);
             ThreadLocalUtils.setRequestData(new RequestData(decodeTags(headers), getPath(request.url()),
                     request.method()));
+            MetricThreadLocal.setFlag(true);
         }
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        collectRequestCountMetric(context);
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestAfterPoint(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) {
+        Object argument = context.getArguments()[0];
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag() && argument instanceof Request) {
+            Request request = (Request) argument;
+            try {
+                URL url = new URL(request.url());
+                MetricsManager.collectRequestCountMetric(url);
+            } catch (MalformedURLException e) {
+                LOGGER.log(Level.SEVERE, "Failed to create URL object based on connection information", e);
+            }
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
+        MetricThreadLocal.removeFlag();
         return context;
     }
 

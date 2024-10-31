@@ -24,6 +24,8 @@ import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.utils.FlowContextUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
@@ -31,6 +33,7 @@ import io.sermant.router.spring.entity.HttpAsyncRequestProducerDecorator;
 import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import org.apache.http.Header;
+import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -38,6 +41,7 @@ import org.apache.http.client.utils.URIUtils;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.protocol.HttpContext;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -57,9 +61,9 @@ import java.util.logging.Logger;
 public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private static final int HTTPCONTEXT_INDEX = 2;
+    private static final int HTTP_CONTEXT_INDEX = 2;
 
-    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     /**
      * Pre trigger point
@@ -79,10 +83,11 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
                 = (HttpAsyncRequestProducer) httpAsyncRequestProducerArgument;
         HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
         handleXdsRouterAndUpdateHttpRequest(httpRequest, context);
-        Object argument = context.getArguments()[HTTPCONTEXT_INDEX];
+        Object argument = context.getArguments()[HTTP_CONTEXT_INDEX];
         if (!(argument instanceof HttpContext)) {
             return context;
         }
+        MetricThreadLocal.setFlag(true);
         HttpContext httpContext = (HttpContext) argument;
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
@@ -95,7 +100,7 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
         Object attribute = httpContext.getAttribute(FlowContextUtils.getTagName());
         if (attribute != null) {
             Map<String, List<String>> map = FlowContextUtils.decodeTags(String.valueOf(attribute));
-            if (map != null && map.size() > 0) {
+            if (map != null && !map.isEmpty()) {
                 ThreadLocalUtils.setRequestData(new RequestData(
                         map, httpRequest.getRequestLine().getUri(), httpRequest.getRequestLine().getMethod()));
             }
@@ -115,13 +120,32 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context) throws Exception {
         LogUtils.printHttpRequestAfterPoint(context);
+        collectRequestCountMetric(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) {
+        Object httpAsyncRequestProducerArgument = context.getArguments()[0];
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag()
+                && httpAsyncRequestProducerArgument instanceof HttpAsyncRequestProducer) {
+            HttpAsyncRequestProducer httpAsyncRequestProducer
+                    = (HttpAsyncRequestProducer) httpAsyncRequestProducerArgument;
+            try {
+                HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
+                URI uri = URI.create(httpRequest.getRequestLine().getUri());
+                MetricsManager.collectRequestCountMetric(uri);
+            } catch (IOException | HttpException e) {
+                LOGGER.log(Level.SEVERE, "Failed to generate request information", e);
+            }
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
+        MetricThreadLocal.removeFlag();
         return context;
     }
 

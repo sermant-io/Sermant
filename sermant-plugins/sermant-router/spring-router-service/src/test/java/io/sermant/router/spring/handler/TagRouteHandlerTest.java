@@ -23,7 +23,7 @@ import io.sermant.router.common.request.RequestData;
 import io.sermant.router.config.cache.ConfigCache;
 import io.sermant.router.spring.RuleInitializationUtils;
 import io.sermant.router.spring.TestDefaultServiceInstance;
-import io.sermant.router.spring.cache.AppCache;
+import io.sermant.router.common.cache.AppCache;
 
 import org.junit.AfterClass;
 import org.junit.Assert;

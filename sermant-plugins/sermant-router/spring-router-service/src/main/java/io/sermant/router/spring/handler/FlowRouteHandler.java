@@ -18,6 +18,7 @@ package io.sermant.router.spring.handler;
 
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.StringUtils;
+import io.sermant.router.common.cache.AppCache;
 import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.request.RequestData;
@@ -32,7 +33,6 @@ import io.sermant.router.config.entity.Rule;
 import io.sermant.router.config.entity.ValueMatch;
 import io.sermant.router.config.utils.FlowRuleUtils;
 import io.sermant.router.config.utils.RuleUtils;
-import io.sermant.router.spring.cache.AppCache;
 import io.sermant.router.spring.strategy.RuleStrategyHandler;
 
 import java.util.Collections;

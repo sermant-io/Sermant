@@ -16,7 +16,10 @@
 
 package io.sermant.router.spring.handler;
 
+import io.sermant.core.plugin.PluginManager;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.router.common.config.RouterConfig;
 import io.sermant.router.spring.TestSpringConfigService;
 import io.sermant.router.spring.service.LaneService;
 import io.sermant.router.spring.service.SpringConfigService;
@@ -42,6 +45,8 @@ import java.util.Map;
 public class LaneMappingHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
+    private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
+
     private static TestLaneService laneService;
 
     private static TestSpringConfigService configService;
@@ -60,6 +65,9 @@ public class LaneMappingHandlerTest {
         configService = new TestSpringConfigService();
         mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
                 .thenReturn(configService);
+        mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class)).
+                thenReturn(new RouterConfig());
     }
 
     /**
@@ -68,6 +76,7 @@ public class LaneMappingHandlerTest {
     @AfterClass
     public static void after() {
         mockServiceManager.close();
+        mockPluginConfigManager.close();
     }
 
     public LaneMappingHandlerTest() {

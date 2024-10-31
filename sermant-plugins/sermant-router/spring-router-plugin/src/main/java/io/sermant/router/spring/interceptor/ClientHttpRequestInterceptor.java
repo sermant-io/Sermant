@@ -18,7 +18,11 @@ package io.sermant.router.spring.interceptor;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.LogUtils;
+import io.sermant.router.common.config.RouterConfig;
+import io.sermant.router.common.metric.MetricThreadLocal;
+import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.request.RequestTag;
 import io.sermant.router.common.utils.ThreadLocalUtils;
@@ -37,6 +41,8 @@ import java.util.Map.Entry;
  * @since 2022-07-12
  */
 public class ClientHttpRequestInterceptor extends AbstractInterceptor {
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+
     @Override
     public ExecuteContext before(ExecuteContext context) {
         LogUtils.printHttpRequestBeforePoint(context);
@@ -48,20 +54,34 @@ public class ClientHttpRequestInterceptor extends AbstractInterceptor {
             String path = request.getURI().getPath();
             ThreadLocalUtils.setRequestData(new RequestData(headers, path, request.getMethod().name()));
         }
+        MetricThreadLocal.setFlag(true);
         return context;
     }
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
+        collectRequestCountMetric(context);
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestAfterPoint(context);
         return context;
+    }
+
+    private void collectRequestCountMetric(ExecuteContext context) {
+        // To prevent execution twice, after mounting and registering the plugin, this interception point is
+        // executed twice for a single request
+        Object obj = context.getObject();
+        if (routerConfig.isEnableMetric() && MetricThreadLocal.getFlag() && obj instanceof HttpRequest) {
+            HttpRequest request = (HttpRequest) obj;
+            MetricsManager.collectRequestCountMetric(request.getURI());
+        }
+        MetricThreadLocal.removeFlag();
     }
 
     @Override
     public ExecuteContext onThrow(ExecuteContext context) {
         ThreadLocalUtils.removeRequestData();
         LogUtils.printHttpRequestOnThrowPoint(context);
+        MetricThreadLocal.removeFlag();
         return context;
     }
 

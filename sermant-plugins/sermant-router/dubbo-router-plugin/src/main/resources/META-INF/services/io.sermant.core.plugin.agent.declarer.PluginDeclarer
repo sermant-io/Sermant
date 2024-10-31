@@ -8,3 +8,5 @@ io.sermant.router.dubbo.declarer.ClusterUtilsDeclarer
 io.sermant.router.dubbo.declarer.ContextFilterDeclarer
 io.sermant.router.dubbo.declarer.SpringApplicationDeclarer
 io.sermant.router.dubbo.declarer.AbstractConfigDeclarer
+io.sermant.router.dubbo.declarer.ApacheDubboMonitorFilterDeclarer
+io.sermant.router.dubbo.declarer.AlibabaDubboMonitorFilterDeclarer

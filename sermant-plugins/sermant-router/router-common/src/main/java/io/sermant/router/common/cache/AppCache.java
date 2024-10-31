@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.sermant.router.spring.cache;
+package io.sermant.router.common.cache;
 
 import java.util.Map;
 
