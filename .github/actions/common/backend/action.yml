@@ -43,6 +43,6 @@ runs:
         tar -zxf nacos-server-2.1.0.tar.gz
         bash nacos/bin/startup.sh -m standalone
     - name: Set up python
-      uses: actions/setup-python@v3.1.3
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
