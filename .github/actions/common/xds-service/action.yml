@@ -30,18 +30,18 @@ runs:
         sleep 10s
         kubectl get pods -n istio-system
     - name: Set up JDK ${{ env.javaVersion }}
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: ${{ env.javaVersion }}
         distribution: 'adopt'
         cache: maven
     - name: get cached agent
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: sermant-agent-*/
         key: ${{ runner.os }}-agent-${{ github.run_id }}
     - name: get cached xds service package
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: sermant-integration-tests/xds-service-test/product/sermant-agent-*/
         key: ${{ runner.os }}-xds-service-product-agent-${{ github.run_id }}

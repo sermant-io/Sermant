@@ -8,7 +8,7 @@ runs:
       with:
         log-dir: ./logs/tag-transmission/rocketmq
     - name: get rocketmq from cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: rocketmq-all-4.8.0-bin-release.zip
         key: ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
@@ -61,7 +61,7 @@ runs:
       with:
         processor-keyword: httpserver-common|rocketmq
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-tag-transmission-rocketmq-(${{ matrix.rocketMqVersion }}-logs

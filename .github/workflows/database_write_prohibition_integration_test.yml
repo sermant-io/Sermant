@@ -24,7 +24,7 @@ jobs:
     name: set-execution-conditions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: plugin-change-check
@@ -46,9 +46,9 @@ jobs:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: cache zookeeper
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: apache-zookeeper-3.6.3-bin.tar.gz
           key: ${{ runner.os }}-apache-zookeeper-3.6.3
@@ -62,15 +62,15 @@ jobs:
     name: build agent and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
       - name: cache agent
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: sermant-agent-*/
           key: ${{ runner.os }}-agent-${{ github.run_id }}
@@ -108,7 +108,7 @@ jobs:
           - mongodbClientVersion: "4.11.1"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -136,7 +136,7 @@ jobs:
           - mysqlClientVersion: "3.3.3"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -195,7 +195,7 @@ jobs:
           - postgresqlVersion: "42.7.2"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -224,7 +224,7 @@ jobs:
           - opengaussVersion: "3.1.1-og"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment

@@ -46,7 +46,7 @@ runs:
       run: |
         python -m unittest ./sermant-integration-tests/scripts/test_backend_event.py
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-backend-logs

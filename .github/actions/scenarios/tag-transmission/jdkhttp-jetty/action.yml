@@ -42,7 +42,7 @@ runs:
       with:
         processor-keyword: httpserver-common|jdkhttp|jetty
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-tag-transmission-jdkhttp-jetty-(${{ matrix.springBootVersion }}-logs

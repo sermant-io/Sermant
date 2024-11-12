@@ -8,7 +8,7 @@ runs:
       with:
         log-dir: ./logs/mq-consume-prohibition/rocketmq-two-topic
     - name: get rocketmq from cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: rocketmq-all-5.1.4-bin-release.zip
         key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
@@ -67,7 +67,7 @@ runs:
       with:
         processor-keyword: rocketmq
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-mq-consume-prohibition-rocketmq-two-topic-(${{ matrix.rocketMqVersion }}-logs

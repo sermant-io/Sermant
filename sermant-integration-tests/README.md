@@ -88,7 +88,7 @@ test-for-spring:
             nacosVersion: "2.0.0.RELEASE"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: common operations
@@ -126,9 +126,9 @@ download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: cache local cse
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: Local-CSE-2.1.3-linux-amd64.zip
           key: ${{ runner.os }}-local-cse
@@ -139,7 +139,7 @@ download-midwares-and-cache:
           export ROOT_PATH=$(pwd)
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh cse
       - name: cache zookeeper
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: apache-zookeeper-3.6.3-bin.tar.gz
           key: ${{ runner.os }}-apache-zookeeper-3.6.3
@@ -150,7 +150,7 @@ download-midwares-and-cache:
           export ROOT_PATH=$(pwd)
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
       - name: cache nacos server
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: nacos-server-1.4.2.tar.gz
           key: ${{ runner.os }}-nacos-server-1.4.2
@@ -164,15 +164,15 @@ download-midwares-and-cache:
     name: build agent and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
       - name: cache agent
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: sermant-agent-*/
           key: ${{ runner.os }}-agent-${{ github.run_id }}
@@ -272,7 +272,7 @@ runs:
   using: "composite"
   steps:
   	# 1. Check whether change files exist in the sermant-plugins/sermant-service-registry     directory.
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-service-registry
       with:
         paths: sermant-plugins/sermant-service-registry
@@ -281,7 +281,7 @@ runs:
       run: |
         echo "sermantServiceRegistryChanged=${{ steps.changed-sermant-service-registry.outputs.changed }}" >> $GITHUB_ENV
      # 2. Check whether the pipeline file is changed.
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-workflow-or-test
       with:
         paths: ./.github/actions ./.github/workflows sermant-integration-tests
@@ -369,9 +369,9 @@ download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: cache zookeeper
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: apache-zookeeper-3.6.3-bin.tar.gz
           key: ${{ runner.os }}-apache-zookeeper-3.6.3
@@ -383,7 +383,7 @@ download-midwares-and-cache:
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
 ```
 
-An example. Use [actions/cache@v3](https://github.com/marketplace/actions/cache) to cache data, and then perform the download step. When `cache-hit` is triggered, the cached ZooKeeper is directly used next time.
+An example. Use [actions/cache@v4](https://github.com/marketplace/actions/cache) to cache data, and then perform the download step. When `cache-hit` is triggered, the cached ZooKeeper is directly used next time.
 
 (2) Add Startup Steps for Mideware
 
@@ -447,7 +447,7 @@ runs:
       with:
         processor-keyword: feign|rest
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-graceful-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion }})-logs
