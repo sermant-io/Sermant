@@ -24,7 +24,7 @@ jobs:
     name: set-execution-conditions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: plugin-change-check
@@ -42,9 +42,9 @@ jobs:
     name: download midwares and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: cache zookeeper
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: apache-zookeeper-3.6.3-bin.tar.gz
           key: ${{ runner.os }}-apache-zookeeper-3.6.3
@@ -55,7 +55,7 @@ jobs:
           export ROOT_PATH=$(pwd)
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
       - name: cache rocketmq
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: rocketmq-all-5.1.4-bin-release.zip
           key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
@@ -66,7 +66,7 @@ jobs:
           export ROOT_PATH=$(pwd)
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq514
       - name: cache kafka
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: kafka_2.13-2.7.0.tgz
           key: ${{ runner.os }}-kafka_2.13-2.7.0
@@ -80,15 +80,15 @@ jobs:
     name: build agent and cache
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '8'
           distribution: 'adopt'
           cache: maven
       - name: cache agent
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: sermant-agent-*/
           key: ${{ runner.os }}-agent-${{ github.run_id }}
@@ -124,7 +124,7 @@ jobs:
           - kafkaVersion: "3.6.1"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -150,7 +150,7 @@ jobs:
           - rocketMqVersion: "5.1.4"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -176,7 +176,7 @@ jobs:
           - rocketMqVersion: "5.1.4"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment
@@ -202,7 +202,7 @@ jobs:
           - rocketMqVersion: "5.1.4"
       fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 100
       - name: set java version to environment

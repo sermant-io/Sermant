@@ -4,7 +4,7 @@ runs:
   using: "composite"
   steps:
     - name: download agent
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: sermant-agent-*/
         key: ${{ runner.os }}-agent-${{ github.run_id }}
@@ -52,7 +52,7 @@ runs:
       run: |
         netstat -nlp | grep :8900 | awk '{print $7}' | awk -F "/" '{print $1}' | xargs kill
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-backend-logs

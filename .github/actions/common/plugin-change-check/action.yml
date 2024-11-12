@@ -3,7 +3,7 @@ description: "check file change for all plugins"
 runs:
   using: "composite"
   steps:
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-agentcore
       with:
         paths: sermant-agentcore
@@ -11,7 +11,7 @@ runs:
       shell: bash
       run: |
         echo "sermantAgentCoreChanged=${{ steps.changed-sermant-agentcore.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-agentcore-dynamic-config
       with:
         paths: sermant-agentcore/sermant-agentcore-implement/src/main/java/io/sermant/implement/service/dynamicconfig
@@ -25,7 +25,7 @@ runs:
       shell: bash
       run: |
         echo "sermantAgentCoreDynamicConfigServiceChanged=${{ steps.changed-sermant-agentcore-dynamic-config.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-agentcore-xds
       with:
         paths: sermant-agentcore/sermant-agentcore-implement/src/main/java/io/sermant/implement/service/xds
@@ -40,7 +40,7 @@ runs:
       shell: bash
       run: |
         echo "sermantAgentCoreXdsServiceChanged=${{ steps.changed-sermant-agentcore-xds.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-router
       with:
         paths: sermant-plugins/sermant-router
@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         echo "sermantRouterChanged=${{ steps.changed-sermant-router.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-flowcontrol
       with:
         paths: sermant-plugins/sermant-flowcontrol
@@ -56,7 +56,7 @@ runs:
       shell: bash
       run: |
         echo "sermantFlowcontrolChanged=${{ steps.changed-sermant-flowcontrol.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-dynamic-config
       with:
         paths: sermant-plugins/sermant-dynamic-config
@@ -64,7 +64,7 @@ runs:
       shell: bash
       run: |
         echo "sermantDynamicConfigChanged=${{ steps.changed-sermant-dynamic-config.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-loadbalancer
       with:
         paths: sermant-plugins/sermant-loadbalancer
@@ -72,7 +72,7 @@ runs:
       shell: bash
       run: |
         echo "sermantLoadbalancerChanged=${{ steps.changed-sermant-loadbalancer.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-monitor
       with:
         paths: sermant-plugins/sermant-monitor ./.github/actions/scenarios/dubbo/monitor
@@ -80,7 +80,7 @@ runs:
       shell: bash
       run: |
         echo "sermantMonitorChanged=${{ steps.changed-sermant-monitor.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-service-visibility
       with:
         paths: sermant-plugins/sermant-service-visibility ./.github/actions/scenarios/dubbo/visibility
@@ -88,7 +88,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceVisibilityChanged=${{ steps.changed-sermant-service-visibility.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-service-registry
       with:
         paths: sermant-plugins/sermant-service-registry
@@ -96,7 +96,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceRegistryChanged=${{ steps.changed-sermant-service-registry.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-springboot-registry
       with:
         paths: sermant-plugins/sermant-springboot-registry
@@ -104,7 +104,7 @@ runs:
       shell: bash
       run: |
         echo "sermantSpringbootRegistryChanged=${{ steps.changed-sermant-springboot-registry.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-sermant-removal
       with:
         paths: sermant-plugins/sermant-service-removal ./.github/actions/scenarios/dubbo/removal
@@ -112,7 +112,7 @@ runs:
       shell: bash
       run: |
         echo "sermantServiceRemovalChanged=${{ steps.changed-sermant-removal.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-mongodb-database-write-prohibition
       with:
         paths: sermant-plugins/sermant-database-write-prohibition/database-config-service
@@ -129,7 +129,7 @@ runs:
       shell: bash
       run: |
         echo "mongodbDataBaseWriteProhibitionChanged=${{ steps.changed-mongodb-database-write-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-mysql-database-write-prohibition
       with:
         paths: sermant-plugins/sermant-database-write-prohibition/database-config-service
@@ -146,7 +146,7 @@ runs:
       shell: bash
       run: |
         echo "mysqlDataBaseWriteProhibitionChanged=${{ steps.changed-mysql-database-write-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-opengauss-database-write-prohibition
       with:
         paths: sermant-plugins/sermant-database-write-prohibition/database-config-service
@@ -162,7 +162,7 @@ runs:
       shell: bash
       run: |
         echo "opengaussDataBaseWritePprohibitionChanged=${{ steps.changed-opengauss-database-write-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-opengauss-postgresql-database-write-prohibition
       with:
         paths: sermant-plugins/sermant-database-write-prohibition/database-config-service
@@ -178,7 +178,7 @@ runs:
       shell: bash
       run: |
         echo "opengaussAndPostgresqlDataBaseWritePprohibitionChanged=${{ steps.changed-opengauss-postgresql-database-write-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-kafka-consume-prohibition
       with:
         paths: sermant-plugins/sermant-mq-consume-prohibition/config-service
@@ -191,7 +191,7 @@ runs:
       shell: bash
       run: |
         echo "kafkaConsumeProhibitionChanged=${{ steps.changed-kafka-consume-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-rocketmq-consume-prohibition
       with:
         paths: sermant-plugins/sermant-mq-consume-prohibition/config-service
@@ -209,7 +209,7 @@ runs:
       shell: bash
       run: |
         echo "rocketmqConsumeProhibitionChanged=${{ steps.changed-rocketmq-consume-prohibition.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-alibaba-dubbo
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -230,7 +230,7 @@ runs:
       shell: bash
       run: |
         echo "alibabaDubboTagTransmissionChanged=${{ steps.changed-tag-transmission-alibaba-dubbo.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-apache-dubbo
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -252,7 +252,7 @@ runs:
       shell: bash
       run: |
         echo "apacheDubboTagTransmissionChanged=${{ steps.changed-tag-transmission-apache-dubbo.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-grpc
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -273,7 +273,7 @@ runs:
       shell: bash
       run: |
         echo "grpcTagTransmissionChanged=${{ steps.changed-tag-transmission-grpc.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-httpclientV3
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -292,7 +292,7 @@ runs:
       shell: bash
       run: |
         echo "httpclientV3TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV3.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-httpclientV4
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -311,7 +311,7 @@ runs:
       shell: bash
       run: |
         echo "httpclientV4TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV4.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-jdkhttp-tomcat
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -332,7 +332,7 @@ runs:
       shell: bash
       run: |
         echo "tomcatTagTransmissionChanged=${{ steps.changed-tag-transmission-jdkhttp-tomcat.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-jdkhttp-jetty
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -353,7 +353,7 @@ runs:
       shell: bash
       run: |
         echo "jettyTagTransmissionChanged=${{ steps.changed-tag-transmission-jdkhttp-jetty.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-kafka
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -374,7 +374,7 @@ runs:
       shell: bash
       run: |
         echo "kafkaTagTransmissionChanged=${{ steps.changed-tag-transmission-kafka.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-okhttp
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -393,7 +393,7 @@ runs:
       shell: bash
       run: |
         echo "okhttpTagTransmissionChanged=${{ steps.changed-tag-transmission-okhttp.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-rocketmq
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -415,7 +415,7 @@ runs:
       shell: bash
       run: |
         echo "rocketmqTagTransmissionChanged=${{ steps.changed-tag-transmission-rocketmq.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-servicecomb
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -436,7 +436,7 @@ runs:
       shell: bash
       run: |
         echo "servicecombTagTransmissionChanged=${{ steps.changed-tag-transmission-servicecomb.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-sofarpc
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -457,7 +457,7 @@ runs:
       shell: bash
       run: |
         echo "sofarpcTagTransmissionChanged=${{ steps.changed-tag-transmission-sofarpc.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-config
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -476,7 +476,7 @@ runs:
       shell: bash
       run: |
         echo "configTagTransmissionChanged=${{ steps.changed-tag-transmission-config.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-crossthread
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -494,7 +494,7 @@ runs:
       shell: bash
       run: |
         echo "crossthreadTagTransmissionChanged=${{ steps.changed-tag-transmission-crossthread.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo-router-action
       with:
         paths: ./.github/actions/scenarios/dubbo/router ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -502,7 +502,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubboRouterActionChange=${{ steps.changed-dubbo-router-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo3-router-action
       with:
         paths: ./.github/actions/scenarios/dubbo/router-dubbo3 ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -510,7 +510,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubbo3RouterActionChange=${{ steps.changed-dubbo3-router-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo-common-action
       with:
         paths: ./.github/actions/scenarios/dubbo/dubbo-common ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -518,7 +518,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubboCommonActionChange=${{ steps.changed-dubbo-common-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo-lane-action
       with:
         paths: ./.github/actions/scenarios/dubbo/lane ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -526,7 +526,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubboLaneActionChange=${{ steps.changed-dubbo-lane-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo3-lane-action
       with:
         paths: ./.github/actions/scenarios/dubbo/lane-dubbo3 ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -534,7 +534,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubbo3LaneActionChange=${{ steps.changed-dubbo3-lane-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-graceful-action
       with:
         paths: ./.github/actions/scenarios/spring/graceful ./.github/actions/common/spring ./.github/workflows/spring_integration_test_1.yml
@@ -542,7 +542,7 @@ runs:
       shell: bash
       run: |
         echo "enableGracefulActionChange=${{ steps.changed-graceful-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-common-action
       with:
         paths: ./.github/actions/scenarios/spring/spring-common ./.github/actions/common/spring ./.github/workflows/spring_integration_test_1.yml
@@ -550,7 +550,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringCommonActionChange=${{ steps.changed-spring-common-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-common-action2
       with:
         paths: ./.github/actions/scenarios/spring/spring-common ./.github/actions/common/spring ./.github/workflows/spring_integration_test_2.yml
@@ -558,7 +558,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringCommonActionChange2=${{ steps.changed-spring-common-action2.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dynamic-config-action
       with:
         paths: ./.github/actions/scenarios/spring/dynamic-config-nacos
@@ -569,7 +569,7 @@ runs:
       shell: bash
       run: |
         echo "enableDynamicConfigActionChange=${{ steps.changed-dynamic-config-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-router-action
       with:
         paths: ./.github/actions/scenarios/spring/router/spring-router
@@ -579,7 +579,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringRouterActionChange=${{ steps.changed-spring-router-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-tag-router-action
       with:
         paths: ./.github/actions/scenarios/spring/router/spring-tag-router
@@ -589,7 +589,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringTagRouterActionChange=${{ steps.changed-spring-tag-router-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-tag-az-router-action
       with:
         paths: ./.github/actions/scenarios/spring/router/spring-tag-az-router
@@ -599,7 +599,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringTagAzRouterActionChange=${{ steps.changed-spring-tag-az-router-action.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-spring-test
       with:
         paths: sermant-integration-tests/spring-test
@@ -607,7 +607,7 @@ runs:
       shell: bash
       run: |
         echo "enableSpringTestChange=${{ steps.changed-spring-test.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo-test
       with:
         paths: sermant-integration-tests/dubbo-test
@@ -615,7 +615,7 @@ runs:
       shell: bash
       run: |
         echo "enableDubboTestChange=${{ steps.changed-dubbo-test.outputs.changed }}" >> $GITHUB_ENV
-    - uses: marceloprado/has-changed-path@v1.0.1
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-common-action
       with:
         paths: ./.github/actions/common/plugin-change-check ./.github/actions/common/entry ./.github/actions/common/exit

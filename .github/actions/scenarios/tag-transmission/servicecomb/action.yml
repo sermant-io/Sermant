@@ -8,7 +8,7 @@ runs:
       with:
         log-dir: ./logs/tag-transmission/servicecomb
     - name: get local cse from cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: Local-CSE-2.1.3-linux-amd64.zip
         key: ${{ runner.os }}-local-cse
@@ -20,7 +20,7 @@ runs:
         export ROOT_PATH=$(pwd)
         bash ./sermant-integration-tests/scripts/startCse.sh
     - name: get nacos from cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: nacos-server-1.4.2.tar.gz
         key: ${{ runner.os }}-nacos-server-1.4.2
@@ -65,7 +65,7 @@ runs:
       with:
         processor-keyword: httpserver-common|servicecomb
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-tag-transmission-servicecomb-(${{ matrix.serviceCombVersion }}-logs

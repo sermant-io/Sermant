@@ -62,7 +62,7 @@ runs:
       with:
         processor-keyword: nacos-config
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-dynamic-config-nacos-(${{ matrix.springBootVersion }}-${{ matrix.springCloudVersion}})-logs

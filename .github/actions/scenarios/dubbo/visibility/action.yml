@@ -64,7 +64,7 @@ runs:
       with:
         processor-keyword: dubbo
     - name: upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: visibility-(${{ matrix.dubbo-version }}-${{ matrix.dubbo-versions }})-logs

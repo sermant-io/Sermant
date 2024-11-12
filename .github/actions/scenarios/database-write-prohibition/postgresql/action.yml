@@ -55,7 +55,7 @@ runs:
       with:
         processor-keyword: postgresql
     - name: if failure then upload error log
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: ${{ failure() || cancelled() }}
       with:
         name: (${{ github.job }})-database-write-prohibition-postgresql-${{ matrix.postgresqlVersion }}-logs
