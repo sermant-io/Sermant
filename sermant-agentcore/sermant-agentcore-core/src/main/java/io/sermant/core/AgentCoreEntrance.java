@@ -85,10 +85,10 @@ public class AgentCoreEntrance {
             agentType = AgentType.AGENTMAIN.getValue();
         }
         artifactCache = artifact;
-        adviserCache = new DefaultAdviser();
 
         // Initialize default logs to ensure log availability before loading the log engine
         LoggerFactory.initDefaultLogger(artifact);
+        adviserCache = new DefaultAdviser();
 
         // Initialize the classloader of framework
         ClassLoaderManager.init(argsMap);
