@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ package io.sermant.monitor.interceptor;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import io.sermant.core.utils.LogUtils;
+import io.sermant.core.utils.ReflectUtils;
 import io.sermant.monitor.common.MetricCalEntity;
 import io.sermant.monitor.util.MonitorCacheUtil;
+
+import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,6 +36,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DispatcherServletInterceptor extends AbstractInterceptor {
     private static final String START_TIME = "startTime";
+
+    private Function<Object, String> getRequestUri;
+
+    /**
+     * 构造方法
+     */
+    public DispatcherServletInterceptor() {
+        initFunction();
+    }
 
     @Override
     public ExecuteContext before(ExecuteContext context) {
@@ -50,7 +62,7 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
             LogUtils.printHttpRequestAfterPoint(context);
             return context;
         }
-        String uri = ((HttpServletRequest) context.getArguments()[0]).getRequestURI();
+        String uri = getRequestUri.apply(context.getArguments()[0]);
         MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(uri);
         metricCalEntity.getReqNum().incrementAndGet();
         long startTime = (Long) context.getExtMemberFieldValue(START_TIME);
@@ -70,11 +82,33 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
             LogUtils.printHttpRequestOnThrowPoint(context);
             return context;
         }
-        String uri = ((HttpServletRequest) context.getArguments()[0]).getRequestURI();
+        String uri = getRequestUri.apply(context.getArguments()[0]);
         MetricCalEntity metricCalEntity = MonitorCacheUtil.getMetricCalEntity(uri);
         metricCalEntity.getReqNum().incrementAndGet();
         metricCalEntity.getFailedReqNum().incrementAndGet();
         LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
+    }
+
+    private String getRequestUri(Object httpServletRequest) {
+        return (String) ReflectUtils.invokeMethodWithNoneParameter(httpServletRequest, "getRequestURI").orElse(null);
+    }
+
+    private void initFunction() {
+        boolean canLoadLowVersion = canLoadLowVersion();
+        if (canLoadLowVersion) {
+            getRequestUri = obj -> ((HttpServletRequest) obj).getRequestURI();
+        } else {
+            getRequestUri = this::getRequestUri;
+        }
+    }
+
+    private boolean canLoadLowVersion() {
+        try {
+            Class.forName(HttpServletRequest.class.getCanonicalName());
+        } catch (NoClassDefFoundError | ClassNotFoundException error) {
+            return false;
+        }
+        return true;
     }
 }

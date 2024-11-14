@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import io.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import io.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
-import io.sermant.registry.grace.interceptors.SpringWebHandlerInterceptor;
+import io.sermant.registry.grace.interceptors.DispatcherServletInterceptor;
 
 /**
  * Inject interceptors by intercepting them
@@ -29,16 +29,16 @@ import io.sermant.registry.grace.interceptors.SpringWebHandlerInterceptor;
  * @author zhouss
  * @since 2022-05-23
  */
-public class SpringWebHandlerDeclarer extends AbstractPluginDeclarer {
+public class DispatcherServletDeclarer extends AbstractPluginDeclarer {
     /**
      * The fully qualified name of the enhanced class
      */
-    private static final String ENHANCE_CLASS = "org.springframework.web.servlet.HandlerExecutionChain";
+    private static final String ENHANCE_CLASS = "org.springframework.web.servlet.DispatcherServlet";
 
     /**
      * The fully qualified name of the interception class
      */
-    private static final String INTERCEPT_CLASS = SpringWebHandlerInterceptor.class.getCanonicalName();
+    private static final String INTERCEPT_CLASS = DispatcherServletInterceptor.class.getCanonicalName();
 
     @Override
     public ClassMatcher getClassMatcher() {
@@ -48,7 +48,7 @@ public class SpringWebHandlerDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-            InterceptDeclarer.build(MethodMatcher.nameEquals("applyPreHandle"), INTERCEPT_CLASS)
+            InterceptDeclarer.build(MethodMatcher.nameEquals("doService"), INTERCEPT_CLASS)
         };
     }
 }

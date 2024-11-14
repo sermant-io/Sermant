@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package io.sermant.router.spring.interceptor;
 
+import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.router.common.request.RequestData;
 import io.sermant.router.common.request.RequestTag;
 import io.sermant.router.common.utils.ThreadLocalUtils;
 import io.sermant.router.spring.BaseTransmitConfigTest;
@@ -31,24 +33,27 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Test RouteHandlerInterceptor
+ * Test DispatcherServletInterceptor
  *
  * @author provenceee
  * @since 2022-09-07
  */
-public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
-    private final RouteHandlerInterceptor interceptor;
+public class DispatcherServletInterceptorTest extends BaseTransmitConfigTest {
+    private final DispatcherServletInterceptor interceptor;
 
     private static TestSpringConfigService configService;
 
     private static MockedStatic<ServiceManager> mockServiceManager;
+
+    private final ExecuteContext context;
+
+    private final MockHttpServletRequest request;
 
     /**
      * Perform mock before the UT is executed
@@ -69,8 +74,12 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
         mockServiceManager.close();
     }
 
-    public RouteHandlerInterceptorTest() {
-        interceptor = new RouteHandlerInterceptor();
+    public DispatcherServletInterceptorTest() throws NoSuchMethodException {
+        interceptor = new DispatcherServletInterceptor();
+        request = new MockHttpServletRequest();
+        Object[] arguments = new Object[]{request};
+        context = ExecuteContext.forMemberMethod(new Object(), String.class.getMethod("trim"), arguments, null,
+                null);
     }
 
     /**
@@ -83,27 +92,24 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * Test the preHandle method
+     * Test the before method
      */
     @Test
-    public void testPreHandle() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+    public void testBefore() {
         request.addHeader("bar", "bar1");
         request.addHeader("foo", "foo1");
         request.addHeader("foo2", "foo2");
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        Object obj = new Object();
 
         // The test keys are all empty
         configService.setReturnEmptyWhenGetMatchTags(true);
         configService.setReturnEmptyWhenGetMatchKeys(true);
-        interceptor.preHandle(request, response, obj);
+        interceptor.before(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
 
         // Test the preHandle method, getMatchKeys is not empty
         configService.setReturnEmptyWhenGetMatchTags(true);
         configService.setReturnEmptyWhenGetMatchKeys(false);
-        interceptor.preHandle(request, response, obj);
+        interceptor.before(context);
         RequestTag requestTag = ThreadLocalUtils.getRequestTag();
         Map<String, List<String>> header = requestTag.getTag();
         Assert.assertNotNull(header);
@@ -113,15 +119,32 @@ public class RouteHandlerInterceptorTest extends BaseTransmitConfigTest {
     }
 
     /**
-     * After testing is completed, verify if the thread variables are released
+     * Test the after method, verify if the thread variables are released
      */
     @Test
-    public void testAfterCompletion() {
+    public void testAfter() {
         ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
+        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
-        // Test afterCompletion to verify if thread variables are released
-        interceptor.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null);
+        // Test the after method, verify if thread variables are released
+        interceptor.after(context);
         Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
+    }
+
+    /**
+     * Test the onThrow method, verify if the thread variables are released
+     */
+    @Test
+    public void testOnThrow() {
+        ThreadLocalUtils.addRequestTag(Collections.singletonMap("bar", Collections.singletonList("foo")));
+        ThreadLocalUtils.setRequestData(new RequestData(Collections.emptyMap(), "", ""));
+        Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
+
+        // Test the onThrow method, verify if thread variables are released
+        interceptor.onThrow(context);
+        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertNull(ThreadLocalUtils.getRequestData());
     }
 }

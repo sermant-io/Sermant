@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,15 +104,6 @@ public class DiscoveryManagerInterceptorTest {
         context.getArguments()[0] = new TestObject(null);
         interceptor.before(context);
         Assert.assertEquals("foo", AppCache.INSTANCE.getAppName());
-    }
-
-    /**
-     * Test the after method
-     */
-    @Test
-    public void testAfter() {
-        AppCache.INSTANCE.setAppName("foo");
-        interceptor.after(context);
         Assert.assertEquals(RouterConstant.SPRING_CACHE_NAME, configService.getCacheName());
         Assert.assertEquals("foo", configService.getServiceName());
     }

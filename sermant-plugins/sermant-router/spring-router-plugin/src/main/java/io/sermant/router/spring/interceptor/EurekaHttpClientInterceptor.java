@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
         if (argument instanceof InstanceInfo) {
             InstanceInfo instanceInfo = (InstanceInfo) argument;
             AppCache.INSTANCE.setAppName(instanceInfo.getAppName());
+            configService.init(RouterConstant.SPRING_CACHE_NAME, instanceInfo.getAppName());
             SpringRouterUtils.putMetaData(instanceInfo.getMetadata(), routerConfig);
         }
         return context;
@@ -60,7 +61,6 @@ public class EurekaHttpClientInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        configService.init(RouterConstant.SPRING_CACHE_NAME, AppCache.INSTANCE.getAppName());
         return context;
     }
 }

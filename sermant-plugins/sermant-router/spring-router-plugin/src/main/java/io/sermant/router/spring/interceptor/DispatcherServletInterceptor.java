@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package io.sermant.router.spring.interceptor;
 
+import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.router.common.handler.Handler;
 import io.sermant.router.common.utils.CollectionUtils;
@@ -25,9 +27,7 @@ import io.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
 import io.sermant.router.spring.handler.LaneRequestTagHandler;
 import io.sermant.router.spring.handler.RouteRequestTagHandler;
 import io.sermant.router.spring.service.SpringConfigService;
-
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
+import io.sermant.router.spring.utils.SpringRouterUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,65 +37,82 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
- * Spring Interceptor
+ * get http request data
  *
  * @author provenceee
  * @since 2022-07-12
  */
-public class RouteHandlerInterceptor implements HandlerInterceptor {
+public class DispatcherServletInterceptor extends AbstractInterceptor {
     private final List<AbstractRequestTagHandler> handlers;
 
     private final SpringConfigService configService;
 
+    private Function<Object, Map<String, String[]>> getParameterMap;
+
+    private Function<Object, String> getRequestUri;
+
+    private Function<Object, String> getMethod;
+
+    private Function<Object, Enumeration<?>> getHeaderNames;
+
+    private BiFunction<Object, String, Enumeration<?>> getHeaders;
+
     /**
      * Constructor
      */
-    public RouteHandlerInterceptor() {
+    public DispatcherServletInterceptor() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);
         handlers = new ArrayList<>();
         handlers.add(new LaneRequestTagHandler());
         handlers.add(new RouteRequestTagHandler());
         handlers.sort(Comparator.comparingInt(Handler::getOrder));
+        initFunction();
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) {
+    public ExecuteContext before(ExecuteContext context) {
         Set<String> matchKeys = configService.getMatchKeys();
         Set<String> injectTags = configService.getInjectTags();
         if (CollectionUtils.isEmpty(matchKeys) && CollectionUtils.isEmpty(injectTags)) {
             // The staining mark is empty, which means that there are no staining rules, and it is returned directly
-            return true;
+            return context;
         }
+        Object request = context.getArguments()[0];
         Map<String, List<String>> headers = getHeaders(request);
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        String path = request.getRequestURI();
-        String method = request.getMethod();
+        Map<String, String[]> parameterMap = getParameterMap.apply(request);
+        String path = getRequestUri.apply(request);
+        String method = getMethod.apply(request);
         handlers.forEach(handler -> ThreadLocalUtils.addRequestTag(
                 handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, injectTags))));
-        return true;
+        return context;
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object obj,
-            ModelAndView modelAndView) {
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object obj, Exception ex) {
+    public ExecuteContext after(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
         ThreadLocalUtils.removeRequestTag();
+        return context;
     }
 
-    private Map<String, List<String>> getHeaders(HttpServletRequest request) {
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context) {
+        ThreadLocalUtils.removeRequestData();
+        ThreadLocalUtils.removeRequestTag();
+        return context;
+    }
+
+    private Map<String, List<String>> getHeaders(Object request) {
         Map<String, List<String>> headers = new HashMap<>();
-        Enumeration<?> enumeration = request.getHeaderNames();
+        Enumeration<?> enumeration = getHeaderNames.apply(request);
         while (enumeration.hasMoreElements()) {
             String key = (String) enumeration.nextElement();
-            headers.put(key, enumeration2List(request.getHeaders(key)));
+            headers.put(key, enumeration2List(getHeaders.apply(request, key)));
         }
         return headers;
     }
@@ -109,5 +126,31 @@ public class RouteHandlerInterceptor implements HandlerInterceptor {
             collection.add((String) enumeration.nextElement());
         }
         return collection;
+    }
+
+    private void initFunction() {
+        boolean canLoadLowVersion = canLoadLowVersion();
+        if (canLoadLowVersion) {
+            getParameterMap = obj -> ((HttpServletRequest) obj).getParameterMap();
+            getRequestUri = obj -> ((HttpServletRequest) obj).getRequestURI();
+            getMethod = obj -> ((HttpServletRequest) obj).getMethod();
+            getHeaderNames = obj -> ((HttpServletRequest) obj).getHeaderNames();
+            getHeaders = (obj, key) -> ((HttpServletRequest) obj).getHeaders(key);
+        } else {
+            getParameterMap = SpringRouterUtils::getParameterMap;
+            getRequestUri = SpringRouterUtils::getRequestUri;
+            getMethod = SpringRouterUtils::getMethod;
+            getHeaderNames = SpringRouterUtils::getHeaderNames;
+            getHeaders = SpringRouterUtils::getHeaders;
+        }
+    }
+
+    private boolean canLoadLowVersion() {
+        try {
+            Class.forName(HttpServletRequest.class.getCanonicalName());
+        } catch (NoClassDefFoundError | ClassNotFoundException error) {
+            return false;
+        }
+        return true;
     }
 }
