@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
                         serviceRegistration.getClass().getDeclaredMethod("getRegistration"))
                         .invoke(serviceRegistration);
                 AppCache.INSTANCE.setAppName(registration.getServiceId());
+                configService.init(RouterConstant.SPRING_CACHE_NAME, registration.getServiceId());
                 SpringRouterUtils.putMetaData(registration.getMetadata(), routerConfig);
             } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
                 LOGGER.log(Level.WARNING, "Can not get the registration.", ex);
@@ -76,7 +77,6 @@ public class ServiceRegistryInterceptor extends AbstractInterceptor {
 
     @Override
     public ExecuteContext after(ExecuteContext context) {
-        configService.init(RouterConstant.SPRING_CACHE_NAME, AppCache.INSTANCE.getAppName());
         return context;
     }
 }

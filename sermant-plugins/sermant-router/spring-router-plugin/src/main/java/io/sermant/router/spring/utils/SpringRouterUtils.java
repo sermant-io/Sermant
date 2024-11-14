@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import io.sermant.router.common.utils.ReflectUtils;
 
 import org.springframework.cloud.client.DefaultServiceInstance;
 
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +49,57 @@ public class SpringRouterUtils {
     private static RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     private SpringRouterUtils() {
+    }
+
+    /**
+     * get http parameter
+     *
+     * @param obj HttpServletRequest
+     * @return parameter
+     */
+    public static Map<String, String[]> getParameterMap(Object obj) {
+        return (Map<String, String[]>) ReflectUtils.invokeWithNoneParameter(obj, "getParameterMap");
+    }
+
+    /**
+     * get http uri
+     *
+     * @param obj HttpServletRequest
+     * @return uri
+     */
+    public static String getRequestUri(Object obj) {
+        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, "getRequestURI");
+    }
+
+    /**
+     * get http method
+     *
+     * @param obj HttpServletRequest
+     * @return method
+     */
+    public static String getMethod(Object obj) {
+        return ReflectUtils.invokeWithNoneParameterAndReturnString(obj, "getMethod");
+    }
+
+    /**
+     * get http header keys
+     *
+     * @param obj HttpServletRequest
+     * @return key
+     */
+    public static Enumeration<?> getHeaderNames(Object obj) {
+        return (Enumeration<?>) ReflectUtils.invokeWithNoneParameter(obj, "getHeaderNames");
+    }
+
+    /**
+     * get http header value
+     *
+     * @param obj HttpServletRequest
+     * @param key header key
+     * @return header value
+     */
+    public static Enumeration<?> getHeaders(Object obj, String key) {
+        return (Enumeration<?>) ReflectUtils.invokeWithParameter(obj, "getHeaders", key, String.class);
     }
 
     /**
