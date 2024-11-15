@@ -56,7 +56,7 @@ import java.util.logging.Logger;
  * @since 2024-05-13
  **/
 public abstract class XdsHandler<T> implements XdsServiceAction {
-    protected static final Logger LOGGER = LoggerFactory.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final int DELAY_TIME = 3000;
 
@@ -180,38 +180,47 @@ public abstract class XdsHandler<T> implements XdsServiceAction {
             @Override
             public void onNext(DiscoveryResponse response) {
                 handleResponse(requestKey, response);
-                if (countDownLatch != null) {
-                    countDownLatch.countDown();
-                }
+                countDown(countDownLatch);
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (countDownLatch != null) {
-                    countDownLatch.countDown();
-                }
-                initExecutor();
-                executor.submit(() -> {
-                    try {
-                        Thread.sleep(DELAY_TIME);
-                    } catch (InterruptedException e) {
-                        LOGGER.log(Level.WARNING, "An error occurred in thread sleeping.", e);
-                    }
-                    client.updateChannel();
-                    subscribe(requestKey, null);
-                });
-                LOGGER.log(Level.SEVERE, "An error occurred in Xds communication with istiod.", throwable);
+                countDown(countDownLatch);
+                handleError(throwable, requestKey);
             }
 
             @Override
             public void onCompleted() {
-                if (countDownLatch != null) {
-                    countDownLatch.countDown();
-                }
-                subscribe(requestKey, null);
-                LOGGER.log(Level.WARNING, "Xds stream is closed, new stream has been created for communication.");
+                countDown(countDownLatch);
+                handleCompletion(requestKey);
             }
         };
+    }
+
+    private void countDown(CountDownLatch countDownLatch) {
+        if (countDownLatch != null) {
+            countDownLatch.countDown();
+        }
+    }
+
+    private void handleError(Throwable throwable, String requestKey) {
+        initExecutor();
+        executor.submit(() -> {
+            try {
+                Thread.sleep(DELAY_TIME);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "An error occurred in thread sleeping.", e);
+                Thread.currentThread().interrupt();
+            }
+            client.updateChannel();
+            subscribe(requestKey, null);
+        });
+        LOGGER.log(Level.SEVERE, "An error occurred in Xds communication with istiod.", throwable);
+    }
+
+    private void handleCompletion(String requestKey) {
+        subscribe(requestKey, null);
+        LOGGER.log(Level.WARNING, "Xds stream is closed, new stream has been created for communication.");
     }
 
     /**

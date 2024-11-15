@@ -60,31 +60,40 @@ public class PluginConfigManager {
     public static void loadPluginConfigs(Plugin plugin) {
         File pluginConfigFile = getPluginConfigFile(plugin.getPath());
         ClassLoader classLoader = plugin.getPluginClassLoader();
-        for (BaseConfig config : ServiceLoader.load(PluginConfig.class, classLoader)) {
-            Class<? extends BaseConfig> pluginConfigCls = config.getClass();
-            String pluginConfigKey = ConfigKeyUtil.getTypeKeyWithClassloader(ConfigKeyUtil.getTypeKey(pluginConfigCls),
-                    pluginConfigCls.getClassLoader());
-            final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
-            if (pluginConfigFile.isFile()) {
-                if (retainedConfig == null) {
-                    PLUGIN_CONFIG_MAP.put(pluginConfigKey,
-                            ConfigManager.doLoad(pluginConfigFile, config, plugin.isDynamic()));
-                    plugin.getConfigs().add(pluginConfigKey);
-                } else if (retainedConfig.getClass() == pluginConfigCls) {
-                    LOGGER.log(Level.FINE, "Skip load config [{0}] repeatedly. ",
-                            pluginConfigCls.getName());
-                } else {
-                    LOGGER.log(Level.WARNING, "Type key of {0} is {1}, same as {2}'s. ",
-                            new String[]{pluginConfigCls.getName(), pluginConfigKey,
-                                    retainedConfig.getClass().getName()});
-                }
-                continue;
-            }
-            if (PLUGIN_CONFIG_MAP.containsKey(pluginConfigKey)) {
-                continue;
-            }
 
-            // If it cannot be loaded from file, it is the default configuration
+        for (BaseConfig config : ServiceLoader.load(PluginConfig.class, classLoader)) {
+            processConfig(plugin, pluginConfigFile, config);
+        }
+    }
+
+    private static void processConfig(Plugin plugin, File pluginConfigFile, BaseConfig config) {
+        Class<? extends BaseConfig> pluginConfigCls = config.getClass();
+        String pluginConfigKey = ConfigKeyUtil.getTypeKeyWithClassloader(ConfigKeyUtil.getTypeKey(pluginConfigCls),
+                pluginConfigCls.getClassLoader());
+
+        if (pluginConfigFile.isFile()) {
+            handleFileConfig(plugin, pluginConfigFile, config, pluginConfigCls, pluginConfigKey);
+        } else {
+            loadDefaultConfig(plugin, config, pluginConfigKey);
+        }
+    }
+
+    private static void handleFileConfig(Plugin plugin, File pluginConfigFile, BaseConfig config,
+            Class<? extends BaseConfig> pluginConfigCls, String pluginConfigKey) {
+        final BaseConfig retainedConfig = PLUGIN_CONFIG_MAP.get(pluginConfigKey);
+        if (retainedConfig == null) {
+            PLUGIN_CONFIG_MAP.put(pluginConfigKey, ConfigManager.doLoad(pluginConfigFile, config, plugin.isDynamic()));
+            plugin.getConfigs().add(pluginConfigKey);
+        } else if (retainedConfig.getClass() == pluginConfigCls) {
+            LOGGER.log(Level.FINE, "Skip load config [{0}] repeatedly.", pluginConfigCls.getName());
+        } else {
+            LOGGER.log(Level.WARNING, "Type key of {0} is {1}, same as {2}'s.",
+                    new String[]{pluginConfigCls.getName(), pluginConfigKey, retainedConfig.getClass().getName()});
+        }
+    }
+
+    private static void loadDefaultConfig(Plugin plugin, BaseConfig config, String pluginConfigKey) {
+        if (!PLUGIN_CONFIG_MAP.containsKey(pluginConfigKey)) {
             PLUGIN_CONFIG_MAP.put(pluginConfigKey, config);
             plugin.getConfigs().add(pluginConfigKey);
         }

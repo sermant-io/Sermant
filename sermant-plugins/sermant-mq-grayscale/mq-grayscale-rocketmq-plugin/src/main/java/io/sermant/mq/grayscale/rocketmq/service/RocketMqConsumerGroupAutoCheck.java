@@ -143,7 +143,7 @@ public class RocketMqConsumerGroupAutoCheck {
                 continue;
             }
             Set<String> grayTags = findGrayConsumerGroupAndGetTags(clientConfig);
-            LOGGER.log(Level.INFO,"[auto-check] current find gray tags: {0}.", grayTags);
+            LOGGER.log(Level.INFO, "[auto-check] current find gray tags: {0}.", grayTags);
             resetAutoCheckGrayTagItems(grayTags, clientConfig);
         }
     }
@@ -163,7 +163,7 @@ public class RocketMqConsumerGroupAutoCheck {
             return getGrayTagsByConsumerGroup(groupList, brokerAddress, mqClientApi,
                     clientConfig.getConsumerGroup());
         } catch (MQClientException | InterruptedException | RemotingTimeoutException | RemotingSendRequestException
-                 | RemotingConnectException | MQBrokerException e) {
+                | RemotingConnectException | MQBrokerException e) {
             LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[auto-check] error, message: %s",
                     e.getMessage()), e);
         }
@@ -185,7 +185,7 @@ public class RocketMqConsumerGroupAutoCheck {
                     grayTags.add(grayTag);
                 }
             } catch (RemotingConnectException | RemotingSendRequestException | RemotingTimeoutException
-                     | MQBrokerException | InterruptedException e) {
+                    | MQBrokerException | InterruptedException e) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "[auto-check] can not find ids in group: [%s].",
                         group));
             }

@@ -39,7 +39,7 @@ public class XdsRoundRobinLoadBalancer implements XdsLoadBalancer {
 
     @Override
     public ServiceInstance selectInstance(List<ServiceInstance> instances) {
-        synchronized (this.getClass()) {
+        synchronized (XdsRoundRobinLoadBalancer.class) {
             // safely calculate the index based on the current size of the instances list
             int currentIndex = index.getAndUpdate(i -> (i + 1) % instances.size());
 

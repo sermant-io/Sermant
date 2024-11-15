@@ -109,7 +109,7 @@ public class MqGrayscaleConfig implements PluginConfig {
      * @return gray tag item
      */
     public Optional<GrayTagItem> getGrayTagByGroupTag(String grayGroupTag) {
-        for (GrayTagItem item: grayscale) {
+        for (GrayTagItem item : grayscale) {
             if (grayGroupTag.equals(item.getConsumerGroupTag())) {
                 return Optional.of(item);
             }

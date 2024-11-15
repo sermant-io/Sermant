@@ -103,20 +103,30 @@ public class PageTemplateService {
     private void loadTemplateFile(String templatePath) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(templatePath), "*.yml")) {
             for (Path entry : stream) {
-                if (!Files.isRegularFile(entry)) {
-                    continue;
-                }
-                try (InputStream inputStream = Files.newInputStream(entry)) {
-                    PageTemplateInfo pageTemplateInfo = yaml.loadAs(inputStream, PageTemplateInfo.class);
-                    if (pageTemplateInfo == null || pageTemplateInfo.getPlugin() == null) {
-                        LOGGER.warn("The page template file {} is missing plugin information.", entry.getFileName());
-                        continue;
-                    }
-                    pageTemplateInfoMap.put(pageTemplateInfo.getPlugin().getEnglishName(), pageTemplateInfo);
-                }
+                loadTemplateEntry(entry);
             }
         } catch (IOException e) {
             LOGGER.error("An error occurred while retrieving template file information", e);
         }
+    }
+
+    private void loadTemplateEntry(Path entry) {
+        if (!Files.isRegularFile(entry)) {
+            return;
+        }
+        try (InputStream inputStream = Files.newInputStream(entry)) {
+            PageTemplateInfo pageTemplateInfo = yaml.loadAs(inputStream, PageTemplateInfo.class);
+            processTemplateInfo(entry, pageTemplateInfo);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to load page template from file {}", entry.getFileName(), e);
+        }
+    }
+
+    private void processTemplateInfo(Path entry, PageTemplateInfo pageTemplateInfo) {
+        if (pageTemplateInfo == null || pageTemplateInfo.getPlugin() == null) {
+            LOGGER.warn("The page template file {} is missing plugin information.", entry.getFileName());
+            return;
+        }
+        pageTemplateInfoMap.put(pageTemplateInfo.getPlugin().getEnglishName(), pageTemplateInfo);
     }
 }
