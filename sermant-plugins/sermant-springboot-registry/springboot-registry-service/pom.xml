@@ -21,6 +21,7 @@
         <cloud.zk.version>3.1.0</cloud.zk.version>
         <jackson.version>2.13.4.2</jackson.version>
         <guava.version>31.1-jre</guava.version>
+        <nacos.version>2.3.3</nacos.version>
         <!--Curator 2.x.x is compatible with Zookeeper's 3.4.x and 3.5.x
             Curator 3.x.x only compatible with Zookeeper 3.5.x -->
         <!--zk  3.4.x, Upward compatible-->
@@ -40,6 +41,12 @@
             <artifactId>springboot-registry-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>${nacos.version}</version>
         </dependency>
 
         <!--compile dependency -->

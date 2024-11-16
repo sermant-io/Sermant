@@ -16,3 +16,4 @@
 
 io.sermant.discovery.config.LbConfig
 io.sermant.discovery.config.DiscoveryPluginConfig
+io.sermant.discovery.config.NacosRegisterConfig

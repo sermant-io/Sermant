@@ -16,6 +16,7 @@
 
 package io.sermant.discovery.service.lb.discovery.zk;
 
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.ex.QueryInstanceException;
 import io.sermant.discovery.service.lb.discovery.ServiceDiscoveryClient;
@@ -58,8 +59,8 @@ public class ZkDiscoveryClientProxy implements ServiceDiscoveryClient {
     }
 
     @Override
-    public String name() {
-        return "Zookeeper";
+    public RegisterType registerType() {
+        return RegisterType.ZOOKEEPER;
     }
 
     @Override

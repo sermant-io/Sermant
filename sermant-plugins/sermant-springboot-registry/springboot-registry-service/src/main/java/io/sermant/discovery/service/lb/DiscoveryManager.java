@@ -18,7 +18,9 @@ package io.sermant.discovery.service.lb;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.discovery.config.DiscoveryPluginConfig;
 import io.sermant.discovery.config.LbConfig;
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.lb.cache.InstanceCacheManager;
 import io.sermant.discovery.service.lb.discovery.InstanceListenable;
@@ -83,16 +85,16 @@ public enum DiscoveryManager {
     }
 
     private void initServiceDiscoveryClient() {
-        final String registryCenterType = lbConfig.getRegistryCenterType();
+        RegisterType registerType = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).getRegisterType();
         for (ServiceDiscoveryClient discoveryClient : ServiceLoader.load(ServiceDiscoveryClient.class, this.getClass()
                 .getClassLoader())) {
-            if (discoveryClient.name().equalsIgnoreCase(lbConfig.getRegistryCenterType())) {
+            if (discoveryClient.registerType().equals(registerType)) {
                 this.serviceDiscoveryClient = discoveryClient;
                 break;
             }
         }
         if (this.serviceDiscoveryClient == null) {
-            throw new IllegalStateException("Can not support register center type: " + registryCenterType);
+            throw new IllegalStateException("Can not support register center type: " + registerType);
         }
         this.serviceDiscoveryClient.init();
     }
@@ -105,9 +107,10 @@ public enum DiscoveryManager {
     }
 
     private void loadListen() {
+        RegisterType registerType = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).getRegisterType();
         for (InstanceListenable listenable : ServiceLoader.load(InstanceListenable.class, this.getClass()
                 .getClassLoader())) {
-            if (listenable.name().equalsIgnoreCase(lbConfig.getRegistryCenterType())) {
+            if (listenable.registerType().equals(registerType)) {
                 this.instanceListenable = listenable;
                 break;
             }

@@ -25,6 +25,7 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.discovery.config.LbConfig;
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.ex.QueryInstanceException;
 import io.sermant.discovery.service.lb.LbConstants;
@@ -208,8 +209,8 @@ public class ZkDiscoveryClient implements ServiceDiscoveryClient {
     }
 
     @Override
-    public String name() {
-        return "Zookeeper";
+    public RegisterType registerType() {
+        return RegisterType.ZOOKEEPER;
     }
 
     private ServiceDiscovery<ZookeeperInstance> build() {

@@ -16,6 +16,7 @@
 
 package io.sermant.discovery.service.lb.discovery;
 
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.ex.QueryInstanceException;
 
@@ -68,7 +69,7 @@ public interface ServiceDiscoveryClient extends Closeable {
     /**
      * The name of the service discovery, associated with the registry type
      *
-     * @return Name
+     * @return RegisterType
      */
-    String name();
+    RegisterType registerType();
 }

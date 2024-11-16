@@ -7,6 +7,8 @@ sermant.springboot.registry:
   realmName: www.domain.com
   # Whether to enable traffic statistics, after it is enabled, the traffic entering the plug-in will be printed every time
   enableRequestCount: false
+  # The type of the registry center, currently supports NACOS and ZOOKEEPER
+  registryCenterType: ZOOKEEPER
 
 sermant.springboot.registry.lb:
   # The load balancer type currently supports RoundRobin、Random、WeightedResponseTime、
@@ -28,3 +30,21 @@ sermant.springboot.registry.lb:
   # For retry scenarios, for {@link java.util.concurrent.TimeoutException}, whether you need to retry, which is enabled
   # by default, and this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
   enableTimeoutExRetry: true
+
+nacos.config:
+  # Whether to enable authentication
+  enableAuth: false
+  # nacos verifies accounts
+  username: ""
+  # nacos verifies password need encrypts
+  password: ""
+  # Specify the AES privateKey that encrypts and decrypts the password
+  privateKey: ""
+  # Namespace, the nacos configuration creates the id value of the namespace
+  namespace: ""
+  # Service instance weight value
+  weight: 1
+  # Cluster name
+  clusterName: DEFAULT
+  # Whether it is a temporary node. The value can be true or false
+  ephemeral: true
