@@ -18,6 +18,8 @@ package io.sermant.discovery.service.lb.discovery;
 
 import io.sermant.discovery.entity.ServiceInstance;
 
+import java.util.List;
+
 /**
  * Listeners for instance changes, and notifications are sent when the instance changes
  *
@@ -32,6 +34,14 @@ public interface InstanceChangeListener {
      * @param serviceInstance Change the instance
      */
     void notify(EventType eventType, ServiceInstance serviceInstance);
+
+
+    /**
+     * Notice
+     *
+     * @param serviceInstances All instances
+     */
+    void notify(List<ServiceInstance> serviceInstances);
 
     /**
      * The type of event

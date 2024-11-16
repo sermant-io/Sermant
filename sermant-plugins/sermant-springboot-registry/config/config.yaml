@@ -9,6 +9,8 @@ sermant.springboot.registry:
   enableRequestCount: false
 
 sermant.springboot.registry.lb:
+  # The type of the registry center, currently supports Nacos and Zookeeper
+  registryCenterType:
   # The load balancer type currently supports RoundRobin、Random、WeightedResponseTime、
   # BestAvailable(Minimum number of concurrent transactions)
   lbType: RoundRobin
@@ -28,3 +30,12 @@ sermant.springboot.registry.lb:
   # For retry scenarios, for {@link java.util.concurrent.TimeoutException}, whether you need to retry, which is enabled
   # by default, and this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
   enableTimeoutExRetry: true
+
+
+nacos.service:
+  username: "nacos" # nacos验证账户
+  password: "nacos" # nacos的验证密码
+  namespace: "sermant" # 命名空间，nacos配置创建命名空间的id值
+  weight: 1 # 服务实例权重值
+  clusterName: DEFAULT # 集群名称
+  ephemeral: true # 是否是临时节点，true为是，false为否

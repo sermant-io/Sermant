@@ -263,6 +263,14 @@ public class InstanceCacheManager {
             instanceCaches.put(serviceName, instanceCache);
         }
 
+        @Override
+        public void notify(List<ServiceInstance> serviceInstances) {
+            String serviceName = serviceInstances.get(0).getServiceName();
+            InstanceCache instanceCache = new InstanceCache(serviceName, serviceInstances);
+            instanceCache.setUpdateTimestamp(System.currentTimeMillis());
+            instanceCaches.put(serviceName, instanceCache);
+        }
+
         private void printLog(EventType eventType, ServiceInstance serviceInstance) {
             final Map<String, String> metadata = serviceInstance.getMetadata();
             if (metadata == null) {
