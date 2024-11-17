@@ -104,11 +104,23 @@ public class NacosServiceManager {
     }
 
     private NamingService createNewNamingService(Properties properties) throws NacosException {
-        return new NacosNamingService(properties);
+        ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        try {
+            return new NacosNamingService(properties);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tempClassLoader);
+        }
     }
 
     private NamingMaintainService createNamingMaintainService(Properties properties) throws NacosException {
-        return new NacosNamingMaintainService(properties);
+        ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        try {
+            return new NacosNamingMaintainService(properties);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tempClassLoader);
+        }
     }
 
     /**

@@ -57,12 +57,16 @@ public class NamingServiceUtils {
     public static NamingService buildNamingService(Map<String, String> parameters, NacosRegisterConfig registerConfig,
         RegisterServiceCommonConfig commonConfig) {
         Properties nacosProperties = buildNacosProperties(parameters, registerConfig, commonConfig);
+        ClassLoader tempClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(NamingServiceUtils.class.getClassLoader());
         try {
             return NacosFactory.createNamingService(nacosProperties);
         } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "create namingService failed: {%s}",
                     e.getErrMsg()), e);
             throw new IllegalStateException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tempClassLoader);
         }
     }
 
