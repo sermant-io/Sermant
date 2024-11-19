@@ -45,6 +45,8 @@ public class ClassLoaderManager {
 
     private static FrameworkClassLoader frameworkClassLoader;
 
+    private static ClassLoader userClassLoader;
+
     private ClassLoaderManager() {
     }
 
@@ -86,6 +88,26 @@ public class ClassLoaderManager {
                 return new PluginClassLoader(new URL[0], sermantClassLoader);
             }
         });
+    }
+
+    public static void setUserClassLoader(ClassLoader userClassLoader) {
+        ClassLoaderManager.userClassLoader = userClassLoader;
+    }
+
+    /**
+     * get ContextClassLoader or UserClassLoader
+     *
+     * @return ClassLoader
+     */
+    public static ClassLoader getContextClassLoaderOrUserClassLoader() {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            return classLoader;
+        }
+
+        // In some Tomcat scenarios, sermant cannot obtain the class loader of the current thread.
+        // In this case, the host class loader is used to load classes.
+        return userClassLoader;
     }
 
     public static SermantClassLoader getSermantClassLoader() {
