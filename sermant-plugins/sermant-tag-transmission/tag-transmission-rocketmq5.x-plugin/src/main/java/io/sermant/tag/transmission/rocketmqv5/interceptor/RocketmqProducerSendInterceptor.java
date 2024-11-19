@@ -75,8 +75,8 @@ public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<S
     }
 
     /**
-     * Insert the traffic tag into the properties string. The format of the original properties is as
-     * follows: key1[SOH]value1[STX]key2[SOH]value2, [SOH] is the symbol of ASCII=1, [STX] is the symbol of ASCII=2
+     * Insert the traffic tag into the properties string. The format of the original properties is as follows:
+     * key1[SOH]value1[STX]key2[SOH]value2, [SOH] is the symbol of ASCII=1, [STX] is the symbol of ASCII=2
      *
      * @param oldProperties original properties
      * @return String
@@ -88,6 +88,12 @@ public class RocketmqProducerSendInterceptor extends AbstractClientInterceptor<S
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original properties contains the specific key, then ignore
+            if (oldProperties.contains(key)) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
             newProperties.append(key);
             newProperties.append(LINK_MARK);
