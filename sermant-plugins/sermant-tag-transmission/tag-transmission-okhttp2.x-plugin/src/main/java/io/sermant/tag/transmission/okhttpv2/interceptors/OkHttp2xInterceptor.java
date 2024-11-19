@@ -16,17 +16,20 @@
 
 package io.sermant.tag.transmission.okhttpv2.interceptors;
 
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Request.Builder;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.utils.CollectionUtils;
+import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.tag.TrafficUtils;
 import io.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import io.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +78,17 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            Optional<Object> headersBuilderObject = ReflectUtils.getFieldValue(builder, "headers");
+            if (headersBuilderObject.isPresent()) {
+                Headers.Builder headersBuilder = (Headers.Builder) headersBuilderObject.get();
+                String value = headersBuilder.get(key);
+                if (value != null) {
+                    continue;
+                }
+            }
+
             List<String> values = entry.getValue();
 
             // The server side converts the label value to list storage when it is not null. If it is null, it directly
