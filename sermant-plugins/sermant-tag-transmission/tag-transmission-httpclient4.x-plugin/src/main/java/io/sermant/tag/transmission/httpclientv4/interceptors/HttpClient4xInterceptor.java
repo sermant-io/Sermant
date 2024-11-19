@@ -23,6 +23,7 @@ import io.sermant.core.utils.tag.TrafficUtils;
 import io.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import io.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
+import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 
 import java.util.List;
@@ -66,6 +67,13 @@ public class HttpClient4xInterceptor extends AbstractClientInterceptor<HttpReque
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            Header[] originalHeaders = httpRequest.getHeaders(key);
+            if (originalHeaders != null && originalHeaders.length != 0) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // The server side converts the label value to list storage when it is not null. If it is null, it directly
