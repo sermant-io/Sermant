@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,29 +47,6 @@ public class RouteUtils {
      * @param parameters parameters
      * @return Matching swimlane markers
      */
-    public static List<Route> getLaneRoutesByParameterArray(List<Rule> list, Map<String, List<String>> headers,
-            Map<String, String[]> parameters) {
-        for (Rule rule : list) {
-            Match match = rule.getMatch();
-            if (match == null) {
-                return rule.getRoute();
-            }
-            if (isMatchByHeaders(match.getHeaders(), headers) && isMatchByParameterArray(match.getParameters(),
-                    parameters)) {
-                return rule.getRoute();
-            }
-        }
-        return Collections.emptyList();
-    }
-
-    /**
-     * Get matching swimlanes
-     *
-     * @param list Valid rules
-     * @param headers header
-     * @param parameters parameters
-     * @return Matching swimlane markers
-     */
     public static List<Route> getLaneRoutesByParameterList(List<Rule> list, Map<String, List<String>> headers,
             Map<String, List<String>> parameters) {
         for (Rule rule : list) {
@@ -99,29 +76,6 @@ public class RouteUtils {
                 MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
                 List<String> list = headers.get(key);
                 String arg = list == null ? null : list.get(0);
-                if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
-                    // As long as one of them doesn't match, it's a mismatch
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean isMatchByParameterArray(Map<String, List<MatchRule>> matchParameters,
-            Map<String, String[]> parameters) {
-        if (CollectionUtils.isEmpty(matchParameters)) {
-            return true;
-        }
-        for (Entry<String, List<MatchRule>> entry : matchParameters.entrySet()) {
-            String key = entry.getKey();
-            List<MatchRule> matchRuleList = entry.getValue();
-            for (MatchRule matchRule : matchRuleList) {
-                ValueMatch valueMatch = matchRule.getValueMatch();
-                List<String> values = valueMatch.getValues();
-                MatchStrategy matchStrategy = valueMatch.getMatchStrategy();
-                String[] arr = parameters.get(key);
-                String arg = (arr == null || arr.length == 0) ? null : arr[0];
                 if (!matchStrategy.isMatch(values, arg, matchRule.isCaseInsensitive())) {
                     // As long as one of them doesn't match, it's a mismatch
                     return false;

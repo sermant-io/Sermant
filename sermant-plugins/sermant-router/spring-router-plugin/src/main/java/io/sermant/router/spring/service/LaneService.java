@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,6 @@ import java.util.Map;
  * @since 2023-02-20
  */
 public interface LaneService extends PluginService {
-    /**
-     * Get swimlane markers
-     *
-     * @param path The path of the request
-     * @param methodName http method
-     * @param headers HTTP request headers
-     * @param parameters URL parameter
-     * @return Swimlane markers
-     */
-    Map<String, List<String>> getLaneByParameterArray(String path, String methodName, Map<String, List<String>> headers,
-            Map<String, String[]> parameters);
-
     /**
      * Get swimlane markers
      *

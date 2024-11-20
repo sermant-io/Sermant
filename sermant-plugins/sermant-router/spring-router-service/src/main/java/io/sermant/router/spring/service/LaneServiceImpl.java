@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,6 @@ import java.util.Map;
  * @since 2023-02-20
  */
 public class LaneServiceImpl implements LaneService {
-    @Override
-    public Map<String, List<String>> getLaneByParameterArray(String path, String methodName,
-            Map<String, List<String>> headers, Map<String, String[]> parameters) {
-        List<Rule> rules = getRules(path, methodName);
-        List<Route> routes = RouteUtils.getLaneRoutesByParameterArray(rules, headers, parameters);
-        return RuleUtils.getTargetLaneTags(routes);
-    }
-
     @Override
     public Map<String, List<String>> getLaneByParameterList(String path, String methodName,
             Map<String, List<String>> headers, Map<String, List<String>> parameters) {

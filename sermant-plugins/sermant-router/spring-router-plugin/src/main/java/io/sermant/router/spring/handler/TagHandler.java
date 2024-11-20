@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,20 @@
 
 package io.sermant.router.spring.handler;
 
-import io.sermant.core.plugin.service.PluginServiceManager;
-import io.sermant.router.spring.service.SpringConfigService;
+import io.sermant.router.common.constants.RouterConstant;
+import io.sermant.router.spring.entity.Keys;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * AbstractHandlerMapping handler
+ * tag handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
-public abstract class AbstractMappingHandler extends AbstractHandler {
-    /**
-     * Configuration service
-     */
-    protected final SpringConfigService configService;
-
-    /**
-     * Constructor
-     */
-    public AbstractMappingHandler() {
-        configService = PluginServiceManager.getPluginService(SpringConfigService.class);
-    }
-
+public class TagHandler extends AbstractHandler {
     /**
      * Obtain transparent tags
      *
@@ -48,8 +37,18 @@ public abstract class AbstractMappingHandler extends AbstractHandler {
      * @param methodName http method
      * @param headers HTTP request headers
      * @param parameters URL parameter
+     * @param keys The key of the tag to be obtained
      * @return Marks for transparent transmission
      */
-    public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
-            Map<String, List<String>> headers, Map<String, List<String>> parameters);
+    @Override
+    public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
+            Map<String, List<String>> parameters, Keys keys) {
+        Set<String> matchKeys = keys.getMatchedKeys();
+        return getRequestTag(headers, matchKeys);
+    }
+
+    @Override
+    public int getOrder() {
+        return RouterConstant.ROUTER_HANDLER_ORDER;
+    }
 }

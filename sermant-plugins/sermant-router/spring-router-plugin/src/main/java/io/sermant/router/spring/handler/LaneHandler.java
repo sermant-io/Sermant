@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.utils.CollectionUtils;
+import io.sermant.router.spring.entity.Keys;
 import io.sermant.router.spring.service.LaneService;
 
 import java.util.Collections;
@@ -30,12 +31,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Stain web blocker handler
+ * lane handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
-public class LaneRequestTagHandler extends AbstractRequestTagHandler {
+public class LaneHandler extends AbstractHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final LaneService laneService;
@@ -43,7 +44,7 @@ public class LaneRequestTagHandler extends AbstractRequestTagHandler {
     /**
      * Constructor
      */
-    public LaneRequestTagHandler() {
+    public LaneHandler() {
         laneService = PluginServiceManager.getPluginService(LaneService.class);
     }
 
@@ -51,14 +52,16 @@ public class LaneRequestTagHandler extends AbstractRequestTagHandler {
      * Obtain transparent tags
      *
      * @param path The path of the request
-     * @param methodName The name of the method
+     * @param methodName http method
      * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @param keys The key of the tag to be obtained
      * @return Marks for transparent transmission
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-            Map<String, String[]> parameters, Keys keys) {
-        Set<String> injectTags = keys.getInjectTags();
+            Map<String, List<String>> parameters, Keys keys) {
+        Set<String> injectTags = keys.getInjectedTags();
         if (CollectionUtils.isEmpty(injectTags)) {
             // The staining mark is empty, which means that there are no staining rules, and it is returned directly
             LOGGER.fine("Lane tags are empty.");
@@ -69,7 +72,7 @@ public class LaneRequestTagHandler extends AbstractRequestTagHandler {
         Map<String, List<String>> tags = getRequestTag(headers, injectTags);
 
         // This staining marker
-        Map<String, List<String>> laneTag = laneService.getLaneByParameterArray(path, methodName, headers, parameters);
+        Map<String, List<String>> laneTag = laneService.getLaneByParameterList(path, methodName, headers, parameters);
         if (CollectionUtils.isEmpty(laneTag)) {
             LOGGER.fine("Lane is empty.");
             return tags;

@@ -40,7 +40,7 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
     private Function<Object, String> getRequestUri;
 
     /**
-     * 构造方法
+     * constructor
      */
     public DispatcherServletInterceptor() {
         initFunction();
