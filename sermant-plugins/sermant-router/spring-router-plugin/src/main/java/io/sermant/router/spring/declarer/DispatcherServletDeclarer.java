@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@ package io.sermant.router.spring.declarer;
 import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 
 /**
- * Add an injection interceptor by intercepting and inject a spring web interceptor
+ * get http request data
  *
  * @author provenceee
  * @since 2022-07-12
  */
-public class HandlerExecutionChainDeclarer extends AbstractDeclarer {
-    private static final String ENHANCE_CLASS = "org.springframework.web.servlet.HandlerExecutionChain";
+public class DispatcherServletDeclarer extends AbstractDeclarer {
+    private static final String ENHANCE_CLASS = "org.springframework.web.servlet.DispatcherServlet";
 
     private static final String INTERCEPT_CLASS
-            = "io.sermant.router.spring.interceptor.HandlerExecutionChainInterceptor";
+            = "io.sermant.router.spring.interceptor.DispatcherServletInterceptor";
 
-    private static final String METHOD_NAME = "applyPreHandle";
+    private static final String METHOD_NAME = "doService";
 
     /**
      * Constructor
      */
-    public HandlerExecutionChainDeclarer() {
+    public DispatcherServletDeclarer() {
         super(ENHANCE_CLASS, INTERCEPT_CLASS, METHOD_NAME);
     }
 

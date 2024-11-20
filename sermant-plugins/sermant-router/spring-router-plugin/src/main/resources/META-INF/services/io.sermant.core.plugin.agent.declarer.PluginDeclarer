@@ -4,7 +4,7 @@ io.sermant.router.spring.declarer.ClientHttpRequestDeclarer
 io.sermant.router.spring.declarer.DiscoveryManagerDeclarer
 io.sermant.router.spring.declarer.EurekaHttpClientDeclarer
 io.sermant.router.spring.declarer.FeignClientDeclarer
-io.sermant.router.spring.declarer.HandlerExecutionChainDeclarer
+io.sermant.router.spring.declarer.DispatcherServletDeclarer
 io.sermant.router.spring.declarer.HystrixActionDeclarer
 io.sermant.router.spring.declarer.LoadBalancerClientFilterDeclarer
 io.sermant.router.spring.declarer.NopInstanceFilterDeclarer

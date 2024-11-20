@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+# Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ io.sermant.registry.declarers.health.HealthIndicatorDeclarer
 io.sermant.registry.grace.declarers.RegistryDelayDeclarer
 io.sermant.registry.grace.declarers.SpringRibbonWarmUpDeclarer
 io.sermant.registry.grace.declarers.SpringLoadbalancerWarmUpDeclarer
-io.sermant.registry.grace.declarers.SpringWebHandlerDeclarer
+io.sermant.registry.grace.declarers.DispatcherServletDeclarer
 io.sermant.registry.grace.declarers.SpringRibbonBalancerDeclarer
 io.sermant.registry.grace.declarers.SpringCacheManagerDeclarer
 io.sermant.registry.grace.declarers.SpringLoadbalancerFeignResponseDeclarer

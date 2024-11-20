@@ -74,7 +74,7 @@ public class GraceSwitchInterceptor extends RegisterSwitchSupport {
      * @return endpoint
      */
     protected String buildEndpoint(String host, int port) {
-        return String.format(Locale.ENGLISH, "%s:%s", host, port);
+        return host + ":" + port;
     }
 
     /**
