@@ -1,0 +1,14 @@
+# ide
+.idea/
+*.iml
+.vscode/
+
+# debug
+logs
+
+# build artifacts
+sermant-agent-*
+target/
+node_modules/
+node/
+sermant-integration-tests/tag-transmission-test/grpc-api-demo/src/main/java/io/sermant/demo/tagtransmission/grpc/api
