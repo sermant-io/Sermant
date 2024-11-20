@@ -39,7 +39,7 @@ public class ServiceDiscoveryRegistryDirectoryInterceptor extends AbstractInterc
     private final AtomicBoolean isInitialized = new AtomicBoolean();
 
     /**
-     * 构造方法
+     * constructor
      */
     public ServiceDiscoveryRegistryDirectoryInterceptor() {
         invokerRuleStrategyService = PluginServiceManager.getPluginService(InvokerRuleStrategyService.class);

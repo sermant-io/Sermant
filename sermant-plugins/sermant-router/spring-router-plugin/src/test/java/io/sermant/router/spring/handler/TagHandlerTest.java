@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package io.sermant.router.spring.handler;
 
 import io.sermant.core.service.ServiceManager;
 import io.sermant.router.spring.TestSpringConfigService;
-import io.sermant.router.spring.service.SpringConfigService;
+import io.sermant.router.spring.entity.Keys;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -38,12 +38,12 @@ import java.util.Map;
  * @author provenceee
  * @since 2023-02-28
  */
-public class RouteMappingHandlerTest {
+public class TagHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     private static TestSpringConfigService configService;
 
-    private final RouteMappingHandler handler;
+    private final TagHandler handler;
 
     /**
      * Perform mock before the UT is executed
@@ -52,8 +52,6 @@ public class RouteMappingHandlerTest {
     public static void before() {
         mockServiceManager = Mockito.mockStatic(ServiceManager.class);
         configService = new TestSpringConfigService();
-        mockServiceManager.when(() -> ServiceManager.getService(SpringConfigService.class))
-                .thenReturn(configService);
     }
 
     /**
@@ -64,8 +62,8 @@ public class RouteMappingHandlerTest {
         mockServiceManager.close();
     }
 
-    public RouteMappingHandlerTest() {
-        handler = new RouteMappingHandler();
+    public TagHandlerTest() {
+        handler = new TagHandler();
     }
 
     /**
@@ -78,7 +76,8 @@ public class RouteMappingHandlerTest {
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("bar", Collections.singletonList("bar1"));
         headers.put("foo", Collections.singletonList("foo1"));
-        Map<String, List<String>> requestTag = handler.getRequestTag("", "", headers, null);
+        Map<String, List<String>> requestTag = handler.getRequestTag("", "", headers, null,
+                new Keys(configService.getMatchKeys(), configService.getInjectTags()));
         Assert.assertNotNull(requestTag);
         Assert.assertEquals(2, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
@@ -86,7 +85,8 @@ public class RouteMappingHandlerTest {
 
         // Test getMatchKeys returns null
         configService.setReturnEmptyWhenGetMatchKeys(true);
-        requestTag = handler.getRequestTag("", "", null, null);
+        requestTag = handler.getRequestTag("", "", null, null,
+                new Keys(configService.getMatchKeys(), configService.getInjectTags()));
         Assert.assertEquals(Collections.emptyMap(), requestTag);
     }
 }

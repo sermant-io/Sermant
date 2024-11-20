@@ -16,19 +16,24 @@
 
 package io.sermant.router.spring.interceptor;
 
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import io.sermant.core.plugin.service.PluginServiceManager;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.handler.Handler;
 import io.sermant.router.common.utils.CollectionUtils;
 import io.sermant.router.common.utils.ThreadLocalUtils;
-import io.sermant.router.spring.handler.AbstractRequestTagHandler;
-import io.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
-import io.sermant.router.spring.handler.LaneRequestTagHandler;
-import io.sermant.router.spring.handler.RouteRequestTagHandler;
+import io.sermant.router.spring.entity.Keys;
+import io.sermant.router.spring.handler.AbstractHandler;
+import io.sermant.router.spring.handler.LaneHandler;
+import io.sermant.router.spring.handler.TagHandler;
 import io.sermant.router.spring.service.SpringConfigService;
 import io.sermant.router.spring.utils.SpringRouterUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,9 +41,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,11 +57,13 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2022-07-12
  */
 public class DispatcherServletInterceptor extends AbstractInterceptor {
-    private final List<AbstractRequestTagHandler> handlers;
+    private static final Logger LOGGER = LoggerFactory.getLogger();
+
+    private final List<AbstractHandler> handlers;
 
     private final SpringConfigService configService;
 
-    private Function<Object, Map<String, String[]>> getParameterMap;
+    private Function<Object, String> getQueryString;
 
     private Function<Object, String> getRequestUri;
 
@@ -69,8 +79,8 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
     public DispatcherServletInterceptor() {
         configService = PluginServiceManager.getPluginService(SpringConfigService.class);
         handlers = new ArrayList<>();
-        handlers.add(new LaneRequestTagHandler());
-        handlers.add(new RouteRequestTagHandler());
+        handlers.add(new LaneHandler());
+        handlers.add(new TagHandler());
         handlers.sort(Comparator.comparingInt(Handler::getOrder));
         initFunction();
     }
@@ -85,11 +95,13 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
         }
         Object request = context.getArguments()[0];
         Map<String, List<String>> headers = getHeaders(request);
-        Map<String, String[]> parameterMap = getParameterMap.apply(request);
+        String queryString = getQueryString.apply(request);
+        String decode = Optional.ofNullable(queryString).map(this::decode).orElse(StringUtils.EMPTY);
+        Map<String, List<String>> queryParams = SpringRouterUtils.getParametersByQuery(decode);
         String path = getRequestUri.apply(request);
         String method = getMethod.apply(request);
         handlers.forEach(handler -> ThreadLocalUtils.addRequestTag(
-                handler.getRequestTag(path, method, headers, parameterMap, new Keys(matchKeys, injectTags))));
+                handler.getRequestTag(path, method, headers, queryParams, new Keys(matchKeys, injectTags))));
         return context;
     }
 
@@ -105,6 +117,15 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
         ThreadLocalUtils.removeRequestData();
         ThreadLocalUtils.removeRequestTag();
         return context;
+    }
+
+    private String decode(String str) {
+        try {
+            return URLDecoder.decode(str, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException ex) {
+            LOGGER.log(Level.SEVERE, "Cannot decode the string[{0}], ex is {1}.", new Object[]{str, ex.getMessage()});
+            return StringUtils.EMPTY;
+        }
     }
 
     private Map<String, List<String>> getHeaders(Object request) {
@@ -131,13 +152,13 @@ public class DispatcherServletInterceptor extends AbstractInterceptor {
     private void initFunction() {
         boolean canLoadLowVersion = canLoadLowVersion();
         if (canLoadLowVersion) {
-            getParameterMap = obj -> ((HttpServletRequest) obj).getParameterMap();
+            getQueryString = obj -> ((HttpServletRequest) obj).getQueryString();
             getRequestUri = obj -> ((HttpServletRequest) obj).getRequestURI();
             getMethod = obj -> ((HttpServletRequest) obj).getMethod();
             getHeaderNames = obj -> ((HttpServletRequest) obj).getHeaderNames();
             getHeaders = (obj, key) -> ((HttpServletRequest) obj).getHeaders(key);
         } else {
-            getParameterMap = SpringRouterUtils::getParameterMap;
+            getQueryString = SpringRouterUtils::getQueryString;
             getRequestUri = SpringRouterUtils::getRequestUri;
             getMethod = SpringRouterUtils::getMethod;
             getHeaderNames = SpringRouterUtils::getHeaderNames;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.utils.CollectionUtils;
+import io.sermant.router.spring.entity.Keys;
 import io.sermant.router.spring.service.LaneService;
 
 import java.util.Collections;
@@ -30,12 +31,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * AbstractHandlerMapping handler
+ * lane handler
  *
  * @author provenceee
  * @since 2023-02-21
  */
-public class LaneMappingHandler extends AbstractMappingHandler {
+public class LaneHandler extends AbstractHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private final LaneService laneService;
@@ -43,7 +44,7 @@ public class LaneMappingHandler extends AbstractMappingHandler {
     /**
      * Constructor
      */
-    public LaneMappingHandler() {
+    public LaneHandler() {
         laneService = PluginServiceManager.getPluginService(LaneService.class);
     }
 
@@ -54,12 +55,13 @@ public class LaneMappingHandler extends AbstractMappingHandler {
      * @param methodName http method
      * @param headers HTTP request headers
      * @param parameters URL parameter
+     * @param keys The key of the tag to be obtained
      * @return Marks for transparent transmission
      */
     @Override
     public Map<String, List<String>> getRequestTag(String path, String methodName, Map<String, List<String>> headers,
-            Map<String, List<String>> parameters) {
-        Set<String> injectTags = configService.getInjectTags();
+            Map<String, List<String>> parameters, Keys keys) {
+        Set<String> injectTags = keys.getInjectedTags();
         if (CollectionUtils.isEmpty(injectTags)) {
             // The staining mark is empty, which means that there are no staining rules, and it is returned directly
             LOGGER.fine("Lane tags are empty.");
