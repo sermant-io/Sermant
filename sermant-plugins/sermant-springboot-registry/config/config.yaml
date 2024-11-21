@@ -31,11 +31,16 @@ sermant.springboot.registry.lb:
   # by default, and this timeout is mostly used in asynchronous scenarios, such as Future, MinimalHttpAsyncClient
   enableTimeoutExRetry: true
 
-
 nacos.service:
-  username: "nacos" # nacos验证账户
-  password: "nacos" # nacos的验证密码
-  namespace: "sermant" # 命名空间，nacos配置创建命名空间的id值
-  weight: 1 # 服务实例权重值
-  clusterName: DEFAULT # 集群名称
-  ephemeral: true # 是否是临时节点，true为是，false为否
+  # nacos verifies accounts
+  username: "nacos"
+  # nacos verifies password
+  password: "nacos"
+  # Namespace, the nacos configuration creates the id value of the namespace
+  namespace: "sermant"
+  # Service instance weight value
+  weight: 1
+  # Cluster name
+  clusterName: DEFAULT
+  # Whether it is a temporary node. The value can be true or false
+  ephemeral: true

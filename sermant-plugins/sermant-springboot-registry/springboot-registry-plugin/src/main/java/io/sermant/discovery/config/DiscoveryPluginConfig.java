@@ -42,6 +42,11 @@ public class DiscoveryPluginConfig implements PluginConfig {
      */
     private boolean enableRegistry = true;
 
+    /**
+     * Registry type, currently only ZK is supported
+     */
+    private String registryCenterType = "Zookeeper";
+
     public boolean isEnableRegistry() {
         return enableRegistry;
     }
@@ -64,5 +69,13 @@ public class DiscoveryPluginConfig implements PluginConfig {
 
     public void setEnableRequestCount(boolean enableRequestCount) {
         this.enableRequestCount = enableRequestCount;
+    }
+
+    public String getRegistryCenterType() {
+        return registryCenterType;
+    }
+
+    public void setRegistryCenterType(String registryCenterType) {
+        this.registryCenterType = registryCenterType;
     }
 }

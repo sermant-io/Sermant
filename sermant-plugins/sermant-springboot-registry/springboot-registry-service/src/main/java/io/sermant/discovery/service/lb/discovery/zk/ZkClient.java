@@ -21,6 +21,7 @@ import io.sermant.core.plugin.service.PluginService;
 import io.sermant.discovery.config.DiscoveryPluginConfig;
 import io.sermant.discovery.config.LbConfig;
 
+import io.sermant.discovery.config.RegisterType;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.state.ConnectionState;
@@ -36,8 +37,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 2022-10-25
  */
 public class ZkClient implements PluginService {
-
-    private final String REGISTRY_CENTER_TYPE = "Zookeeper";
 
     private final AtomicReference<ConnectionState> zkState = new AtomicReference<>();
 
@@ -55,7 +54,7 @@ public class ZkClient implements PluginService {
     @Override
     public void start() {
         if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()
-                || !REGISTRY_CENTER_TYPE.equals(lbConfig.getRegistryCenterType())) {
+                || !RegisterType.ZOOKEEPER.name().equals(lbConfig.getRegistryCenterType())) {
             return;
         }
         this.client = this.buildClient();

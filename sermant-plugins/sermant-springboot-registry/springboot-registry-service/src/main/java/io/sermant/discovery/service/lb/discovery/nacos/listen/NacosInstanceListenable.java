@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2024-2024 Sermant Authors. All rights reserved.
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 package io.sermant.discovery.service.lb.discovery.nacos.listen;
 
 import com.alibaba.nacos.api.exception.NacosException;
@@ -8,6 +24,7 @@ import com.alibaba.nacos.client.naming.event.InstancesChangeEvent;
 import com.alibaba.nacos.common.notify.Event;
 import com.alibaba.nacos.common.notify.NotifyCenter;
 import com.alibaba.nacos.common.notify.listener.Subscriber;
+
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.discovery.entity.ServiceInstance;
@@ -23,21 +40,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * nacos监听实现
+ * nacos Listen
  *
- * @author zhouss
+ * @author xz
  * @since 2024-11-12
  */
 public class NacosInstanceListenable extends Subscriber<InstancesChangeEvent> implements InstanceListenable {
-
     private static final Logger LOGGER = LoggerFactory.getLogger();
-
 
     private final Map<String, InstanceChangeListener> listenerCache = new ConcurrentHashMap<>();
 
     private final NacosServiceManager nacosServiceManager = NacosServiceManager.getInstance();
 
-
+    /**
+     * Construct
+     */
     public NacosInstanceListenable() {
     }
 
@@ -75,15 +92,13 @@ public class NacosInstanceListenable extends Subscriber<InstancesChangeEvent> im
             namingService.subscribe(serviceName, new EventListener() {
                 @Override
                 public void onEvent(com.alibaba.nacos.api.naming.listener.Event event) {
-                    LOGGER.info("Receive nacos instance change event: " + event);
+                    LOGGER.info("Receive nacos instance change event: %s");
                 }
             });
             listenerCache.put(serviceName, listener);
         } catch (NacosException e) {
-            System.out.println(e.getErrMsg());
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -95,5 +110,4 @@ public class NacosInstanceListenable extends Subscriber<InstancesChangeEvent> im
     public String name() {
         return "Nacos";
     }
-
 }

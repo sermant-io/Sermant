@@ -70,11 +70,6 @@ public class LbConfig implements PluginConfig {
     private String registryAddress = "127.0.0.1:2181";
 
     /**
-     * Registry type, currently only ZK is supported
-     */
-    private String registryCenterType = "Zookeeper";
-
-    /**
      * When it is enabled, if other registries are the same as the registries of this plugin and are registered to the
      * registry at the same time, the registries that are not registered by the plugin will be automatically excluded
      * from the query
@@ -307,14 +302,6 @@ public class LbConfig implements PluginConfig {
 
     public void setOnlyCurRegisterInstances(boolean onlyCurRegisterInstances) {
         this.onlyCurRegisterInstances = onlyCurRegisterInstances;
-    }
-
-    public String getRegistryCenterType() {
-        return registryCenterType;
-    }
-
-    public void setRegistryCenterType(String registryCenterType) {
-        this.registryCenterType = registryCenterType;
     }
 
     public String getZkServerVersion() {

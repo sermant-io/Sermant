@@ -18,6 +18,7 @@ package io.sermant.discovery.service.lb;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.discovery.config.DiscoveryPluginConfig;
 import io.sermant.discovery.config.LbConfig;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.lb.cache.InstanceCacheManager;
@@ -83,10 +84,11 @@ public enum DiscoveryManager {
     }
 
     private void initServiceDiscoveryClient() {
-        final String registryCenterType = lbConfig.getRegistryCenterType();
+        final String registryCenterType = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class)
+                .getRegistryCenterType();
         for (ServiceDiscoveryClient discoveryClient : ServiceLoader.load(ServiceDiscoveryClient.class, this.getClass()
                 .getClassLoader())) {
-            if (discoveryClient.name().equalsIgnoreCase(lbConfig.getRegistryCenterType())) {
+            if (discoveryClient.name().equalsIgnoreCase(registryCenterType)) {
                 this.serviceDiscoveryClient = discoveryClient;
                 break;
             }
@@ -105,9 +107,11 @@ public enum DiscoveryManager {
     }
 
     private void loadListen() {
+        final String registryCenterType = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class)
+                .getRegistryCenterType();
         for (InstanceListenable listenable : ServiceLoader.load(InstanceListenable.class, this.getClass()
                 .getClassLoader())) {
-            if (listenable.name().equalsIgnoreCase(lbConfig.getRegistryCenterType())) {
+            if (listenable.name().equalsIgnoreCase(registryCenterType)) {
                 this.instanceListenable = listenable;
                 break;
             }
