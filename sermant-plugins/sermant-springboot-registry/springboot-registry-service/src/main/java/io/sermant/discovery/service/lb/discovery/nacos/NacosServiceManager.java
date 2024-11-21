@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.sermant.discovery.service.lb.discovery.nacos;
 
 import com.alibaba.nacos.api.exception.NacosException;
@@ -11,10 +27,14 @@ import io.sermant.discovery.config.NacosRegisterConfig;
 import io.sermant.discovery.entity.DefaultServiceInstance;
 import io.sermant.discovery.entity.ServiceInstance;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 
 /**
- * nacos注册插件配置
+ * NACOS Registration Service Manager
  *
  * @author xiaozhao
  * @since 2024-11-16
@@ -29,11 +49,10 @@ public class NacosServiceManager {
 
     private final NacosRegisterConfig nacosRegisterConfig;
 
-
     private static NacosServiceManager nacosServiceManager;
 
     /**
-     * 构造方法
+     * Constructor
      */
     public NacosServiceManager() {
         nacosRegisterConfig = PluginConfigManager.getPluginConfig(NacosRegisterConfig.class);
@@ -50,12 +69,11 @@ public class NacosServiceManager {
         return nacosServiceManager;
     }
 
-
     /**
-     * 获取注册服务
+     * Get registration services
      *
-     * @return NamingService服务
-     * @throws NacosException nacos异常
+     * @return NamingService services
+     * @throws NacosException nacos exception
      */
     public NamingService getNamingService() throws NacosException {
         if (Objects.isNull(this.namingService)) {
@@ -65,10 +83,10 @@ public class NacosServiceManager {
     }
 
     /**
-     * 获取namingMaintain服务
+     * Obtain the namingMaintain service
      *
-     * @return namingMaintain服务
-     * @throws NacosException nacos异常
+     * @return namingMaintain service
+     * @throws NacosException nacos exception
      */
     public NamingMaintainService getNamingMaintainService() throws NacosException {
         if (Objects.isNull(namingMaintainService)) {
@@ -106,7 +124,7 @@ public class NacosServiceManager {
     }
 
     /**
-     * 构建nacos注册实例
+     * Build the nacos registry instance
      *
      * @return 实例
      */
@@ -124,7 +142,7 @@ public class NacosServiceManager {
     }
 
     /**
-     * 实例信息转换
+     * Instance information conversion
      *
      * @param instance  服务实例
      * @param serviceId 服务id

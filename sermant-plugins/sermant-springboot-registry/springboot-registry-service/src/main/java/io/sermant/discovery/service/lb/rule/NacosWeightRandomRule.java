@@ -29,7 +29,7 @@ public class NacosWeightRandomRule extends AbstractLoadbalancer {
         return "NacosWeight";
     }
 
-    private class InstanceWithWeight {
+    public static class InstanceWithWeight {
         private ServiceInstance server;
         private Integer weight;
 
@@ -56,7 +56,7 @@ public class NacosWeightRandomRule extends AbstractLoadbalancer {
      * @param list 实例列表
      * @return 随机出来的结果
      */
-    private ServiceInstance weightRandom(List<InstanceWithWeight> list) {
+    public ServiceInstance weightRandom(List<InstanceWithWeight> list) {
         List<ServiceInstance> instances = Lists.newArrayList();
         for (InstanceWithWeight instanceWithWeight : list) {
             int weight = instanceWithWeight.getWeight();

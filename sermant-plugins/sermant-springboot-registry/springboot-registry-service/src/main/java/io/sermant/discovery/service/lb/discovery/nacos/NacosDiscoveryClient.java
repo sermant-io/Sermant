@@ -59,7 +59,6 @@ public class NacosDiscoveryClient implements ServiceDiscoveryClient {
         return false;
     }
 
-
     @Override
     public Collection<String> getServices() {
         try {
@@ -115,7 +114,7 @@ public class NacosDiscoveryClient implements ServiceDiscoveryClient {
             NamingService namingService = nacosServiceManager.getNamingService();
             List<Instance> instances = namingService.selectInstances(serviceId, group, true);
             return convertServiceInstanceList(instances, serviceId);
-        } catch (Exception e) {
+        } catch (NacosException e) {
             LOGGER.log(Level.SEVERE, String.format(Locale.ENGLISH, "failed get Instances，"
                     + "serviceId={%s}", serviceId), e);
         }

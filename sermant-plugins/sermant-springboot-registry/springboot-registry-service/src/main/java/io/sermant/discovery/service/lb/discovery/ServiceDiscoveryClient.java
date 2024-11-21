@@ -16,6 +16,7 @@
 
 package io.sermant.discovery.service.lb.discovery;
 
+import com.alibaba.nacos.api.exception.NacosException;
 import io.sermant.discovery.entity.ServiceInstance;
 import io.sermant.discovery.service.ex.QueryInstanceException;
 
@@ -49,7 +50,7 @@ public interface ServiceDiscoveryClient extends Closeable {
      * @return List of instances
      * @throws QueryInstanceException A problem is thrown if there is a query instance
      */
-    Collection<ServiceInstance> getInstances(String serviceId) throws QueryInstanceException;
+    Collection<ServiceInstance> getInstances(String serviceId) throws QueryInstanceException, NacosException;
 
     /**
      * Query all service names
