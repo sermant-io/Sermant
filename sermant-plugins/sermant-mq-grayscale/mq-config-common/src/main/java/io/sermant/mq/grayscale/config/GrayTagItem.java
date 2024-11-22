@@ -81,7 +81,7 @@ public class GrayTagItem {
      * @param grayscale grayscale
      */
     public void updateTrafficTags(List<GrayTagItem> grayscale) {
-        for (GrayTagItem item: grayscale) {
+        for (GrayTagItem item : grayscale) {
             if (StringUtils.equals(consumerGroupTag, item.getConsumerGroupTag())) {
                 setTrafficTag(item.getTrafficTag());
                 return;

@@ -543,7 +543,7 @@ const i18n = createI18n({
 });
 
 export const localeLanguage = reactive({
-    value: getSavedLanguage() == 'zh' ? zh : en,
+    value: getSavedLanguage() === 'zh' ? zh : en,
     language: getSavedLanguage()
 });
 

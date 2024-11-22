@@ -57,13 +57,13 @@ public class MetricsManager {
     static {
         try {
             metricService = ServiceManager.getService(MetricService.class);
-            TAG_KEY_MAP.put("service","service_meta_service");
-            TAG_KEY_MAP.put("version","service_meta_version");
-            TAG_KEY_MAP.put("application","service_meta_application");
-            TAG_KEY_MAP.put("zone","service_meta_zone");
-            TAG_KEY_MAP.put("project","service_meta_project");
-            TAG_KEY_MAP.put("environment","service_meta_environment");
-            TAG_KEY_MAP.put("parameters","service_meta_parameters");
+            TAG_KEY_MAP.put("service", "service_meta_service");
+            TAG_KEY_MAP.put("version", "service_meta_version");
+            TAG_KEY_MAP.put("application", "service_meta_application");
+            TAG_KEY_MAP.put("zone", "service_meta_zone");
+            TAG_KEY_MAP.put("project", "service_meta_project");
+            TAG_KEY_MAP.put("environment", "service_meta_environment");
+            TAG_KEY_MAP.put("parameters", "service_meta_parameters");
         } catch (IllegalArgumentException e) {
             LOGGER.log(Level.SEVERE, "Failed to load metrics service", e);
         }
@@ -92,7 +92,7 @@ public class MetricsManager {
         } else {
             tagsMap = new HashMap<>();
         }
-        tagsMap.put(RouterConstant.SCOPE,"service-router");
+        tagsMap.put(RouterConstant.SCOPE, "service-router");
         Counter counter = COUNT_MAP.computeIfAbsent(new MetricInfo(metricName, tagsMap),
                 metricInfo -> metricService.counter(metricName, Tags.of(tagsMap)));
         counter.increment(value);

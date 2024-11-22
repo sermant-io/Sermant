@@ -20,9 +20,9 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.mq.grayscale.config.ConsumeModeEnum;
 import io.sermant.mq.grayscale.config.GrayTagItem;
 import io.sermant.mq.grayscale.config.MqGrayConfigCache;
+import io.sermant.mq.grayscale.config.MqGrayscaleConfig;
 import io.sermant.mq.grayscale.config.rocketmq.RocketMqConfigUtils;
 import io.sermant.mq.grayscale.rocketmq.config.RocketMqConsumerClientConfig;
-import io.sermant.mq.grayscale.config.MqGrayscaleConfig;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
@@ -244,7 +244,7 @@ public class RocketMqSubscriptionDataUtils {
         }
         String[] originConditions = PATTERN.split(originSubData);
         List<String> refactorConditions = new ArrayList<>();
-        for (String condition: originConditions) {
+        for (String condition : originConditions) {
             if (!containsGrayTags(condition) && !condition.contains("_message_tag_")) {
                 refactorConditions.add(condition);
             }

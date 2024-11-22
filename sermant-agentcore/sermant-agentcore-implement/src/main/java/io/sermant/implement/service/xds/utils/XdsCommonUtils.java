@@ -41,7 +41,7 @@ public class XdsCommonUtils {
     private XdsCommonUtils() {
     }
 
-    /***
+    /**
      * get service name from cluster
      *
      * @param clusterName cluster name

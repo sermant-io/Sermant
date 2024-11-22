@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
  * @since 2024-08-15
  **/
 public class RegexMatchStrategy implements MatchStrategy {
+    private static final Pattern DEFAULT_PATTERN = Pattern.compile(".*");
+
     private final Pattern regex;
 
     /**
@@ -35,7 +37,7 @@ public class RegexMatchStrategy implements MatchStrategy {
      * @param regex regex
      */
     public RegexMatchStrategy(String regex) {
-        this.regex = StringUtils.isEmpty(regex) ? Pattern.compile(".*") : Pattern.compile(regex);
+        this.regex = StringUtils.isEmpty(regex) ? DEFAULT_PATTERN : Pattern.compile(regex);
     }
 
     @Override

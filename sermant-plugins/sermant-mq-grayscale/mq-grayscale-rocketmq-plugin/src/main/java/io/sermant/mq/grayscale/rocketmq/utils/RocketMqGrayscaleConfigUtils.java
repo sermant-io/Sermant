@@ -43,7 +43,7 @@ public class RocketMqGrayscaleConfigUtils {
     /**
      * serviceMeta info
      */
-    public static final Map<String, String> MICRO_SERVICE_PROPERTIES = new HashMap<>();
+    private static final Map<String, String> MICRO_SERVICE_PROPERTIES = new HashMap<>();
 
     /**
      * consumerGroup name rule: ^[%|a-zA-Z0-9_-]+$
