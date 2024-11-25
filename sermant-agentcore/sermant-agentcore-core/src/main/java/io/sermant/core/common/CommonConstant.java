@@ -122,6 +122,16 @@ public class CommonConstant {
      */
     public static final String ENHANCED_CLASS_OUTPUT_PARENT_DIR = "enhancedClasses";
 
+    /**
+     * The key of artifact in agent arguments
+     */
+    public static final String ARTIFACT_NAME_KEY = "artifact";
+
+    /**
+     * The key of agent path
+     */
+    public static final String AGENT_PATH_KEY = "agentPath";
+
     private CommonConstant() {
     }
 }

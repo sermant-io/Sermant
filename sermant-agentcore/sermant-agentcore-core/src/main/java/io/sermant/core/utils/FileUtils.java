@@ -52,8 +52,7 @@ public class FileUtils {
 
     private static final String[] INVALID_SYMBOL = {"../", "..\\"};
 
-    private static final String AGENT_PATH = new File(new File(FileUtils.class.getProtectionDomain().getCodeSource()
-            .getLocation().getPath()).getParent()).getParent();
+    private static String agentPath;
 
     /**
      * file name of unmatched class name
@@ -79,7 +78,7 @@ public class FileUtils {
      * @return path
      */
     public static String getAgentPath() {
-        return AGENT_PATH;
+        return agentPath;
     }
 
     /**
@@ -89,7 +88,7 @@ public class FileUtils {
      * @return fixed path
      */
     public static String validatePath(String path) {
-        if (!path.startsWith(AGENT_PATH)) {
+        if (!path.startsWith(agentPath)) {
             return "";
         }
 
@@ -288,12 +287,16 @@ public class FileUtils {
         AgentConfig config = ConfigManager.getConfig(AgentConfig.class);
         String preFilterPath = config.getPreFilterPath();
         if (StringUtils.isEmpty(preFilterPath)) {
-            preFilterPath = AGENT_PATH;
+            preFilterPath = agentPath;
         }
         String preFilterFile = config.getPreFilterFile();
         if (StringUtils.isEmpty(preFilterFile)) {
             preFilterFile = DEFAULT_OUTPUT_CLASS_NAME_FILE;
         }
         return preFilterPath + File.separatorChar + preFilterFile;
+    }
+
+    public static void setAgentPath(String path) {
+        agentPath = path;
     }
 }
