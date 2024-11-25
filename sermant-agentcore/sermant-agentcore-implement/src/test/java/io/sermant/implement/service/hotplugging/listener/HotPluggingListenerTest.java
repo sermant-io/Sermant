@@ -23,6 +23,7 @@ import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEventType;
+import io.sermant.core.utils.FileUtils;
 import io.sermant.core.utils.JarFileUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.operation.converter.YamlConverterImpl;
@@ -84,6 +85,8 @@ public class HotPluggingListenerTest {
                 .thenReturn(YAML_CONVERTER);
         commandProcessorMockedStatic.verify(() -> CommandProcessor.process(any()), times(0));
         jarFileUtilsMockedStatic.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
+        String pathValid = FileUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        FileUtils.setAgentPath(pathValid);
         Map<String, Object> argsMap = new HashMap<>();
         argsMap.put(CommonConstant.CORE_IMPLEMENT_DIR_KEY, StringUtils.EMPTY);
         argsMap.put(CommonConstant.CORE_CONFIG_FILE_KEY, StringUtils.EMPTY);

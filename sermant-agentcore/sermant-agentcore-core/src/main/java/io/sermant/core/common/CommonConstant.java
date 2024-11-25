@@ -127,6 +127,11 @@ public class CommonConstant {
      */
     public static final String ARTIFACT_NAME_KEY = "artifact";
 
+    /**
+     * The key of agent path
+     */
+    public static final String AGENT_PATH_KEY = "agentPath";
+
     private CommonConstant() {
     }
 }
