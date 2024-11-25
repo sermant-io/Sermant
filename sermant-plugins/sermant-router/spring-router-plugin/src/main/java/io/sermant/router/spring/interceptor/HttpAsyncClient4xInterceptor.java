@@ -81,8 +81,10 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
         }
         HttpAsyncRequestProducer httpAsyncRequestProducer
                 = (HttpAsyncRequestProducer) httpAsyncRequestProducerArgument;
-        HttpRequest httpRequest = httpAsyncRequestProducer.generateRequest();
-        handleXdsRouterAndUpdateHttpRequest(httpRequest, context);
+        HttpRequestBase httpRequest = (HttpRequestBase) httpAsyncRequestProducer.generateRequest();
+        if (handleXdsRouterAndUpdateHttpRequest(httpRequest, context)) {
+            return context;
+        }
         Object argument = context.getArguments()[HTTP_CONTEXT_INDEX];
         if (!(argument instanceof HttpContext)) {
             return context;
@@ -157,29 +159,31 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
         return headerMap;
     }
 
-    private void handleXdsRouterAndUpdateHttpRequest(HttpRequest httpRequest, ExecuteContext context) {
+    private boolean handleXdsRouterAndUpdateHttpRequest(HttpRequestBase httpRequest, ExecuteContext context) {
         if (!routerConfig.isEnabledXdsRoute()) {
-            return;
+            return false;
         }
-        URI uri = URI.create(httpRequest.getRequestLine().getUri());
+        URI uri = httpRequest.getURI();
         String host = uri.getHost();
-        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
-            return;
+        String serviceName = host.split(RouterConstant.ESCAPED_POINT)[0];
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(serviceName)) {
+            return false;
         }
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
-                        getHeaders(httpRequest));
+                .chooseServiceInstanceByXds(serviceName, uri.getPath(), getHeaders(httpRequest));
         if (!serviceInstanceOptional.isPresent()) {
-            return;
+            return false;
         }
         ServiceInstance instance = serviceInstanceOptional.get();
         try {
             context.getArguments()[0] = rebuildProducer(context,
                     new URI(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(uri, instance)));
+            return true;
         } catch (URISyntaxException e) {
             LOGGER.log(Level.WARNING, "Create uri using xds service instance failed.", e.getMessage());
+            return false;
         }
     }
 

@@ -57,13 +57,13 @@ public class MetricsManager {
     static {
         try {
             metricService = ServiceManager.getService(MetricService.class);
-            TAG_KEY_MAP.put("service","service_meta_service");
-            TAG_KEY_MAP.put("version","service_meta_version");
-            TAG_KEY_MAP.put("application","service_meta_application");
-            TAG_KEY_MAP.put("zone","service_meta_zone");
-            TAG_KEY_MAP.put("project","service_meta_project");
-            TAG_KEY_MAP.put("environment","service_meta_environment");
-            TAG_KEY_MAP.put("parameters","service_meta_parameters");
+            TAG_KEY_MAP.put("service", "service_meta_service");
+            TAG_KEY_MAP.put("version", "service_meta_version");
+            TAG_KEY_MAP.put("application", "service_meta_application");
+            TAG_KEY_MAP.put("zone", "service_meta_zone");
+            TAG_KEY_MAP.put("project", "service_meta_project");
+            TAG_KEY_MAP.put("environment", "service_meta_environment");
+            TAG_KEY_MAP.put("parameters", "service_meta_parameters");
         } catch (IllegalArgumentException e) {
             LOGGER.log(Level.SEVERE, "Failed to load metrics service", e);
         }
@@ -92,7 +92,7 @@ public class MetricsManager {
         } else {
             tagsMap = new HashMap<>();
         }
-        tagsMap.put(RouterConstant.SCOPE,"service-router");
+        tagsMap.put(RouterConstant.SCOPE, "service-router");
         Counter counter = COUNT_MAP.computeIfAbsent(new MetricInfo(metricName, tagsMap),
                 metricInfo -> metricService.counter(metricName, Tags.of(tagsMap)));
         counter.increment(value);
@@ -128,6 +128,27 @@ public class MetricsManager {
         tagsMap.put(RouterConstant.SERVER_ADDRESS, address);
         tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.HTTP_PROTOCOL);
         addOrUpdateCounterMetricValue(RouterConstant.ROUTER_REQUEST_COUNT, tagsMap, 1);
+    }
+
+    /**
+     * collect xDS router destination tag count metric
+     *
+     * @param cluster cluster name
+     */
+    public static void collectXdsRouterDestinationTagCountMetric(String cluster) {
+        if (!ROUTER_CONFIG.isEnableMetric()) {
+            return;
+        }
+        Map<String, String> tagsMap = new HashMap<>();
+        MetricsManager.getAllTagKey().forEach(key -> tagsMap.put(key, StringUtils.EMPTY));
+        tagsMap.put(RouterConstant.SERVICE_META_PARAMETERS, "cluster: " + cluster);
+        if (StringUtils.isEmpty(DubboCache.INSTANCE.getAppName())) {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, AppCache.INSTANCE.getAppName());
+        } else {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, DubboCache.INSTANCE.getAppName());
+        }
+        tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.XDS_PROTOCOL);
+        MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.ROUTER_DESTINATION_TAG_COUNT, tagsMap, 1);
     }
 
     /**

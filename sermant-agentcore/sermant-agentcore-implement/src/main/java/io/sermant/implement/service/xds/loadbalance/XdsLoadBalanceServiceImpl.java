@@ -46,6 +46,11 @@ public class XdsLoadBalanceServiceImpl implements XdsLoadBalanceService {
     }
 
     @Override
+    public XdsLbPolicy getLbPolicyOfCluster(String serviceName, String clusterName) {
+        return XdsDataCache.getLbPolicyOfCluster(serviceName, clusterName);
+    }
+
+    @Override
     public XdsLbPolicy getBaseLbPolicyOfService(String serviceName) {
         return XdsDataCache.getBaseLbPolicyOfService(serviceName);
     }

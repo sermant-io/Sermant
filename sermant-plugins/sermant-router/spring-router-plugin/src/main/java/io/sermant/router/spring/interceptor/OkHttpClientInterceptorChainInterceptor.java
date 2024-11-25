@@ -31,7 +31,6 @@ import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.spring.utils.BaseHttpRouterUtils;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -106,44 +105,39 @@ public class OkHttpClientInterceptorChainInterceptor implements Interceptor {
         return headerMap;
     }
 
-    private Request rebuildRequest(Request request, URI uri, ServiceInstance serviceInstance) {
-        URL url = null;
+    private Request rebuildRequest(Request request, URL url, ServiceInstance instance) {
+        URL newUrl = null;
         try {
-            url = new URL(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(uri, serviceInstance));
+            newUrl = new URL(url.getProtocol(), instance.getHost(), instance.getPort(), url.getFile());
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Convert url string to url failed.", e.getMessage());
             return request;
         }
         return request.newBuilder()
-                .url(url)
+                .url(newUrl)
                 .build();
     }
 
-    private void handleXdsRouterAndUpdateHttpRequest(Object[] arguments) {
+    private boolean handleXdsRouterAndUpdateHttpRequest(Object[] arguments) {
         if (!routerConfig.isEnabledXdsRoute()) {
-            return;
+            return false;
         }
         Request request = (Request) arguments[0];
-        URI uri = null;
-        try {
-            uri = request.uri();
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Get uri from okhttp request failed.", e.getMessage());
-            return;
-        }
-        String host = uri.getHost();
-        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
-            return;
+        URL url = request.url();
+        String host = url.getHost();
+        String serviceName = host.split(RouterConstant.ESCAPED_POINT)[0];
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(serviceName)) {
+            return false;
         }
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
-                        getHeaders(request));
+                .chooseServiceInstanceByXds(serviceName, url.getPath(), getHeaders(request));
         if (!serviceInstanceOptional.isPresent()) {
-            return;
+            return false;
         }
         ServiceInstance instance = serviceInstanceOptional.get();
-        arguments[0] = rebuildRequest(request, uri, instance);
+        arguments[0] = rebuildRequest(request, url, instance);
+        return true;
     }
 }

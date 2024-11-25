@@ -45,6 +45,8 @@ public class XdsRouterUtils {
      */
     private static XdsLocality selfServiceLocality;
 
+    private static volatile boolean localityObtainedFlag = false;
+
     private XdsRouterUtils() {
     }
 
@@ -54,13 +56,14 @@ public class XdsRouterUtils {
      * @return XdsLocality
      */
     public static Optional<XdsLocality> getLocalityInfoOfSelfService() {
-        if (selfServiceLocality != null) {
-            return Optional.of(selfServiceLocality);
+        if (localityObtainedFlag) {
+            return Optional.ofNullable(selfServiceLocality);
         }
         synchronized (XdsRouterUtils.class) {
-            if (selfServiceLocality != null) {
-                return Optional.of(selfServiceLocality);
+            if (localityObtainedFlag) {
+                return Optional.ofNullable(selfServiceLocality);
             }
+            localityObtainedFlag = true;
             String podIp = NetworkUtils.getKubernetesPodIp();
             if (StringUtils.isEmpty(podIp)) {
                 return Optional.empty();
@@ -86,6 +89,15 @@ public class XdsRouterUtils {
         if (xdsServiceDiscovery != null) {
             serviceDiscovery = xdsServiceDiscovery;
         }
+    }
+
+    /**
+     * update localityObtainedFlag
+     *
+     * @param flag locality obtained flag
+     */
+    public static void updateLocalityObtainedFlag(boolean flag) {
+        localityObtainedFlag = flag;
     }
 
     private static Optional<ServiceInstance> getMatchedServiceInstanceByPodIp(Set<ServiceInstance> serviceInstances,

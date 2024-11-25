@@ -61,9 +61,11 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
             return context;
         }
         HttpURLConnection connection = (HttpURLConnection) context.getObject();
-        Map<String, List<String>> headers = connection.getRequestProperties();
+        if (handleXdsRouterAndUpdateHttpRequest(connection)) {
+            return context;
+        }
 
-        handleXdsRouterAndUpdateHttpRequest(connection);
+        Map<String, List<String>> headers = connection.getRequestProperties();
         MetricThreadLocal.setFlag(true);
         String method = connection.getRequestMethod();
         if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
@@ -114,30 +116,32 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
         return super.onThrow(context);
     }
 
-    private void handleXdsRouterAndUpdateHttpRequest(HttpURLConnection connection) {
+    private boolean handleXdsRouterAndUpdateHttpRequest(HttpURLConnection connection) {
         if (!routerConfig.isEnabledXdsRoute()) {
-            return;
+            return false;
         }
         Map<String, List<String>> headers = connection.getRequestProperties();
         URL url = connection.getURL();
         String host = url.getHost();
-        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
-            return;
+        String serviceName = host.split(RouterConstant.ESCAPED_POINT)[0];
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(serviceName)) {
+            return false;
         }
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], url.getPath(),
-                        BaseHttpRouterUtils.processHeaders(headers));
+                .chooseServiceInstanceByXds(serviceName, url.getPath(), BaseHttpRouterUtils.processHeaders(headers));
         if (!serviceInstanceOptional.isPresent()) {
-            return;
+            return false;
         }
         ServiceInstance instance = serviceInstanceOptional.get();
         try {
             ReflectUtils.setFieldValue(connection, "url",
-                    new URL(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(url, instance)));
+                    new URL(url.getProtocol(), instance.getHost(), instance.getPort(), url.getFile()));
+            return true;
         } catch (MalformedURLException e) {
             LOGGER.log(Level.WARNING, "Create url using xds service instance failed.", e.getMessage());
+            return false;
         }
     }
 }
