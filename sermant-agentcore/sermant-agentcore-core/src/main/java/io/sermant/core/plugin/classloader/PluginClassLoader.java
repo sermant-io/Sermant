@@ -20,8 +20,10 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.plugin.agent.config.AgentConfig;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -148,6 +150,17 @@ public class PluginClassLoader extends URLClassLoader {
             }
         }
         return clazz;
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        // Due to class isolation, the service loader does not obtain the service provider from the parent
+        // classloader, but returns only the resources in current classloader
+        if (name.startsWith("META-INF/services/")) {
+            return findResources(name);
+        }
+
+        return super.getResources(name);
     }
 
     /**
