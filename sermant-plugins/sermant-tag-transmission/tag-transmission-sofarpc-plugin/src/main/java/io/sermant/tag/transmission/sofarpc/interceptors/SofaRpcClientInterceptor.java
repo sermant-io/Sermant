@@ -69,6 +69,13 @@ public class SofaRpcClientInterceptor extends AbstractClientInterceptor<SofaRequ
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            Object originalHeader = sofaRequest.getRequestProp(key);
+            if (originalHeader != null) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // The server side converts the label value to list storage when it is not null. If it is null, it directly

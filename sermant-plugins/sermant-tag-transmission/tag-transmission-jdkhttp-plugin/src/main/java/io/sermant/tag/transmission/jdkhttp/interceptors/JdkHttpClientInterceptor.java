@@ -83,6 +83,13 @@ public class JdkHttpClientInterceptor extends AbstractClientInterceptor<MessageH
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            Map<String, List<String>> originalHeaders = messageHeader.getHeaders();
+            if (!CollectionUtils.isEmpty(originalHeaders.get(key))) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // The server side converts the label value to list storage when it is not null. If it is null, it directly
