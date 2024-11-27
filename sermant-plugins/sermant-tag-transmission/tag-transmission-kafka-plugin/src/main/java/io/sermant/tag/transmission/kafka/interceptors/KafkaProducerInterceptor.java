@@ -24,6 +24,7 @@ import io.sermant.tag.transmission.config.strategy.TagKeyMatcher;
 import io.sermant.tag.transmission.interceptors.AbstractClientInterceptor;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 import java.nio.charset.StandardCharsets;
@@ -69,6 +70,13 @@ public class KafkaProducerInterceptor extends AbstractClientInterceptor<Producer
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            Header originalHeader = headers.lastHeader(key);
+            if (originalHeader != null) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // On the producer side, if the tag value is not null, it is converted to list storage. If it is null, it
