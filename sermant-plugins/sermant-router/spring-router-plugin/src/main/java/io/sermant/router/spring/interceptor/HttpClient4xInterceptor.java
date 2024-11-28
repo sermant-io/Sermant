@@ -52,28 +52,28 @@ import java.util.logging.Logger;
 public class HttpClient4xInterceptor extends MarkInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
-    private RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
+    private final RouterConfig routerConfig = PluginConfigManager.getPluginConfig(RouterConfig.class);
 
     /**
      * Pre-trigger point
      *
      * @param context Execution context
      * @return Execution context
-     * @throws Exception Execution exception
      */
     @Override
-    public ExecuteContext doBefore(ExecuteContext context) throws Exception {
+    public ExecuteContext doBefore(ExecuteContext context) {
         LogUtils.printHttpRequestBeforePoint(context);
         Object[] arguments = context.getArguments();
+
+        if (handleXdsRouterAndUpdateHttpRequest(arguments)) {
+            return context;
+        }
 
         Object httpRequestObject = arguments[1];
         if (!(httpRequestObject instanceof HttpRequestBase)) {
             return context;
         }
         final HttpRequestBase httpRequest = (HttpRequestBase) httpRequestObject;
-
-        handleXdsRouterAndUpdateHttpRequest(arguments);
-
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
         }
@@ -124,30 +124,32 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         return headerMap;
     }
 
-    private void handleXdsRouterAndUpdateHttpRequest(Object[] arguments) {
+    private boolean handleXdsRouterAndUpdateHttpRequest(Object[] arguments) {
         if (!routerConfig.isEnabledXdsRoute()) {
-            return;
+            return false;
         }
         HttpRequestBase httpRequest = (HttpRequestBase) arguments[1];
         URI uri = httpRequest.getURI();
         String host = uri.getHost();
-        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
-            return;
+        String serviceName = host.split(RouterConstant.ESCAPED_POINT)[0];
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(serviceName)) {
+            return false;
         }
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
-                        getHeaders(httpRequest));
+                .chooseServiceInstanceByXds(serviceName, uri.getPath(), getHeaders(httpRequest));
         if (!serviceInstanceOptional.isPresent()) {
-            return;
+            return false;
         }
         ServiceInstance instance = serviceInstanceOptional.get();
         try {
             httpRequest.setURI(new URI(BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(uri, instance)));
             arguments[0] = new HttpHost(instance.getHost(), instance.getPort());
+            return true;
         } catch (URISyntaxException e) {
             LOGGER.log(Level.WARNING, "Create uri using xds service instance failed.", e.getMessage());
+            return false;
         }
     }
 }

@@ -75,15 +75,16 @@ public class XdsLoadBalancerFactory {
     /**
      * getLoadBalancer
      *
+     * @param serviceName service name
      * @param clusterName cluster name
      * @return XdsLoadBalancer
      */
-    public static XdsLoadBalancer getLoadBalancer(String clusterName) {
+    public static XdsLoadBalancer getLoadBalancer(String serviceName, String clusterName) {
         if (loadBalanceService == null) {
             LOGGER.severe("xDS service not open for xDS routing.");
             return getRoundRobinLoadBalancer(clusterName);
         }
-        XdsLbPolicy lbPolicy = loadBalanceService.getLbPolicyOfCluster(clusterName);
+        XdsLbPolicy lbPolicy = loadBalanceService.getLbPolicyOfCluster(serviceName, clusterName);
         switch (lbPolicy) {
             case RANDOM:
                 return getRandomLoadBalancer();

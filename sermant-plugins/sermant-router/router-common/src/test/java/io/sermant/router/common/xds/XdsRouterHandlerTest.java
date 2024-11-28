@@ -57,6 +57,8 @@ import java.util.Set;
 public class XdsRouterHandlerTest {
     private static final String CLUSTER_NAME = "outbound|8080||serviceA.default.svc.cluster.local";
 
+    private static final String SERVICE_NAME = "serviceA";
+
     private static MockedStatic<ServiceManager> serviceManager;
 
     private static MockedStatic<XdsRouterUtils> xdsRouterUtil;
@@ -72,7 +74,7 @@ public class XdsRouterHandlerTest {
         XdsCoreService xdsCoreService = Mockito.mock(XdsCoreService.class);
         Mockito.when(xdsCoreService.getXdsRouteService()).thenReturn(routeService);
         Mockito.when(xdsCoreService.getXdsServiceDiscovery()).thenReturn(serviceDiscovery);
-        Mockito.when(routeService.isLocalityRoute(CLUSTER_NAME)).thenReturn(true);
+        Mockito.when(routeService.isLocalityRoute(SERVICE_NAME, CLUSTER_NAME)).thenReturn(true);
         Mockito.when(routeService.getServiceRoute("serviceA")).thenReturn(createXdsRoute());
 
         serviceManager = Mockito.mockStatic(ServiceManager.class);
@@ -84,7 +86,7 @@ public class XdsRouterHandlerTest {
         Mockito.when(XdsRouterUtils.getLocalityInfoOfSelfService()).thenReturn(Optional.of(locality));
 
         Mockito.when(serviceDiscovery.getServiceInstance("serviceA")).thenReturn(createServiceInstance4Service());
-        Mockito.when(serviceDiscovery.getClusterServiceInstance(CLUSTER_NAME))
+        Mockito.when(serviceDiscovery.getClusterServiceInstance(SERVICE_NAME, CLUSTER_NAME))
                 .thenReturn(Optional.of(createXdsClusterInstance(CLUSTER_NAME,
                         Arrays.asList("test-region-1", "test-region-2"))));
 

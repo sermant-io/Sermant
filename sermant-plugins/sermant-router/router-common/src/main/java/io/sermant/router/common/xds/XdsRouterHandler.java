@@ -36,8 +36,10 @@ import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.utils.XdsRouterUtils;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -151,13 +153,13 @@ public enum XdsRouterHandler {
 
         // get service instance of cluster
         Optional<XdsClusterLoadAssigment> loadAssigmentOptional =
-                serviceDiscovery.getClusterServiceInstance(cluster);
+                serviceDiscovery.getClusterServiceInstance(serviceName, cluster);
         if (!loadAssigmentOptional.isPresent()) {
             return serviceDiscovery.getServiceInstance(serviceName);
         }
         XdsClusterLoadAssigment clusterLoadAssigment = loadAssigmentOptional.get();
 
-        if (!routeService.isLocalityRoute(clusterLoadAssigment.getClusterName())) {
+        if (!routeService.isLocalityRoute(serviceName, clusterLoadAssigment.getClusterName())) {
             Set<ServiceInstance> serviceInstances = getServiceInstanceOfCluster(clusterLoadAssigment);
             return serviceInstances.isEmpty() ? serviceDiscovery.getServiceInstance(serviceName) : serviceInstances;
         }
@@ -179,15 +181,34 @@ public enum XdsRouterHandler {
     private Set<ServiceInstance> getServiceInstanceOfLocalityCluster(XdsClusterLoadAssigment clusterLoadAssigment,
             XdsLocality locality) {
         return clusterLoadAssigment.getLocalityInstances().entrySet().stream()
-                .filter(xdsLocalitySetEntry -> xdsLocalitySetEntry.getKey().equals(locality))
+                .filter(xdsLocalitySetEntry -> isSameLocality(locality, xdsLocalitySetEntry.getKey()))
                 .flatMap(xdsLocalitySetEntry -> xdsLocalitySetEntry.getValue().stream())
                 .collect(Collectors.toSet());
     }
 
+    private boolean isSameLocality(XdsLocality selfLocality, XdsLocality serviceLocality) {
+        if (!selfLocality.getRegion().equals(serviceLocality.getRegion())) {
+            return false;
+        }
+        if (StringUtils.isEmpty(selfLocality.getZone())) {
+            return true;
+        }
+        if (!selfLocality.getZone().equals(serviceLocality.getZone())) {
+            return false;
+        }
+        if (StringUtils.isEmpty(selfLocality.getSubZone())) {
+            return true;
+        }
+        return selfLocality.getSubZone().equals(serviceLocality.getSubZone());
+    }
+
     private Set<ServiceInstance> getServiceInstanceOfCluster(XdsClusterLoadAssigment clusterLoadAssigment) {
-        return clusterLoadAssigment.getLocalityInstances().entrySet().stream()
-                .flatMap(instanceEntry -> instanceEntry.getValue().stream())
-                .collect(Collectors.toSet());
+        Set<ServiceInstance> serviceInstances = new HashSet<>();
+        for (Entry<XdsLocality, Set<ServiceInstance>> xdsLocalitySetEntry : clusterLoadAssigment.getLocalityInstances()
+                .entrySet()) {
+            serviceInstances.addAll(xdsLocalitySetEntry.getValue());
+        }
+        return serviceInstances;
     }
 
     private boolean isPathMatched(XdsPathMatcher matcher, String path) {
@@ -195,8 +216,12 @@ public enum XdsRouterHandler {
     }
 
     private boolean isHeadersMatched(List<XdsHeaderMatcher> matchers, Map<String, String> headers) {
-        return matchers.stream()
-                .allMatch(xdsHeaderMatcher -> xdsHeaderMatcher.isMatch(headers));
+        for (XdsHeaderMatcher matcher : matchers) {
+            if (!matcher.isMatch(headers)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String selectClusterByWeight(XdsWeightedClusters weightedClusters) {

@@ -103,9 +103,12 @@ public class XdsServiceDiscoveryImpl implements XdsServiceDiscovery {
         if (!serviceNameOptional.isPresent()) {
             return Optional.empty();
         }
-
         String serviceName = serviceNameOptional.get();
+        return getClusterServiceInstance(serviceName, clusterName);
+    }
 
+    @Override
+    public Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String serviceName, String clusterName) {
         // first check the cache and return if service instance exists
         if (XdsDataCache.isContainsRequestObserver(serviceName)) {
             return XdsDataCache.getClusterServiceInstance(serviceName, clusterName);

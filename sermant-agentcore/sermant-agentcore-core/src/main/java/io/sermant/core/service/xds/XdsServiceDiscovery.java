@@ -47,6 +47,15 @@ public interface XdsServiceDiscovery {
     Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String clusterName);
 
     /**
+     * get service instance of service cluster
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @return XdsClusterInstance
+     */
+    Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String serviceName, String clusterName);
+
+    /**
      * subscribe service instance without tag by service name, the listener will be triggered when the service instance
      * changes
      *
