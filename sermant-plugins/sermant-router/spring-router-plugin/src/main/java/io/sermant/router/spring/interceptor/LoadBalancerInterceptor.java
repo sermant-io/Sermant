@@ -63,11 +63,11 @@ public class LoadBalancerInterceptor extends AbstractInterceptor {
             return context;
         }
         Object[] arguments = context.getArguments();
-        List<Object> instances = (List<Object>) arguments[0];
-        if (CollectionUtils.isEmpty(instances)) {
+        if (handleXdsRouterAndUpdateServiceInstance(serviceId, arguments)) {
             return context;
         }
-        if (handleXdsRouterAndUpdateServiceInstance(serviceId, arguments)) {
+        List<Object> instances = (List<Object>) arguments[0];
+        if (CollectionUtils.isEmpty(instances)) {
             return context;
         }
         List<Object> targetInstances = loadBalancerService

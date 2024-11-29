@@ -21,10 +21,8 @@ import io.sermant.core.service.xds.XdsCoreService;
 import io.sermant.core.service.xds.XdsLoadBalanceService;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -59,21 +57,23 @@ public class XdsLoadBalancerFactoryTest {
     @Test
     public void testGetLoadBalancer() {
         // random
-        Mockito.when(loadBalanceService.getLbPolicyOfCluster("outbound|8080||serviceA.default.svc.cluster.local"))
+        Mockito.when(loadBalanceService.getLbPolicyOfCluster("serviceA",
+                "outbound|8080||serviceA.default.svc.cluster.local"))
                 .thenReturn(XdsLbPolicy.RANDOM);
         XdsLoadBalancer loadBalancer = XdsLoadBalancerFactory
-                .getLoadBalancer("outbound|8080||serviceA.default.svc.cluster.local");
+                .getLoadBalancer("serviceA", "outbound|8080||serviceA.default.svc.cluster.local");
         Assert.assertEquals("io.sermant.router.common.xds.lb.XdsRandomLoadBalancer",
                 loadBalancer.getClass().getCanonicalName());
 
         // round robin
-        Mockito.when(loadBalanceService.getLbPolicyOfCluster("outbound|8080||serviceB.default.svc.cluster.local"))
+        Mockito.when(loadBalanceService.getLbPolicyOfCluster("serviceB",
+                "outbound|8080||serviceB.default.svc.cluster.local"))
                 .thenReturn(XdsLbPolicy.ROUND_ROBIN);
         loadBalancer = XdsLoadBalancerFactory
-                .getLoadBalancer("outbound|8080||serviceB.default.svc.cluster.local");
+                .getLoadBalancer("serviceB", "outbound|8080||serviceB.default.svc.cluster.local");
         Assert.assertEquals("io.sermant.router.common.xds.lb.XdsRoundRobinLoadBalancer",
                 loadBalancer.getClass().getCanonicalName());
         Assert.assertEquals(loadBalancer, XdsLoadBalancerFactory
-                .getLoadBalancer("outbound|8080||serviceB.default.svc.cluster.local"));
+                .getLoadBalancer("serviceB", "outbound|8080||serviceB.default.svc.cluster.local"));
     }
 }

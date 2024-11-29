@@ -89,6 +89,7 @@ public class XdsRouterUtilTest {
 
         // find matched service instance
         meta.setService("serviceA");
+        XdsRouterUtils.updateLocalityObtainedFlag(false);
         localityInfo = XdsRouterUtils.getLocalityInfoOfSelfService();
         Assert.assertTrue(localityInfo.isPresent());
         Assert.assertEquals("127.0.0.1", localityInfo.get().getRegion());

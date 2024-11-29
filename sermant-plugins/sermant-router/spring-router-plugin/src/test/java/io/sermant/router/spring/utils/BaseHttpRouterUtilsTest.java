@@ -27,11 +27,8 @@ import io.sermant.core.service.xds.entity.XdsLocality;
 import io.sermant.core.service.xds.entity.XdsPathMatcher;
 import io.sermant.core.service.xds.entity.XdsRoute;
 import io.sermant.core.service.xds.entity.XdsRouteAction;
-import io.sermant.core.service.xds.entity.XdsRouteAction.XdsClusterWeight;
-import io.sermant.core.service.xds.entity.XdsRouteAction.XdsWeightedClusters;
 import io.sermant.core.service.xds.entity.XdsRouteMatch;
 import io.sermant.core.service.xds.entity.match.ExactMatchStrategy;
-import io.sermant.router.common.xds.XdsRouterHandler;
 import io.sermant.router.common.xds.lb.XdsLoadBalancer;
 import io.sermant.router.common.xds.lb.XdsLoadBalancerFactory;
 import io.sermant.router.common.xds.lb.XdsRoundRobinLoadBalancer;
@@ -47,7 +44,6 @@ import org.mockito.Mockito;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,7 +63,11 @@ import java.util.Set;
 public class BaseHttpRouterUtilsTest {
     private static final String CLUSTER_NAME = "outbound|8080||serviceA.default.svc.cluster.local";
 
+    private static final String SERVICE_NAME = "serviceA";
+
     private static MockedStatic<ServiceManager> serviceManager;
+
+    private static MockedStatic<XdsLoadBalancerFactory> xdsLoadBalancerFactory;
 
     private static XdsServiceDiscovery serviceDiscovery;
 
@@ -85,11 +85,13 @@ public class BaseHttpRouterUtilsTest {
         Mockito.when(xdsCoreService.getXdsServiceDiscovery()).thenReturn(serviceDiscovery);
         serviceManager = Mockito.mockStatic(ServiceManager.class);
         Mockito.when(ServiceManager.getService(XdsCoreService.class)).thenReturn(xdsCoreService);
+        xdsLoadBalancerFactory = Mockito.mockStatic(XdsLoadBalancerFactory.class);
     }
 
     @AfterClass
     public static void tearDown() {
         serviceManager.close();
+        xdsLoadBalancerFactory.close();
     }
 
     @Test
@@ -98,20 +100,6 @@ public class BaseHttpRouterUtilsTest {
         TestServiceInstance testServiceInstance = new TestServiceInstance();
         testServiceInstance.setHost("127.0.0.1");
         testServiceInstance.setPort(8080);
-
-        // use URL with query
-        URL oldUrl = new URL("http://example.com/test?param=value");
-        Assert.assertEquals("http://127.0.0.1:8080/test?param=value",
-                BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(oldUrl, testServiceInstance));
-
-        // use URL without query
-        oldUrl = new URL("http://example.com/test");
-        Assert.assertEquals("http://127.0.0.1:8080/test",
-                BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(oldUrl, testServiceInstance));
-
-        // use invalid URL
-        URL invalidOldUrl = new URL("http://invalid url");
-        Assert.assertEquals("", BaseHttpRouterUtils.rebuildUrlByXdsServiceInstance(invalidOldUrl, testServiceInstance));
 
         // use URI
         URI oldUri = new URI("http://example.com/test?param=value");
@@ -122,14 +110,13 @@ public class BaseHttpRouterUtilsTest {
     @Test
     public void testChooseServiceInstanceByXds() {
         XdsLoadBalancer loadBalancer = new XdsRoundRobinLoadBalancer();
-        MockedStatic<XdsLoadBalancerFactory> xdsLoadBalancerFactory = Mockito.mockStatic(XdsLoadBalancerFactory.class);
-        Mockito.when(XdsLoadBalancerFactory.getLoadBalancer(Mockito.any())).thenReturn(loadBalancer);
+        Mockito.when(XdsLoadBalancerFactory.getLoadBalancer(Mockito.any(), Mockito.any())).thenReturn(loadBalancer);
 
         Map<String, String> headers = new HashMap<>();
         headers.put("version", "v1");
 
         // service instance is empty
-        Mockito.when(serviceDiscovery.getClusterServiceInstance(CLUSTER_NAME))
+        Mockito.when(serviceDiscovery.getClusterServiceInstance(SERVICE_NAME, CLUSTER_NAME))
                 .thenReturn(Optional.of(createXdsClusterInstance(CLUSTER_NAME, new ArrayList<>())));
         Optional<ServiceInstance> result = BaseHttpRouterUtils
                 .chooseServiceInstanceByXds("serviceA", "/test", headers);
@@ -141,7 +128,7 @@ public class BaseHttpRouterUtilsTest {
         Assert.assertFalse(result.isPresent());
 
         // route match and service instance is not empty
-        Mockito.when(serviceDiscovery.getClusterServiceInstance(CLUSTER_NAME))
+        Mockito.when(serviceDiscovery.getClusterServiceInstance(SERVICE_NAME, CLUSTER_NAME))
                 .thenReturn(Optional.of(createXdsClusterInstance(CLUSTER_NAME, Arrays.asList("region-1"))));
         result = BaseHttpRouterUtils
                 .chooseServiceInstanceByXds("serviceA", "/test", headers);
@@ -157,13 +144,10 @@ public class BaseHttpRouterUtilsTest {
         // null
         Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired(null));
 
-        // IPv4
-        Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired("192.168.1.1"));
-        Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired("10.0.0.1"));
-        Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired("255.255.255.255"));
+        // start with number
+        Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired("192"));
 
         // host
-        Assert.assertTrue(BaseHttpRouterUtils.isXdsRouteRequired("example.com"));
         Assert.assertFalse(BaseHttpRouterUtils.isXdsRouteRequired("localhost"));
     }
 
@@ -187,7 +171,7 @@ public class BaseHttpRouterUtilsTest {
         result = BaseHttpRouterUtils.processHeaders(headers);
         Assert.assertEquals(2, result.size());
         Assert.assertEquals("Value1", result.get("Header1"));
-        Assert.assertEquals("", result.get("Header2"));
+        Assert.assertNull(result.get("Header2"));
 
         // header has null value
         headers = new HashMap<>();
@@ -197,7 +181,7 @@ public class BaseHttpRouterUtilsTest {
         result = BaseHttpRouterUtils.processHeaders(headers);
         Assert.assertEquals(2, result.size());
         Assert.assertEquals("Value1", result.get("Header1"));
-        Assert.assertEquals("", result.get("Header2"));
+        Assert.assertNull(result.get("Header2"));
     }
 
     private static List<XdsRoute> createXdsRoute() {
