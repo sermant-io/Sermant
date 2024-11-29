@@ -14,39 +14,37 @@
  * limitations under the License.
  */
 
-package io.sermant.integration.entity;
+package io.sermant.router.spring.entity;
 
-import java.io.Serializable;
+import java.util.Set;
 
 /**
- * 泳道测试实体
+ * Transparent transmission marks the key entity
  *
  * @author provenceee
- * @since 2023-03-02
+ * @since 2023-02-21
  */
-public class LaneTestEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Keys {
+    private final Set<String> matchedKeys;
 
-    private final int id;
-
-    private final boolean enabled;
+    private final Set<String> injectedTags;
 
     /**
-     * constructor
+     * Constructor
      *
-     * @param id id
-     * @param enabled enabled
+     * @param matchedKeys Label routing transparent transmission markers
+     * @param injectedTags Swim lane transparent markers
      */
-    public LaneTestEntity(int id, boolean enabled) {
-        this.id = id;
-        this.enabled = enabled;
+    public Keys(Set<String> matchedKeys, Set<String> injectedTags) {
+        this.matchedKeys = matchedKeys;
+        this.injectedTags = injectedTags;
     }
 
-    public int getId() {
-        return id;
+    public Set<String> getMatchedKeys() {
+        return matchedKeys;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public Set<String> getInjectedTags() {
+        return injectedTags;
     }
 }

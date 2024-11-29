@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class SpringAndDubboTest {
     private final String baseUrl;
 
     /**
-     * 构造方法
+     * constructor
      */
     public SpringAndDubboTest() {
         baseUrl = "http://127.0.0.1:" + System.getProperty("controller.port", "28020") + "/consumer/";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package io.sermant.router.spring.handler;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
 import io.sermant.router.common.config.RouterConfig;
-import io.sermant.router.spring.handler.AbstractRequestTagHandler.Keys;
+import io.sermant.router.spring.TestSpringConfigService;
+import io.sermant.router.spring.entity.Keys;
 import io.sermant.router.spring.service.LaneService;
 
 import org.junit.AfterClass;
@@ -31,25 +32,25 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Test LaneInterceptorHandler
+ * Test LaneMappingHandler
  *
  * @author provenceee
  * @since 2023-02-28
  */
-public class LaneRequestTagHandlerTest {
+public class LaneHandlerTest {
     private static MockedStatic<ServiceManager> mockServiceManager;
 
     private static MockedStatic<PluginConfigManager> mockPluginConfigManager;
 
     private static TestLaneService laneService;
 
-    private final LaneRequestTagHandler handler;
+    private static TestSpringConfigService configService;
+
+    private final LaneHandler handler;
 
     /**
      * Perform mock before the UT is executed
@@ -60,9 +61,10 @@ public class LaneRequestTagHandlerTest {
         laneService = new TestLaneService();
         mockServiceManager.when(() -> ServiceManager.getService(LaneService.class))
                 .thenReturn(laneService);
+        configService = new TestSpringConfigService();
         mockPluginConfigManager = Mockito.mockStatic(PluginConfigManager.class);
-        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class))
-                .thenReturn(new RouterConfig());
+        mockPluginConfigManager.when(() -> PluginConfigManager.getPluginConfig(RouterConfig.class)).
+                thenReturn(new RouterConfig());
     }
 
     /**
@@ -74,8 +76,8 @@ public class LaneRequestTagHandlerTest {
         mockPluginConfigManager.close();
     }
 
-    public LaneRequestTagHandlerTest() {
-        handler = new LaneRequestTagHandler();
+    public LaneHandlerTest() {
+        handler = new LaneHandler();
     }
 
     /**
@@ -84,25 +86,28 @@ public class LaneRequestTagHandlerTest {
     @Test
     public void testGetRequestTag() {
         // Test matchTags as null
-        Map<String, List<String>> requestTag = handler.getRequestTag("", "", null, null, new Keys(null, null));
+        configService.setReturnEmptyWhenGetMatchTags(true);
+        Map<String, List<String>> requestTag = handler.getRequestTag("", "", null, null,
+                new Keys(configService.getMatchKeys(), configService.getInjectTags()));
         Assert.assertEquals(requestTag, Collections.emptyMap());
 
         // Test getLane returns null
+        configService.setReturnEmptyWhenGetMatchTags(false);
         laneService.setReturnEmpty(true);
         Map<String, List<String>> headers = new HashMap<>();
         headers.put("bar", Collections.singletonList("bar1"));
         headers.put("foo", Collections.singletonList("foo1"));
-        Set<String> matchTags = new HashSet<>();
-        matchTags.add("bar");
-        matchTags.add("foo");
-        requestTag = handler.getRequestTag("", "", headers, null, new Keys(null, matchTags));
+        requestTag = handler.getRequestTag("", "", headers, null,
+                new Keys(configService.getMatchKeys(), configService.getInjectTags()));
         Assert.assertEquals(2, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));
 
         // Test getLane is not empty
+        configService.setReturnEmptyWhenGetMatchTags(false);
         laneService.setReturnEmpty(false);
-        requestTag = handler.getRequestTag("", "", headers, null, new Keys(null, matchTags));
+        requestTag = handler.getRequestTag("", "", headers, null,
+                new Keys(configService.getMatchKeys(), configService.getInjectTags()));
         Assert.assertEquals(3, requestTag.size());
         Assert.assertEquals("bar1", requestTag.get("bar").get(0));
         Assert.assertEquals("foo1", requestTag.get("foo").get(0));

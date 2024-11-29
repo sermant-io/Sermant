@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import io.sermant.router.common.constants.RouterConstant;
 import io.sermant.router.common.handler.Handler;
 import io.sermant.router.common.metric.MetricsManager;
 import io.sermant.router.common.utils.CollectionUtils;
+import io.sermant.router.spring.entity.Keys;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +60,19 @@ public abstract class AbstractHandler implements Handler {
         }
         return map;
     }
+
+    /**
+     * Obtain transparent tags
+     *
+     * @param path The path of the request
+     * @param methodName http method
+     * @param headers HTTP request headers
+     * @param parameters URL parameter
+     * @param keys The key of the tag to be obtained
+     * @return Marks for transparent transmission
+     */
+    public abstract Map<String, List<String>> getRequestTag(String path, String methodName,
+            Map<String, List<String>> headers, Map<String, List<String>> parameters, Keys keys);
 
     /**
      * Collect Lane Count Metric.
