@@ -65,10 +65,12 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
             return context;
         }
         Request request = rawRequest.get();
+        if (handleXdsRouterAndUpdateHttpRequest(context.getObject(), request)) {
+            return context;
+        }
+
         URI uri = request.url().uri();
         Headers headers = request.headers();
-
-        handleXdsRouterAndUpdateHttpRequest(context.getObject(), request);
         MetricThreadLocal.setFlag(true);
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
@@ -133,32 +135,35 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
     }
 
     private Request rebuildRequest(Request request, ServiceInstance serviceInstance) {
+        HttpUrl url = request.url().newBuilder()
+                .host(serviceInstance.getHost())
+                .port(serviceInstance.getPort())
+                .build();
         return request.newBuilder()
-                .url(HttpUrl
-                        .parse(BaseHttpRouterUtils
-                                .rebuildUrlByXdsServiceInstance(request.url().uri(), serviceInstance)))
+                .url(url)
                 .build();
     }
 
-    private void handleXdsRouterAndUpdateHttpRequest(Object obj, Request request) {
+    private boolean handleXdsRouterAndUpdateHttpRequest(Object obj, Request request) {
         if (!routerConfig.isEnabledXdsRoute()) {
-            return;
+            return false;
         }
-        Headers headers = request.headers();
-        URI uri = request.url().uri();
-        String host = uri.getHost();
-        if (!BaseHttpRouterUtils.isXdsRouteRequired(host)) {
-            return;
+        HttpUrl url = request.url();
+        String host = url.host();
+        String serviceName = host.split(RouterConstant.ESCAPED_POINT)[0];
+        if (!BaseHttpRouterUtils.isXdsRouteRequired(serviceName)) {
+            return false;
         }
 
         // use xds route to find a service instance, and modify url by it
         Optional<ServiceInstance> serviceInstanceOptional = BaseHttpRouterUtils
-                .chooseServiceInstanceByXds(host.split(RouterConstant.ESCAPED_POINT)[0], uri.getPath(),
-                        getHeaders(headers));
+                .chooseServiceInstanceByXds(serviceName, url.encodedPath(),
+                        getHeaders(request.headers()));
         if (!serviceInstanceOptional.isPresent()) {
-            return;
+            return false;
         }
         ServiceInstance instance = serviceInstanceOptional.get();
         ReflectUtils.setFieldValue(obj, "originalRequest", rebuildRequest(request, instance));
+        return true;
     }
 }

@@ -77,16 +77,19 @@ public class OkHttpClientInterceptorChainInterceptorTest {
                 .header("Header1", "Value1")
                 .build();
         ExecuteContext context = ExecuteContext.forMemberMethod(obj, null, arguments, null, null);
+        mockedUtils
+                .when(() -> BaseHttpRouterUtils.isXdsRouteRequired("example")).thenCallRealMethod();
 
         // service instance is null
+        mockedUtils
+                .when(() -> BaseHttpRouterUtils.chooseServiceInstanceByXds(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(Optional.ofNullable(null));
         ExecuteContext result = interceptor.before(context);
         Request newRequest = (Request) result.getArguments()[0];
         Assert.assertNotNull(newRequest);
         HttpUrl newUrl = newRequest.httpUrl();
         Assert.assertEquals("http://example.default.svc.cluster.local/test", newUrl.toString());
-        mockedUtils
-                .when(() -> BaseHttpRouterUtils.chooseServiceInstanceByXds(Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(Optional.ofNullable(null));
+
 
         // service instance is not empty
         TestServiceInstance serviceInstance = new TestServiceInstance();

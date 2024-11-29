@@ -42,4 +42,13 @@ public interface XdsRouteService {
      * @return route rules
      */
     boolean isLocalityRoute(String clusterName);
+
+    /**
+     * get lb policy of cluster
+     *
+     * @param serviceName service name
+     * @param clusterName cluster name
+     * @return route rules
+     */
+    boolean isLocalityRoute(String serviceName, String clusterName);
 }

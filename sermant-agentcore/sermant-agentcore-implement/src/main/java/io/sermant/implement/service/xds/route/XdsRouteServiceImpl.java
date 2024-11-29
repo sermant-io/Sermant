@@ -47,4 +47,9 @@ public class XdsRouteServiceImpl implements XdsRouteService {
                 .map(serviceName -> XdsDataCache.isLocalityLb(serviceName, clusterName))
                 .orElse(false);
     }
+
+    @Override
+    public boolean isLocalityRoute(String serviceName, String clusterName) {
+        return XdsDataCache.isLocalityLb(serviceName, clusterName);
+    }
 }

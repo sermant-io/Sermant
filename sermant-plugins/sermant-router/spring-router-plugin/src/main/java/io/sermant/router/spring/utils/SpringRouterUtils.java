@@ -28,12 +28,12 @@ import io.sermant.router.common.utils.ReflectUtils;
 
 import org.springframework.cloud.client.DefaultServiceInstance;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Reflection tool class
@@ -110,9 +110,11 @@ public class SpringRouterUtils {
      */
     public static List<org.springframework.cloud.client.ServiceInstance> getSpringCloudServiceInstanceByXds(
             Set<ServiceInstance> xdsServiceInstances) {
-        return xdsServiceInstances.stream()
-                .map(SpringRouterUtils::convertServiceInstance)
-                .collect(Collectors.toList());
+        List<org.springframework.cloud.client.ServiceInstance> serviceInstances = new ArrayList<>();
+        for (ServiceInstance xdsServiceInstance : xdsServiceInstances) {
+            serviceInstances.add(convertServiceInstance(xdsServiceInstance));
+        }
+        return serviceInstances;
     }
 
     /**
@@ -121,11 +123,12 @@ public class SpringRouterUtils {
      * @param xdsServiceInstances
      * @return spring cloud service instance
      */
-    public static List<Server> getSpringCloudServerByXds(
-            Set<ServiceInstance> xdsServiceInstances) {
-        return xdsServiceInstances.stream()
-                .map(SpringRouterUtils::convertServiceInstance2Server)
-                .collect(Collectors.toList());
+    public static List<Server> getSpringCloudServerByXds(Set<ServiceInstance> xdsServiceInstances) {
+        List<Server> servers = new ArrayList<>();
+        for (ServiceInstance xdsServiceInstance : xdsServiceInstances) {
+            servers.add(convertServiceInstance2Server(xdsServiceInstance));
+        }
+        return servers;
     }
 
     /**

@@ -131,6 +131,27 @@ public class MetricsManager {
     }
 
     /**
+     * collect xDS router destination tag count metric
+     *
+     * @param cluster cluster name
+     */
+    public static void collectXdsRouterDestinationTagCountMetric(String cluster) {
+        if (!ROUTER_CONFIG.isEnableMetric()) {
+            return;
+        }
+        Map<String, String> tagsMap = new HashMap<>();
+        MetricsManager.getAllTagKey().forEach(key -> tagsMap.put(key, StringUtils.EMPTY));
+        tagsMap.put(RouterConstant.SERVICE_META_PARAMETERS, "cluster: " + cluster);
+        if (StringUtils.isEmpty(DubboCache.INSTANCE.getAppName())) {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, AppCache.INSTANCE.getAppName());
+        } else {
+            tagsMap.put(RouterConstant.CLIENT_SERVICE_NAME, DubboCache.INSTANCE.getAppName());
+        }
+        tagsMap.put(RouterConstant.PROTOCOL, RouterConstant.XDS_PROTOCOL);
+        MetricsManager.addOrUpdateCounterMetricValue(RouterConstant.ROUTER_DESTINATION_TAG_COUNT, tagsMap, 1);
+    }
+
+    /**
      * Get the key of the metric tag
      *
      * @param tagName tag name for routing rules or lane rules
