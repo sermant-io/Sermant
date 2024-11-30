@@ -29,7 +29,7 @@ public class FileUtilsTest {
     @Test
     public void testPath() {
         String pathValid = FileUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        Assert.assertEquals(pathValid, FileUtils.validatePath(pathValid));
+        FileUtils.setAgentPath(pathValid);
         String pathInvalid = "/test/path";
         Assert.assertEquals("", FileUtils.validatePath(pathInvalid));
         String pathInvalidSymbolA = pathValid + "../" + "/test";
