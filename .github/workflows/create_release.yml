@@ -11,7 +11,7 @@ env:
 jobs:
   auto-create-release:
     name: Auto Create Release
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: save env version
         shell: bash
@@ -32,9 +32,23 @@ jobs:
       - name: set version
         run: |
           mvn versions:set -DnewVersion='${{ env.version }}'
-      - name: Build with Maven
+      - name: Build agent with Maven
         run: |
-          mvn clean package -P agent -P package -DskipTests
+          mvn clean package -P agent -DskipTests
+      - name: compile tools
+        run: |
+          cd ${{ github.workspace }}/scripts
+          javac -cp ./:$JAVA_HOME/lib/tools.jar AgentLoader.java
+          javac AesUtil.java
+          gcc attach_sermant_agent.c -o attach_sermant_agent
+          mkdir ${{ github.workspace }}/sermant-agent-${{ env.version }}/tools
+          cp AgentLoader.class ${{ github.workspace }}/sermant-agent-${{ env.version }}/tools
+          cp AesUtil.class ${{ github.workspace }}/sermant-agent-${{ env.version }}/tools
+          cp attach_sermant_agent ${{ github.workspace }}/sermant-agent-${{ env.version }}/tools
+          cp readme.txt ${{ github.workspace }}/sermant-agent-${{ env.version }}/tools
+      - name: package sermant
+        run: |
+          mvn package -P package -DskipTests
           mkdir ${{ github.workspace }}/package
           cp ${{ github.workspace }}/sermant-agent-*.tar.gz ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
           ls ${{ github.workspace }}/package
