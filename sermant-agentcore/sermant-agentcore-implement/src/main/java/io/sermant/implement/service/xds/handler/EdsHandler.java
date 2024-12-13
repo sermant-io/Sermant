@@ -32,7 +32,7 @@ import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
 import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.utils.EdsProtocolTransformer;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class EdsHandler extends XdsHandler<ClusterLoadAssignment> {
      */
     public EdsHandler(XdsClient client) {
         super(client);
-        this.resourceType = XdsConstant.EDS_RESOURCE_TYPE;
+        this.resourceType = XdsEnvConstant.EDS_RESOURCE_TYPE;
     }
 
     @Override

@@ -20,6 +20,12 @@ import java.util.List;
 
 /**
  * Xds rate-limiting configuration information
+ * LocalRateLimit is published through
+ * <a href="https://istio.io/latest/docs/reference/config/networking/envoy-filter/">EnvoyFilter</a>,
+ * with routeConfiguration.vhost.name corresponding to the name after
+ * filling in spec.hosts in
+ * <a href="https://istio.io/latest/docs/reference/config/networking/virtual-service">VirtualService</a>, and
+ * routeConfiguration.vhost.route.name corresponding to the name in spec.http
  *
  * @author zhp
  * @since 2024-11-18

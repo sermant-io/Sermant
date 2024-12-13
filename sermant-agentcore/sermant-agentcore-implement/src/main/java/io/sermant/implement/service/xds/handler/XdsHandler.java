@@ -29,12 +29,13 @@ import io.envoyproxy.envoy.config.core.v3.Node;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.grpc.stub.StreamObserver;
+import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.utils.FileUtils;
 import io.sermant.core.utils.NetworkUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,22 +147,22 @@ public abstract class XdsHandler<T> implements XdsServiceAction {
     }
 
     private void createNode() {
-        String fileContent = FileUtils.readFileToString(XdsConstant.K8S_POD_NAMESPACE_PATH);
-        String namespace = StringUtils.isEmpty(fileContent) ? XdsConstant.K8S_DEFAULT_NAMESPACE : fileContent;
+        String fileContent = FileUtils.readFileToString(XdsEnvConstant.K8S_POD_NAMESPACE_PATH);
+        String namespace = StringUtils.isEmpty(fileContent) ? XdsEnvConstant.K8S_DEFAULT_NAMESPACE : fileContent;
         StringBuilder nodeIdBuilder = new StringBuilder();
 
         // nodeId:sidecar~{pod_ip}~{pod_name}.{namespace}~{namespace}.svc.cluster.local
-        nodeIdBuilder.append(XdsConstant.SIDECAR)
-                .append(XdsConstant.WAVY_LINE)
+        nodeIdBuilder.append(XdsEnvConstant.SIDECAR)
+                .append(CommonConstant.WAVY_LINE)
                 .append(NetworkUtils.getMachineIp())
-                .append(XdsConstant.WAVY_LINE)
-                .append(System.getenv(XdsConstant.POD_NAME_ENV))
-                .append(XdsConstant.POINT)
+                .append(CommonConstant.WAVY_LINE)
+                .append(System.getenv(XdsEnvConstant.POD_NAME_ENV))
+                .append(CommonConstant.DOT)
                 .append(namespace)
-                .append(XdsConstant.WAVY_LINE)
+                .append(CommonConstant.WAVY_LINE)
                 .append(namespace)
-                .append(XdsConstant.POINT)
-                .append(XdsConstant.HOST_SUFFIX);
+                .append(CommonConstant.DOT)
+                .append(XdsEnvConstant.HOST_SUFFIX);
         this.node = Node.newBuilder()
                 .setId(nodeIdBuilder.toString())
                 .build();

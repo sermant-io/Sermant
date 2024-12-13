@@ -16,11 +16,16 @@
 
 package io.sermant.implement.service.xds.utils;
 
+import io.envoyproxy.envoy.config.cluster.v3.CircuitBreakers;
 import io.envoyproxy.envoy.config.cluster.v3.Cluster;
 import io.envoyproxy.envoy.config.cluster.v3.Cluster.LbPolicy;
+import io.envoyproxy.envoy.config.cluster.v3.OutlierDetection;
 import io.sermant.core.service.xds.entity.XdsCluster;
+import io.sermant.core.service.xds.entity.XdsInstanceCircuitBreakers;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
+import io.sermant.core.service.xds.entity.XdsRequestCircuitBreakers;
 import io.sermant.core.service.xds.entity.XdsServiceCluster;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.StringUtils;
 
 import java.util.HashMap;
@@ -65,7 +70,7 @@ public class CdsProtocolTransformer {
     public static Map<String, XdsServiceCluster> getServiceClusters(List<Cluster> clusters) {
         Map<String, Set<XdsCluster>> xdsClusters = clusters.stream()
                 .filter(Objects::nonNull)
-                .map(cluster -> parseCluster(cluster))
+                .map(CdsProtocolTransformer::parseCluster)
                 .filter(xdsCluster -> !StringUtils.isEmpty(xdsCluster.getServiceName()))
                 .collect(Collectors.groupingBy(
                         XdsCluster::getServiceName,
@@ -96,6 +101,8 @@ public class CdsProtocolTransformer {
         xdsCluster.setServiceName(serviceNameFromCluster.get());
         xdsCluster.setLocalityLb(cluster.getCommonLbConfig().hasLocalityWeightedLbConfig());
         xdsCluster.setLbPolicy(parseClusterLbPolicy(cluster.getLbPolicy()));
+        xdsCluster.setRequestCircuitBreakers(parseRequestCircuitBreakers(cluster.getCircuitBreakers()));
+        xdsCluster.setInstanceCircuitBreakers(parseInstanceCircuitBreakers(cluster));
         return xdsCluster;
     }
 
@@ -112,5 +119,36 @@ public class CdsProtocolTransformer {
 
     private static XdsLbPolicy parseClusterLbPolicy(LbPolicy lbPolicy) {
         return LB_POLICY_MAPPING.getOrDefault(lbPolicy, XdsLbPolicy.UNRECOGNIZED);
+    }
+
+    private static XdsRequestCircuitBreakers parseRequestCircuitBreakers(CircuitBreakers circuitBreakers) {
+        XdsRequestCircuitBreakers requestCircuitBreakers = new XdsRequestCircuitBreakers();
+        if (!CollectionUtils.isEmpty(circuitBreakers.getThresholdsList())) {
+            requestCircuitBreakers.setMaxRequests(circuitBreakers.getThresholds(0).getMaxRequests().getValue());
+        }
+        return requestCircuitBreakers;
+    }
+
+    private static XdsInstanceCircuitBreakers parseInstanceCircuitBreakers(Cluster cluster) {
+        OutlierDetection outlierDetection = cluster.getOutlierDetection();
+        XdsInstanceCircuitBreakers xdsInstanceCircuitBreakers = new XdsInstanceCircuitBreakers();
+        xdsInstanceCircuitBreakers.setSplitExternalLocalOriginErrors(outlierDetection
+                .getSplitExternalLocalOriginErrors());
+        xdsInstanceCircuitBreakers.setConsecutiveLocalOriginFailure(outlierDetection.getConsecutiveLocalOriginFailure()
+                .getValue());
+        xdsInstanceCircuitBreakers.setConsecutiveGatewayFailure(outlierDetection.getConsecutiveGatewayFailure()
+                .getValue());
+        xdsInstanceCircuitBreakers.setConsecutive5xxFailure(outlierDetection.getConsecutive5Xx().getValue());
+        long interval = java.time.Duration.ofSeconds(outlierDetection.getInterval().getSeconds()).toMillis();
+        xdsInstanceCircuitBreakers.setInterval(interval);
+        long ejectionTime = java.time.Duration.ofSeconds(outlierDetection.getBaseEjectionTime().getSeconds())
+                .toMillis();
+        xdsInstanceCircuitBreakers.setBaseEjectionTime(ejectionTime);
+        xdsInstanceCircuitBreakers.setMaxEjectionPercent(outlierDetection.getMaxEjectionPercent().getValue());
+        xdsInstanceCircuitBreakers.setFailurePercentageMinimumHosts(outlierDetection.getFailurePercentageMinimumHosts()
+                .getValue());
+        xdsInstanceCircuitBreakers.setMinHealthPercent(cluster.getCommonLbConfig().
+                getHealthyPanicThreshold().getValue());
+        return xdsInstanceCircuitBreakers;
     }
 }

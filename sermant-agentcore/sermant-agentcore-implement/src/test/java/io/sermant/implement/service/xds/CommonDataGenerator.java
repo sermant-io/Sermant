@@ -17,20 +17,25 @@
 package io.sermant.implement.service.xds;
 
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsAbort;
 import io.sermant.core.service.xds.entity.XdsCluster;
 import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsHttpConnectionManager;
+import io.sermant.core.service.xds.entity.XdsHttpFault;
+import io.sermant.core.service.xds.entity.XdsInstanceCircuitBreakers;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
 import io.sermant.core.service.xds.entity.XdsLocality;
+import io.sermant.core.service.xds.entity.XdsRateLimit;
+import io.sermant.core.service.xds.entity.XdsRequestCircuitBreakers;
 import io.sermant.core.service.xds.entity.XdsRoute;
 import io.sermant.core.service.xds.entity.XdsRouteConfiguration;
 import io.sermant.core.service.xds.entity.XdsServiceCluster;
 import io.sermant.core.service.xds.entity.XdsServiceClusterLoadAssigment;
+import io.sermant.core.service.xds.entity.XdsTokenBucket;
 import io.sermant.core.service.xds.entity.XdsVirtualHost;
 import io.sermant.implement.service.xds.entity.XdsServiceInstance;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,26 +51,32 @@ public class CommonDataGenerator {
     public static List<XdsRouteConfiguration> createRouteConfigurations() {
         XdsRouteConfiguration routeConfiguration = new XdsRouteConfiguration();
         XdsVirtualHost virtualHost1 = new XdsVirtualHost();
-        virtualHost1.setName("serviceA.name");
+        virtualHost1.setName("serviceA.name:8080");
         XdsVirtualHost virtualHost2 = new XdsVirtualHost();
-        virtualHost2.setName("serviceB.name");
+        virtualHost2.setName("serviceB.name:8080");
 
         XdsRoute route = new XdsRoute();
         route.setName("test-route");
-        virtualHost1.setRoutes(Arrays.asList(route));
+        XdsHttpFault httpFault = new XdsHttpFault();
+        httpFault.setAbort(new XdsAbort());
+        httpFault.getAbort().setHttpStatus(503);
+        route.setHttpFault(httpFault);
+        XdsRateLimit xdsRateLimit = new XdsRateLimit();
+        XdsTokenBucket xdsTokenBucket = new XdsTokenBucket();
+        xdsTokenBucket.setMaxTokens(10);
+        xdsRateLimit.setTokenBucket(xdsTokenBucket);
+        route.setRateLimit(xdsRateLimit);
+        virtualHost1.setRoutes(Collections.singletonList(route));
         virtualHost2.setRoutes(Collections.emptyList());
         Map<String, XdsVirtualHost> virtualHosts = new HashMap<>();
         virtualHosts.put("serviceA", virtualHost1);
         virtualHosts.put("serviceB", virtualHost2);
         routeConfiguration.setVirtualHosts(virtualHosts);
-        return Arrays.asList(routeConfiguration);
+        return Collections.singletonList(routeConfiguration);
     }
 
     public static Map<String, XdsServiceCluster> createServiceClusterMap(String serviceName, String clusterName) {
-        XdsCluster cluster = new XdsCluster();
-        cluster.setClusterName(clusterName);
-        cluster.setLocalityLb(true);
-        cluster.setLbPolicy(XdsLbPolicy.RANDOM);
+        XdsCluster cluster = initCluster(clusterName);
         Map<String, XdsCluster> clusters = new HashMap<>();
         clusters.put(clusterName, cluster);
 
@@ -76,6 +87,20 @@ public class CommonDataGenerator {
         Map<String, XdsServiceCluster> serviceClusterMap = new HashMap<>();
         serviceClusterMap.put(serviceName, serviceCluster);
         return serviceClusterMap;
+    }
+
+    private static XdsCluster initCluster(String clusterName) {
+        XdsCluster cluster = new XdsCluster();
+        cluster.setClusterName(clusterName);
+        cluster.setLocalityLb(true);
+        cluster.setLbPolicy(XdsLbPolicy.RANDOM);
+        XdsRequestCircuitBreakers requestCircuitBreakers = new XdsRequestCircuitBreakers();
+        requestCircuitBreakers.setMaxRequests(100);
+        cluster.setRequestCircuitBreakers(requestCircuitBreakers);
+        XdsInstanceCircuitBreakers instanceCircuitBreakers = new XdsInstanceCircuitBreakers();
+        instanceCircuitBreakers.setInterval(1000);
+        cluster.setInstanceCircuitBreakers(instanceCircuitBreakers);
+        return cluster;
     }
 
     public static XdsServiceClusterLoadAssigment createXdsServiceClusterInstance(List<String> clusterNames,

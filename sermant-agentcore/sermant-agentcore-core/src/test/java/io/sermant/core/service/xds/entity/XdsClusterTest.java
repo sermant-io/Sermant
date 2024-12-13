@@ -33,9 +33,15 @@ public class XdsClusterTest {
         cluster.setLbPolicy(XdsLbPolicy.RANDOM);
         cluster.setLocalityLb(true);
         cluster.setServiceName("serviceA");
+        XdsInstanceCircuitBreakers instanceCircuitBreakers = new XdsInstanceCircuitBreakers();
+        cluster.setInstanceCircuitBreakers(instanceCircuitBreakers);
+        XdsRequestCircuitBreakers requestCircuitBreakers = new XdsRequestCircuitBreakers();
+        cluster.setRequestCircuitBreakers(requestCircuitBreakers);
         Assert.assertTrue(cluster.isLocalityLb());
         Assert.assertEquals("outbound|8080||serviceA.default.svc.cluster.local", cluster.getClusterName());
         Assert.assertEquals("serviceA", cluster.getServiceName());
         Assert.assertEquals(XdsLbPolicy.RANDOM, cluster.getLbPolicy());
+        Assert.assertEquals(instanceCircuitBreakers, cluster.getInstanceCircuitBreakers());
+        Assert.assertEquals(requestCircuitBreakers, cluster.getRequestCircuitBreakers());
     }
 }

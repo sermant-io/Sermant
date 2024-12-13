@@ -26,7 +26,7 @@ import io.envoyproxy.envoy.extensions.filters.network.http_connection_manager.v3
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.sermant.implement.service.xds.BaseXdsTest;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -51,29 +51,29 @@ public class LdsHandlerTest extends BaseXdsTest {
     public static void setUp() {
         handler = new LdsHandler(client);
         Mockito.doReturn(requestStreamObserver).when(client).getDiscoveryRequestObserver(handler
-                .getResponseStreamObserver(XdsConstant.LDS_ALL_RESOURCE, null));
-        XdsDataCache.updateRequestObserver(XdsConstant.RDS_ALL_RESOURCE, requestStreamObserver);
+                .getResponseStreamObserver(XdsEnvConstant.LDS_ALL_RESOURCE, null));
+        XdsDataCache.updateRequestObserver(XdsEnvConstant.RDS_ALL_RESOURCE, requestStreamObserver);
     }
 
     @AfterClass
     public static void tearDown() {
         Mockito.clearAllCaches();
-        XdsDataCache.removeRequestObserver(XdsConstant.LDS_ALL_RESOURCE);
-        XdsDataCache.removeRequestObserver(XdsConstant.RDS_ALL_RESOURCE);
+        XdsDataCache.removeRequestObserver(XdsEnvConstant.LDS_ALL_RESOURCE);
+        XdsDataCache.removeRequestObserver(XdsEnvConstant.RDS_ALL_RESOURCE);
         XdsDataCache.updateHttpConnectionManagers(new ArrayList<>());
     }
 
     @Test
     public void testHandleResponse() {
-        handler.subscribe(XdsConstant.LDS_ALL_RESOURCE, null);
+        handler.subscribe(XdsEnvConstant.LDS_ALL_RESOURCE, null);
 
         // listener is empty
-        handler.handleResponse(XdsConstant.LDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.LDS_ALL_RESOURCE,
                 DiscoveryResponse.newBuilder().addAllResources(new ArrayList<>()).build());
         Assert.assertEquals(0, XdsDataCache.getRouteResources().size());
 
         // listener is not empty
-        handler.handleResponse(XdsConstant.LDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.LDS_ALL_RESOURCE,
                 buildDiscoveryResponse("test-listener", "test-routeConfig"));
         Set<String> routeResources = XdsDataCache.getRouteResources();
         Assert.assertEquals(1, routeResources.size());

@@ -25,7 +25,7 @@ import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.sermant.core.service.xds.entity.XdsRoute;
 import io.sermant.implement.service.xds.BaseXdsTest;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -49,27 +49,27 @@ public class RdsHandlerTest extends BaseXdsTest {
     public void setUp() throws Exception {
         handler = new RdsHandler(client);
         Mockito.doReturn(requestStreamObserver).when(client).getDiscoveryRequestObserver(handler
-                .getResponseStreamObserver(XdsConstant.RDS_ALL_RESOURCE, null));
+                .getResponseStreamObserver(XdsEnvConstant.RDS_ALL_RESOURCE, null));
     }
 
     @After
     public void tearDown() throws Exception {
         Mockito.clearAllCaches();
-        XdsDataCache.removeRequestObserver(XdsConstant.RDS_ALL_RESOURCE);
+        XdsDataCache.removeRequestObserver(XdsEnvConstant.RDS_ALL_RESOURCE);
         XdsDataCache.updateRouteConfigurations(new ArrayList<>());
     }
 
     @Test
     public void testHandleResponse() {
-        handler.subscribe(XdsConstant.RDS_ALL_RESOURCE, null);
+        handler.subscribe(XdsEnvConstant.RDS_ALL_RESOURCE, null);
 
         // routeConfiguration is empty
-        handler.handleResponse(XdsConstant.RDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.RDS_ALL_RESOURCE,
                 DiscoveryResponse.newBuilder().addAllResources(new ArrayList<>()).build());
         Assert.assertEquals(0, XdsDataCache.getRouteConfigurations().size());
 
         // routeConfiguration is not empty
-        handler.handleResponse(XdsConstant.RDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.RDS_ALL_RESOURCE,
                 buildDiscoveryResponse("serviceA.example.com", "test-route",
                         "test-routeConfig"));
         List<XdsRoute> route = XdsDataCache.getServiceRoute("serviceA");

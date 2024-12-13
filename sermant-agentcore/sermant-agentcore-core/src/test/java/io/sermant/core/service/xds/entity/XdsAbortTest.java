@@ -29,9 +29,9 @@ public class XdsAbortTest {
     @Test
     public void testXdsAbort() {
         XdsAbort abort = new XdsAbort();
-        abort.setPercentage(0.1f);
+        abort.setPercentage(100);
         abort.setHttpStatus(200);
         Assert.assertEquals(200, abort.getHttpStatus());
-        Assert.assertEquals(0.1f, abort.getPercentage(), 0);
+        Assert.assertEquals(100, abort.getPercentage(), 0);
     }
 }

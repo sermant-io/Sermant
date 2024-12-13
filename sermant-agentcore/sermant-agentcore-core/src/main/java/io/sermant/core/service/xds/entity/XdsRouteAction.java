@@ -31,6 +31,8 @@ public class XdsRouteAction {
 
     private XdsWeightedClusters weightedClusters;
 
+    private XdsRetryPolicy retryPolicy;
+
     public String getCluster() {
         return cluster;
     }
@@ -53,6 +55,14 @@ public class XdsRouteAction {
 
     public void setWeightedClusters(XdsWeightedClusters weightedClusters) {
         this.weightedClusters = weightedClusters;
+    }
+
+    public XdsRetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(XdsRetryPolicy retryPolicy) {
+        this.retryPolicy = retryPolicy;
     }
 
     /**

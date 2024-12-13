@@ -128,6 +128,16 @@ public class CommonConstant {
     public static final String ARTIFACT_NAME_KEY = "artifact";
 
     /**
+     * ~ string
+     */
+    public static final String WAVY_LINE = "~";
+
+    /**
+     * | string after escaping
+     */
+    public static final String ESCAPED_VERTICAL_LINE = "\\|";
+
+    /**
      * The key of agent path
      */
     public static final String AGENT_PATH_KEY = "agentPath";

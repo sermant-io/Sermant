@@ -31,7 +31,7 @@ public class XdsDelay {
     /**
      * The percentage of requests on which the delay will be injected
      */
-    private float percentage;
+    private int percentage;
 
     public long getFixedDelay() {
         return fixedDelay;
@@ -41,11 +41,11 @@ public class XdsDelay {
         this.fixedDelay = fixedDelay;
     }
 
-    public float getPercentage() {
+    public int getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(float percentage) {
+    public void setPercentage(int percentage) {
         this.percentage = percentage;
     }
 }

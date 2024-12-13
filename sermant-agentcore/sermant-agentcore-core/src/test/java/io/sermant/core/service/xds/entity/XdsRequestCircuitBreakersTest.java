@@ -16,23 +16,20 @@
 
 package io.sermant.core.service.xds.entity;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * Xds circuit breaker information
+ * XdsCircuitBreakersTest
  *
  * @author zhp
- * @since 2024-11-18
- */
-public class XdsCircuitBreakers {
-    /**
-     * Maximum active request count
-     */
-    private int maxRequests;
-
-    public int getMaxRequests() {
-        return maxRequests;
-    }
-
-    public void setMaxRequests(int maxRequests) {
-        this.maxRequests = maxRequests;
+ * @since 2024-11-21
+ **/
+public class XdsRequestCircuitBreakersTest {
+    @Test
+    public void testXdsCircuitBreakers() {
+        XdsRequestCircuitBreakers circuitBreakers = new XdsRequestCircuitBreakers();
+        circuitBreakers.setMaxRequests(200);
+        Assert.assertEquals(200, circuitBreakers.getMaxRequests());
     }
 }

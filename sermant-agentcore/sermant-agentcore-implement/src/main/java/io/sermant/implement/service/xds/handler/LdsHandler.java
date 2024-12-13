@@ -28,7 +28,7 @@ import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.grpc.stub.StreamObserver;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
 import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.utils.LdsProtocolTransformer;
 
 import java.util.Collections;
@@ -49,7 +49,7 @@ public class LdsHandler extends XdsHandler<Listener> {
      */
     public LdsHandler(XdsClient client) {
         super(client);
-        this.resourceType = XdsConstant.LDS_RESOURCE_TYPE;
+        this.resourceType = XdsEnvConstant.LDS_RESOURCE_TYPE;
     }
 
     @Override
@@ -72,8 +72,9 @@ public class LdsHandler extends XdsHandler<Listener> {
             return;
         }
         StreamObserver<DiscoveryRequest> rdsRequestObserver = XdsDataCache
-                .getRequestObserver(XdsConstant.RDS_ALL_RESOURCE);
-        rdsRequestObserver.onNext(buildDiscoveryRequest(XdsConstant.RDS_RESOURCE_TYPE, null, null, newRouteResources));
+                .getRequestObserver(XdsEnvConstant.RDS_ALL_RESOURCE);
+        rdsRequestObserver.onNext(buildDiscoveryRequest(XdsEnvConstant.RDS_RESOURCE_TYPE, null, null,
+                newRouteResources));
     }
 
     @Override

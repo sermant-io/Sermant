@@ -29,6 +29,10 @@ public class XdsRoute {
 
     private XdsRouteAction routeAction;
 
+    private XdsHttpFault httpFault;
+
+    private XdsRateLimit rateLimit;
+
     public String getName() {
         return name;
     }
@@ -51,5 +55,21 @@ public class XdsRoute {
 
     public void setRouteAction(XdsRouteAction routeAction) {
         this.routeAction = routeAction;
+    }
+
+    public XdsHttpFault getHttpFault() {
+        return httpFault;
+    }
+
+    public void setHttpFault(XdsHttpFault httpFault) {
+        this.httpFault = httpFault;
+    }
+
+    public XdsRateLimit getRateLimit() {
+        return rateLimit;
+    }
+
+    public void setRateLimit(XdsRateLimit rateLimit) {
+        this.rateLimit = rateLimit;
     }
 }

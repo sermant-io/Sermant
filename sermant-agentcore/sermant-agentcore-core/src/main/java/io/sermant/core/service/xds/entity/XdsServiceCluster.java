@@ -18,6 +18,7 @@ package io.sermant.core.service.xds.entity;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -103,5 +104,39 @@ public class XdsServiceCluster {
             return XdsLbPolicy.UNRECOGNIZED;
         }
         return xdsCluster.getLbPolicy();
+    }
+
+    /**
+     * get XdsRequestCircuitBreakers
+     *
+     * @param clusterName cluster name
+     * @return XdsOutlierDetection
+     */
+    public Optional<XdsRequestCircuitBreakers> getRequestCircuitBreakersOfCluster(String clusterName) {
+        if (clusters == null) {
+            return Optional.empty();
+        }
+        XdsCluster xdsCluster = clusters.get(clusterName);
+        if (xdsCluster == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(xdsCluster.getRequestCircuitBreakers());
+    }
+
+    /**
+     * get XdsInstanceCircuitBreakers
+     *
+     * @param clusterName cluster name
+     * @return XdsOutlierDetection
+     */
+    public Optional<XdsInstanceCircuitBreakers> getInstanceCircuitBreakersOfCluster(String clusterName) {
+        if (clusters == null) {
+            return Optional.empty();
+        }
+        XdsCluster xdsCluster = clusters.get(clusterName);
+        if (xdsCluster == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(xdsCluster.getInstanceCircuitBreakers());
     }
 }
