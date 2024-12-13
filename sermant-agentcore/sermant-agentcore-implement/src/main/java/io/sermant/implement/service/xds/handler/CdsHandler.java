@@ -29,7 +29,7 @@ import io.grpc.stub.StreamObserver;
 import io.sermant.core.service.xds.entity.XdsServiceCluster;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
 import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.utils.CdsProtocolTransformer;
 
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class CdsHandler extends XdsHandler<Cluster> {
      */
     public CdsHandler(XdsClient client) {
         super(client);
-        this.resourceType = XdsConstant.CDS_RESOURCE_TYPE;
+        this.resourceType = XdsEnvConstant.CDS_RESOURCE_TYPE;
     }
 
     @Override
@@ -76,7 +76,7 @@ public class CdsHandler extends XdsHandler<Cluster> {
         // Eds is updated based on the new service and cluster mapping relationship
         for (Entry<String, StreamObserver<DiscoveryRequest>> entry : XdsDataCache.getRequestObserversEntry()) {
             String key = entry.getKey();
-            if (XdsConstant.CDS_ALL_RESOURCE.equals(key)) {
+            if (XdsEnvConstant.CDS_ALL_RESOURCE.equals(key)) {
                 continue;
             }
 
@@ -94,7 +94,7 @@ public class CdsHandler extends XdsHandler<Cluster> {
                 continue;
             }
             StreamObserver<DiscoveryRequest> requestStreamObserver = entry.getValue();
-            requestStreamObserver.onNext(buildDiscoveryRequest(XdsConstant.EDS_RESOURCE_TYPE, null, null,
+            requestStreamObserver.onNext(buildDiscoveryRequest(XdsEnvConstant.EDS_RESOURCE_TYPE, null, null,
                     XdsDataCache.getClustersByServiceName(key)));
         }
     }

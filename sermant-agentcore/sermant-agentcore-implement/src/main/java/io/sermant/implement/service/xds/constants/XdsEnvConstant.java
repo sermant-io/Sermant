@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package io.sermant.implement.service.xds.env;
+package io.sermant.implement.service.xds.constants;
 
 /**
  * Constant
@@ -22,7 +22,7 @@ package io.sermant.implement.service.xds.env;
  * @author daizhenyu
  * @since 2024-05-09
  **/
-public class XdsConstant {
+public class XdsEnvConstant {
     /**
      * pod name environment
      */
@@ -54,16 +54,6 @@ public class XdsConstant {
     public static final String SIDECAR = "sidecar";
 
     /**
-     * ~ string
-     */
-    public static final String WAVY_LINE = "~";
-
-    /**
-     * . string
-     */
-    public static final String POINT = ".";
-
-    /**
      * hots suffix of k8s
      */
     public static final String HOST_SUFFIX = "svc.cluster.local";
@@ -93,6 +83,6 @@ public class XdsConstant {
      */
     public static final String K8S_DEFAULT_NAMESPACE = "default";
 
-    private XdsConstant() {
+    private XdsEnvConstant() {
     }
 }

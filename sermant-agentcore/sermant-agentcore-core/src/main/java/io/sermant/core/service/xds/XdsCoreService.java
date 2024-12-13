@@ -45,4 +45,11 @@ public interface XdsCoreService extends BaseService {
      * @return XdsRoute
      */
     XdsLoadBalanceService getLoadBalanceService();
+
+    /**
+     * get XDSFlowControlService
+     *
+     * @return XdsFlowControlService
+     */
+    XdsFlowControlService getXdsFlowControlService();
 }

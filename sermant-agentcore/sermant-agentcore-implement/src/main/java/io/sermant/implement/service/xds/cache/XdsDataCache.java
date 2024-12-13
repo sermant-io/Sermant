@@ -102,7 +102,7 @@ public class XdsDataCache {
     public static Set<ServiceInstance> getServiceInstance(String serviceName) {
         XdsServiceClusterLoadAssigment serviceClusterInstance = SERVICE_INSTANCES.get(serviceName);
         if (serviceClusterInstance == null) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return serviceClusterInstance.getServiceInstance();
     }
@@ -150,7 +150,7 @@ public class XdsDataCache {
      * @return ServiceDiscoveryListeners
      */
     public static List<XdsServiceDiscoveryListener> getServiceDiscoveryListeners(String serviceName) {
-        return SERVICE_DISCOVER_LISTENER.getOrDefault(serviceName, Collections.EMPTY_LIST);
+        return SERVICE_DISCOVER_LISTENER.getOrDefault(serviceName, Collections.emptyList());
     }
 
     /**
@@ -232,7 +232,7 @@ public class XdsDataCache {
     public static Set<String> getClustersByServiceName(String serviceName) {
         XdsServiceCluster xdsServiceCluster = serviceClusterMap.get(serviceName);
         if (xdsServiceCluster == null) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return xdsServiceCluster.getClusterResources();
     }
@@ -296,7 +296,7 @@ public class XdsDataCache {
                 return virtualHosts.get(serviceName).getRoutes();
             }
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**

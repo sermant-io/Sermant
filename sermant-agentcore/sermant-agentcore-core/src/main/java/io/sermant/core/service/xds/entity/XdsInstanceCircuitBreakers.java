@@ -17,12 +17,13 @@
 package io.sermant.core.service.xds.entity;
 
 /**
- * Xds Outlier Detection information
+ * Circuit breaker information of server instance, The instance has reached the specified number of errors and will
+ * trigger a circuit breaker and the instance will be removed for a period of time
  *
  * @author zhp
  * @since 2024-11-18
  */
-public class XdsOutlierDetection {
+public class XdsInstanceCircuitBreakers {
     /**
      * Whether to distinguish between local source failures and external errors. When set to true,
      * it will detect local source failures.
@@ -61,12 +62,18 @@ public class XdsOutlierDetection {
     /**
      * The maximum % of an upstream cluster that can be ejected due to outlier detection
      */
-    private float maxEjectionPercent;
+    private int maxEjectionPercent;
 
     /**
      * The minimum number of hosts in a cluster in order to perform failure percentage-based ejection
      */
-    private float failurePercentageMinimumHosts;
+    private int failurePercentageMinimumHosts;
+
+    /**
+     * Outlier detection will be enabled as long as the associated load balancing pool has at least min_health_percent
+     * hosts in healthy mode.
+     */
+    private double minHealthPercent;
 
     public boolean isSplitExternalLocalOriginErrors() {
         return splitExternalLocalOriginErrors;
@@ -116,19 +123,27 @@ public class XdsOutlierDetection {
         this.baseEjectionTime = baseEjectionTime;
     }
 
-    public float getMaxEjectionPercent() {
+    public int getMaxEjectionPercent() {
         return maxEjectionPercent;
     }
 
-    public void setMaxEjectionPercent(float maxEjectionPercent) {
+    public void setMaxEjectionPercent(int maxEjectionPercent) {
         this.maxEjectionPercent = maxEjectionPercent;
     }
 
-    public float getFailurePercentageMinimumHosts() {
+    public int getFailurePercentageMinimumHosts() {
         return failurePercentageMinimumHosts;
     }
 
-    public void setFailurePercentageMinimumHosts(float failurePercentageMinimumHosts) {
+    public void setFailurePercentageMinimumHosts(int failurePercentageMinimumHosts) {
         this.failurePercentageMinimumHosts = failurePercentageMinimumHosts;
+    }
+
+    public double getMinHealthPercent() {
+        return minHealthPercent;
+    }
+
+    public void setMinHealthPercent(double minHealthPercent) {
+        this.minHealthPercent = minHealthPercent;
     }
 }

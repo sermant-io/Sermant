@@ -16,20 +16,24 @@
 
 package io.sermant.core.service.xds.entity;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 /**
- * XdsCircuitBreakersTest
+ * Circuit breaker information for the client's request, When the number of active requests for an instance
+ * reaches the specified limit, it will trigger a circuit breaker
  *
  * @author zhp
- * @since 2024-11-21
- **/
-public class XdsCircuitBreakersTest {
-    @Test
-    public void testXdsCircuitBreakers() {
-        XdsCircuitBreakers circuitBreakers = new XdsCircuitBreakers();
-        circuitBreakers.setMaxRequests(200);
-        Assert.assertEquals(200, circuitBreakers.getMaxRequests());
+ * @since 2024-11-18
+ */
+public class XdsRequestCircuitBreakers {
+    /**
+     * Maximum active request count
+     */
+    private int maxRequests;
+
+    public int getMaxRequests() {
+        return maxRequests;
+    }
+
+    public void setMaxRequests(int maxRequests) {
+        this.maxRequests = maxRequests;
     }
 }

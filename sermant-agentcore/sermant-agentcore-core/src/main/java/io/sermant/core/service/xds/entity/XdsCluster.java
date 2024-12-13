@@ -31,6 +31,10 @@ public class XdsCluster {
 
     private boolean isLocalityLb;
 
+    private XdsRequestCircuitBreakers requestCircuitBreakers;
+
+    private XdsInstanceCircuitBreakers instanceCircuitBreakers;
+
     public String getClusterName() {
         return clusterName;
     }
@@ -61,5 +65,21 @@ public class XdsCluster {
 
     public void setLocalityLb(boolean localityLb) {
         isLocalityLb = localityLb;
+    }
+
+    public XdsRequestCircuitBreakers getRequestCircuitBreakers() {
+        return requestCircuitBreakers;
+    }
+
+    public void setRequestCircuitBreakers(XdsRequestCircuitBreakers requestCircuitBreakers) {
+        this.requestCircuitBreakers = requestCircuitBreakers;
+    }
+
+    public XdsInstanceCircuitBreakers getInstanceCircuitBreakers() {
+        return instanceCircuitBreakers;
+    }
+
+    public void setInstanceCircuitBreakers(XdsInstanceCircuitBreakers instanceCircuitBreakers) {
+        this.instanceCircuitBreakers = instanceCircuitBreakers;
     }
 }

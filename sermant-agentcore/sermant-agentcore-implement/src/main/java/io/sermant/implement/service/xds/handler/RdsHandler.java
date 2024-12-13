@@ -29,7 +29,7 @@ import io.grpc.stub.StreamObserver;
 import io.sermant.core.service.xds.entity.XdsRouteConfiguration;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
 import io.sermant.implement.service.xds.client.XdsClient;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.utils.RdsProtocolTransformer;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class RdsHandler extends XdsHandler<RouteConfiguration> {
      */
     public RdsHandler(XdsClient client) {
         super(client);
-        this.resourceType = XdsConstant.RDS_RESOURCE_TYPE;
+        this.resourceType = XdsEnvConstant.RDS_RESOURCE_TYPE;
     }
 
     @Override

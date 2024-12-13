@@ -31,7 +31,7 @@ public class XdsAbort {
     /**
      * The percentage of requests/ operations/ connections that will be aborted with the error code
      */
-    private float percentage;
+    private int percentage;
 
     public int getHttpStatus() {
         return httpStatus;
@@ -41,11 +41,11 @@ public class XdsAbort {
         this.httpStatus = httpStatus;
     }
 
-    public float getPercentage() {
+    public int getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(float percentage) {
+    public void setPercentage(int percentage) {
         this.percentage = percentage;
     }
 }

@@ -22,7 +22,7 @@ import io.envoyproxy.envoy.config.cluster.v3.Cluster;
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryResponse;
 import io.sermant.implement.service.xds.BaseXdsTest;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
-import io.sermant.implement.service.xds.env.XdsConstant;
+import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -49,7 +49,7 @@ public class CdsHandlerTest extends BaseXdsTest {
     public static void setUp() {
         handler = new CdsHandler(client);
         Mockito.doReturn(requestStreamObserver).when(client).getDiscoveryRequestObserver(handler
-                .getResponseStreamObserver(XdsConstant.CDS_ALL_RESOURCE, null));
+                .getResponseStreamObserver(XdsEnvConstant.CDS_ALL_RESOURCE, null));
         XdsDataCache.updateRequestObserver(serviceName, requestStreamObserver);
     }
 
@@ -57,21 +57,21 @@ public class CdsHandlerTest extends BaseXdsTest {
     public static void tearDown() {
         Mockito.clearAllCaches();
         XdsDataCache.removeRequestObserver(serviceName);
-        XdsDataCache.removeRequestObserver(XdsConstant.CDS_ALL_RESOURCE);
+        XdsDataCache.removeRequestObserver(XdsEnvConstant.CDS_ALL_RESOURCE);
         XdsDataCache.updateServiceClusterMap(new HashMap<>());
     }
 
     @Test
     public void testHandleResponse() {
-        handler.subscribe(XdsConstant.CDS_ALL_RESOURCE, null);
+        handler.subscribe(XdsEnvConstant.CDS_ALL_RESOURCE, null);
 
         // cluster is empty
-        handler.handleResponse(XdsConstant.CDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.CDS_ALL_RESOURCE,
                 buildDiscoveryResponse(new ArrayList<>()));
         Assert.assertEquals(0, XdsDataCache.getServiceClusterMap().size());
 
         // service with one cluster
-        handler.handleResponse(XdsConstant.CDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.CDS_ALL_RESOURCE,
                 buildDiscoveryResponse(Arrays.asList("outbound|8080||serviceA.default.svc.cluster.local")));
         Set<String> clusterNames = XdsDataCache.getClustersByServiceName(serviceName);
         Assert.assertNotNull(clusterNames);
@@ -79,7 +79,7 @@ public class CdsHandlerTest extends BaseXdsTest {
         Assert.assertTrue(clusterNames.contains("outbound|8080||serviceA.default.svc.cluster.local"));
 
         // service with many cluster
-        handler.handleResponse(XdsConstant.CDS_ALL_RESOURCE,
+        handler.handleResponse(XdsEnvConstant.CDS_ALL_RESOURCE,
                 buildDiscoveryResponse(Arrays.asList(
                         "outbound|8080|subset1|serviceA.default.svc.cluster.local",
                         "outbound|8080|subset2|serviceA.default.svc.cluster.local"
