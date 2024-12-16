@@ -92,6 +92,32 @@ public class ApacheDubboProviderInterceptorTest extends AbstractRpcInterceptorTe
         interceptor.after(returnContext);
     }
 
+    @Test
+    public void testConsumerSideRemoveTrafficTag() {
+        // If interceptor is invoked in consumer side, it should not remove traffic tag in after method.
+        Map<String, List<String>> expectTag = buildExpectTrafficTag("id", "name");
+        TrafficUtils.setTrafficTag(new TrafficTag(expectTag));
+
+        ExecuteContext context = buildContext(new RpcInvocation(), new HashMap<>(), "consumer");
+        interceptor.before(context);
+        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTag);
+        interceptor.after(context);
+        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTag);
+    }
+
+    @Test
+    public void testProviderSideRemoveTrafficTag() {
+        // If interceptor is invoked in provider side, it should remove traffic tag in after method.
+        Map<String, List<String>> expectTag = buildExpectTrafficTag("id", "name");
+        TrafficUtils.setTrafficTag(new TrafficTag(expectTag));
+
+        ExecuteContext context = buildContext(new RpcInvocation(), new HashMap<>(), "provider");
+        interceptor.before(context);
+        Assert.assertEquals(TrafficUtils.getTrafficTag().getTag(), expectTag);
+        interceptor.after(context);
+        Assert.assertNull(TrafficUtils.getTrafficTag());
+    }
+
     private ExecuteContext buildContext(RpcInvocation rpcInvocation, Map<String, String> headers, String side) {
         URL url = new URL("http", "127.0.0.1", 8080);
         url = url.addParameter("side", side);

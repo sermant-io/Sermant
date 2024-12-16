@@ -43,3 +43,5 @@ runs:
       shell: bash
       run: |
         nohup java -jar sermant-integration-tests/tag-transmission-test/httpserver-common-demo/target/httpserver-common-demo.jar > ${{ env.logDir }}/httpserver-common-demo.log 2>&1 &
+    - name: plugin change check
+      uses: ./.github/actions/common/plugin-change-check

@@ -111,6 +111,11 @@ public class RedisClusterOperationImpl implements RedisOperation {
     }
 
     @Override
+    public String psetex(String key, long milliseconds, String value) {
+        return jedisCluster.psetex(key, milliseconds, value);
+    }
+
+    @Override
     public long hset(String key, String field, String value) {
         return jedisCluster.hset(key, field, value);
     }

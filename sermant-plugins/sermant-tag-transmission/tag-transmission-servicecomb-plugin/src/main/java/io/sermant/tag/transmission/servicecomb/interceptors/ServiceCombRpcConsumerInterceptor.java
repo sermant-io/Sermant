@@ -69,6 +69,13 @@ public class ServiceCombRpcConsumerInterceptor extends AbstractClientInterceptor
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original headers contains the specific key, then ignore
+            String originalHeader = invocation.getContext().get(key);
+            if (originalHeader != null) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // If the tag value is not null on the provider side, it will be converted to list storage. If it is null,

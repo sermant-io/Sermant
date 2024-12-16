@@ -75,6 +75,13 @@ public class RedisStandAloneOperationImpl implements RedisOperation {
     }
 
     @Override
+    public String psetex(String key, long milliseconds, String value) {
+        try (Jedis jedis = jedisPool.getResource()) {
+            return jedis.psetex(key, milliseconds, value);
+        }
+    }
+
+    @Override
     public long hset(String key, String field, String value) {
         try (Jedis jedis = jedisPool.getResource()) {
             return jedis.hset(key, field, value);

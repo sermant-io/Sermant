@@ -97,7 +97,7 @@ public class LoggerFactory {
         if (defaultLogger == null) {
             synchronized (LoggerFactory.class) {
                 if (defaultLogger == null) {
-                    defaultLogger = java.util.logging.Logger.getLogger("sermant");
+                    defaultLogger = java.util.logging.Logger.getLogger("sermant.default");
                 }
             }
         }

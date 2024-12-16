@@ -71,6 +71,13 @@ public class AlibabaDubboConsumerInterceptor extends AbstractClientInterceptor<R
             if (!TagKeyMatcher.isMatch(key)) {
                 continue;
             }
+
+            // if original attachment contains the specific key, then ignore
+            String originalAttachment = invocation.getAttachment(key);
+            if (originalAttachment != null) {
+                continue;
+            }
+
             List<String> values = entry.getValue();
 
             // If the tag value is not null on the provider side, it will be converted to list storage. If it is null,

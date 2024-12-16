@@ -19,6 +19,7 @@ package io.sermant.core;
 import io.sermant.core.classloader.ClassLoaderManager;
 import io.sermant.core.common.AgentType;
 import io.sermant.core.common.BootArgsIndexer;
+import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.EventManager;
@@ -35,6 +36,7 @@ import io.sermant.core.plugin.agent.adviser.AdviserScheduler;
 import io.sermant.core.plugin.agent.info.EnhancementManager;
 import io.sermant.core.plugin.agent.template.DefaultAdviser;
 import io.sermant.core.service.ServiceManager;
+import io.sermant.core.utils.FileUtils;
 import io.sermant.god.common.SermantManager;
 
 import java.lang.instrument.Instrumentation;
@@ -85,10 +87,12 @@ public class AgentCoreEntrance {
             agentType = AgentType.AGENTMAIN.getValue();
         }
         artifactCache = artifact;
-        adviserCache = new DefaultAdviser();
 
         // Initialize default logs to ensure log availability before loading the log engine
         LoggerFactory.initDefaultLogger(artifact);
+        adviserCache = new DefaultAdviser();
+
+        FileUtils.setAgentPath((String) argsMap.get(CommonConstant.AGENT_PATH_KEY));
 
         // Initialize the classloader of framework
         ClassLoaderManager.init(argsMap);

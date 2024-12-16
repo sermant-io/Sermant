@@ -46,6 +46,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -62,6 +63,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -78,6 +80,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -94,6 +97,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -110,6 +114,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -126,6 +131,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -142,6 +148,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -158,6 +165,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -174,6 +182,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -190,6 +199,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -207,6 +217,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development
@@ -223,6 +234,7 @@ runs:
       env:
         sermant.springboot.registry.enableRegistry: true
         SERVICECOMB_SERVICE_ENABLESPRINGREGISTER: true
+        SERVICECOMB_SERVICE_PREFERIPADDRESS: true
         dynamic.config.dynamicConfigType: KIE
         dynamic.config.serverAddress: 127.0.0.1:30110
         SERVICE_META_ENVIRONMENT: development

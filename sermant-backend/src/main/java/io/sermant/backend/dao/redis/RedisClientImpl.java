@@ -105,7 +105,7 @@ public class RedisClientImpl implements EventDao {
 
     @Override
     public boolean addInstanceMeta(InstanceMeta instanceMeta) {
-        redisOperation.setex(instanceMeta.getMetaHash(), backendConfig.getHeartbeatEffectiveTime(),
+        redisOperation.psetex(instanceMeta.getMetaHash(), backendConfig.getHeartbeatEffectiveTime(),
                 JSONObject.toJSONString(instanceMeta));
         return true;
     }
@@ -192,7 +192,7 @@ public class RedisClientImpl implements EventDao {
     @Override
     public QueryResultEventInfoEntity getDoNotifyEvent(Event event) {
         QueryResultEventInfoEntity queryResultEventInfoEntity = new QueryResultEventInfoEntity();
-        String instanceMeta = redisOperation.hget(CommonConst.REDIS_HASH_KEY_OF_INSTANCE_META, event.getMetaHash());
+        String instanceMeta = redisOperation.get(event.getMetaHash());
         if (!DbUtils.isEmpty(instanceMeta)) {
             InstanceMeta agentInstanceMeta = JSONObject.parseObject(instanceMeta, InstanceMeta.class);
             queryResultEventInfoEntity = DbUtils.aggregationEvent(event, agentInstanceMeta);

@@ -207,6 +207,9 @@ public class ConfigValueUtil {
     }
 
     private static <R> void parseConfigToCollection(String configStr, Class<R> type, Collection<R> result) {
+        if (StringUtils.isBlank(configStr)) {
+            return;
+        }
         for (String configSlice : configStr.split(CONFIG_SEPARATOR)) {
             final R obj = toBaseType(configSlice.trim(), type);
             if (obj == null) {
@@ -240,6 +243,9 @@ public class ConfigValueUtil {
      */
     public static <K, V> Map<K, V> toMapType(String configStr, Class<K> keyType, Class<V> valueType) {
         final Map<K, V> result = new HashMap<K, V>();
+        if (StringUtils.isBlank(configStr)) {
+            return result;
+        }
         for (String kvSlice : configStr.split(CONFIG_SEPARATOR)) {
             final String[] kvEntry = kvSlice.trim().split(":");
             if (kvEntry.length != MAP_KV_LEN) {

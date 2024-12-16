@@ -11,7 +11,10 @@ on:
       - 'sermant-integration-tests/agentcore-test/**'
       - '.github/workflows/agentcore*.yml'
       - '.github/actions/common/agentcore/action.yml'
-      - '.github/actions/scenarios/agentcore/action.yml'
+      - '.github/actions/scenarios/agentcore/**'
+      - '.github/actions/common/plugin-change-check/action.yml'
+      - '.github/actions/common/entry/action.yml'
+      - '.github/actions/common/exit/action.yml'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
