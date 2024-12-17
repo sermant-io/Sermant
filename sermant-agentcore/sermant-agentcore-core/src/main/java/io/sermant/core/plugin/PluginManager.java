@@ -17,6 +17,7 @@
 package io.sermant.core.plugin;
 
 import io.sermant.core.classloader.ClassLoaderManager;
+import io.sermant.core.command.DynamicAgentArgsManager;
 import io.sermant.core.common.BootArgsIndexer;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.event.collector.FrameworkEventCollector;
@@ -33,6 +34,7 @@ import io.sermant.core.plugin.common.PluginSchemaValidator;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.core.utils.CollectionUtils;
+import io.sermant.core.utils.StringUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -163,7 +165,11 @@ public class PluginManager {
         }
         final String pluginPackage;
         try {
-            pluginPackage = BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
+            if (isDynamic) {
+                pluginPackage = getDynamicPluginPackagePath();
+            } else {
+                pluginPackage = getStaticPluginPackagePath();
+            }
         } catch (IOException ioException) {
             String names = pluginNames.stream().map(String::valueOf).collect(Collectors.joining(", "));
             LOGGER.log(Level.SEVERE, "[INSTALL-PLUGINS] [{0}] Resolve plugin package failed.", names);
@@ -413,5 +419,21 @@ public class PluginManager {
          * @param jarFile Jar file object
          */
         void consume(JarFile jarFile);
+    }
+
+    private static String getStaticPluginPackagePath() throws IOException {
+        return BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
+    }
+
+    private static String getDynamicPluginPackagePath() throws IOException {
+        String dynamicPluginPath = DynamicAgentArgsManager.getDynamicPluginPackagePath();
+        if (!StringUtils.isEmpty(dynamicPluginPath)) {
+            return dynamicPluginPath;
+        }
+        String agentPath = DynamicAgentArgsManager.getAgentPath();
+        if (!StringUtils.isEmpty(agentPath)) {
+            return agentPath + File.separatorChar + "pluginPackage";
+        }
+        return BootArgsIndexer.getPluginPackageDir().getCanonicalPath();
     }
 }

@@ -16,6 +16,10 @@
 
 package io.sermant.core.command;
 
+import io.sermant.core.common.CommonConstant;
+import io.sermant.core.utils.StringUtils;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,5 +64,27 @@ public class DynamicAgentArgsManager {
      */
     public static Map<String, String> getAgentArgsMap() {
         return AGENT_ARGS;
+    }
+
+    /**
+     * get dynamic plugin path
+     *
+     * @return dynamic plugin path
+     */
+    public static String getDynamicPluginPackagePath() {
+        String agentFilePath = AGENT_ARGS.get(CommonConstant.AGENT_FILE_KEY);
+        if (StringUtils.isEmpty(agentFilePath)) {
+            return StringUtils.EMPTY;
+        }
+        return agentFilePath + File.separatorChar + "pluginPackage";
+    }
+
+    /**
+     * get dynamic agent path
+     *
+     * @return dynamic agent path
+     */
+    public static String getAgentPath() {
+        return AGENT_ARGS.get(CommonConstant.AGENT_PATH_KEY);
     }
 }
