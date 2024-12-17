@@ -22,7 +22,7 @@ concurrency:
 jobs:
   set-execution-conditions:
     name: set-execution-conditions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,7 +44,7 @@ jobs:
       enableOpengaussAndPostgresqlDataBaseWriteProhibitionAction: ${{ steps.set-outputs.outputs.enableOpengaussAndPostgresqlDataBaseWriteProhibitionAction }}
   download-midwares-and-cache:
     name: download midwares and cache
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: cache zookeeper
@@ -60,7 +60,7 @@ jobs:
           bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh zk
   build-agent-and-cache:
     name: build agent and cache
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 8
@@ -82,7 +82,7 @@ jobs:
           mvn package -DskipTests -Ptest --file pom.xml
   test-for-database-write-prohibition-mongodb:
     name: Test for database-write-prohibition mongodb
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.set-execution-conditions.outputs.enableMongodbDataBaseWriteProhibitionAction == 'true'
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
@@ -121,7 +121,7 @@ jobs:
   test-for-database-write-prohibition-mysql:
     name: Test for database-write-prohibition mysql
     if: needs.set-execution-conditions.outputs.enableMysqlDataBaseWriteProhibitionAction == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
@@ -148,7 +148,7 @@ jobs:
         uses: ./.github/actions/scenarios/database-write-prohibition/mysql
   test-for-postgresql:
     name: Test for postgresql
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.set-execution-conditions.outputs.enableOpengaussAndPostgresqlDataBaseWriteProhibitionAction == 'true'
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
@@ -209,7 +209,7 @@ jobs:
         uses: ./.github/actions/scenarios/database-write-prohibition/postgresql/
   test-for-opengauss:
     name: Test for opengauss
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: needs.set-execution-conditions.outputs.enableOpengaussDataBaseWriteProhibitionAction == 'true'
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
