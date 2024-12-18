@@ -23,7 +23,6 @@ import io.micrometer.core.instrument.DistributionSummary.Builder;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.config.MeterFilter;
-import io.sermant.core.common.BootArgsIndexer;
 import io.sermant.core.service.metric.api.Counter;
 import io.sermant.core.service.metric.api.DistributionStatisticConfig;
 import io.sermant.core.service.metric.api.Gauge;
@@ -32,12 +31,16 @@ import io.sermant.core.service.metric.api.Summary;
 import io.sermant.core.service.metric.api.Tags;
 import io.sermant.core.service.metric.api.Timer;
 import io.sermant.core.service.metric.config.MetricConfig;
+import io.sermant.core.service.metric.entity.MetricCommonTagEnum;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * metric
@@ -59,10 +62,26 @@ public class MeterMetric implements Metric {
     public MeterMetric(MeterRegistryProvider registryProvider, MetricConfig metricConfig) {
         this.registry = registryProvider.getRegistry();
         MeterRegistry.Config config = this.registry.config();
-        config.commonTags(
-                "agent", "sermant",
-                "agent.app.name", BootArgsIndexer.getAppName()
-        );
+        Set<String> commonTagKeys = metricConfig.getCommonTagKeySet();
+        if (CollectionUtils.isEmpty(commonTagKeys)) {
+            config.meterFilter(MeterFilter.maximumAllowableMetrics(metricConfig.getMaxTimeSeries()));
+            return;
+        }
+
+        List<io.micrometer.core.instrument.Tag> tags = new ArrayList<>();
+        for (String tagKey : commonTagKeys) {
+            if (StringUtils.isEmpty(tagKey)) {
+                continue;
+            }
+            String tagValue = MetricCommonTagEnum.of(tagKey);
+            if (StringUtils.isEmpty(tagValue)) {
+                continue;
+            }
+            tags.add(io.micrometer.core.instrument.Tag.of(tagKey, tagValue));
+        }
+        if (!CollectionUtils.isEmpty(tags)) {
+            config.commonTags(tags);
+        }
         config.meterFilter(MeterFilter.maximumAllowableMetrics(metricConfig.getMaxTimeSeries()));
     }
 
@@ -89,7 +108,7 @@ public class MeterMetric implements Metric {
 
     @Override
     public Summary summary(String metricName, Tags tags, String description,
-            DistributionStatisticConfig distributionStatisticConfig) {
+                           DistributionStatisticConfig distributionStatisticConfig) {
         Builder summaryBuilder = DistributionSummary.builder(metricName)
                 .tags(getMeterTags(tags))
                 .description(description);

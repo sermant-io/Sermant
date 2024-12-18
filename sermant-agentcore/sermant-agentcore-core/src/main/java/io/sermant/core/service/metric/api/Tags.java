@@ -35,6 +35,14 @@ import java.util.Map;
  * @since 2024-08-16
  */
 public final class Tags {
+    /**
+     * Key for the scope tag
+     */
+    public static final String SCOPE = "scope";
+    /**
+     * Value for the core scope tag
+     */
+    public static final String SCOPE_VALUE_CORE = "core";
     private final Map<String, String> tags = new HashMap<>();
 
     private Tags() {
@@ -82,6 +90,26 @@ public final class Tags {
             result.tags.putAll(tags);
         }
         return result;
+    }
+
+    /**
+     * Adds a core scope tag.
+     *
+     * @return Tags Returns the current Tags instance to support method chaining.
+     */
+    public Tags addCoreScope() {
+        return addScope(SCOPE_VALUE_CORE);
+    }
+
+    /**
+     * Adds a scope tag.
+     *
+     * @param scopeValue scope value
+     * @return Tags Returns the current Tags instance to support method chaining.
+     */
+    public Tags addScope(String scopeValue) {
+        tags.put(SCOPE, StringUtils.isEmpty(scopeValue) ? "undefined" : scopeValue);
+        return this;
     }
 
     /**

@@ -234,11 +234,6 @@ public class RouterConstant {
     public static final String LANE_TAG = "lane_tag";
 
     /**
-     * Scope for metrics
-     */
-    public static final String SCOPE = "scope";
-
-    /**
      * the name for the service.meta.parameters tag
      */
     public static final String SERVICE_META_PARAMETERS = "service_meta_parameters";
