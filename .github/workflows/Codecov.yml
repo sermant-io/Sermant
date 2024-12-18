@@ -5,12 +5,12 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         java_version: [8]
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
     permissions:
       checks: write
       contents: write
