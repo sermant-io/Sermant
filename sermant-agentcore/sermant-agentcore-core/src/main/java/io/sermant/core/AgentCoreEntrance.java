@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package io.sermant.core;
 
 import io.sermant.core.classloader.ClassLoaderManager;
+import io.sermant.core.command.CommandProcessor;
 import io.sermant.core.common.AgentType;
 import io.sermant.core.common.BootArgsIndexer;
 import io.sermant.core.common.CommonConstant;
@@ -24,6 +25,7 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.EventManager;
 import io.sermant.core.event.collector.FrameworkEventCollector;
+import io.sermant.core.ext.ExternalAgentManager;
 import io.sermant.core.notification.NotificationInfo;
 import io.sermant.core.notification.NotificationManager;
 import io.sermant.core.notification.SermantNotificationType;
@@ -33,6 +35,7 @@ import io.sermant.core.plugin.PluginSystemEntrance;
 import io.sermant.core.plugin.agent.ByteEnhanceManager;
 import io.sermant.core.plugin.agent.adviser.AdviserInterface;
 import io.sermant.core.plugin.agent.adviser.AdviserScheduler;
+import io.sermant.core.plugin.agent.config.AgentConfig;
 import io.sermant.core.plugin.agent.info.EnhancementManager;
 import io.sermant.core.plugin.agent.template.DefaultAdviser;
 import io.sermant.core.service.ServiceManager;
@@ -135,6 +138,24 @@ public class AgentCoreEntrance {
         // Internal notification, Sermant start-up completion notification
         if (NotificationManager.isEnable()) {
             NotificationManager.doNotify(new NotificationInfo(SermantNotificationType.LOAD_COMPLETE, null));
+        }
+
+        // cache instrumentation
+        CommandProcessor.cacheInstrumentation(instrumentation);
+
+        // install external agent, such as OTEL
+        handleExternalAgentInstallation(instrumentation);
+    }
+
+    private static void handleExternalAgentInstallation(Instrumentation instrumentation) {
+        AgentConfig agentConfig = ConfigManager.getConfig(AgentConfig.class);
+        if (agentConfig.isExternalAgentInjection()) {
+            try {
+                ExternalAgentManager.installExternalAgent(false, agentConfig.getExternalAgentName(),
+                        agentConfig.getExternalAgentFile(), null, instrumentation);
+            } catch (Exception e) {
+                LOGGER.severe("Failed to install external agent: " + e.getMessage());
+            }
         }
     }
 

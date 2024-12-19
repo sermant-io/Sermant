@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,17 @@ public enum FrameworkEventDefinitions {
     /**
      * Sermant plugin update event definition
      */
-    SERMANT_PLUGIN_UPDATE("SERMANT_PLUGIN_UPDATE", EventType.OPERATION, EventLevel.NORMAL);
+    SERMANT_PLUGIN_UPDATE("SERMANT_PLUGIN_UPDATE", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * External agent install event definition
+     */
+    EXTERNAL_AGENT_INSTALL("EXTERNAL_AGENT_INSTALL", EventType.OPERATION, EventLevel.NORMAL),
+
+    /**
+     * OpenTelemetry agent start event definition
+     */
+    OTEL_START("OTEL_START", EventType.OPERATION, EventLevel.NORMAL);
 
     /**
      * event name

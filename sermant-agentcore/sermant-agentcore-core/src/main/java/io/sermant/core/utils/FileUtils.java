@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -298,5 +301,17 @@ public class FileUtils {
 
     public static void setAgentPath(String path) {
         agentPath = path;
+    }
+
+    /**
+     * get attributes from jar file
+     *
+     * @param jarFile jar file
+     * @return attributes of the given jar file
+     * @throws IOException
+     */
+    public static Attributes getJarFileAttributes(JarFile jarFile) throws IOException {
+        Manifest manifest = jarFile.getManifest();
+        return manifest != null ? manifest.getMainAttributes() : new Attributes();
     }
 }

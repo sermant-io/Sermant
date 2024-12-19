@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,15 @@ public class AgentConfig implements BaseConfig {
 
     @ConfigFieldKey("preFilter.file")
     private String preFilterFile;
+
+    @ConfigFieldKey("externalAgent.injection")
+    private boolean externalAgentInjection = false;
+
+    @ConfigFieldKey("externalAgent.name")
+    private String externalAgentName = "unknown";
+
+    @ConfigFieldKey("externalAgent.file")
+    private String externalAgentFile = "";
 
     /**
      * Allows classes to be loaded from the thread context, mainly used by the PluginClassLoader to load the classes of
@@ -171,5 +180,29 @@ public class AgentConfig implements BaseConfig {
 
     public void setPreFilterFile(String preFilterFile) {
         this.preFilterFile = preFilterFile;
+    }
+
+    public boolean isExternalAgentInjection() {
+        return externalAgentInjection;
+    }
+
+    public void setExternalAgentInjection(boolean externalAgentInjection) {
+        this.externalAgentInjection = externalAgentInjection;
+    }
+
+    public String getExternalAgentName() {
+        return externalAgentName;
+    }
+
+    public void setExternalAgentName(String externalAgentName) {
+        this.externalAgentName = externalAgentName;
+    }
+
+    public String getExternalAgentFile() {
+        return externalAgentFile;
+    }
+
+    public void setExternalAgentFile(String externalAgentFile) {
+        this.externalAgentFile = externalAgentFile;
     }
 }

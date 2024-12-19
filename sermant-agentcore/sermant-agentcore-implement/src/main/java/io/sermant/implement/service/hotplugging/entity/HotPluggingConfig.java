@@ -34,6 +34,11 @@ public class HotPluggingConfig {
     private String pluginNames;
 
     /**
+     * name of external agent
+     */
+    private String externalAgentName;
+
+    /**
      * Instance ID，generate by UUID
      */
     private String instanceIds;
@@ -86,5 +91,13 @@ public class HotPluggingConfig {
 
     public void setParams(String params) {
         this.params = params;
+    }
+
+    public String getExternalAgentName() {
+        return externalAgentName;
+    }
+
+    public void setExternalAgentName(String externalAgentName) {
+        this.externalAgentName = externalAgentName;
     }
 }

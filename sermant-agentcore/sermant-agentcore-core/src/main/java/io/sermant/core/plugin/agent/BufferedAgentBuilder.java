@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.collector.FrameworkEventCollector;
+import io.sermant.core.ext.otel.OtelConstant;
 import io.sermant.core.plugin.Plugin;
 import io.sermant.core.plugin.agent.config.AgentConfig;
 import io.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
@@ -342,6 +343,10 @@ public class BufferedAgentBuilder {
         @Override
         public boolean matches(TypeDescription typeDesc, ClassLoader classLoader, JavaModule javaModule,
                 Class<?> classBeingRedefined, ProtectionDomain protectionDomain) {
+            if (OtelConstant.OTEL_AGENT_CLASS.equals(typeDesc.getActualName())) {
+                return false;
+            }
+
             if (unMatchedClassCache.containsKey(typeDesc.getActualName())) {
                 return true;
             }

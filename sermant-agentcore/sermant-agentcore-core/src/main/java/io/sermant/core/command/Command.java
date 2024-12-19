@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,12 @@ public enum Command {
     /**
      * Enhancement query instruction
      */
-    CHECK_ENHANCEMENT("CHECK-ENHANCEMENT");
+    CHECK_ENHANCEMENT("CHECK-ENHANCEMENT"),
+
+    /**
+     * Install external agent instruction
+     */
+    INSTALL_EXTERNAL_AGENT("INSTALL-EXTERNAL-AGENT");
 
     private final String value;
 

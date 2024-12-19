@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.sermant.core.command;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.utils.StringUtils;
 
+import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,12 +42,15 @@ public class CommandProcessor {
 
     private static final String COMMAND = "command";
 
+    private static Instrumentation instrumentation;
+
     static {
         COMMAND_EXECUTOR_MAP.put(Command.INSTALL_PLUGINS.getValue(), new PluginsInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UNINSTALL_AGENT.getValue(), new AgentUnInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UNINSTALL_PLUGINS.getValue(), new PluginsUnInstallCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.UPDATE_PLUGINS.getValue(), new PluginsUpdateCommandExecutor());
         COMMAND_EXECUTOR_MAP.put(Command.CHECK_ENHANCEMENT.getValue(), new CheckEnhancementsCommandExecutor());
+        COMMAND_EXECUTOR_MAP.put(Command.INSTALL_EXTERNAL_AGENT.getValue(), new ExternalAgentInstallCommandExecutor());
     }
 
     /**
@@ -80,5 +84,23 @@ public class CommandProcessor {
         String commandArgs = commandInfo.length > 1 ? commandInfo[1] : null;
         DynamicAgentArgsManager.refreshAgentArgs(agentArgsMap);
         commandExecutor.execute(commandArgs);
+    }
+
+    /**
+     * cache instrumentation for dynamic agent installation
+     *
+     * @param inst instrumentation
+     */
+    public static void cacheInstrumentation(Instrumentation inst) {
+        instrumentation = inst;
+    }
+
+    /**
+     * get instrumentation for dynamic agent installation
+     *
+     * @return instrumentation
+     */
+    public static Instrumentation getInstrumentation() {
+        return instrumentation;
     }
 }

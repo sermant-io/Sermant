@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import com.alibaba.fastjson.JSONObject;
 import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
+import io.sermant.core.ext.ExternalAgentManager;
 import io.sermant.core.plugin.common.PluginConstant;
 import io.sermant.core.plugin.common.PluginSchemaValidator;
 import io.sermant.core.service.heartbeat.api.ExtInfoProvider;
 import io.sermant.core.service.heartbeat.api.HeartbeatService;
+import io.sermant.core.service.heartbeat.common.ExternalAgentInfo;
 import io.sermant.core.service.heartbeat.common.HeartbeatConstant;
 import io.sermant.core.service.heartbeat.common.HeartbeatMessage;
 import io.sermant.core.service.heartbeat.common.PluginInfo;
@@ -110,6 +112,15 @@ public class HeartbeatServiceImpl implements HeartbeatService {
                     new PluginInfo(entry.getKey(), entry.getValue()));
             addExtInfo(entry.getKey(), heartbeatMessage.getPluginInfoMap().get(entry.getKey()));
         }
+
+        // add external agent installation information
+        for (String agentName : ExternalAgentManager.getExternalAgentInstallationStatus().keySet()) {
+            if (ExternalAgentManager.getInstallationStatus(agentName)) {
+                heartbeatMessage.getExternalAgentInfoMap().putIfAbsent(agentName,
+                        new ExternalAgentInfo(agentName, ExternalAgentManager.getAgentVersion(agentName)));
+            }
+        }
+
         heartbeatMessage.updateHeartbeatVersion();
         if (nettyClient == null) {
             LOGGER.warning("Netty client is null when send heartbeat message.");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import io.sermant.core.plugin.agent.collector.PluginCollector;
 import io.sermant.core.plugin.agent.config.AgentConfig;
 import io.sermant.core.plugin.agent.declarer.PluginDescription;
 import io.sermant.core.plugin.agent.enhance.ClassLoaderDeclarer;
+import io.sermant.core.plugin.agent.enhance.OpenTelemetryAgentDeclarer;
 import io.sermant.core.service.ServiceConfig;
 import io.sermant.core.utils.FileUtils;
 
@@ -126,6 +127,7 @@ public class ByteEnhanceManager {
 
     private static void enhanceForFramework() {
         enhanceForInjectService();
+        enhanceForOtelAgent();
     }
 
     /**
@@ -135,5 +137,12 @@ public class ByteEnhanceManager {
         if (ConfigManager.getConfig(ServiceConfig.class).isInjectEnable()) {
             builder.addEnhance(new ClassLoaderDeclarer());
         }
+    }
+
+    /**
+     * An enhancement to the OpenTelemetry agent for the observability
+     */
+    private static void enhanceForOtelAgent() {
+        builder.addEnhance(new OpenTelemetryAgentDeclarer());
     }
 }

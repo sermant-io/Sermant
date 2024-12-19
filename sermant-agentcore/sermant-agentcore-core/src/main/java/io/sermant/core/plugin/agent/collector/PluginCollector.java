@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ public class PluginCollector {
 
             return result;
         } catch (Exception exception) {
-            LOGGER.log(Level.WARNING, "Exception occurs when math target: " + target.getActualName() + ",{0}",
+            LOGGER.log(Level.WARNING, "Exception occurs when match target: " + target.getActualName() + ",{0}",
                     exception.getMessage());
             return false;
         }

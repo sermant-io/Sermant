@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2023 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2023-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,5 +163,21 @@ public class FrameworkEventCollector extends EventCollector {
         offerEvent(new Event(frameworkEventDefinitions.getScope(), frameworkEventDefinitions.getEventLevel(),
                 frameworkEventDefinitions.getEventType(),
                 new EventInfo(frameworkEventDefinitions.getName(), description)));
+    }
+
+    /**
+     * Collect OpenTelemetry Agent start event
+     *
+     * @param startMethod the method name OpenTelemetry Agent starts by
+     */
+    public void collectOtelStartEvent(String startMethod) {
+        if (!eventConfig.isEnable()) {
+            return;
+        }
+        String description = "OpenTelemetry Agent starts by " + startMethod;
+        offerEvent(new Event(FrameworkEventDefinitions.OTEL_START.getScope(),
+                FrameworkEventDefinitions.OTEL_START.getEventLevel(),
+                FrameworkEventDefinitions.OTEL_START.getEventType(),
+                new EventInfo(FrameworkEventDefinitions.OTEL_START.getName(), description)));
     }
 }
