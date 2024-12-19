@@ -188,7 +188,7 @@
         </template>
       </el-table-column>
       <el-table-column prop="eventInfo.name" :filters="eventNames" :filtered-value="eventNameFilterValue"
-                       :label="$t('eventViews.event')" width="150" column-key="name">
+                       :label="$t('eventViews.event')" width="180" column-key="name">
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <span v-if="scope.row.type === 'log'">
@@ -543,6 +543,8 @@ const eventName = reactive({
   SERMANT_PLUGIN_INSTALL: i18n.global.t('eventViews.pluginInstall'),
   SERMANT_PLUGIN_UNINSTALL: i18n.global.t('eventViews.pluginUninstall'),
   SERMANT_PLUGIN_UPDATE: i18n.global.t('eventViews.pluginUpdate'),
+  EXTERNAL_AGENT_INSTALL: i18n.global.t('eventViews.externalAgentInstall'),
+  OTEL_START: i18n.global.t('eventViews.otelStart'),
   // 日志事件
   WARNING: i18n.global.t('eventViews.warningLog'),
   SEVERE: i18n.global.t('eventViews.errorLog'),
@@ -664,6 +666,8 @@ watch(() => i18n.global.locale, (newLocale, oldLocale) => {
   eventName.SERMANT_PLUGIN_INSTALL=i18n.global.t('eventViews.pluginInstall');
   eventName.SERMANT_PLUGIN_UNINSTALL=i18n.global.t('eventViews.pluginUninstall');
   eventName.SERMANT_PLUGIN_UPDATE=i18n.global.t('eventViews.pluginUpdate');
+  eventName.EXTERNAL_AGENT_INSTALL=i18n.global.t('eventViews.externalAgentInstall');
+  eventName.OTEL_START=i18n.global.t('eventViews.otelStart');
   eventName.WARNING=i18n.global.t('eventViews.warningLog');
   eventName.SEVERE=i18n.global.t('eventViews.errorLog');
   eventName.TRAFFIC_LIMITING=i18n.global.t('eventViews.rateLimiting');

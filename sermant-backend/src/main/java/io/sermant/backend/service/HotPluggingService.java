@@ -78,7 +78,18 @@ public class HotPluggingService {
      * @return verification results
      */
     private boolean validateParam(HotPluggingConfig hotPluggingConfig) {
-        return StringUtils.isNotEmpty(hotPluggingConfig.getPluginNames())
-                || !commandTypeSet.contains(hotPluggingConfig.getCommandType());
+        if (!commandTypeSet.contains(hotPluggingConfig.getCommandType())) {
+            return false;
+        }
+
+        if (CommandType.INSTALL_EXTERNAL_AGENT.getValue().equals(hotPluggingConfig.getCommandType())) {
+            if (StringUtils.isEmpty(hotPluggingConfig.getAgentPath()) || StringUtils.isEmpty(
+                    hotPluggingConfig.getExternalAgentName())) {
+                return false;
+            }
+            return true;
+        } else {
+            return StringUtils.isNotEmpty(hotPluggingConfig.getPluginNames());
+        }
     }
 }

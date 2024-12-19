@@ -102,15 +102,15 @@
       <el-table :data="state.tableData" style="width: 100%" :border="true" stripe
                 @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" :selectable="selectable"/>
-        <el-table-column :label="$t('instanceView.status')" prop="health" width="100">
+        <el-table-column :label="$t('instanceView.status')" prop="health" width="70">
           <template #default="scope">
             <div class="dot normal-dot" v-if="scope.row.health"></div>
             <div class="dot abnormal-dot" v-if="!scope.row.health"></div>
           </template>
         </el-table-column>
-        <el-table-column prop="appName" :label="$t('instanceView.appName')" width="110"></el-table-column>
+        <el-table-column prop="appName" :label="$t('instanceView.appName')" width="100"></el-table-column>
         <el-table-column prop="service" :label="$t('instanceView.service')" width="100"></el-table-column>
-        <el-table-column prop="artifact" :label="$t('instanceView.sermantName')" width="120"></el-table-column>
+        <el-table-column prop="artifact" :label="$t('instanceView.artifactName')" width="100"></el-table-column>
         <el-table-column prop="processId" :label="$t('instanceView.processId')" width="100"></el-table-column>
         <el-table-column :label="$t('instanceView.DynamicInstall')" width="140">
           <template #default="scope">
@@ -121,9 +121,9 @@
         <el-table-column prop="instanceId" :label="$t('instanceView.instanceID')" width="170"></el-table-column>
         <el-table-column prop="version" :label="$t('instanceView.version')" width="80"></el-table-column>
         <el-table-column prop="ipAddress" label="IP" width="180"></el-table-column>
-        <el-table-column prop="heartbeatTime" :label="$t('instanceView.heartbeat')" width="180">
+        <el-table-column prop="heartbeatTime" :label="$t('instanceView.heartbeat')" width="160">
         </el-table-column>
-        <el-table-column :label="$t('instanceView.plugin')">
+        <el-table-column :label="$t('instanceView.plugin')" width="240">
           <template #default="props">
             <div class="plugin-box">
               <el-tag
@@ -136,22 +136,38 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('instanceView.operation')" fixed="right" align="center" width="250">
+        <el-table-column :label="$t('instanceView.externalAgent')" width="240">
+          <template #default="props">
+            <div class="plugin-box">
+              <el-tag
+                  class="mx-1"
+                  v-for="(agent, index) in props.row.externalAgentInfoMap"
+                  :key="index"
+              >{{ agent.name }}:{{ agent.version }}
+              </el-tag
+              >
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column :label="$t('instanceView.operation')" fixed="right" align="center" width="160">
           <template #default="scope">
-            <div v-if="scope.row.dynamicInstall && scope.row.health">
-              <el-button type="primary" class="button-padding" @click="hotPlugging(scope.row.instanceId)">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <el-button
+                  type="primary"
+                  class="button-padding"
+                  @click="hotPlugging(scope.row.instanceId)"
+                  style="margin-left: 10%; margin-right: 10%"
+              >
                 {{ $t('instanceView.hotPlugging') }}
               </el-button>
-              <el-button type="primary" class="button-padding" @click="viewResult(scope.row.instanceId)">
+              <el-button
+                  type="primary"
+                  class="button-padding"
+                  @click="viewResult(scope.row.instanceId)"
+                  style="margin-left: 10%; margin-right: 10%"
+              >
                 {{ $t('instanceView.view') }}
               </el-button>
-            </div>
-            <div v-else style="display: inline">
-              <el-button type="primary" class="button-padding" disabled>{{
-                  $t('instanceView.hotPlugging')
-                }}
-              </el-button>
-              <el-button type="primary" class="button-padding" disabled>{{ $t('instanceView.view') }}</el-button>
             </div>
           </template>
         </el-table-column>
@@ -173,10 +189,12 @@
     <el-form :model="hotPluggingConfig" :rules="checkRule" ref="ruleFormRef">
       <el-form-item :label="$t('instanceView.commandType')" label-width="140px" prop="commandType">
         <el-select v-model="hotPluggingConfig.commandType" class="input-style"
-                   :placeholder="$t('instanceView.commandTypePlaceholder')">
+                   :placeholder="$t('instanceView.commandTypePlaceholder')"
+                   @change="handleExternalAgentInput()" >
           <el-option :label="$t('instanceView.uninstallPlugin')" value="UNINSTALL-PLUGINS"/>
           <el-option :label="$t('instanceView.installPlugin')" value="INSTALL-PLUGINS"/>
           <el-option :label="$t('instanceView.updatePlugin')" value="UPDATE-PLUGINS"/>
+          <el-option :label="$t('instanceView.installExternalAgent')" value="INSTALL-EXTERNAL-AGENT"/>
         </el-select>
         <TooltipIcon :content="$t('instanceView.commandTypeNotice')"/>
       </el-form-item>
@@ -187,16 +205,31 @@
                   :placeholder="$t('instanceView.pluginNamePlaceholder')"/>
         <TooltipIcon :content="$t('instanceView.pluginNameNotice')"/>
       </el-form-item>
-      <el-form-item v-if="hotPluggingConfig.commandType == 'UPDATE-AGENT'" :label="$t('instanceView.agentPath')"
+      <el-form-item v-if="hotPluggingConfig.commandType == 'INSTALL-EXTERNAL-AGENT'"
+                    :label="$t('instanceView.externalAgentName')" label-width="140px" prop="externalAgentName">
+        <el-input v-model="hotPluggingConfig.externalAgentName" class="input-style"
+                  :placeholder="$t('instanceView.externalAgentNamePlaceholder')"/>
+        <TooltipIcon :content="$t('instanceView.externalAgentNameNotice')"/>
+      </el-form-item>
+      <el-form-item v-if="hotPluggingConfig.commandType == 'UPDATE-PLUGINS'
+                    || hotPluggingConfig.commandType == 'INSTALL-PLUGINS'" :label="$t('instanceView.agentPath')"
                     label-width="140px"
                     prop="agentPath">
         <el-input v-model="hotPluggingConfig.agentPath" class="input-style"
                   :placeholder="$t('instanceView.agentPathPlaceholder')"/>
         <TooltipIcon :content="$t('instanceView.agentPathNotice')"/>
       </el-form-item>
+      <el-form-item v-if="hotPluggingConfig.commandType == 'INSTALL-EXTERNAL-AGENT'"
+                    :label="$t('instanceView.agentPath')"
+                    label-width="140px"
+                    prop="agentPath">
+        <el-input v-model="hotPluggingConfig.agentPath" class="input-style"
+                  :placeholder="$t('instanceView.externalAgentPathPlaceholder')"/>
+        <TooltipIcon :content="$t('instanceView.externalAgentPathNotice')"/>
+      </el-form-item>
       <el-form-item
           v-if="hotPluggingConfig.commandType == 'UPDATE-AGENT' || hotPluggingConfig.commandType == 'UPDATE-PLUGINS'
-            || hotPluggingConfig.commandType == 'INSTALL-PLUGINS'"
+            || hotPluggingConfig.commandType == 'INSTALL-PLUGINS' || hotPluggingConfig.commandType == 'INSTALL-EXTERNAL-AGENT'"
           :label="$t('instanceView.param')" label-width="140px"
           prop="param">
         <el-input v-model="hotPluggingConfig.params" class="input-style"
@@ -233,7 +266,7 @@ onMounted(() => {
 
 const dialogFormVisible = ref(false)
 
-const selectable = (row: TableData) => row.dynamicInstall && row.health;
+const selectable = (row: TableData) => true
 
 const goBack = () => {
   router.push("/events");
@@ -273,10 +306,14 @@ const checkRule = reactive({
     {required: true, message: i18n.global.t('instanceView.commandTypePlaceholder'), trigger: 'blur'}
   ],
   agentPath: [
-    {required: true, message: i18n.global.t('instanceView.agentPathPlaceholder'), trigger: 'blur'}
+    {required: false, message: i18n.global.t('instanceView.agentPathPlaceholder'), trigger: 'blur'}
   ],
+
   pluginNames: [
     {required: true, message: i18n.global.t('instanceView.pluginNamePlaceholder'), trigger: 'blur'}
+  ],
+  externalAgentName: [
+    {required: true, message: i18n.global.t('instanceView.externalAgentNamePlaceholder'), trigger: 'blur'}
   ]
 });
 
@@ -320,6 +357,18 @@ const handleInputConfirm = () => {
   search();
 };
 
+const handleExternalAgentInput = () => {
+  if(hotPluggingConfig.value.commandType === 'INSTALL-EXTERNAL-AGENT') {
+    checkRule.agentPath = [
+      {required: true, message: i18n.global.t('instanceView.agentPathPlaceholder'), trigger: 'blur'}
+    ]
+  } else {
+    checkRule.agentPath = [
+      {required: false, message: i18n.global.t('instanceView.agentPathPlaceholder'), trigger: 'blur'}
+    ]
+  }
+}
+
 // Statistics of data for each label
 const tagCount = reactive({
   applicationCount: [],
@@ -334,6 +383,7 @@ interface TableData {
   ip: string;
   lastHeartbeatTime: string;
   pluginInfoMap: any[];
+  externalAgentInfoMap: any[];
   version: string;
   health: boolean;
   ipAddress: string;
@@ -346,6 +396,7 @@ interface TableData {
 const hotPluggingConfig = ref({
   commandType: '',
   pluginNames: '',
+  externalAgentName:'',
   agentPath: '',
   params: '',
   instanceIds: ''
@@ -504,6 +555,7 @@ function cleanHotPluggingConfig() {
   hotPluggingConfig.value = {
     commandType: '',
     pluginNames: '',
+    externalAgentName: '',
     agentPath: '',
     params: '',
     instanceIds: ''
