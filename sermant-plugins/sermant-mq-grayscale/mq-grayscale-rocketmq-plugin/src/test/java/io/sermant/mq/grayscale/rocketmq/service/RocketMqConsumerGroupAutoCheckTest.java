@@ -61,24 +61,10 @@ public class RocketMqConsumerGroupAutoCheckTest extends RocketMqTestAbstract {
         MQClientAPIImpl mqClientAPI = Mockito.mock(MQClientAPIImpl.class);
         Mockito.when(instance.getMQClientAPIImpl()).thenReturn(mqClientAPI);
 
-        TopicRouteData topicRouteData = Mockito.mock(TopicRouteData.class);
-        Mockito.when(mqClientAPI.getTopicRouteInfoFromNameServer("TEST-TOPIC", 5000L, false))
-                .thenReturn(topicRouteData);
-
-        HashMap<Long, String> brokerAddrs = new HashMap<>();
-        brokerAddrs.put(123L, "127.0.0.1:9876");
-        BrokerData brokerData = new BrokerData();
-        brokerData.setBrokerAddrs(brokerAddrs);
-        List<BrokerData> brokerDataList = new ArrayList<>();
-        brokerDataList.add(brokerData);
-        Mockito.when(topicRouteData.getBrokerDatas()).thenReturn(brokerDataList);
-
         GroupList groupList = new GroupList();
         HashSet<String> list = new HashSet<>();
         list.add("group_junit_gray");
         groupList.setGroupList(list);
-        Mockito.when(mqClientAPI.queryTopicConsumeByWho("127.0.0.1:9876", "TEST-TOPIC", 5000L))
-                .thenReturn(groupList);
 
         List<String> consumerIds = new ArrayList<>();
         consumerIds.add("123");
