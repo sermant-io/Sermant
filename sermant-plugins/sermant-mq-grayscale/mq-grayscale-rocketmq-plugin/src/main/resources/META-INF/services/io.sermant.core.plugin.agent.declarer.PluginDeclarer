@@ -23,3 +23,8 @@ io.sermant.mq.grayscale.rocketmq.declarer.RocketMqPushConsumerSubscribeFetchDecl
 io.sermant.mq.grayscale.rocketmq.declarer.RocketMqLitePullConsumerConstructorDeclarer
 io.sermant.mq.grayscale.rocketmq.declarer.RocketMqPullConsumerConstructorDeclarer
 io.sermant.mq.grayscale.rocketmq.declarer.RocketMqPushConsumerConstructorDeclarer
+
+# UPPER 5.1.x client
+io.sermant.mq.grayscale.rocketmq.declarer.client51.RocketMqV51LitePullConsumerConstructorDeclarer
+io.sermant.mq.grayscale.rocketmq.declarer.client51.RocketMqV51PullConsumerConstructorDeclarer
+io.sermant.mq.grayscale.rocketmq.declarer.client51.RocketMqV51PushConsumerConstructorDeclarer
