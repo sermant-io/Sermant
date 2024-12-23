@@ -34,6 +34,11 @@ public class HotPluggingConfig {
     private String pluginNames;
 
     /**
+     * External agent name
+     */
+    private String externalAgentName;
+
+    /**
      * JavaAgent Path
      */
     private String agentPath;

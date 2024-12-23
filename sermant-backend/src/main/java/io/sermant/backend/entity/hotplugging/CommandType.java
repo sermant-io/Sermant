@@ -34,7 +34,12 @@ public enum CommandType {
     /**
      * Uninstall plugin instruction
      */
-    UNINSTALL_PLUGINS("UNINSTALL-PLUGINS");
+    UNINSTALL_PLUGINS("UNINSTALL-PLUGINS"),
+
+    /**
+     * Install external agent instruction
+     */
+    INSTALL_EXTERNAL_AGENT("INSTALL-EXTERNAL-AGENT");
 
     private final String value;
 

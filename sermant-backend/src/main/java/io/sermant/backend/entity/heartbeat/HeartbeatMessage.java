@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,8 @@ public class HeartbeatMessage {
     private String instanceId;
 
     private Map<String, PluginInfo> pluginInfoMap = new HashMap<>();
+
+    private Map<String, ExternalAgentInfo> externalAgentInfoMap = new HashMap<>();
 
     private String appName;
 
@@ -185,5 +187,13 @@ public class HeartbeatMessage {
 
     public void setProcessId(String processId) {
         this.processId = processId;
+    }
+
+    public Map<String, ExternalAgentInfo> getExternalAgentInfoMap() {
+        return externalAgentInfoMap;
+    }
+
+    public void setExternalAgentInfoMap(Map<String, ExternalAgentInfo> externalAgentInfoMap) {
+        this.externalAgentInfoMap = externalAgentInfoMap;
     }
 }
