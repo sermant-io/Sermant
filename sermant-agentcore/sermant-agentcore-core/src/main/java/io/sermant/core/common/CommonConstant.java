@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2021 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,6 +141,11 @@ public class CommonConstant {
      * The key of agent path
      */
     public static final String AGENT_PATH_KEY = "agentPath";
+
+    /**
+     * The key of agent file in dynamic installation
+     */
+    public static final String AGENT_FILE_KEY = "AGENT_FILE";
 
     private CommonConstant() {
     }

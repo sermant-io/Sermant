@@ -16,12 +16,22 @@
 
 package io.sermant.core.event.collector;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.when;
+
+import io.sermant.core.common.BootArgsIndexer;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.event.Event;
 import io.sermant.core.event.config.EventConfig;
 import io.sermant.core.utils.JarFileUtils;
 import io.sermant.core.utils.ReflectUtils;
-import org.junit.*;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -30,9 +40,6 @@ import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit Tests for FrameworkEventCollector
@@ -48,19 +55,21 @@ public class FrameworkEventCollectorTest {
 
     private final MockedStatic<JarFileUtils> jarFileUtilsMockedStatic = Mockito.mockStatic(JarFileUtils.class);
 
-    private static final EventConfig EVENT_CONFIG = new EventConfig();
-
     @Before
     public void setUp() throws Exception {
-        configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(EVENT_CONFIG);
+        configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(new EventConfig());
         jarFileUtilsMockedStatic.when(() -> JarFileUtils.getManifestAttr(any(), anyString())).thenReturn("1.0.0");
     }
 
     @Test
     public void testEventNotEnabled() {
-        EVENT_CONFIG.setEnable(false);
-        FrameworkEventCollector.getInstance().collectdHotPluggingEvent(FrameworkEventDefinitions.SERMANT_PLUGIN_UNINSTALL,
-                "Hot plugging command[INSTALL-PLUGINS] has been processed.");
+        Optional<Object> eventConfigOptional = ReflectUtils.getFieldValue(FrameworkEventCollector.getInstance(),
+                "eventConfig");
+        EventConfig eventConfig = (EventConfig) (eventConfigOptional.get());
+        eventConfig.setEnable(false);
+        FrameworkEventCollector.getInstance()
+                .collectdHotPluggingEvent(FrameworkEventDefinitions.SERMANT_PLUGIN_UNINSTALL,
+                        "Hot plugging command[INSTALL-PLUGINS] has been processed.");
         Optional<Object> optional = ReflectUtils.getFieldValue(FrameworkEventCollector.getInstance(), "eventQueue");
         Assert.assertTrue(optional.isPresent());
         BlockingQueue<Event> eventQueue = (BlockingQueue<Event>) optional.get();
@@ -69,9 +78,13 @@ public class FrameworkEventCollectorTest {
 
     @Test
     public void testEventEnabled() {
-        EVENT_CONFIG.setEnable(true);
-        FrameworkEventCollector.getInstance().collectdHotPluggingEvent(FrameworkEventDefinitions.SERMANT_PLUGIN_UNINSTALL,
-                "Hot plugging command[INSTALL-PLUGINS] has been processed.");
+        Optional<Object> eventConfigOptional = ReflectUtils.getFieldValue(FrameworkEventCollector.getInstance(),
+                "eventConfig");
+        EventConfig eventConfig = (EventConfig) (eventConfigOptional.get());
+        eventConfig.setEnable(true);
+        FrameworkEventCollector.getInstance()
+                .collectdHotPluggingEvent(FrameworkEventDefinitions.SERMANT_PLUGIN_UNINSTALL,
+                        "Hot plugging command[INSTALL-PLUGINS] has been processed.");
         Optional<Object> optional = ReflectUtils.getFieldValue(FrameworkEventCollector.getInstance(), "eventQueue");
         Assert.assertTrue(optional.isPresent());
         BlockingQueue<Event> eventQueue = (BlockingQueue<Event>) optional.get();

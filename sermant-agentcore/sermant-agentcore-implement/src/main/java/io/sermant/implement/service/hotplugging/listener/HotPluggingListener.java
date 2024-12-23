@@ -18,6 +18,7 @@ package io.sermant.implement.service.hotplugging.listener;
 
 import io.sermant.core.command.CommandProcessor;
 import io.sermant.core.common.BootArgsIndexer;
+import io.sermant.core.common.CommonConstant;
 import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigEvent;
@@ -59,8 +60,11 @@ public class HotPluggingListener implements DynamicConfigListener {
         }
         Map<String, String> argsMap = new HashMap<>();
         parseParams(config, argsMap);
+        argsMap.put(CommonConstant.AGENT_FILE_KEY, config.getAgentPath());
         if (!StringUtils.isEmpty(config.getPluginNames())) {
             argsMap.put(COMMAND, config.getCommandType() + ":" + config.getPluginNames().replace(",", "/"));
+        } else if (!StringUtils.isEmpty(config.getExternalAgentName())) {
+            argsMap.put(COMMAND, config.getCommandType() + ":" + config.getExternalAgentName());
         } else {
             argsMap.put(COMMAND, config.getCommandType());
         }

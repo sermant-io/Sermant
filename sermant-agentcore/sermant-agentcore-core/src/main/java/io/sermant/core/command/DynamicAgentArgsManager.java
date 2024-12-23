@@ -52,4 +52,13 @@ public class DynamicAgentArgsManager {
     public static String getAgentArg(String key) {
         return AGENT_ARGS.get(key);
     }
+
+    /**
+     * get AGENT_ARGS map
+     *
+     * @return dynamical args
+     */
+    public static Map<String, String> getAgentArgsMap() {
+        return AGENT_ARGS;
+    }
 }

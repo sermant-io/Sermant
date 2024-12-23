@@ -45,6 +45,7 @@ public abstract class AbstractKindHandlerTest {
     @BeforeClass
     public static void init() {
         EventConfig config = new EventConfig();
+        config.setEnable(false);
         mockConfigManager = Mockito.mockStatic(ConfigManager.class);
         mockConfigManager.when(() -> ConfigManager.getConfig(EventConfig.class)).thenReturn(config);
 

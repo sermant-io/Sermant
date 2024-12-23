@@ -54,8 +54,10 @@ public class RegistryImplTest extends BaseTest {
         MockitoAnnotations.openMocks(this);
         pluginServiceManagerMockedStatic.when(() -> PluginServiceManager.getPluginService(ZkService34.class))
                 .thenReturn(zkService34);
+        EventConfig eventConfig = new EventConfig();
+        eventConfig.setEnable(false);
         configManagerMockedStatic.when(() -> ConfigManager.getConfig(EventConfig.class))
-                .thenReturn(new EventConfig());
+                .thenReturn(eventConfig);
         start();
     }
 
