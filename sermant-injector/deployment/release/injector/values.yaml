@@ -26,6 +26,12 @@ agent:
     # Never(only local image is used, never pull)
     pullPolicy: IfNotPresent
 
+externalAgent:
+  # external agent image address (for example: io.sermant/opentelemetry-javaagent:2.10.0)
+  imageAddr:
+  # external agent file name  (for example: opentelemetry-javaagent.jar)
+  fileName:
+
 config:
   # Configuration center type: ZOOKEEPER/KIE/NACOS
   type: ZOOKEEPER

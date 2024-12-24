@@ -116,7 +116,7 @@ public class SermantInjectorController {
 
     private static final String IMAGE_PULL_POLICY_KEY = "imagePullPolicy";
 
-    private static final String IMAGE_NAME = "sermant-agent";
+    private static final String SERMANT_AGENT_INIT_CONTAINER_NAME = "sermant-agent";
 
     private static final String VOLUME_DIR = "emptyDir";
 
@@ -180,6 +180,20 @@ public class SermantInjectorController {
 
     private static final String SERMANT_ENV_PREFIX = "env.sermant.io/";
 
+    private static final String EXTERNAL_AGENT_INJECTION_CONFIG_KEY = "agent_config_externalAgent_injection";
+
+    private static final String EXTERNAL_AGENT_NAME_CONFIG_KEY = "agent_config_externalAgent_name";
+
+    private static final String EXTERNAL_AGENT_FILE_CONFIG_KEY = "agent_config_externalAgent_file";
+
+    private static final String EXTERNAL_AGENT_INIT_CONTAINER_NAME = "external-agent";
+
+    /**
+     * if external agent injection is to be enabled, the annotations should be config as
+     * 'env.sermant.io/external.agent.injection:"OTEL"' in spec -> template ->metadata -> annotations
+     */
+    private static final String EXTERNAL_AGENT_INJECTION_ENV_IN_ANNOTATION = "external.agent.injection";
+
     @Autowired
     private ObjectMapper om;
 
@@ -212,6 +226,12 @@ public class SermantInjectorController {
 
     @Value("${sermant-agent.inject.action:before}")
     private String action;
+
+    @Value("${sermant-agent.externalAgent.imageAddr:}")
+    private String externalAgentAddr;
+
+    @Value("${sermant-agent.externalAgent.fileName:}")
+    private String externalAgentFileName;
 
     /**
      * Admission controller
@@ -258,7 +278,9 @@ public class SermantInjectorController {
         ArrayNode arrayNode = om.createArrayNode();
 
         // Added initContainers node
-        injectInitContainer(arrayNode, specNode);
+        injectSermantInitContainer(arrayNode, specNode);
+
+        injectExternalAgentInitContainer(arrayNode, annotationEnv);
 
         // Add volume nodes
         injectVolumes(arrayNode, specNode);
@@ -308,6 +330,11 @@ public class SermantInjectorController {
                 String envKey = labelName.substring(prefixLength);
                 String envValue = srcMap.findValue(labelName).textValue();
                 tgtEnv.put(envKey, envValue);
+                if (envKey.equals(EXTERNAL_AGENT_INJECTION_ENV_IN_ANNOTATION)) {
+                    tgtEnv.put(EXTERNAL_AGENT_INJECTION_CONFIG_KEY, Boolean.TRUE.toString());
+                    tgtEnv.put(EXTERNAL_AGENT_NAME_CONFIG_KEY, envValue);
+                    tgtEnv.put(EXTERNAL_AGENT_FILE_CONFIG_KEY, mountPath + PATH_SEPARATOR + externalAgentFileName);
+                }
             }
         }
     }
@@ -327,31 +354,54 @@ public class SermantInjectorController {
         }
     }
 
-    private void injectInitContainer(ArrayNode arrayNode, JsonNode specPath) {
-        // Create an initContainer
-        ObjectNode initContainerNode = putOrAddObject(arrayNode, specPath, INIT_CONTAINERS_PATH,
+    private void injectSermantInitContainer(ArrayNode arrayNode, JsonNode specPath) {
+        ObjectNode sermantInitContainerNode = putOrAddObject(arrayNode, specPath, INIT_CONTAINERS_PATH,
                 INIT_CONTAINERS_INJECT_PATH);
 
+        constructInitContainerNode(sermantInitContainerNode, SERMANT_AGENT_INIT_CONTAINER_NAME, imageAddr,
+                INIT_COMMAND);
+    }
+
+    private void injectExternalAgentInitContainer(ArrayNode arrayNode, Map<String, String> annotationEnv) {
+        if (!StringUtils.hasText(annotationEnv.get(EXTERNAL_AGENT_INJECTION_ENV_IN_ANNOTATION))) {
+            return;
+        }
+
+        ObjectNode node = arrayNode.addObject();
+        node.put(JSON_OPERATION_KEY, JSON_OPERATION_ADD);
+        node.put(PATH_KEY, INIT_CONTAINERS_INJECT_PATH + END_PATH);
+
+        ObjectNode externalAgentInitContainerNode = node.putObject(VALUE_KEY);
+        List<JsonNode> initCommandForExternalAgent =
+                Arrays.asList(new TextNode("cp"), new TextNode("/home/" + externalAgentFileName),
+                        new TextNode(mountPath));
+        constructInitContainerNode(externalAgentInitContainerNode, EXTERNAL_AGENT_INIT_CONTAINER_NAME,
+                externalAgentAddr, initCommandForExternalAgent);
+    }
+
+    private void constructInitContainerNode(ObjectNode initContainerNode, String containerName, String image,
+            List<JsonNode> command) {
         // Image name
-        initContainerNode.put(NAME_KEY, IMAGE_NAME);
+        initContainerNode.put(NAME_KEY, containerName);
 
         // Image address
-        initContainerNode.put(IMAGE_KEY, imageAddr);
+        initContainerNode.put(IMAGE_KEY, image);
 
         // Image pulling policy
         initContainerNode.put(IMAGE_PULL_POLICY_KEY, pullPolicy);
 
         // Initialization command
-        initContainerNode.putArray(COMMAND_KEY).addAll(INIT_COMMAND);
+        initContainerNode.putArray(COMMAND_KEY).addAll(command);
 
         // Create a volumeMount
-        ObjectNode initContainerVolumeMountNode = initContainerNode.putArray(VOLUME_MOUNTS_PATH).addObject();
+        ObjectNode externalAgentVolumeMountNode = initContainerNode.putArray(VOLUME_MOUNTS_PATH)
+                .addObject();
 
         // Disk name
-        initContainerVolumeMountNode.put(NAME_KEY, VOLUME_NAME);
+        externalAgentVolumeMountNode.put(NAME_KEY, VOLUME_NAME);
 
         // Disk path
-        initContainerVolumeMountNode.put(MOUNT_PATH, INIT_SERMANT_PATH);
+        externalAgentVolumeMountNode.put(MOUNT_PATH, INIT_SERMANT_PATH);
     }
 
     private void injectVolumes(ArrayNode arrayNode, JsonNode specPath) {
