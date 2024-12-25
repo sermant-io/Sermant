@@ -14,25 +14,26 @@
  *   limitations under the License.
  */
 
-package io.sermant.core.service.xds.entity;
+package io.sermant.flowcontrol.common.util;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
- * XdsAbortTest
+ * RandomUtil test
  *
  * @author zhp
- * @since 2024-11-21
- **/
-public class XdsAbortTest {
+ * @since 2024-12-05
+ */
+public class RandomUtilTest {
     @Test
-    public void testXdsAbort() {
-        XdsAbort abort = new XdsAbort();
-        FractionalPercent percent = new FractionalPercent();
-        abort.setPercentage(percent);
-        abort.setHttpStatus(200);
-        Assert.assertEquals(200, abort.getHttpStatus());
-        Assert.assertEquals(percent, abort.getPercentage());
+    public void testRandomInt1() {
+        assertEquals(0, RandomUtil.randomInt(0, 1));
+    }
+
+    @Test
+    public void testRandomInt2() {
+        assertEquals(0, RandomUtil.randomInt(1));
     }
 }

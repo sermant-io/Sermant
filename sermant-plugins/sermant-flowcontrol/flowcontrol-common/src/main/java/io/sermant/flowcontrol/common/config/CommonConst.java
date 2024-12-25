@@ -269,6 +269,21 @@ public class CommonConst {
      */
     public static final String REQUEST_START_TIME = "requestStartTime";
 
+    /**
+     * the connect for request address
+     */
+    public static final String CONNECT = ":";
+
+    /**
+     * point
+     */
+    public static final String ESCAPED_POINT = "\\.";
+
+    /**
+     * Default response status code
+     */
+    public static final int DEFAULT_RESPONSE_CODE = -1;
+
     private CommonConst() {
     }
 }

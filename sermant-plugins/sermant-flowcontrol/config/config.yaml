@@ -1,6 +1,20 @@
 # FlowControl configuration
 flow.control.plugin:
-  useCseRule: true # whether to configure cse rules
-  enable-start-monitor: false # whether to enable indicator monitoring
-  enable-system-adaptive: false # whether to enable system adaptive flow control
-  enable-system-rule: false # whether to enable system rule flow control
+  # whether to configure cse rules
+  useCseRule: true
+  # whether to enable indicator monitoring
+  enable-start-monitor: false
+  # whether to enable system adaptive flow control
+  enable-system-adaptive: false
+  # whether to enable system rule flow control
+  enable-system-rule: false
+xds.flow.control.config:
+  # Whether to enable Xds flow control
+  enable: false
+  retry:
+    # The specified response status codes that need to be retried. Retry will be performed when the response's status
+    # code matches one of the specified codes.
+    x-sermant-retriable-status-codes:
+    # The specified response header names that need to be retried. Retry will be performed when the response contains
+    # the specified headers.
+    x-sermant-retriable-header-names:

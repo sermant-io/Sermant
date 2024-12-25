@@ -29,9 +29,10 @@ public class XdsDelayTest {
     @Test
     public void testXdsDelay() {
         XdsDelay delay = new XdsDelay();
-        delay.setPercentage(100);
+        FractionalPercent fractionalPercent = new FractionalPercent();
+        delay.setPercentage(fractionalPercent);
         delay.setFixedDelay(200L);
         Assert.assertEquals(200, delay.getFixedDelay());
-        Assert.assertEquals(100, delay.getPercentage(), 0);
+        Assert.assertEquals(fractionalPercent, delay.getPercentage());
     }
 }
