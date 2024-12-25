@@ -14,25 +14,24 @@
  *   limitations under the License.
  */
 
-package io.sermant.core.service.xds.entity;
+package io.sermant.flowcontrol.common.xds.lb;
 
-import org.junit.Assert;
-import org.junit.Test;
+import io.sermant.core.service.xds.entity.ServiceInstance;
+
+import java.util.List;
 
 /**
- * XdsAbortTest
+ * XdsLoadBalancer
  *
- * @author zhp
- * @since 2024-11-21
+ * @author daizhenyu
+ * @since 2024-08-30
  **/
-public class XdsAbortTest {
-    @Test
-    public void testXdsAbort() {
-        XdsAbort abort = new XdsAbort();
-        FractionalPercent percent = new FractionalPercent();
-        abort.setPercentage(percent);
-        abort.setHttpStatus(200);
-        Assert.assertEquals(200, abort.getHttpStatus());
-        Assert.assertEquals(percent, abort.getPercentage());
-    }
+public interface XdsLoadBalancer {
+    /**
+     * select instance by loadbalancer
+     *
+     * @param instances service instance
+     * @return selected instance
+     */
+    ServiceInstance selectInstance(List<ServiceInstance> instances);
 }

@@ -294,7 +294,12 @@ public class RdsProtocolTransformer {
 
     private static XdsAbort parseAbort(FaultAbort faultAbort) {
         XdsAbort xdsAbort = new XdsAbort();
-        xdsAbort.setPercentage(faultAbort.getPercentage().getNumerator());
+        io.sermant.core.service.xds.entity.FractionalPercent fractionalPercent =
+                new io.sermant.core.service.xds.entity.FractionalPercent();
+        fractionalPercent.setNumerator(faultAbort.getPercentage().getNumerator());
+        fractionalPercent.setDenominator(DenominatorType.getValueByName(faultAbort.getPercentage()
+                .getDenominator().name()));
+        xdsAbort.setPercentage(fractionalPercent);
         xdsAbort.setHttpStatus(faultAbort.getHttpStatus());
         return xdsAbort;
     }
@@ -303,7 +308,12 @@ public class RdsProtocolTransformer {
         XdsDelay xdsDelay = new XdsDelay();
         long fixedDelay = Duration.ofSeconds(faultDelay.getFixedDelay().getSeconds()).toMillis();
         xdsDelay.setFixedDelay(fixedDelay);
-        xdsDelay.setPercentage(faultDelay.getPercentage().getNumerator());
+        io.sermant.core.service.xds.entity.FractionalPercent fractionalPercent =
+                new io.sermant.core.service.xds.entity.FractionalPercent();
+        fractionalPercent.setNumerator(faultDelay.getPercentage().getNumerator());
+        fractionalPercent.setDenominator(DenominatorType.getValueByName(faultDelay.getPercentage()
+                .getDenominator().name()));
+        xdsDelay.setPercentage(fractionalPercent);
         return xdsDelay;
     }
 

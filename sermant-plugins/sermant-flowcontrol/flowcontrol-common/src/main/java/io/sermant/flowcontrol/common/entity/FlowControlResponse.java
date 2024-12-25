@@ -17,6 +17,10 @@
 
 package io.sermant.flowcontrol.common.entity;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 /**
  * flow control response
  *
@@ -32,6 +36,11 @@ public class FlowControlResponse {
      * In response to the result, directly replace the interface return value
      */
     private Object result;
+
+    /**
+     * response
+     */
+    private Map<String, List<String>> headers;
 
     /**
      * Whether to replace the actual response result, if true, replace
@@ -52,6 +61,21 @@ public class FlowControlResponse {
     public FlowControlResponse(String msg, int code) {
         this.msg = msg;
         this.code = code;
+    }
+
+    /**
+     * flow control response results
+     *
+     * @param msg prompt message
+     * @param code response code
+     * @param headers response headers
+     * @param result response result
+     */
+    public FlowControlResponse(String msg, int code, Map<String, List<String>> headers, Object result) {
+        this.msg = msg;
+        this.code = code;
+        this.headers = headers;
+        this.result = result;
     }
 
     /**
@@ -90,5 +114,9 @@ public class FlowControlResponse {
 
     public boolean isReplaceResult() {
         return isReplaceResult;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers == null ? Collections.emptyMap() : headers;
     }
 }
