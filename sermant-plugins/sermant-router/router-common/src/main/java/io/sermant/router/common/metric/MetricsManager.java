@@ -92,9 +92,9 @@ public class MetricsManager {
         } else {
             tagsMap = new HashMap<>();
         }
-        tagsMap.put(RouterConstant.SCOPE, "service-router");
         Counter counter = COUNT_MAP.computeIfAbsent(new MetricInfo(metricName, tagsMap),
-                metricInfo -> metricService.counter(metricName, Tags.of(tagsMap)));
+                metricInfo -> metricService.counter(metricName,
+                        Tags.of(tagsMap).addScope("service-router")));
         counter.increment(value);
     }
 
