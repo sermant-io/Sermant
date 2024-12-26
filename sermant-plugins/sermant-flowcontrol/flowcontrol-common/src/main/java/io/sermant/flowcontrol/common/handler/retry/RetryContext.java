@@ -17,14 +17,19 @@
 
 package io.sermant.flowcontrol.common.handler.retry;
 
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.flowcontrol.common.core.RuleUtils;
 import io.sermant.flowcontrol.common.core.resolver.RetryResolver;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
-import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnSamePolicy;
+import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnUntriedPolicy;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryPolicy;
+import io.sermant.flowcontrol.common.util.StringUtils;
+import io.sermant.flowcontrol.common.xds.handler.XdsHandler;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Retry context, used to manage retry policies based on different host framework types
@@ -87,7 +92,7 @@ public enum RetryContext {
         if (retryPolicy == null) {
             return false;
         }
-        return retryPolicy.isRetry() && retryPolicy.needRetry();
+        return retryPolicy.isRetry() && retryPolicy.isReachedRetryThreshold();
     }
 
     /**
@@ -104,12 +109,12 @@ public enum RetryContext {
      *
      * @param serviceInstance service instance
      */
-    public void updateServiceInstance(Object serviceInstance) {
+    public void updateRetriedServiceInstance(Object serviceInstance) {
         final RetryPolicy retryPolicy = getRetryPolicy();
         if (retryPolicy == null) {
             return;
         }
-        retryPolicy.update(serviceInstance);
+        retryPolicy.updateRetriedInstance(serviceInstance);
         retryPolicy.retryMark();
     }
 
@@ -119,7 +124,7 @@ public enum RetryContext {
      * @param retryRule retry rule
      */
     public void buildRetryPolicy(RetryRule retryRule) {
-        policyThreadLocal.set(new RetryOnSamePolicy(retryRule.getRetryOnSame()));
+        policyThreadLocal.set(new RetryOnUntriedPolicy(retryRule.getRetryOnSame()));
     }
 
     /**
@@ -133,5 +138,24 @@ public enum RetryContext {
         if (!rule.isEmpty()) {
             RetryContext.INSTANCE.buildRetryPolicy(rule.get(0));
         }
+    }
+
+    /**
+     * build test strategy
+     *
+     * @param scenario scenario information
+     */
+    public void buildXdsRetryPolicy(FlowControlScenario scenario) {
+        if (StringUtils.isEmpty(scenario.getServiceName())
+                || StringUtils.isEmpty(scenario.getRouteName())) {
+            return;
+        }
+        Optional<XdsRetryPolicy> retryPolicyOptional = XdsHandler.INSTANCE
+                .getRetryPolicy(scenario.getServiceName(), scenario.getRouteName());
+        if (!retryPolicyOptional.isPresent()) {
+            return;
+        }
+        XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
+        policyThreadLocal.set(new RetryOnUntriedPolicy((int) retryPolicy.getMaxAttempts()));
     }
 }

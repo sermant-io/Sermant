@@ -17,6 +17,8 @@
 
 package io.sermant.flowcontrol.common.handler.retry.policy;
 
+import java.util.Set;
+
 /**
  * retry strategy
  *
@@ -25,11 +27,11 @@ package io.sermant.flowcontrol.common.handler.retry.policy;
  */
 public interface RetryPolicy {
     /**
-     * need to retry
+     * is reached max attempts
      *
      * @return retry or not
      */
-    boolean needRetry();
+    boolean isReachedRetryThreshold();
 
     /**
      * retry mark
@@ -44,16 +46,16 @@ public interface RetryPolicy {
     boolean isRetry();
 
     /**
-     * Gets the last retry instance
+     * Gets All retry instance
      *
      * @return retry instance
      */
-    Object getLastRetryServer();
+    Set<Object> getAllRetriedInstance();
 
     /**
      * update retry instance
      *
      * @param instance instance
      */
-    void update(Object instance);
+    void updateRetriedInstance(Object instance);
 }

@@ -19,17 +19,14 @@ package io.sermant.flowcontrol.retry;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
-import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnSamePolicy;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryPolicy;
 import io.sermant.flowcontrol.service.InterceptorSupporter;
 
-import org.springframework.cloud.client.ServiceInstance;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -38,7 +35,7 @@ import java.util.logging.Logger;
  * that the last called service can be selected again based on load balancing when retrying.
  *
  * @author zhouss
- * @see RetryOnSamePolicy
+ * @see io.sermant.flowcontrol.common.handler.retry.policy.RetryOnUntriedPolicy
  * @since 2022-07-25
  */
 public class SpringLbChooseServerInterceptor extends InterceptorSupporter {
@@ -59,7 +56,7 @@ public class SpringLbChooseServerInterceptor extends InterceptorSupporter {
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         if (RetryContext.INSTANCE.isPolicyNeedRetry()) {
-            tryChangeServiceInstanceForRetry(context);
+            removeRetriedServiceInstance(context);
         }
         return context;
     }
@@ -76,48 +73,12 @@ public class SpringLbChooseServerInterceptor extends InterceptorSupporter {
         return context;
     }
 
-    private void tryChangeServiceInstanceForRetry(ExecuteContext context) {
-        final RetryPolicy retryPolicy = RetryContext.INSTANCE.getRetryPolicy();
-        if (retryPolicy != null && retryPolicy.getLastRetryServer() != null) {
-            retryPolicy.retryMark();
-            final Optional<Object> result = buildResult(retryPolicy.getLastRetryServer(),
-                    context.getMethod().getReturnType().getName());
-            if (!result.isPresent()) {
-                return;
-            }
-            context.skip(result.get());
-        }
-    }
-
-    private Optional<Object> buildResult(Object lastServer, String responseClassName) {
-        String defaultResponseClazz = null;
-        if (RESPONSE_CLASS.equals(responseClassName)) {
-            defaultResponseClazz = DEFAULT_RESPONSE_CLASS;
-        } else if (RESPONSE_REACTIVE_CLASS.equals(responseClassName)) {
-            defaultResponseClazz = DEFAULT_RESPONSE_REACTIVE_CLASS;
-        }
-        if (defaultResponseClazz == null) {
-            return Optional.empty();
-        }
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            final Class<?> clazz = contextClassLoader.loadClass(defaultResponseClazz);
-            final Constructor<?> declaredConstructor = clazz.getDeclaredConstructor(ServiceInstance.class);
-            return Optional.of(declaredConstructor.newInstance(lastServer));
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
-                | InvocationTargetException exception) {
-            LOGGER.warning(String.format(Locale.ENGLISH,
-                    "Can not create loadbalancer response for retry! className: [%s]", defaultResponseClazz));
-        }
-        return Optional.empty();
-    }
-
     private void updateServiceInstance(Object result) {
         final Optional<Object> getServer = ReflectUtils.invokeMethod(result, "getServer", null, null);
         if (!getServer.isPresent()) {
             return;
         }
-        RetryContext.INSTANCE.updateServiceInstance(getServer.get());
+        RetryContext.INSTANCE.updateRetriedServiceInstance(getServer.get());
     }
 
     private boolean isTarget(Object result) {
@@ -128,5 +89,29 @@ public class SpringLbChooseServerInterceptor extends InterceptorSupporter {
     @Override
     protected boolean canInvoke(ExecuteContext context) {
         return true;
+    }
+
+    /**
+     * remove retried instance
+     *
+     * @param context The execution context of the Interceptor
+     */
+    public void removeRetriedServiceInstance(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        if (arguments == null || arguments.length == 0 || !(arguments[0] instanceof List)) {
+            return;
+        }
+        final RetryPolicy retryPolicy = RetryContext.INSTANCE.getRetryPolicy();
+        if (retryPolicy == null || CollectionUtils.isEmpty(retryPolicy.getAllRetriedInstance())) {
+            return;
+        }
+        retryPolicy.retryMark();
+        List<?> instances = new ArrayList<>((List<?>) arguments[0]);
+        for (Object instance : retryPolicy.getAllRetriedInstance()) {
+            instances.remove(instance);
+        }
+        if (!instances.isEmpty()) {
+            arguments[0] = instances;
+        }
     }
 }

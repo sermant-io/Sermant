@@ -102,5 +102,3 @@ jobs:
         uses: ./.github/actions/scenarios/backend/config
       - name: start hot plugging test
         uses: ./.github/actions/scenarios/backend/hot-plugging
-
-

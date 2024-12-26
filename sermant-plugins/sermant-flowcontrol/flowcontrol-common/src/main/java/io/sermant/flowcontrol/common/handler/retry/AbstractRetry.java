@@ -79,7 +79,18 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
      * @return response status code
      * @throws UnsupportedOperationException unsupported operation
      */
-    protected Optional<String> getCode(Object result) {
+    public Optional<String> getCode(Object result) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get the name of the response header in the response information
+     *
+     * @param result interface response result
+     * @return response header names
+     * @throws UnsupportedOperationException unsupported operation
+     */
+    public Optional<Set<String>> getHeaderNames(Object result) {
         throw new UnsupportedOperationException();
     }
 
@@ -97,7 +108,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
             final RetryFramework retryFramework = retryType();
             final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
             String[] retryExceptions;
-            if (retryFramework == RetryFramework.SPRING_CLOUD) {
+            if (retryFramework == RetryFramework.SPRING_CLOUD || retryFramework == RetryFramework.SPRING) {
                 retryExceptions = pluginConfig.getSpringRetryExceptions();
             } else if (retryFramework == RetryFramework.ALIBABA_DUBBO) {
                 retryExceptions = pluginConfig.getAlibabaDubboRetryExceptions();

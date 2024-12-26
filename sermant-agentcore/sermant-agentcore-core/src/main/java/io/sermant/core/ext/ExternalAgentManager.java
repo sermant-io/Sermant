@@ -16,8 +16,6 @@
 
 package io.sermant.core.ext;
 
-import com.sun.org.apache.bcel.internal.util.ClassLoader;
-
 import io.sermant.core.classloader.FrameworkClassLoader;
 import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;

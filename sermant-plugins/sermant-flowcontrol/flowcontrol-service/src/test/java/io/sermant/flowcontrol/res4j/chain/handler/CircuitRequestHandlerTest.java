@@ -52,7 +52,7 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
     protected HandlerChainEntry entry;
     protected String sourceName;
 
-    private static final String METHOD_NAME = "createProcessor";
+    private static final String METHOD_NAME = "createHandler";
 
     private static final long NANO_TIMES = 1000000000;
 

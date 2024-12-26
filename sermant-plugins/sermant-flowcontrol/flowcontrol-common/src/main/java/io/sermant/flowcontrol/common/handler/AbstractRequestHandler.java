@@ -20,8 +20,9 @@ package io.sermant.flowcontrol.common.handler;
 import io.sermant.flowcontrol.common.core.ResolverManager;
 import io.sermant.flowcontrol.common.core.match.MatchManager;
 import io.sermant.flowcontrol.common.core.resolver.AbstractResolver;
-import io.sermant.flowcontrol.common.core.rule.AbstractRule;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
+import io.sermant.flowcontrol.common.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
  * @author zhouss
  * @since 2022-01-22
  */
-public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
+public abstract class AbstractRequestHandler<H, R> {
     /**
      * Handler cache
      */
@@ -71,9 +72,20 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
     }
 
     /**
+     * gets the specified request handler
+     *
+     * @param flowControlScenario matched scenario information
+     * @return handler
+     */
+    public List<H> getXdsHandlers(FlowControlScenario flowControlScenario) {
+        Optional<H> handlerOptions = createHandler(flowControlScenario, StringUtils.EMPTY);
+        return handlerOptions.map(Collections::singletonList).orElse(Collections.emptyList());
+    }
+
+    /**
      * create handler
      *
-     * @param businessNames matched service name
+     * @param businessNames matching service scenarios
      * @return handler
      */
     public List<H> createOrGetHandlers(Set<String> businessNames) {
@@ -90,7 +102,7 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
         if (rule == null) {
             return Optional.empty();
         }
-        return createProcessor(businessName, rule);
+        return createHandler(businessName, rule);
     }
 
     /**
@@ -100,7 +112,18 @@ public abstract class AbstractRequestHandler<H, R extends AbstractRule> {
      * @param rule matching resolution rules
      * @return handler
      */
-    protected abstract Optional<H> createProcessor(String businessName, R rule);
+    protected abstract Optional<H> createHandler(String businessName, R rule);
+
+    /**
+     * create handler
+     *
+     * @param flowControlScenario matched business information
+     * @param businessName service scenario name
+     * @return handler
+     */
+    public Optional<H> createHandler(FlowControlScenario flowControlScenario, String businessName) {
+        return Optional.empty();
+    }
 
     /**
      * get configuration key

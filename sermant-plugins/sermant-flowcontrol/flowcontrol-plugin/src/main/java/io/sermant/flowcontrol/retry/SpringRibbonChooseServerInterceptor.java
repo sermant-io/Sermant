@@ -20,31 +20,35 @@ package io.sermant.flowcontrol.retry;
 import com.google.common.base.Optional;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
-import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnSamePolicy;
+import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnUntriedPolicy;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryPolicy;
 import io.sermant.flowcontrol.service.InterceptorSupporter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Ribbon method select instance method to intercept. Obtain the last called service through interception, so that the
  * last called service can be selected again based on load balancing when retrying.
  *
  * @author zhouss
- * @see RetryOnSamePolicy
+ * @see RetryOnUntriedPolicy
  * @since 2022-07-25
  */
 public class SpringRibbonChooseServerInterceptor extends InterceptorSupporter {
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
         if (RetryContext.INSTANCE.isPolicyNeedRetry()) {
-            tryChangeServiceInstanceForRetry(context);
+            removeRetriedServiceInstance(context);
         }
         return context;
     }
 
     @Override
     protected ExecuteContext doAfter(ExecuteContext context) throws Exception {
-        if (!RetryContext.INSTANCE.isPolicyNeedRetry()) {
+        if (RetryContext.INSTANCE.isPolicyNeedRetry()) {
             updateServiceInstance(context);
         }
         return context;
@@ -57,20 +61,36 @@ public class SpringRibbonChooseServerInterceptor extends InterceptorSupporter {
             if (!serverInstanceOption.isPresent()) {
                 return;
             }
-            RetryContext.INSTANCE.updateServiceInstance(serverInstanceOption.get());
-        }
-    }
-
-    private void tryChangeServiceInstanceForRetry(ExecuteContext context) {
-        final RetryPolicy retryPolicy = RetryContext.INSTANCE.getRetryPolicy();
-        if (retryPolicy != null && retryPolicy.getLastRetryServer() != null) {
-            retryPolicy.retryMark();
-            context.skip(Optional.of(retryPolicy.getLastRetryServer()));
+            RetryContext.INSTANCE.updateRetriedServiceInstance(serverInstanceOption.get());
         }
     }
 
     @Override
     protected boolean canInvoke(ExecuteContext context) {
         return true;
+    }
+
+    /**
+     * remove retried instance
+     *
+     * @param context The execution context of the Interceptor
+     */
+    public void removeRetriedServiceInstance(ExecuteContext context) {
+        Object[] arguments = context.getArguments();
+        if (arguments == null || arguments.length == 0 || !(arguments[0] instanceof List)) {
+            return;
+        }
+        final RetryPolicy retryPolicy = RetryContext.INSTANCE.getRetryPolicy();
+        if (retryPolicy == null || CollectionUtils.isEmpty(retryPolicy.getAllRetriedInstance())) {
+            return;
+        }
+        retryPolicy.retryMark();
+        List<?> instances = new ArrayList<>((List<?>) arguments[0]);
+        for (Object instance : retryPolicy.getAllRetriedInstance()) {
+            instances.remove(instance);
+        }
+        if (!instances.isEmpty()) {
+            arguments[0] = instances;
+        }
     }
 }

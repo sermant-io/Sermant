@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 public class RateLimitingHandler extends AbstractRequestHandler<RateLimiter, RateLimitingRule> {
     @Override
-    protected final Optional<RateLimiter> createProcessor(String businessName, RateLimitingRule rule) {
+    protected final Optional<RateLimiter> createHandler(String businessName, RateLimitingRule rule) {
         RateLimiterConfig config = RateLimiterConfig.custom()
                 .limitForPeriod(rule.getRate())
                 .limitRefreshPeriod(Duration.ofMillis(rule.getParsedLimitRefreshPeriod()))

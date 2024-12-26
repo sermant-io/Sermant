@@ -49,7 +49,7 @@ public class SpringLbChooseServerInterceptorTest {
         final Object instance = new Object();
 
         // simulated update instance
-        RetryContext.INSTANCE.updateServiceInstance(instance);
+        RetryContext.INSTANCE.updateRetriedServiceInstance(instance);
         interceptor.before(context);
         assertNull(context.getResult());
         RetryContext.INSTANCE.remove();
@@ -63,7 +63,7 @@ public class SpringLbChooseServerInterceptorTest {
         RetryContext.INSTANCE.buildRetryPolicy(retryRule);
         ReflectUtils.invokeMethod(interceptor, "updateServiceInstance", new Class[]{Object.class},
                 new Object[]{new TestResult()});
-        Assert.assertEquals(RetryContext.INSTANCE.getRetryPolicy().getLastRetryServer(), server);
+        Assert.assertTrue(RetryContext.INSTANCE.getRetryPolicy().getAllRetriedInstance().contains(server));
         RetryContext.INSTANCE.remove();
     }
 

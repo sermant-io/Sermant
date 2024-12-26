@@ -32,7 +32,7 @@ import java.util.Optional;
  */
 public class SystemRuleHandler extends AbstractRequestHandler<SystemRuleFault, SystemRule> {
     @Override
-    protected Optional<SystemRuleFault> createProcessor(String businessName, SystemRule rule) {
+    protected Optional<SystemRuleFault> createHandler(String businessName, SystemRule rule) {
         return Optional.of(new SystemRuleFault(rule));
     }
 

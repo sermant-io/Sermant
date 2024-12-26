@@ -94,7 +94,7 @@ public class HandlerTest {
         final BulkheadRule bulkheadRule = new BulkheadRule();
         bulkheadRule.setMaxConcurrentCalls(MAX_CALLS);
         bulkheadRule.setMaxWaitDuration(MAX_WAIT_DURATION);
-        final Bulkhead bulkhead = bulkheadHandler.createProcessor(BUSINESS_NAME, bulkheadRule).get();
+        final Bulkhead bulkhead = bulkheadHandler.createHandler(BUSINESS_NAME, bulkheadRule).get();
         Assert.assertEquals(bulkhead.getBulkheadConfig().getMaxConcurrentCalls(), MAX_CALLS);
         Assert.assertEquals(bulkhead.getBulkheadConfig().getMaxWaitDuration().toMillis(),
             Long.parseLong(MAX_WAIT_DURATION));
@@ -109,7 +109,7 @@ public class HandlerTest {
         final RateLimitingRule rateLimitingRule = new RateLimitingRule();
         rateLimitingRule.setRate(RATE);
         rateLimitingRule.setLimitRefreshPeriod(LIMIT_PERIOD);
-        final RateLimiter rateLimiter = rateLimitingHandler.createProcessor(BUSINESS_NAME, rateLimitingRule).get();
+        final RateLimiter rateLimiter = rateLimitingHandler.createHandler(BUSINESS_NAME, rateLimitingRule).get();
         Assert.assertEquals(rateLimiter.getRateLimiterConfig().getLimitForPeriod(), RATE);
         Assert.assertEquals(rateLimiter.getRateLimiterConfig().getLimitRefreshPeriod().toMillis(),
             Long.parseLong(LIMIT_PERIOD));
@@ -141,7 +141,7 @@ public class HandlerTest {
         faultRule.setType(RuleConstants.FAULT_RULE_ABORT_TYPE);
         faultRule.setForceClosed(true);
         faultRule.setPercentage(PERCENTAGE);
-        final Optional<Fault> processor = faultHandler.createProcessor(BUSINESS_NAME, faultRule);
+        final Optional<Fault> processor = faultHandler.createHandler(BUSINESS_NAME, faultRule);
         Assert.assertTrue(processor.isPresent());
         final Fault fault = processor.get();
         final Optional<Object> rule = ReflectUtils.getFieldValue(fault, "rule");
@@ -160,7 +160,7 @@ public class HandlerTest {
         circuitBreakerRule.setFailureRateThreshold(FAILURE_RATE_THRESHOLD);
         circuitBreakerRule.setMinimumNumberOfCalls(MIN_CALLS);
         circuitBreakerRule.setSlidingWindowSize(WINDOW_SIZE);
-        final CircuitBreaker circuitBreaker = handler.createProcessor(BUSINESS_NAME,
+        final CircuitBreaker circuitBreaker = handler.createHandler(BUSINESS_NAME,
                 circuitBreakerRule).get();
         Assert.assertEquals(circuitBreaker.getCircuitBreakerConfig().getFailureRateThreshold(), FAILURE_RATE_THRESHOLD,
                 DELTA);
