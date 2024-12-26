@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 public class BulkheadHandler extends AbstractRequestHandler<Bulkhead, BulkheadRule> {
     @Override
-    protected final Optional<Bulkhead> createProcessor(String businessName, BulkheadRule rule) {
+    protected final Optional<Bulkhead> createHandler(String businessName, BulkheadRule rule) {
         final BulkheadConfig config = BulkheadConfig.custom()
                 .maxConcurrentCalls(rule.getMaxConcurrentCalls())
                 .maxWaitDuration(Duration.ofMillis(rule.getParsedMaxWaitDuration()))

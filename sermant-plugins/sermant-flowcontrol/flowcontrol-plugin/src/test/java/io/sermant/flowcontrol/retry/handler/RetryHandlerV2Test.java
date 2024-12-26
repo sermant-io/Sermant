@@ -69,7 +69,7 @@ public class RetryHandlerV2Test {
         final RetryHandlerV2 retryHandlerV2 = new RetryHandlerV2();
         final AlibabaDubboRetry alibabaDubboRetry = new AlibabaDubboRetry();
         RetryContext.INSTANCE.markRetry(alibabaDubboRetry);
-        final Retry test = retryHandlerV2.createProcessor("test", new RetryRule()).get();
+        final Retry test = retryHandlerV2.createHandler("test", new RetryRule()).get();
         Assert.assertNotNull(test);
         RetryContext.INSTANCE.remove();
     }

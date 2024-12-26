@@ -22,6 +22,7 @@ import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -61,13 +62,13 @@ public class RetryContextTest {
         }
 
         // If the number of retries exceeds the maximum, retry is complete
-        RetryContext.INSTANCE.updateServiceInstance(instance);
+        RetryContext.INSTANCE.updateRetriedServiceInstance(instance);
         Assert.assertFalse(RetryContext.INSTANCE.isPolicyNeedRetry());
         RetryContext.INSTANCE.remove();
     }
 
     private void muteRetry(Object instance) {
-        RetryContext.INSTANCE.updateServiceInstance(instance);
+        RetryContext.INSTANCE.updateRetriedServiceInstance(instance);
         Assert.assertTrue(RetryContext.INSTANCE.isPolicyNeedRetry());
     }
 
@@ -86,6 +87,16 @@ public class RetryContextTest {
             @Override
             public RetryFramework retryType() {
                 return RetryFramework.ALIBABA_DUBBO;
+            }
+
+            @Override
+            public Optional<String> getCode(Object result) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<Set<String>> getHeaderNames(Object result) {
+                return Optional.empty();
             }
         };
     }

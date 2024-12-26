@@ -175,7 +175,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         private static final String METHOD_KEY = "ClientHttpResponse#getRawStatusCode";
 
         @Override
-        protected Optional<String> getCode(Object result) {
+        public Optional<String> getCode(Object result) {
             final Optional<Method> getRawStatusCode = getInvokerMethod(result.getClass().getName() + METHOD_KEY, fn -> {
                 try {
                     final Method method = result.getClass().getDeclaredMethod("getRawStatusCode");

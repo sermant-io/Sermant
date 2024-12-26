@@ -17,6 +17,7 @@
 
 package io.sermant.flowcontrol.common.handler.retry;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -50,6 +51,22 @@ public interface Retry {
     RetryFramework retryType();
 
     /**
+     *  get status code
+     *
+     * @param result interface response result
+     * @return response status code
+     */
+    Optional<String> getCode(Object result);
+
+    /**
+     *  get header
+     *
+     * @param result interface response result
+     * @return response header names
+     */
+    Optional<Set<String>> getHeaderNames(Object result);
+
+    /**
      * retryFrame
      *
      * @since 2022-01-22
@@ -68,6 +85,11 @@ public interface Retry {
         /**
          * apache dubbo retry
          */
-        APACHE_DUBBO
+        APACHE_DUBBO,
+
+        /**
+         * Spring retry
+         */
+        SPRING;
     }
 }

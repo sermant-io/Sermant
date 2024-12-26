@@ -76,5 +76,15 @@ public class DefaultRetryPredicateCreatorTest {
         public RetryFramework retryType() {
             return RetryFramework.SPRING_CLOUD;
         }
+
+        @Override
+        public Optional<String> getCode(Object result) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Set<String>> getHeaderNames(Object result) {
+            return Optional.empty();
+        }
     }
 }

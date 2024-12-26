@@ -40,7 +40,7 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     private final RetryPredicateCreator retryPredicateCreator = new DefaultRetryPredicateCreator();
 
     @Override
-    protected Optional<Retry> createProcessor(String businessName, RetryRule rule) {
+    protected Optional<Retry> createHandler(String businessName, RetryRule rule) {
         final io.sermant.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
         if (retry == null) {
             return Optional.empty();

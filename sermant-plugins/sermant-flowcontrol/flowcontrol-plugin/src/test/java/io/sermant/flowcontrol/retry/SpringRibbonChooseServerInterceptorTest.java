@@ -17,9 +17,8 @@
 
 package io.sermant.flowcontrol.retry;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 
@@ -32,6 +31,9 @@ import io.sermant.flowcontrol.common.handler.retry.RetryContext;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ribbon test
@@ -53,10 +55,14 @@ public class SpringRibbonChooseServerInterceptorTest {
         final Object instance = new Object();
 
         // simulated update instance
-        RetryContext.INSTANCE.updateServiceInstance(instance);
+        RetryContext.INSTANCE.updateRetriedServiceInstance(instance);
+        List<Object> instances = new ArrayList<>();
+        instances.add(instance);
+        instances.add(new Object());
+        context.changeArgs(new Object[]{instances});
         interceptor.before(context);
-        assertTrue(context.getResult() instanceof Optional && ((Optional<?>) context.getResult()).isPresent());
-        assertEquals(((Optional<?>) context.getResult()).get(), instance);
+        instances = (List<Object>) context.getArguments()[0];
+        assertFalse(instances.contains(instance));
         RetryContext.INSTANCE.remove();
     }
 
@@ -70,7 +76,7 @@ public class SpringRibbonChooseServerInterceptorTest {
         context.changeResult(Optional.of(server));
         ReflectUtils.invokeMethod(interceptor, "updateServiceInstance", new Class[]{ExecuteContext.class},
                 new Object[]{context});
-        Assert.assertEquals(RetryContext.INSTANCE.getRetryPolicy().getLastRetryServer(), server);
+        Assert.assertTrue(RetryContext.INSTANCE.getRetryPolicy().getAllRetriedInstance().contains(server));
         RetryContext.INSTANCE.remove();
     }
 

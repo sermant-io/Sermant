@@ -42,7 +42,7 @@ import java.util.Optional;
  */
 public class CircuitBreakerHandler extends AbstractRequestHandler<CircuitBreaker, CircuitBreakerRule> {
     @Override
-    protected final Optional<CircuitBreaker> createProcessor(String businessName, CircuitBreakerRule rule) {
+    protected final Optional<CircuitBreaker> createHandler(String businessName, CircuitBreakerRule rule) {
         final SlidingWindowType slidingWindowType = getSlidingWindowType(rule.getSlidingWindowType());
         CircuitBreaker circuitBreaker = CircuitBreakerRegistry.of(CircuitBreakerConfig.custom()
                 .failureRateThreshold(rule.getFailureRateThreshold())

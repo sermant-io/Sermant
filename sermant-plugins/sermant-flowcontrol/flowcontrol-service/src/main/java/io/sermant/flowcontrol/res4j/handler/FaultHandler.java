@@ -35,7 +35,7 @@ import java.util.Optional;
  */
 public class FaultHandler extends AbstractRequestHandler<Fault, FaultRule> {
     @Override
-    protected final Optional<Fault> createProcessor(String businessName, FaultRule rule) {
+    protected final Optional<Fault> createHandler(String businessName, FaultRule rule) {
         if (RuleConstants.FAULT_RULE_DELAY_TYPE.equals(rule.getType())) {
             return Optional.of(new DelayFault(rule));
         }
