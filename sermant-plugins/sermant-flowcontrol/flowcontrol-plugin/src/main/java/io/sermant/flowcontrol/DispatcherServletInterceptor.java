@@ -16,6 +16,7 @@
 
 package io.sermant.flowcontrol;
 
+import io.sermant.core.exception.SermantRuntimeException;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
@@ -192,7 +193,7 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
                 try {
                     return ((HttpServletResponse) obj).getWriter();
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    throw new SermantRuntimeException(ex);
                 }
             };
             setStatus = (obj, code) -> ((HttpServletResponse) obj).setStatus(code);

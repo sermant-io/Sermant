@@ -347,7 +347,7 @@ public class RdsProtocolTransformer {
      *       }
      *     }
      *   }
-     *}
+     * }
      *
      * @param typedStruct Serial protocol buffer message for rate limiting configuration
      * @return Rate limiting configuration information

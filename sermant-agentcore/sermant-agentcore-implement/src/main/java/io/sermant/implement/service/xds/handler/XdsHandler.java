@@ -211,7 +211,6 @@ public abstract class XdsHandler<T> implements XdsServiceAction {
                 Thread.sleep(DELAY_TIME);
             } catch (InterruptedException e) {
                 LOGGER.log(Level.WARNING, "An error occurred in thread sleeping.", e);
-                Thread.currentThread().interrupt();
             }
             client.updateChannel();
             subscribe(requestKey, null);

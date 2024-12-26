@@ -151,7 +151,7 @@
         </el-table-column>
         <el-table-column :label="$t('instanceView.operation')" fixed="right" align="center" width="160">
           <template #default="scope">
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div v-if="scope.row.health" style="display: flex; flex-direction: column; gap: 10px;">
               <el-button
                   type="primary"
                   class="button-padding"
@@ -266,7 +266,7 @@ onMounted(() => {
 
 const dialogFormVisible = ref(false)
 
-const selectable = (row: TableData) => true
+const selectable = (row: TableData) => row.health;
 
 const goBack = () => {
   router.push("/events");

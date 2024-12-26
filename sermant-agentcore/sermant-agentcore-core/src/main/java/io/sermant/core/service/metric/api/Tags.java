@@ -39,10 +39,12 @@ public final class Tags {
      * Key for the scope tag
      */
     public static final String SCOPE = "scope";
+
     /**
      * Value for the core scope tag
      */
     public static final String SCOPE_VALUE_CORE = "core";
+
     private final Map<String, String> tags = new HashMap<>();
 
     private Tags() {
