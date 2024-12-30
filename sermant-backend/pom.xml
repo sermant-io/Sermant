@@ -15,8 +15,8 @@
         <jdk.version>1.8</jdk.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <io.netty.version>4.1.108.Final</io.netty.version>
-        <protobuf-java.version>3.19.6</protobuf-java.version>
+        <io.netty.version>4.1.115.Final</io.netty.version>
+        <protobuf-java.version>3.25.5</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -32,7 +32,7 @@
         <aspectjweaver.version>1.8.4</aspectjweaver.version>
         <tomcat-embed.version>9.0.95</tomcat-embed.version>
         <spring-framework.version>5.3.39</spring-framework.version>
-        <nacos-client-version>2.2.1</nacos-client-version>
+        <nacos-client-version>2.3.3</nacos-client-version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
     </properties>
 
@@ -279,6 +279,11 @@
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
             <version>${nacos-client-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 

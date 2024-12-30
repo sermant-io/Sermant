@@ -30,7 +30,6 @@ import io.sermant.dubbo.registry.listener.GovernanceConfigListener;
 import io.sermant.dubbo.registry.service.GovernanceService;
 import io.sermant.dubbo.registry.service.RegistryService;
 import io.sermant.dubbo.registry.service.RegistryServiceImpl;
-import io.sermant.implement.operation.converter.YamlConverterImpl;
 import io.sermant.registry.config.RegisterConfig;
 import io.sermant.registry.config.RegisterServiceCommonConfig;
 
@@ -55,6 +54,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -112,7 +113,22 @@ public class RegistryServiceTest {
         MOCKED_STATICS.add(mockConfigManager);
         MockedStatic<OperationManager> operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
-            .thenReturn(new YamlConverterImpl());
+            .thenReturn(new YamlConverter() {
+                @Override
+                public <T> Optional<T> convert(String source, Class<? super T> type) {
+                    return Optional.empty();
+                }
+
+                @Override
+                public <T> Optional<T> convert(Reader reader, Class<? super T> type) {
+                    return Optional.empty();
+                }
+
+                @Override
+                public String dump(Object data) {
+                    return null;
+                }
+            });
         MOCKED_STATICS.add(operationManagerMockedStatic);
     }
 
