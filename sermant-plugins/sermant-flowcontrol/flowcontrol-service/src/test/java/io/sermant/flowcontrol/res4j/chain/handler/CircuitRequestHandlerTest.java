@@ -21,6 +21,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.core.ResolverManager;
 import io.sermant.flowcontrol.common.core.resolver.CircuitBreakerRuleResolver;
 import io.sermant.flowcontrol.common.core.rule.CircuitBreakerRule;
@@ -67,6 +68,8 @@ public class CircuitRequestHandlerTest extends BaseEntityTest implements Request
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(()->PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(flowControlConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
     }
 
     // The mock static method needs to be closed when it is finished

@@ -18,12 +18,12 @@
 package io.sermant.flowcontrol.res4j.chain.handler;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 import io.sermant.flowcontrol.res4j.handler.RateLimitingHandler;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Current limiting request handler
@@ -35,26 +35,27 @@ public class RateLimitingRequestHandler extends FlowControlHandler<RateLimiter> 
     private final RateLimitingHandler rateLimitingHandler = new RateLimitingHandler();
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
-        final List<RateLimiter> handlers = rateLimitingHandler.createOrGetHandlers(businessNames);
+    public void onBefore(RequestContext context, FlowControlScenario scenarioInfo) {
+        final List<RateLimiter> handlers =
+                rateLimitingHandler.createOrGetHandlers(scenarioInfo.getMatchedScenarioNames());
         if (!handlers.isEmpty()) {
             context.save(getContextName(), handlers);
             handlers.forEach(rateLimiter -> RateLimiter.waitForPermission(rateLimiter, 1));
         }
-        super.onBefore(context, businessNames);
+        super.onBefore(context, scenarioInfo);
     }
 
     @Override
-    public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
+    public void onThrow(RequestContext context, FlowControlScenario scenarioInfo, Throwable throwable) {
         final List<RateLimiter> rateLimiters = getHandlersFromCache(context.getSourceName(), getContextName());
         if (rateLimiters != null) {
             rateLimiters.forEach(rateLimiter -> rateLimiter.onError(throwable));
         }
-        super.onThrow(context, businessNames, throwable);
+        super.onThrow(context, scenarioInfo, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
+    public void onResult(RequestContext context, FlowControlScenario scenarioInfo, Object result) {
         try {
             final List<RateLimiter> rateLimiters = getHandlersFromCache(context.getSourceName(), getContextName());
             if (rateLimiters != null) {
@@ -63,7 +64,7 @@ public class RateLimitingRequestHandler extends FlowControlHandler<RateLimiter> 
         } finally {
             context.remove(getContextName());
         }
-        super.onResult(context, businessNames, result);
+        super.onResult(context, scenarioInfo, result);
     }
 
     @Override

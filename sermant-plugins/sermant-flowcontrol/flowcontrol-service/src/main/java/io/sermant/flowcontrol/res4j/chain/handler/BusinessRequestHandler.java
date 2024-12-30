@@ -18,6 +18,7 @@
 package io.sermant.flowcontrol.res4j.chain.handler;
 
 import io.sermant.flowcontrol.common.core.match.MatchManager;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.ChainContext;
@@ -32,42 +33,31 @@ import java.util.Set;
  * @since 2022-07-05
  */
 public class BusinessRequestHandler extends AbstractChainHandler {
-    private static final String MATCHED_BUSINESS_NAMES = "__MATCHED_BUSINESS_NAMES__";
-
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
+    public void onBefore(RequestContext context, FlowControlScenario scenarioInfo) {
         final Set<String> matchBusinessNames = MatchManager.INSTANCE.matchWithCache(context.getRequestEntity());
-        if (matchBusinessNames == null || matchBusinessNames.isEmpty()) {
-            return;
+        if (scenarioInfo != null) {
+            scenarioInfo.setMatchedScenarioNames(matchBusinessNames);
+            super.onBefore(context, scenarioInfo);
+        } else {
+            FlowControlScenario flowControlScenario = new FlowControlScenario();
+            flowControlScenario.setMatchedScenarioNames(matchBusinessNames);
+            super.onBefore(context, flowControlScenario);
         }
-        context.save(MATCHED_BUSINESS_NAMES, matchBusinessNames);
-        super.onBefore(context, matchBusinessNames);
     }
 
     @Override
-    public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
-        final Set<String> matchBusinessNames = getMatchedBusinessNames(context);
-        if (matchBusinessNames == null || matchBusinessNames.isEmpty()) {
-            return;
-        }
-        super.onThrow(context, matchBusinessNames, throwable);
+    public void onThrow(RequestContext context, FlowControlScenario scenarioInfo, Throwable throwable) {
+        super.onThrow(context, scenarioInfo, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
-        final Set<String> matchBusinessNames = getMatchedBusinessNames(context);
-        if (matchBusinessNames == null || matchBusinessNames.isEmpty()) {
-            return;
-        }
+    public void onResult(RequestContext context, FlowControlScenario scenarioInfo, Object result) {
         try {
-            super.onResult(context, matchBusinessNames, result);
+            super.onResult(context, scenarioInfo, result);
         } finally {
-            ChainContext.getThreadLocalContext(context.getSourceName()).remove(MATCHED_BUSINESS_NAMES);
+            ChainContext.getThreadLocalContext(context.getSourceName()).remove(MATCHED_SCENARIO_NAMES);
         }
-    }
-
-    private Set<String> getMatchedBusinessNames(RequestContext context) {
-        return context.get(MATCHED_BUSINESS_NAMES, Set.class);
     }
 
     @Override

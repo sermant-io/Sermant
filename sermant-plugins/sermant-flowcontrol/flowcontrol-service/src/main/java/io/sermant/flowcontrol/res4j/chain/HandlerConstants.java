@@ -27,7 +27,7 @@ public class HandlerConstants {
     /**
      * monitoring priority
      */
-    public static final int MONITOR_ORDER = -2000;
+    public static final int MONITOR_ORDER = -3000;
 
     /**
      * service processing priority
@@ -35,19 +35,34 @@ public class HandlerConstants {
     public static final int BUSINESS_ORDER = -1000;
 
     /**
+     * xds service processing priority
+     */
+    public static final int XDS_BUSINESS_ORDER = -2000;
+
+    /**
      * fault injection priority
      */
-    public static final int FAULT_ORDER = 3000;
+    public static final int FAULT_ORDER = 4000;
+
+    /**
+     *  xds fault injection priority
+     */
+    public static final int XDS_FAULT_ORDER = 3000;
 
     /**
      * rate limiting priority
      */
-    public static final int RATE_LIMIT_ORDER = 4000;
+    public static final int RATE_LIMIT_ORDER = 6000;
+
+    /**
+     * rate limiting priority
+     */
+    public static final int XDS_RATE_LIMIT_ORDER = 5000;
 
     /**
      * isolation bin priority
      */
-    public static final int BULK_HEAD_ORDER = 5000;
+    public static final int BULK_HEAD_ORDER = 7000;
 
     /**
      * Instance isolation priority, which must be greater than the circuit breaker priority

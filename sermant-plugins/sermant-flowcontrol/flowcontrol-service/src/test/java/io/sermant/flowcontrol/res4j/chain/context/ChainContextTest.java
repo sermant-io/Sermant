@@ -48,6 +48,9 @@ public class ChainContextTest {
         ChainContext.getThreadLocalContext("test125");
         ChainContext.getThreadLocalContext("test126");
         ChainContext.getThreadLocalContext("test127");
+        ChainContext.getThreadLocalContext("test128");
+        ChainContext.getThreadLocalContext("test130");
+        ChainContext.getThreadLocalContext("test129");
         try {
             ChainContext.getThreadLocalContext("test5");
         } finally {

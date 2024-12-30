@@ -17,8 +17,11 @@
 
 package io.sermant.flowcontrol.res4j.chain.handler;
 
+import io.sermant.core.utils.CollectionUtils;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
 import io.sermant.flowcontrol.res4j.chain.context.ChainContext;
+import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 
 import java.util.List;
 
@@ -50,5 +53,11 @@ public abstract class FlowControlHandler<T> extends AbstractChainHandler {
      */
     protected String getContextName() {
         return getClass().getName();
+    }
+
+    @Override
+    protected boolean isSkip(RequestContext context, FlowControlScenario flowControlScenario) {
+        return XDS_FLOW_CONTROL_CONFIG.isEnable() || flowControlScenario == null
+                || CollectionUtils.isEmpty(flowControlScenario.getMatchedScenarioNames());
     }
 }

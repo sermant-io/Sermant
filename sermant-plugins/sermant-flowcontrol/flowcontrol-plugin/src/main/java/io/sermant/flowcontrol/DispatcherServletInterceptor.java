@@ -17,6 +17,7 @@
 package io.sermant.flowcontrol;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.common.config.ConfigConst;
@@ -30,6 +31,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -120,13 +122,21 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
             return context;
         }
         chooseHttpService().onBefore(className, httpRequestEntity.get(), result);
-        if (result.isSkip()) {
-            context.skip(null);
-            final Object response = allArguments[1];
-            if (response != null) {
-                setStatus.accept(response, result.getResponse().getCode());
-                getWriter.apply(response).print(result.buildResponseMsg());
+        if (!result.isSkip()) {
+            return context;
+        }
+        context.skip(null);
+        final Object response = allArguments[1];
+        if (response == null) {
+            return context;
+        }
+        setStatus.accept(response, result.getResponse().getCode());
+        getWriter.apply(response).print(result.buildResponseMsg());
+        for (Map.Entry<String, List<String>> entry : result.getResponse().getHeaders().entrySet()) {
+            if (CollectionUtils.isEmpty(entry.getValue())) {
+                continue;
             }
+            setResponseHeader(response, entry.getKey(), entry.getValue().get(0));
         }
         return context;
     }
@@ -165,6 +175,11 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
     private String getHeader(Object httpServletRequest, String key) {
         return (String) ReflectUtils.invokeMethod(httpServletRequest, "getHeader", new Class[]{String.class},
                 new Object[]{key}).orElse(null);
+    }
+
+    private Optional<Object> setResponseHeader(Object httpServletResponse, String key, String value) {
+        return ReflectUtils.invokeMethod(httpServletResponse, "setHeader",
+                new Class[]{String.class, String.class}, new Object[]{key, value});
     }
 
     private PrintWriter getWriter(Object httpServletRequest) {

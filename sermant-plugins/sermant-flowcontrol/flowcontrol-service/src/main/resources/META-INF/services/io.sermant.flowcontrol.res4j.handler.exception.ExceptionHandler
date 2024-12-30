@@ -21,3 +21,4 @@ io.sermant.flowcontrol.res4j.handler.exception.CircuitExceptionHandler
 io.sermant.flowcontrol.res4j.handler.exception.InstanceIsolationExceptionHandler
 io.sermant.flowcontrol.res4j.handler.exception.RateLimitingExceptionHandler
 io.sermant.flowcontrol.res4j.handler.exception.SystemRuleExceptionHandler
+io.sermant.flowcontrol.res4j.handler.exception.XdsRateLimitingExceptionHandler

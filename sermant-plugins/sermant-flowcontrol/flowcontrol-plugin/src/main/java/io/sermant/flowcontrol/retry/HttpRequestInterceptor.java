@@ -27,6 +27,7 @@ import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.common.handler.retry.AbstractRetry;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
+import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.inject.DefaultClientHttpResponse;
 import io.sermant.flowcontrol.inject.RetryClientHttpResponse;
 import io.sermant.flowcontrol.service.InterceptorSupporter;
@@ -39,9 +40,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -95,12 +99,12 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         if (flowControlResult.isSkip()) {
             context.skip(new DefaultClientHttpResponse(flowControlResult));
         } else {
-            tryExeWithRetry(context);
+            tryExeWithRetry(context, httpRequestEntity.get());
         }
         return context;
     }
 
-    private void tryExeWithRetry(ExecuteContext context) {
+    private void tryExeWithRetry(ExecuteContext context, HttpRequestEntity httpRequestEntity) {
         final Object[] allArguments = context.getArguments();
         final HttpRequest request = (HttpRequest) context.getObject();
         Object result;
@@ -118,12 +122,8 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         }
         context.afterMethod(result, ex);
         try {
-            final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
-            if (!httpRequestEntity.isPresent()) {
-                return;
-            }
-            RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity.get());
-            final List<Retry> handlers = getRetryHandler().getHandlers(httpRequestEntity.get());
+            RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity);
+            final List<Retry> handlers = getRetryHandler().getHandlers(httpRequestEntity);
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
                 // retry only one policy
                 request.getHeaders().add(RETRY_KEY, RETRY_VALUE);
@@ -143,6 +143,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     @Override
     protected ExecuteContext doThrow(ExecuteContext context) {
         chooseHttpService().onThrow(className, context.getThrowable());
+        XdsThreadLocalUtil.removeSendByteFlag();
         return context;
     }
 
@@ -155,6 +156,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
             chooseHttpService().onThrow(className, defaultException);
         }
         chooseHttpService().onAfter(className, context.getResult());
+        XdsThreadLocalUtil.removeSendByteFlag();
         return context;
     }
 
@@ -176,9 +178,38 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
 
         @Override
         public Optional<String> getCode(Object result) {
+            Optional<Object> resultOptional = getMethodResult(result, "getRawStatusCode");
+            return resultOptional.map(String::valueOf);
+        }
+
+        @Override
+        public Optional<Set<String>> getHeaderNames(Object result) {
+            Optional<Object> resultOptional = getMethodResult(result, "getHeaders");
+            if (!resultOptional.isPresent() || !(resultOptional.get() instanceof Map)) {
+                return Optional.empty();
+            }
+            Map<?, ?> headers = (Map<?, ?>) resultOptional.get();
+            Set<String> headerNames = new HashSet<>();
+            for (Map.Entry<?, ?> entry : headers.entrySet()) {
+                headerNames.add(entry.getKey().toString());
+            }
+            return Optional.of(headerNames);
+        }
+
+        @Override
+        public Class<? extends Throwable>[] retryExceptions() {
+            return getRetryExceptions();
+        }
+
+        @Override
+        public RetryFramework retryType() {
+            return RetryFramework.SPRING_CLOUD;
+        }
+
+        private Optional<Object> getMethodResult(Object result, String methodName) {
             final Optional<Method> getRawStatusCode = getInvokerMethod(result.getClass().getName() + METHOD_KEY, fn -> {
                 try {
-                    final Method method = result.getClass().getDeclaredMethod("getRawStatusCode");
+                    final Method method = result.getClass().getDeclaredMethod(methodName);
                     method.setAccessible(true);
                     return method;
                 } catch (NoSuchMethodException ex) {
@@ -192,7 +223,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
                 return Optional.empty();
             }
             try {
-                return Optional.of(String.valueOf(getRawStatusCode.get().invoke(result)));
+                return Optional.of(getRawStatusCode.get().invoke(result));
             } catch (IllegalAccessException ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH,
                         "Can not find method getRawStatusCode from class [%s]!",
@@ -202,16 +233,6 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
                         ex.getMessage()));
             }
             return Optional.empty();
-        }
-
-        @Override
-        public Class<? extends Throwable>[] retryExceptions() {
-            return getRetryExceptions();
-        }
-
-        @Override
-        public RetryFramework retryType() {
-            return RetryFramework.SPRING_CLOUD;
         }
     }
 }

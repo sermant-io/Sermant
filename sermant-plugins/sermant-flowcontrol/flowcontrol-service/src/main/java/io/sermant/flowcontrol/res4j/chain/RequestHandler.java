@@ -17,9 +17,8 @@
 
 package io.sermant.flowcontrol.res4j.chain;
 
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
-
-import java.util.Set;
 
 /**
  * request handler definition
@@ -32,27 +31,27 @@ public interface RequestHandler {
      * request processing
      *
      * @param context request context
-     * @param businessNames matched service scenario name
+     * @param flowControlScenario matched business information
      */
-    void onBefore(RequestContext context, Set<String> businessNames);
+    void onBefore(RequestContext context, FlowControlScenario flowControlScenario);
 
     /**
      * response processing
      *
      * @param context request context
-     * @param businessNames matched service scenario name
+     * @param flowControlScenario matched business information
      * @param result response result
      */
-    void onResult(RequestContext context, Set<String> businessNames, Object result);
+    void onResult(RequestContext context, FlowControlScenario flowControlScenario, Object result);
 
     /**
      * response processing
      *
      * @param context request context
-     * @param businessNames matched service scenario name
+     * @param flowControlScenario matched business information
      * @param throwable throwable
      */
-    void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable);
+    void onThrow(RequestContext context, FlowControlScenario flowControlScenario, Throwable throwable);
 
     /**
      * priority

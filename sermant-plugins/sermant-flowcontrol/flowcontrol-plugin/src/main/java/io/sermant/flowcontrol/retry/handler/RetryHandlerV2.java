@@ -21,10 +21,14 @@ import io.github.resilience4j.core.IntervalFunction;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.flowcontrol.common.core.resolver.RetryResolver;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.handler.AbstractRequestHandler;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
+import io.sermant.flowcontrol.common.xds.handler.XdsHandler;
 import io.sermant.flowcontrol.retry.FeignRequestInterceptor.FeignRetry;
 import io.sermant.flowcontrol.retry.HttpRequestInterceptor.HttpRetry;
 
@@ -40,13 +44,39 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     private final RetryPredicateCreator retryPredicateCreator = new DefaultRetryPredicateCreator();
 
     @Override
+    public Optional<Retry> createHandler(FlowControlScenario flowControlScenario, String businessName) {
+        final io.sermant.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
+        if (retry == null) {
+            return Optional.empty();
+        }
+        Optional<XdsRetryPolicy> retryPolicyOptional = XdsHandler.INSTANCE
+                .getRetryPolicy(flowControlScenario.getServiceName(), flowControlScenario.getRouteName());
+        if (!retryPolicyOptional.isPresent()) {
+            return Optional.empty();
+        }
+        XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
+        if (retryPolicy.getPerTryTimeout() <= 0 || StringUtils.isEmpty(retryPolicy.getRetryOn())
+                || retryPolicy.getMaxAttempts() <= 0) {
+            return Optional.empty();
+        }
+        final RetryConfig retryConfig = RetryConfig.custom()
+                .maxAttempts((int)retryPolicy.getMaxAttempts())
+                .retryOnResult(retryPredicateCreator.createResultPredicate(retry, retryPolicy))
+                .retryOnException(retryPredicateCreator.createExceptionPredicate(retry.retryExceptions(), retryPolicy))
+                .intervalFunction(IntervalFunction.of(retryPolicy.getPerTryTimeout()))
+                .failAfterMaxAttempts(false)
+                .build();
+        return Optional.of(RetryRegistry.of(retryConfig).retry(businessName));
+    }
+
+    @Override
     protected Optional<Retry> createHandler(String businessName, RetryRule rule) {
         final io.sermant.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
         if (retry == null) {
             return Optional.empty();
         }
         final RetryConfig retryConfig = RetryConfig.custom()
-                .maxAttempts(getMaxAttempts(retry, rule))
+                .maxAttempts(getMaxAttempts(retry, rule.getMaxAttempts()))
                 .retryOnResult(retryPredicateCreator.createResultPredicate(retry, rule))
                 .retryOnException(retryPredicateCreator.createExceptionPredicate(retry.retryExceptions()))
                 .intervalFunction(getIntervalFunction(rule))
@@ -61,14 +91,14 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
      * based approach is{@link FeignRetry}, others are injection
      *
      * @param retry retry type
-     * @param rule rule
+     * @param maxAttempts maximum retry
      * @return maximum retry
      */
-    private int getMaxAttempts(io.sermant.flowcontrol.common.handler.retry.Retry retry, RetryRule rule) {
+    private int getMaxAttempts(io.sermant.flowcontrol.common.handler.retry.Retry retry, int maxAttempts) {
         if (retry instanceof FeignRetry || retry instanceof HttpRetry) {
-            return rule.getMaxAttempts();
+            return maxAttempts;
         }
-        return rule.getMaxAttempts() + 1;
+        return maxAttempts + 1;
     }
 
     @Override

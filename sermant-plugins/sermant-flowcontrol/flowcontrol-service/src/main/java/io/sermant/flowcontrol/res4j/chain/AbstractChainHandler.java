@@ -17,10 +17,11 @@
 
 package io.sermant.flowcontrol.res4j.chain;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
-
-import java.util.Set;
 
 /**
  * abstract handler chain, the order of execution is as follows:
@@ -30,38 +31,41 @@ import java.util.Set;
  * @since 2022-07-11
  */
 public abstract class AbstractChainHandler implements RequestHandler, Comparable<AbstractChainHandler> {
-    private static final int EXTRA_LENGTH_FOR_METHOD_CACHE_KEY = 11;
+    protected static final String MATCHED_SCENARIO_NAMES = "__MATCHED_SCENARIO_ENTITY__";
+
+    protected static final XdsFlowControlConfig XDS_FLOW_CONTROL_CONFIG =
+            PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class);
 
     private AbstractChainHandler next;
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
-        AbstractChainHandler cur = getNextHandler(context, businessNames);
+    public void onBefore(RequestContext context, FlowControlScenario flowControlScenario) {
+        AbstractChainHandler cur = getNextHandler(context, flowControlScenario);
         if (cur != null) {
-            cur.onBefore(context, businessNames);
+            cur.onBefore(context, flowControlScenario);
         }
     }
 
     @Override
-    public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
-        AbstractChainHandler cur = getNextHandler(context, businessNames);
+    public void onThrow(RequestContext context, FlowControlScenario flowControlScenario, Throwable throwable) {
+        AbstractChainHandler cur = getNextHandler(context, flowControlScenario);
         if (cur != null) {
-            cur.onThrow(context, businessNames, throwable);
+            cur.onThrow(context, flowControlScenario, throwable);
         }
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
-        AbstractChainHandler cur = getNextHandler(context, businessNames);
+    public void onResult(RequestContext context, FlowControlScenario flowControlScenario, Object result) {
+        AbstractChainHandler cur = getNextHandler(context, flowControlScenario);
         if (cur != null) {
-            cur.onResult(context, businessNames, result);
+            cur.onResult(context, flowControlScenario, result);
         }
     }
 
-    private AbstractChainHandler getNextHandler(RequestContext context, Set<String> businessNames) {
+    private AbstractChainHandler getNextHandler(RequestContext context, FlowControlScenario flowControlScenario) {
         AbstractChainHandler tmp = next;
         while (tmp != null) {
-            if (!isNeedSkip(tmp, context, businessNames)) {
+            if (!isNeedSkip(tmp, context, flowControlScenario)) {
                 break;
             }
             tmp = tmp.getNext();
@@ -69,15 +73,16 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
         return tmp;
     }
 
-    private boolean isNeedSkip(AbstractChainHandler tmp, RequestContext context, Set<String> businessNames) {
+    private boolean isNeedSkip(AbstractChainHandler tmp, RequestContext context, FlowControlScenario scenario) {
         final RequestType direct = tmp.direct();
-        if (direct != RequestType.BOTH && context.getRequestEntity().getRequestType() != direct) {
+        if (direct != RequestType.BOTH && context.getRequestEntity() != null
+                && context.getRequestEntity().getRequestType() != direct) {
             return true;
         }
         final String skipKey = skipCacheKey(tmp);
         Boolean isSkip = context.get(skipKey, Boolean.class);
         if (isSkip == null) {
-            isSkip = tmp.isSkip(context, businessNames);
+            isSkip = tmp.isSkip(context, scenario);
             context.save(skipKey, isSkip);
         }
         return isSkip;
@@ -88,10 +93,7 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
         RequestType direct = tmp.direct();
 
         // The length of the String Builder is initialized for performance
-        StringBuilder sb =
-                new StringBuilder(className.length() + direct.name().length() + EXTRA_LENGTH_FOR_METHOD_CACHE_KEY);
-        sb.append(direct).append("_").append(className).append("_skip_flag");
-        return sb.toString();
+        return direct + "_" + className + "_skip_flag";
     }
 
     /**
@@ -108,11 +110,11 @@ public abstract class AbstractChainHandler implements RequestHandler, Comparable
      * whether to skip the current handler
      *
      * @param context requestContext
-     * @param businessNames matching scene name
+     * @param flowControlScenario matched scenario information
      * @return skip or not
      */
-    protected boolean isSkip(RequestContext context, Set<String> businessNames) {
-        return false;
+    protected boolean isSkip(RequestContext context, FlowControlScenario flowControlScenario) {
+        return XDS_FLOW_CONTROL_CONFIG.isEnable();
     }
 
     @Override

@@ -21,6 +21,7 @@ import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.core.ResolverManager;
 import io.sermant.flowcontrol.common.core.match.MatchGroupResolver;
 import io.sermant.flowcontrol.res4j.chain.HandlerChainEntry;
@@ -63,7 +64,8 @@ public class RequestHandlerTest {
     @Before
     public void setUp() {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
-        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+                .thenReturn(new YamlConverterImpl());
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         FlowControlConfig flowControlConfig = new FlowControlConfig();
         flowControlConfig.setEnableStartMonitor(true);
@@ -72,6 +74,8 @@ public class RequestHandlerTest {
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(flowControlConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
         publishMatchGroup();
         loadTests();
         entry = HandlerChainEntry.INSTANCE;

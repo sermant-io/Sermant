@@ -34,13 +34,13 @@ public class XdsFlowControlConfig implements PluginConfig {
     /**
      * Specify the response code for retry, and retry will be executed when the response code is included
      */
-    @ConfigFieldKey("retry.x-sermant-retriable-status-codes")
+    @ConfigFieldKey("x-sermant-retriable-status-codes")
     private List<String> retryStatusCodes;
 
     /**
      * Specify the response code for retry, and retry will be executed when the response header is included
      */
-    @ConfigFieldKey("retry.x-sermant-retriable-header-names")
+    @ConfigFieldKey("x-sermant-retriable-header-names")
     private List<String> retryHeaderNames;
 
     /**
