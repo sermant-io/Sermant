@@ -39,6 +39,9 @@ sermant-agent:
     # injection before the original variable (default), after indicates injection after the original variable, and
     # ignore indicates that injection is not performed
     action: before
+  externalAgent:
+    imageAddr: io.sermant/opentelemetry-javaagent:2.10.0
+    fileName: opentelemetry-javaagent.jar
 
 management:
   endpoint:

@@ -21,5 +21,9 @@ data:
   # Injector injection action
   SERMANT_AGENT_INJECT_ACTION: {{ .Values.injector.action }}
   {{- if not (and .Values.configMap.enabled .Values.configMap.namespaces) }}
+  # External agent image address
+  SERMANT_AGENT_EXTERNALAGENT_IMAGEADDR: {{ .Values.externalAgent.imageAddr }}
+  # External agent file name in image
+  SERMANT_AGENT_EXTERNALAGENT_FILENAME: {{ .Values.externalAgent.fileName }}
   SERMANT_AGENT_CONFIGMAP: ""
   {{- end }}
