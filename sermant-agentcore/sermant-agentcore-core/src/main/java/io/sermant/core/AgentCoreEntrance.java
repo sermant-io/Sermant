@@ -46,6 +46,7 @@ import java.lang.instrument.Instrumentation;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * agent core entrance
@@ -144,15 +145,21 @@ public class AgentCoreEntrance {
         CommandProcessor.cacheInstrumentation(instrumentation);
 
         // install external agent, such as OTEL
-        handleExternalAgentInstallation(instrumentation);
+        handleExternalAgentInstallation(instrumentation, isDynamic, argsMap);
     }
 
-    private static void handleExternalAgentInstallation(Instrumentation instrumentation) {
+    private static void handleExternalAgentInstallation(Instrumentation instrumentation, boolean isDynamic,
+            Map<String, Object> argsMap) {
         AgentConfig agentConfig = ConfigManager.getConfig(AgentConfig.class);
         if (agentConfig.isExternalAgentInjection()) {
             try {
-                ExternalAgentManager.installExternalAgent(false, agentConfig.getExternalAgentName(),
-                        agentConfig.getExternalAgentFile(), null, instrumentation);
+                Map<String, String> args = null;
+                if (isDynamic) {
+                    args = argsMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                            entry -> entry.getValue() != null ? (String) entry.getValue() : null));
+                }
+                ExternalAgentManager.installExternalAgent(isDynamic, agentConfig.getExternalAgentName(),
+                        agentConfig.getExternalAgentFile(), args, instrumentation);
             } catch (Exception e) {
                 LOGGER.severe("Failed to install external agent: " + e.getMessage());
             }

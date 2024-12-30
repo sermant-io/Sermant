@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -191,8 +192,8 @@ public class ExternalAgentManager {
      * @param argsMap arguments of dynamic installation
      */
     static void setArgsToSystemProperties(Map<String, String> argsMap) {
-        for (String key : argsMap.keySet()) {
-            System.setProperty(key, argsMap.get(key));
+        for (Entry<String, String> entry : argsMap.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
         }
     }
 

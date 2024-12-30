@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
  * @since 2024-12-18
  */
 public enum MetricCommonTagEnum {
-
     /**
      * Define an AGENT tag with key "agent" and a constant value "sermant".
      */
@@ -64,10 +63,12 @@ public enum MetricCommonTagEnum {
     /**
      * Define an AGENT_VERSION tag with key "agent.version" and a value supplied by agent version
      */
-    AGENT_VERSION("agent.version", false, BootArgsIndexer::getCoreVersion),;
+    AGENT_VERSION("agent.version", false, BootArgsIndexer::getCoreVersion);
 
     private final String key;
+
     private final boolean defaultEnable;
+
     private final Supplier<String> valueSupplier;
 
     /**
@@ -121,8 +122,8 @@ public enum MetricCommonTagEnum {
     }
 
     /**
-     * Get the value of the tag corresponding to the given key.
-     * If the provided key is empty or does not correspond to any tag, return an empty string.
+     * Get the value of the tag corresponding to the given key. If the provided key is empty or does not correspond to
+     * any tag, return an empty string.
      *
      * @param key The key of the tag
      * @return The value of the tag, or an empty string if no matching tag exists
@@ -138,5 +139,4 @@ public enum MetricCommonTagEnum {
         }
         return StringUtils.EMPTY;
     }
-
 }
