@@ -114,7 +114,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                     .request(request)
                     .build());
         } else {
-            tryExeWithRetry(context);
+            executeWithRetryPolicy(context);
         }
         return context;
     }
@@ -130,7 +130,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
         return newRequest;
     }
 
-    private void tryExeWithRetry(ExecuteContext context) {
+    private void executeWithRetryPolicy(ExecuteContext context) {
         final Object[] allArguments = context.getArguments();
         Request request = (Request) allArguments[0];
         Object result = context.getResult();

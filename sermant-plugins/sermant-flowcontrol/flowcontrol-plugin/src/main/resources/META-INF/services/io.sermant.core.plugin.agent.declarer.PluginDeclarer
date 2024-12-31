@@ -31,3 +31,12 @@ io.sermant.flowcontrol.retry.HttpRequestDeclarer
 io.sermant.flowcontrol.retry.SpringRibbonLbDeclarer
 io.sermant.flowcontrol.retry.SpringLbDeclarer
 io.sermant.flowcontrol.ClusterDeclarer
+io.sermant.flowcontrol.retry.OkHttpSendHeaderDeclarer
+io.sermant.flowcontrol.retry.HttpClientConnectionSendHeaderDeclarer
+#HttpClient
+io.sermant.flowcontrol.retry.client.OkHttpClientInterceptorChainDeclarer
+io.sermant.flowcontrol.retry.client.HttpClient4xDeclarer
+io.sermant.flowcontrol.retry.client.HttpUrlConnectionConnectDeclarer
+io.sermant.flowcontrol.retry.client.HttpUrlConnectionDisconnectDeclarer
+io.sermant.flowcontrol.retry.client.OkHttp3ClientDeclarer
+io.sermant.flowcontrol.retry.client.HttpUrlConnectionResponseStreamDeclarer
