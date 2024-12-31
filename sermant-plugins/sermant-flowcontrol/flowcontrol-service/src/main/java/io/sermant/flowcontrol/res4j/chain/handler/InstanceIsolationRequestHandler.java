@@ -17,6 +17,7 @@
 
 package io.sermant.flowcontrol.res4j.chain.handler;
 
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
@@ -24,8 +25,6 @@ import io.sermant.flowcontrol.res4j.exceptions.CircuitBreakerException;
 import io.sermant.flowcontrol.res4j.exceptions.InstanceIsolationException;
 import io.sermant.flowcontrol.res4j.handler.CircuitBreakerHandler;
 import io.sermant.flowcontrol.res4j.handler.InstanceIsolationHandler;
-
-import java.util.Set;
 
 /**
  * Instance isolation. Instance isolation applies only to clients
@@ -39,9 +38,9 @@ public class InstanceIsolationRequestHandler extends CircuitBreakerRequestHandle
     private static final String START_TIME = CONTEXT_NAME + "_START_TIME";
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
+    public void onBefore(RequestContext context, FlowControlScenario flowControlScenario) {
         try {
-            super.onBefore(context, businessNames);
+            super.onBefore(context, flowControlScenario);
         } catch (CircuitBreakerException ex) {
             throw InstanceIsolationException.createException(ex.getCircuitBreaker());
         }

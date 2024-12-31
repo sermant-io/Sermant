@@ -21,6 +21,7 @@ import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.entity.DubboRequestEntity;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity.Builder;
@@ -44,7 +45,7 @@ import java.util.Collections;
  * @since 2022-08-30
  */
 public class HandlerChainEntryTest {
-    private final HandlerChainEntry instance = HandlerChainEntry.INSTANCE;
+    private HandlerChainEntry instance;
 
     private final String sourceName = this.getClass().getName();
 
@@ -74,8 +75,12 @@ public class HandlerChainEntryTest {
         pluginConfigManagerMockedStatic
                 .when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
-        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+                .thenReturn(new YamlConverterImpl());
+        instance = HandlerChainEntry.INSTANCE;
     }
 
     /**

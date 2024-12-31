@@ -18,6 +18,8 @@
 package io.sermant.flowcontrol.res4j.chain.handler;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.sermant.core.utils.CollectionUtils;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.adaptor.CircuitBreakerAdaptor;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
@@ -25,7 +27,6 @@ import io.sermant.flowcontrol.res4j.exceptions.CircuitBreakerException;
 import io.sermant.flowcontrol.res4j.handler.CircuitBreakerHandler;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,19 +43,21 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     private final CircuitBreakerHandler circuitBreakerHandler = getHandler();
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
-        final List<CircuitBreaker> circuitBreakers = circuitBreakerHandler.createOrGetHandlers(businessNames);
+    public void onBefore(RequestContext context, FlowControlScenario flowControlScenario) {
+        final List<CircuitBreaker> circuitBreakers =
+                circuitBreakerHandler.createOrGetHandlers(flowControlScenario.getMatchedScenarioNames());
         if (!circuitBreakers.isEmpty()) {
             for (CircuitBreaker circuitBreaker : circuitBreakers) {
                 checkForceOpen(circuitBreaker);
                 checkCircuitBreakerState(circuitBreaker);
             }
 
-            // 这里使用内置方法获取时间, 列表中的每个熔断器时间均一致，因此取第一个
+            // Use the built-in method to get the time. Since the time of each circuit breaker in the list is the same,
+            // take the first one
             context.save(getStartTime(), circuitBreakers.get(0).getCurrentTimestamp());
             context.save(getContextName(), circuitBreakers);
         }
-        super.onBefore(context, businessNames);
+        super.onBefore(context, flowControlScenario);
     }
 
     private void checkCircuitBreakerState(CircuitBreaker circuitBreaker) {
@@ -65,34 +68,34 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     }
 
     /**
-     * 强制开启状态直接抛出熔断异常
+     * In forced open state, throw a circuit breaker exception directly
      *
-     * @param circuitBreaker 熔断器
+     * @param circuitBreaker Circuit Breaker
      */
     private void checkForceOpen(CircuitBreaker circuitBreaker) {
         if (circuitBreaker instanceof CircuitBreakerAdaptor) {
             if (((CircuitBreakerAdaptor) circuitBreaker).isForceOpen()) {
-                // 强制开启则直接抛出异常
+                // Force open to throw an exception directly
                 throw CircuitBreakerException.createException(circuitBreaker);
             }
         }
     }
 
     @Override
-    public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
+    public void onThrow(RequestContext context, FlowControlScenario scenario, Throwable throwable) {
         process(context, throwable, null, false);
-        super.onThrow(context, businessNames, throwable);
+        super.onThrow(context, scenario, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
+    public void onResult(RequestContext context, FlowControlScenario scenario, Object result) {
         try {
             process(context, null, result, true);
         } finally {
             context.remove(getContextName());
             context.remove(getStartTime());
         }
-        super.onResult(context, businessNames, result);
+        super.onResult(context, scenario, result);
     }
 
     private void process(RequestContext context, Throwable throwable, Object result, boolean isResult) {
@@ -112,8 +115,9 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     }
 
     @Override
-    protected boolean isSkip(RequestContext context, Set<String> businessNames) {
-        return isForceClose(circuitBreakerHandler.createOrGetHandlers(businessNames));
+    protected boolean isSkip(RequestContext context, FlowControlScenario scenario) {
+        return scenario == null || CollectionUtils.isEmpty(scenario.getMatchedScenarioNames())
+                || isForceClose(circuitBreakerHandler.createOrGetHandlers(scenario.getMatchedScenarioNames()));
     }
 
     private boolean isForceClose(List<CircuitBreaker> circuitBreakers) {
@@ -122,7 +126,7 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
                 continue;
             }
             if (((CircuitBreakerAdaptor) circuitBreaker).isForceClosed()) {
-                // 强制关闭则跳过当前处理器逻辑
+                // Force shutdown skips current processor logic
                 return true;
             }
         }
@@ -130,9 +134,9 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     }
 
     /**
-     * 获取当前缓存上下文名称
+     * Get the name of the current cache context
      *
-     * @return 缓存上下文名称
+     * @return the name of the current cache context
      */
     @Override
     protected String getContextName() {
@@ -140,9 +144,9 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     }
 
     /**
-     * 获取当前缓存上下文开始时间
+     * Get the start time of the current cache context
      *
-     * @return 缓存上下文开始时间
+     * @return the start time of the current cache context
      */
     protected String getStartTime() {
         return START_TIME;
@@ -154,9 +158,9 @@ public class CircuitBreakerRequestHandler extends FlowControlHandler<CircuitBrea
     }
 
     /**
-     * 获取控制器
+     * Get the controller
      *
-     * @return 控制器
+     * @return controller
      */
     protected CircuitBreakerHandler getHandler() {
         return new CircuitBreakerHandler();

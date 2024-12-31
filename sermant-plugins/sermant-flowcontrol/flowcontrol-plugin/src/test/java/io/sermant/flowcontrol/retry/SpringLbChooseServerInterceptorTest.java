@@ -21,13 +21,19 @@ import static org.junit.Assert.assertNull;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.Interceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.TestHelper;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 /**
  * spring load test
@@ -37,6 +43,20 @@ import org.junit.Test;
  */
 public class SpringLbChooseServerInterceptorTest {
     private final Object server = new Object();
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    /**
+     * pre initialization
+     */
+    @Before
+    public void before() throws Exception {
+        XdsFlowControlConfig xdsFlowControlConfig = new XdsFlowControlConfig();
+        xdsFlowControlConfig.setEnable(true);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(()->PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(xdsFlowControlConfig);
+    }
 
     @Test
     public void testBefore() throws Exception {
@@ -80,5 +100,10 @@ public class SpringLbChooseServerInterceptorTest {
      */
     protected Interceptor getInterceptor() {
         return new SpringLbChooseServerInterceptor();
+    }
+
+    @After
+    public void after() {
+        pluginConfigManagerMockedStatic.close();
     }
 }

@@ -19,6 +19,7 @@ package io.sermant.flowcontrol.res4j.chain.handler;
 
 import io.sermant.flowcontrol.common.config.CommonConst;
 import io.sermant.flowcontrol.common.core.rule.fault.Fault;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
@@ -28,7 +29,6 @@ import io.sermant.flowcontrol.res4j.util.SystemRuleUtils;
 import io.sermant.flowcontrol.res4j.windows.WindowsArray;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * system rule flow control Handler
@@ -42,11 +42,11 @@ public class SystemServerReqHandler extends FlowControlHandler<Fault> {
     private final String contextName = SystemServerReqHandler.class.getName();
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
+    public void onBefore(RequestContext context, FlowControlScenario businessEntity) {
         if (SystemRuleUtils.isEnableSystemRule()) {
-
             // flow control detection
-            final List<SystemRuleFault> faults = systemRuleHandler.createOrGetHandlers(businessNames);
+            final List<SystemRuleFault> faults =
+                    systemRuleHandler.createOrGetHandlers(businessEntity.getMatchedScenarioNames());
             if (!faults.isEmpty()) {
                 faults.forEach(Fault::acquirePermission);
             }
@@ -55,18 +55,18 @@ public class SystemServerReqHandler extends FlowControlHandler<Fault> {
             context.save(CommonConst.REQUEST_START_TIME, System.currentTimeMillis());
             WindowsArray.INSTANCE.addThreadNum(context.get(CommonConst.REQUEST_START_TIME, long.class));
         }
-        super.onBefore(context, businessNames);
+        super.onBefore(context, businessEntity);
     }
 
     @Override
-    public void onThrow(RequestContext context, Set<String> businessNames, Throwable throwable) {
+    public void onThrow(RequestContext context, FlowControlScenario scenarioInfo, Throwable throwable) {
         context.remove(getContextName());
         context.remove(CommonConst.REQUEST_START_TIME);
-        super.onThrow(context, businessNames, throwable);
+        super.onThrow(context, scenarioInfo, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
+    public void onResult(RequestContext context, FlowControlScenario scenarioInfo, Object result) {
         if (SystemRuleUtils.isEnableSystemRule() && context.hasKey(CommonConst.REQUEST_START_TIME)) {
             long startTime = context.get(CommonConst.REQUEST_START_TIME, long.class);
             WindowsArray.INSTANCE.addSuccess(startTime);
@@ -75,7 +75,7 @@ public class SystemServerReqHandler extends FlowControlHandler<Fault> {
             context.remove(CommonConst.REQUEST_START_TIME);
         }
         context.remove(getContextName());
-        super.onResult(context, businessNames, result);
+        super.onResult(context, scenarioInfo, result);
     }
 
     @Override

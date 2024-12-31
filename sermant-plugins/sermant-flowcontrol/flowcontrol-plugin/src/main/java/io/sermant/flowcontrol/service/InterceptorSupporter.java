@@ -24,6 +24,7 @@ import io.sermant.core.plugin.agent.interceptor.Interceptor;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.enums.FlowFramework;
 import io.sermant.flowcontrol.common.exception.InvokerWrapperException;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
@@ -78,6 +79,8 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      */
     protected final FlowControlConfig flowControlConfig;
 
+    protected final XdsFlowControlConfig xdsFlowControlConfig;
+
     private final ReentrantLock lock = new ReentrantLock();
 
     private RetryHandlerV2 retryHandler = null;
@@ -91,6 +94,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      */
     protected InterceptorSupporter() {
         flowControlConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+        xdsFlowControlConfig = PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class);
     }
 
     /**
@@ -162,7 +166,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      * @return Method
      * @throws InvokerWrapperException InvokerWrapperException
      */
-    protected final Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
+    protected Supplier<Object> createRetryFunc(Object obj, Method method, Object[] allArguments, Object result) {
         return () -> {
             method.setAccessible(true);
             try {

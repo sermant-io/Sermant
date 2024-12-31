@@ -21,6 +21,7 @@ import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.res4j.chain.context.ChainContext;
@@ -48,6 +49,8 @@ public class DubboRest4jServiceImplTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(new FlowControlConfig());
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
         operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
     }

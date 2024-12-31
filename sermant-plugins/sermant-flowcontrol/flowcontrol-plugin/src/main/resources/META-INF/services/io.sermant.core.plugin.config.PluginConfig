@@ -1,1 +1,2 @@
 io.sermant.flowcontrol.common.config.FlowControlConfig
+io.sermant.flowcontrol.common.config.XdsFlowControlConfig

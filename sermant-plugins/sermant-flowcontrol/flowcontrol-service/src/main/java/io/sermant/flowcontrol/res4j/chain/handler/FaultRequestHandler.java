@@ -18,13 +18,13 @@
 package io.sermant.flowcontrol.res4j.chain.handler;
 
 import io.sermant.flowcontrol.common.core.rule.fault.Fault;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 import io.sermant.flowcontrol.res4j.handler.FaultHandler;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * error injection request handler
@@ -38,19 +38,19 @@ public class FaultRequestHandler extends FlowControlHandler<Fault> {
     private final String contextName = FaultRequestHandler.class.getName();
 
     @Override
-    public void onBefore(RequestContext context, Set<String> businessNames) {
-        final List<Fault> faults = faultHandler.createOrGetHandlers(businessNames);
+    public void onBefore(RequestContext context, FlowControlScenario flowControlScenario) {
+        final List<Fault> faults = faultHandler.createOrGetHandlers(flowControlScenario.getMatchedScenarioNames());
         if (!faults.isEmpty()) {
             faults.forEach(Fault::acquirePermission);
             context.save(getContextName(), faults);
         }
-        super.onBefore(context, businessNames);
+        super.onBefore(context, flowControlScenario);
     }
 
     @Override
-    public void onResult(RequestContext context, Set<String> businessNames, Object result) {
+    public void onResult(RequestContext context, FlowControlScenario flowControlScenario, Object result) {
         context.remove(getContextName());
-        super.onResult(context, businessNames, result);
+        super.onResult(context, flowControlScenario, result);
     }
 
     @Override

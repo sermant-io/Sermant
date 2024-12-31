@@ -41,9 +41,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -209,10 +212,29 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
 
         @Override
         public Optional<String> getCode(Object result) {
+            Optional<Object> resultOptional = getMethodResult(result, "status");
+            return resultOptional.map(String::valueOf);
+        }
+
+        @Override
+        public Optional<Set<String>> getHeaderNames(Object result) {
+            Optional<Object> resultOptional = getMethodResult(result, "headers");
+            if (!resultOptional.isPresent() || !(resultOptional.get() instanceof Map)) {
+                return Optional.empty();
+            }
+            Map<?, ?> headers = (Map<?, ?>) resultOptional.get();
+            Set<String> headerNames = new HashSet<>();
+            for (Map.Entry<?, ?> entry : headers.entrySet()) {
+                headerNames.add(entry.getKey().toString());
+            }
+            return Optional.of(headerNames);
+        }
+
+        private Optional<Object> getMethodResult(Object result, String methodName) {
             final Optional<Method> status = getInvokerMethod(result.getClass().getName() + METHOD_KEY, fn -> {
                 final Method method;
                 try {
-                    method = result.getClass().getDeclaredMethod("status");
+                    method = result.getClass().getDeclaredMethod(methodName);
                     method.setAccessible(true);
                     return method;
                 } catch (NoSuchMethodException ex) {
@@ -225,7 +247,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
                 return Optional.empty();
             }
             try {
-                return Optional.of(String.valueOf(status.get().invoke(result)));
+                return Optional.of(status.get().invoke(result));
             } catch (IllegalAccessException ex) {
                 LOGGER.warning(String.format(Locale.ENGLISH, "Can not find method status from class [%s]!",
                         result.getClass().getCanonicalName()));

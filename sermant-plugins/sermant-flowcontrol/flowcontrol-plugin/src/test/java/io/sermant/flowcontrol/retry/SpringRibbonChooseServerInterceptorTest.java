@@ -24,13 +24,19 @@ import com.google.common.base.Optional;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.Interceptor;
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.TestHelper;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +49,20 @@ import java.util.List;
  */
 public class SpringRibbonChooseServerInterceptorTest {
     private final Object server = new Object();
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    /**
+     * pre initialization
+     */
+    @Before
+    public void before() throws Exception {
+        XdsFlowControlConfig xdsFlowControlConfig = new XdsFlowControlConfig();
+        xdsFlowControlConfig.setEnable(true);
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(()->PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(xdsFlowControlConfig);
+    }
 
     @Test
     public void testBefore() throws Exception {
@@ -74,13 +94,26 @@ public class SpringRibbonChooseServerInterceptorTest {
         RetryContext.INSTANCE.buildRetryPolicy(retryRule);
         final ExecuteContext context = TestHelper.buildDefaultContext();
         context.changeResult(Optional.of(server));
-        ReflectUtils.invokeMethod(interceptor, "updateServiceInstance", new Class[]{ExecuteContext.class},
+        ReflectUtils.invokeMethod(interceptor, "updateServiceInstance", new Class[]{context.getClass()},
                 new Object[]{context});
         Assert.assertTrue(RetryContext.INSTANCE.getRetryPolicy().getAllRetriedInstance().contains(server));
+        List<Object> serverList = new ArrayList<>();
+        serverList.add(server);
+        Object instance = new Object();
+        serverList.add(instance);
+        context.changeArgs(new Object[]{serverList});
+        ReflectUtils.invokeMethod(interceptor, "removeRetriedServiceInstance", new Class[]{context.getClass()},
+                new Object[]{context});
+        Assert.assertEquals(((List<?>)context.getArguments()[0]).get(0), instance);
         RetryContext.INSTANCE.remove();
     }
 
     private Interceptor getInterceptor() {
         return new SpringRibbonChooseServerInterceptor();
+    }
+
+    @After
+    public void after() {
+        pluginConfigManagerMockedStatic.close();
     }
 }

@@ -21,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 import io.sermant.core.operation.OperationManager;
 import io.sermant.core.operation.converter.api.YamlConverter;
+import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity.Builder;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
@@ -49,16 +52,23 @@ import java.util.Set;
 public class HandlerChainTest {
     private MockedStatic<OperationManager> operationManagerMockedStatic;
 
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
     @Before
     public void setUp() {
         operationManagerMockedStatic = Mockito.mockStatic(OperationManager.class);
-        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class)).thenReturn(new YamlConverterImpl());
+        operationManagerMockedStatic.when(() -> OperationManager.getOperation(YamlConverter.class))
+                .thenReturn(new YamlConverterImpl());
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
     }
 
     // The mock static method needs to be closed when it is finished
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         operationManagerMockedStatic.close();
+        pluginConfigManagerMockedStatic.close();
     }
 
     /**
@@ -86,32 +96,34 @@ public class HandlerChainTest {
         final RequestContext requestContext = ChainContext.getThreadLocalContext("test");
         final HttpRequestEntity build = new Builder().setRequestType(RequestType.CLIENT).setApiPath("/api").build();
         requestContext.setRequestEntity(build);
+        FlowControlScenario scenarioInfo = new FlowControlScenario();
         final Set<String> businessNames = Collections.singleton("test");
         final Exception exception = new IllegalArgumentException("error");
         final Object result = new Object();
-        handlerChain.onBefore(requestContext, businessNames);
-        handlerChain.onThrow(requestContext, businessNames, exception);
-        handlerChain.onResult(requestContext, businessNames, result);
+        scenarioInfo.setMatchedScenarioNames(businessNames);
+        handlerChain.onBefore(requestContext, scenarioInfo);
+        handlerChain.onThrow(requestContext, scenarioInfo, exception);
+        handlerChain.onResult(requestContext, scenarioInfo, result);
         Mockito.verify(bulkheadRequestHandler, Mockito.times(1))
-                .onBefore(requestContext, businessNames);
+                .onBefore(requestContext, scenarioInfo);
         Mockito.verify(bulkheadRequestHandler, Mockito.times(1))
-                .onThrow(requestContext, businessNames, exception);
+                .onThrow(requestContext, scenarioInfo, exception);
         Mockito.verify(bulkheadRequestHandler, Mockito.times(1))
-                .onResult(requestContext, businessNames, result);
+                .onResult(requestContext, scenarioInfo, result);
 
         Mockito.verify(circuitBreakerClientReqHandler, Mockito.times(1))
-                .onBefore(requestContext, businessNames);
+                .onBefore(requestContext, scenarioInfo);
         Mockito.verify(circuitBreakerClientReqHandler, Mockito.times(1))
-                .onThrow(requestContext, businessNames, exception);
+                .onThrow(requestContext, scenarioInfo, exception);
         Mockito.verify(circuitBreakerClientReqHandler, Mockito.times(1))
-                .onResult(requestContext, businessNames, result);
+                .onResult(requestContext, scenarioInfo, result);
 
         Mockito.verify(faultRequestHandler, Mockito.times(1))
-                .onBefore(requestContext, businessNames);
+                .onBefore(requestContext, scenarioInfo);
         Mockito.verify(faultRequestHandler, Mockito.times(1))
-                .onThrow(requestContext, businessNames, exception);
+                .onThrow(requestContext, scenarioInfo, exception);
         Mockito.verify(faultRequestHandler, Mockito.times(1))
-                .onResult(requestContext, businessNames, result);
+                .onResult(requestContext, scenarioInfo, result);
 
     }
 }

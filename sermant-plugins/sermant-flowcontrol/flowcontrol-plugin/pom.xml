@@ -27,6 +27,9 @@
         <netflix-core.version>1.4.7.RELEASE</netflix-core.version>
         <spring.cloud.context.version>2.2.0.RELEASE</spring.cloud.context.version>
         <google.guava>31.1-jre</google.guava>
+        <apache-httpclient.version>4.5.13</apache-httpclient.version>
+        <okhttp.version>4.11.0</okhttp.version>
+        <okhttp.sq.version>2.7.5</okhttp.sq.version>
     </properties>
     <dependencies>
         <!--compile-->
@@ -109,6 +112,24 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${google.guava}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${apache-httpclient.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.sq.version}</version>
             <scope>provided</scope>
         </dependency>
         <!--test-->

@@ -32,9 +32,11 @@ import io.sermant.flowcontrol.common.entity.FlowControlResult;
  */
 public class FaultExceptionHandler extends AbstractExceptionHandler<FaultException> {
     @Override
-    protected FlowControlResponse getFlowControlResponse(FaultException ex,
-            FlowControlResult flowControlResult) {
+    protected FlowControlResponse getFlowControlResponse(FaultException ex, FlowControlResult flowControlResult) {
         final FaultRule rule = ex.getRule();
+        if (rule == null) {
+            return new FlowControlResponse(ex.getMsg(), ex.getCode());
+        }
         if (RuleConstants.FAULT_RULE_FALLBACK_NULL_TYPE.equals(rule.getFallbackType())) {
             return new FlowControlResponse(ex.getMsg(), CommonConst.HTTP_OK, null);
         }

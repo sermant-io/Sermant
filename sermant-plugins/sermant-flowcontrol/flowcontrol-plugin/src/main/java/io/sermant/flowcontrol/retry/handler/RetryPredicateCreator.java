@@ -17,6 +17,7 @@
 
 package io.sermant.flowcontrol.retry.handler;
 
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.handler.retry.Retry;
 
@@ -38,6 +39,15 @@ public interface RetryPredicateCreator {
     Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions);
 
     /**
+     * Create exception Predicate
+     *
+     * @param retryExceptions retry exception set
+     * @param policy retry rule
+     * @return Predicate
+     */
+    Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions, XdsRetryPolicy policy);
+
+    /**
      * create retry result predicate
      *
      * @param retry retry
@@ -45,4 +55,13 @@ public interface RetryPredicateCreator {
      * @return Predicate
      */
     Predicate<Object> createResultPredicate(Retry retry, RetryRule rule);
+
+    /**
+     * create retry result predicate
+     *
+     * @param retry retry
+     * @param xdsRetryPolicy retry rule
+     * @return Predicate
+     */
+    Predicate<Object> createResultPredicate(Retry retry, XdsRetryPolicy xdsRetryPolicy);
 }

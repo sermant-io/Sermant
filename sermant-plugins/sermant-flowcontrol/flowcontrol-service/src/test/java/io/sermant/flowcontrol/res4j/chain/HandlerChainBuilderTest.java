@@ -17,11 +17,17 @@
 
 package io.sermant.flowcontrol.res4j.chain;
 
+import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.utils.ReflectUtils;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.res4j.service.ServiceCollectorService;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +40,20 @@ import java.util.Optional;
  */
 public class HandlerChainBuilderTest {
     private static final String FIELD_NAME = "HANDLERS";
+
+    private MockedStatic<PluginConfigManager> pluginConfigManagerMockedStatic;
+
+    @Before
+    public void setUp() {
+        pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
+    }
+
+    @After
+    public void tearDown() {
+        pluginConfigManagerMockedStatic.close();
+    }
 
     /**
      * ChainBuilder，determine the number of handlers
