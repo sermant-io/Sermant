@@ -21,6 +21,7 @@ import feign.Request;
 import feign.Response;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.flowcontrol.common.config.ConfigConst;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.FlowControlServiceMeta;
@@ -121,9 +122,12 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
 
     private Request getRequest(ExecuteContext context) {
         final Request request = (Request) context.getArguments()[0];
+        String serviceName = FlowControlServiceMeta.getInstance().getServiceName();
+        if (StringUtils.isEmpty(serviceName)) {
+            return request;
+        }
         final HashMap<String, Collection<String>> headers = new HashMap<>(request.headers());
-        headers.put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY,
-                Collections.singletonList(FlowControlServiceMeta.getInstance().getServiceName()));
+        headers.put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY, Collections.singletonList(serviceName));
         final Request newRequest = Request
                 .create(request.method(), request.url(), headers, request.body(), request.charset());
         context.getArguments()[0] = newRequest;
