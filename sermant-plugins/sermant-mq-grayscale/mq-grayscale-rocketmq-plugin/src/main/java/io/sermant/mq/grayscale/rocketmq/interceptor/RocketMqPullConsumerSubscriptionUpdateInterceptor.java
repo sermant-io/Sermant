@@ -22,12 +22,12 @@ import io.sermant.core.utils.ReflectUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.mq.grayscale.rocketmq.service.RocketMqConsumerGroupAutoCheck;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqGrayscaleConfigUtils;
+import io.sermant.mq.grayscale.rocketmq.utils.RocketMqReflectUtils;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqSubscriptionDataUtils;
 
 import org.apache.rocketmq.client.consumer.DefaultMQPullConsumer;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPullConsumerImpl;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
-import org.apache.rocketmq.common.protocol.heartbeat.SubscriptionData;
 
 import java.util.Optional;
 import java.util.logging.Level;
@@ -44,8 +44,9 @@ public class RocketMqPullConsumerSubscriptionUpdateInterceptor extends RocketMqA
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) throws Exception {
-        SubscriptionData subscriptionData = (SubscriptionData) context.getResult();
-        if (RocketMqSubscriptionDataUtils.isExpressionTypeInaccurate(subscriptionData.getExpressionType())) {
+        Object subscriptionData = context.getResult();
+        if (RocketMqSubscriptionDataUtils
+                .isExpressionTypeInaccurate(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
             return context;
         }
         Optional<Object> fieldValue = ReflectUtils.getFieldValue(context.getObject(), "mQClientFactory");
@@ -58,19 +59,20 @@ public class RocketMqPullConsumerSubscriptionUpdateInterceptor extends RocketMqA
         return context;
     }
 
-    private void buildSql92SubscriptionData(ExecuteContext context, SubscriptionData subscriptionData,
+    private void buildSql92SubscriptionData(ExecuteContext context, Object subscriptionData,
             MQClientInstance instance) {
         DefaultMQPullConsumer pullConsumer
                 = ((DefaultMQPullConsumerImpl) context.getObject()).getDefaultMQPullConsumer();
         String consumerGroup = pullConsumer.getConsumerGroup();
         if (StringUtils.isEmpty(RocketMqGrayscaleConfigUtils.getGrayGroupTag())) {
-            RocketMqConsumerGroupAutoCheck.setMqClientInstance(subscriptionData.getTopic(), consumerGroup, instance);
+            RocketMqConsumerGroupAutoCheck.setMqClientInstance(RocketMqReflectUtils.getTopic(subscriptionData),
+                    consumerGroup, instance);
             RocketMqConsumerGroupAutoCheck.syncUpdateCacheGrayTags();
             RocketMqConsumerGroupAutoCheck.startSchedulerCheckGroupTask();
         }
         String namesrvAddr = instance.getClientConfig().getNamesrvAddr();
-        String subscribeScope = RocketMqSubscriptionDataUtils.buildSubscribeScope(subscriptionData.getTopic(),
-                consumerGroup, namesrvAddr);
+        String subscribeScope = RocketMqSubscriptionDataUtils
+                .buildSubscribeScope(RocketMqReflectUtils.getTopic(subscriptionData), consumerGroup, namesrvAddr);
         RocketMqSubscriptionDataUtils.resetsSql92SubscriptionData(subscriptionData, subscribeScope);
     }
 }

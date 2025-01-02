@@ -22,6 +22,7 @@ import io.sermant.mq.grayscale.config.GrayTagItem;
 import io.sermant.mq.grayscale.config.MqGrayConfigCache;
 import io.sermant.mq.grayscale.rocketmq.config.RocketMqConsumerClientConfig;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqGrayscaleConfigUtils;
+import io.sermant.mq.grayscale.rocketmq.utils.RocketMqReflectUtils;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqSubscriptionDataUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,9 +30,6 @@ import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.impl.MQClientAPIImpl;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
-import org.apache.rocketmq.common.protocol.body.GroupList;
-import org.apache.rocketmq.common.protocol.route.BrokerData;
-import org.apache.rocketmq.common.protocol.route.TopicRouteData;
 import org.apache.rocketmq.remoting.exception.RemotingConnectException;
 import org.apache.rocketmq.remoting.exception.RemotingSendRequestException;
 import org.apache.rocketmq.remoting.exception.RemotingTimeoutException;
@@ -158,22 +156,22 @@ public class RocketMqConsumerGroupAutoCheck {
         try {
             MQClientAPIImpl mqClientApi = clientConfig.getMqClientInstance().getMQClientAPIImpl();
             String brokerAddress = getBrokerAddress(clientConfig.getTopic(), mqClientApi);
-            GroupList groupList = mqClientApi.queryTopicConsumeByWho(brokerAddress, clientConfig.getTopic(),
-                    ROCKET_MQ_READ_TIMEOUT);
+            Object groupList = RocketMqReflectUtils.queryTopicConsumeByWho(mqClientApi, brokerAddress,
+                    clientConfig.getTopic(), ROCKET_MQ_READ_TIMEOUT);
             return getGrayTagsByConsumerGroup(groupList, brokerAddress, mqClientApi,
                     clientConfig.getConsumerGroup());
         } catch (MQClientException | InterruptedException | RemotingTimeoutException | RemotingSendRequestException
-                | RemotingConnectException | MQBrokerException e) {
+                | RemotingConnectException e) {
             LOGGER.log(Level.FINE, String.format(Locale.ENGLISH, "[auto-check] error, message: %s",
                     e.getMessage()), e);
         }
         return new HashSet<>();
     }
 
-    private static Set<String> getGrayTagsByConsumerGroup(GroupList groupList, String brokerAddress,
+    private static Set<String> getGrayTagsByConsumerGroup(Object groupList, String brokerAddress,
             MQClientAPIImpl mqClientApi, String consumerGroup) {
         Set<String> grayTags = new HashSet<>();
-        for (String group : groupList.getGroupList()) {
+        for (String group : RocketMqReflectUtils.getGroupList(groupList)) {
             try {
                 List<String> consumerIds = mqClientApi.getConsumerIdListByGroup(brokerAddress, group,
                         ROCKET_MQ_READ_TIMEOUT);
@@ -196,11 +194,11 @@ public class RocketMqConsumerGroupAutoCheck {
     private static String getBrokerAddress(String topic, MQClientAPIImpl mqClientApi)
             throws RemotingSendRequestException, RemotingConnectException, RemotingTimeoutException,
             InterruptedException, MQClientException {
-        TopicRouteData topicRouteData = mqClientApi.getTopicRouteInfoFromNameServer(topic, ROCKET_MQ_READ_TIMEOUT,
-                false);
+        Object topicRouteData = RocketMqReflectUtils.getTopicRouteInfoFromNameServer(mqClientApi, topic,
+                ROCKET_MQ_READ_TIMEOUT, false);
         List<String> brokerList = new ArrayList<>();
-        for (BrokerData brokerData : topicRouteData.getBrokerDatas()) {
-            brokerList.addAll(brokerData.getBrokerAddrs().values());
+        for (Object brokerData : RocketMqReflectUtils.getBrokerDatas(topicRouteData)) {
+            brokerList.addAll(RocketMqReflectUtils.getBrokerAddrs(brokerData).values());
         }
 
         // cluster mode has multiple addresses, just select one

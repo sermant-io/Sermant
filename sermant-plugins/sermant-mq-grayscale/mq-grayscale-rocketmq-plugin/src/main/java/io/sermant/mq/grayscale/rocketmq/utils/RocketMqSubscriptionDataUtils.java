@@ -26,7 +26,6 @@ import io.sermant.mq.grayscale.rocketmq.config.RocketMqConsumerClientConfig;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
-import org.apache.rocketmq.common.protocol.heartbeat.SubscriptionData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -274,24 +273,27 @@ public class RocketMqSubscriptionDataUtils {
      * @param subscriptionData subscriptionData
      * @param subscribeScope subscribeScope
      */
-    public static void resetsSql92SubscriptionData(SubscriptionData subscriptionData, String subscribeScope) {
+    public static void resetsSql92SubscriptionData(Object subscriptionData, String subscribeScope) {
         String originSubData;
-        if (EXPRESSION_TYPE_TAG.equals(subscriptionData.getExpressionType())) {
-            originSubData = buildSql92ExpressionByTags(subscriptionData.getTagsSet());
+        if (EXPRESSION_TYPE_TAG.equals(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
+            originSubData = buildSql92ExpressionByTags(RocketMqReflectUtils.getTagsSet(subscriptionData));
         } else {
-            originSubData = subscriptionData.getSubString();
+            originSubData = RocketMqReflectUtils.getSubString(subscriptionData);
         }
         String newSubStr = addGrayTagsToSql92Expression(originSubData, subscribeScope);
         if (StringUtils.isEmpty(newSubStr)) {
             newSubStr = SELECT_ALL_MESSAGE_SQL;
         }
-        if (EXPRESSION_TYPE_TAG.equals(subscriptionData.getExpressionType())) {
-            subscriptionData.setExpressionType("SQL92");
-            subscriptionData.getTagsSet().clear();
-            subscriptionData.getCodeSet().clear();
+        if (EXPRESSION_TYPE_TAG.equals(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
+            RocketMqReflectUtils.setSubscriptionDatae(subscriptionData, "setExpressionType",
+                    new Class[]{String.class}, new Object[]{"SQL92"});
+            RocketMqReflectUtils.getTagsSet(subscriptionData).clear();
+            RocketMqReflectUtils.getCodeSet(subscriptionData).clear();
         }
-        subscriptionData.setSubString(newSubStr);
-        subscriptionData.setSubVersion(System.currentTimeMillis());
+        RocketMqReflectUtils.setSubscriptionDatae(subscriptionData, "setSubString",
+                new Class[]{String.class}, new Object[]{newSubStr});
+        RocketMqReflectUtils.setSubscriptionDatae(subscriptionData, "setSubVersion",
+                new Class[]{long.class}, new Object[]{System.currentTimeMillis()});
         LOGGER.warning(String.format(Locale.ENGLISH, "update [key: %s] SQL92 subscriptionData, originSubStr: "
                 + "[%s], newSubStr: [%s]", subscribeScope, originSubData, newSubStr));
     }

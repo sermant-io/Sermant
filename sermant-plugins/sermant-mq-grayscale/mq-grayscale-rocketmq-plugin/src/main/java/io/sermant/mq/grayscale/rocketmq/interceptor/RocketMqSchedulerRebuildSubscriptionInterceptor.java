@@ -20,11 +20,11 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.mq.grayscale.rocketmq.service.RocketMqConsumerGroupAutoCheck;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqGrayscaleConfigUtils;
+import io.sermant.mq.grayscale.rocketmq.utils.RocketMqReflectUtils;
 import io.sermant.mq.grayscale.rocketmq.utils.RocketMqSubscriptionDataUtils;
 
 import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
 import org.apache.rocketmq.client.impl.factory.MQClientInstance;
-import org.apache.rocketmq.common.protocol.heartbeat.SubscriptionData;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -39,13 +39,14 @@ public class RocketMqSchedulerRebuildSubscriptionInterceptor extends RocketMqAbs
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) throws Exception {
-        ConcurrentMap<String, SubscriptionData> map = (ConcurrentMap<String, SubscriptionData>) context.getResult();
+        ConcurrentMap<String, Object> map = (ConcurrentMap<String, Object>) context.getResult();
         RebalanceImpl balance = (RebalanceImpl) context.getObject();
         if (balance.getConsumerGroup() == null) {
             return context;
         }
-        for (SubscriptionData subscriptionData : map.values()) {
-            if (RocketMqSubscriptionDataUtils.isExpressionTypeInaccurate(subscriptionData.getExpressionType())) {
+        for (Object subscriptionData : map.values()) {
+            if (RocketMqSubscriptionDataUtils
+                    .isExpressionTypeInaccurate(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
                 continue;
             }
             buildSql92SubscriptionData(subscriptionData, balance);
@@ -53,9 +54,9 @@ public class RocketMqSchedulerRebuildSubscriptionInterceptor extends RocketMqAbs
         return context;
     }
 
-    private void buildSql92SubscriptionData(SubscriptionData subscriptionData, RebalanceImpl balance) {
+    private void buildSql92SubscriptionData(Object subscriptionData, RebalanceImpl balance) {
         synchronized (lock) {
-            String topic = subscriptionData.getTopic();
+            String topic = RocketMqReflectUtils.getTopic(subscriptionData);
             if (!RocketMqSubscriptionDataUtils.getGrayTagChangeFlag(topic, balance)) {
                 return;
             }
@@ -74,7 +75,7 @@ public class RocketMqSchedulerRebuildSubscriptionInterceptor extends RocketMqAbs
         }
     }
 
-    private void resetsSql92SubscriptionData(String topic, String consumerGroup, SubscriptionData subscriptionData,
+    private void resetsSql92SubscriptionData(String topic, String consumerGroup, Object subscriptionData,
             String namesrvAddr) {
         String subscribeScope = RocketMqSubscriptionDataUtils.buildSubscribeScope(topic, consumerGroup,
                 namesrvAddr);
