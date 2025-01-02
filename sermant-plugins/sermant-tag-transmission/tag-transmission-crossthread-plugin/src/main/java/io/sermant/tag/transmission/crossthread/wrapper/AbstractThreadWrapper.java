@@ -51,6 +51,8 @@ public abstract class AbstractThreadWrapper<T> {
 
     private final boolean cannotTransmit;
 
+    private final long threadId;
+
     /**
      * constructor
      *
@@ -73,6 +75,7 @@ public abstract class AbstractThreadWrapper<T> {
         }
         this.cannotTransmit = cannotTransmit;
         this.executorName = executorName;
+        this.threadId = Thread.currentThread().getId();
     }
 
     /**
@@ -108,6 +111,9 @@ public abstract class AbstractThreadWrapper<T> {
      * @param obj thread object
      */
     protected void before(Object obj) {
+        if (threadId == Thread.currentThread().getId()) {
+            return;
+        }
         if (cannotTransmit) {
             // When ordinary thread transparent transmission is enabled and thread pool transparent transmission is not
             // enabled, the data transparently transmitted by InheritableThreadLocal needs to be deleted before
@@ -133,6 +139,9 @@ public abstract class AbstractThreadWrapper<T> {
      * Post method executed by thread object
      */
     protected void after() {
+        if (threadId == Thread.currentThread().getId()) {
+            return;
+        }
         TrafficUtils.removeTrafficTag();
         TrafficUtils.removeTrafficData();
     }

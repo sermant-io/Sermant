@@ -45,6 +45,8 @@ public abstract class AbstractThreadWrapper<T> {
 
     private final boolean cannotTransmit;
 
+    private final long threadId;
+
     /**
      * Constructor
      *
@@ -66,6 +68,7 @@ public abstract class AbstractThreadWrapper<T> {
             this.requestData = requestData;
         }
         this.cannotTransmit = cannotTransmit;
+        this.threadId = Thread.currentThread().getId();
     }
 
     /**
@@ -96,6 +99,9 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     private void before(Object obj) {
+        if (threadId == Thread.currentThread().getId()) {
+            return;
+        }
         if (cannotTransmit) {
             // If you enable normal thread pass through but do not enable thread pool pass through,
             // you need to delete the data that is pass passed by InheritableThreadLocal before executing the method
@@ -117,6 +123,9 @@ public abstract class AbstractThreadWrapper<T> {
     }
 
     private void after() {
+        if (threadId == Thread.currentThread().getId()) {
+            return;
+        }
         ThreadLocalUtils.removeRequestTag();
         ThreadLocalUtils.removeRequestData();
     }
