@@ -20,6 +20,7 @@ package io.sermant.flowcontrol.retry;
 import io.github.resilience4j.retry.Retry;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.flowcontrol.common.config.ConfigConst;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.FlowControlServiceMeta;
@@ -88,8 +89,11 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     protected final ExecuteContext doBefore(ExecuteContext context) {
         final FlowControlResult flowControlResult = new FlowControlResult();
         final HttpRequest request = (HttpRequest) context.getObject();
-        request.getHeaders().put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY,
-                Collections.singletonList(FlowControlServiceMeta.getInstance().getServiceName()));
+        String serviceName = FlowControlServiceMeta.getInstance().getServiceName();
+        if (!StringUtils.isEmpty(serviceName)) {
+            request.getHeaders().put(ConfigConst.FLOW_REMOTE_SERVICE_NAME_HEADER_KEY,
+                    Collections.singletonList(serviceName));
+        }
         final Optional<HttpRequestEntity> httpRequestEntity = convertToHttpEntity(request);
         if (!httpRequestEntity.isPresent()) {
             return context;
