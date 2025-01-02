@@ -20,6 +20,7 @@ import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginServiceManager;
 import io.sermant.discovery.config.LbConfig;
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.service.lb.discovery.InstanceChangeListener;
 import io.sermant.discovery.service.lb.discovery.InstanceChangeListener.EventType;
 import io.sermant.discovery.service.lb.discovery.InstanceListenable;
@@ -200,7 +201,7 @@ public class ZkInstanceListenable implements InstanceListenable {
     }
 
     @Override
-    public String name() {
-        return "Zookeeper";
+    public RegisterType registerType() {
+        return RegisterType.ZOOKEEPER;
     }
 }

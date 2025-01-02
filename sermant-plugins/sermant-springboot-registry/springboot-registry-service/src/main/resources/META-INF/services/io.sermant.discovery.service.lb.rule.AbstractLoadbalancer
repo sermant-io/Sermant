@@ -18,3 +18,4 @@ io.sermant.discovery.service.lb.rule.RoundRobinLoadbalancer
 io.sermant.discovery.service.lb.rule.RandomLoadbalancer
 io.sermant.discovery.service.lb.rule.BestAvailableLoadbalancer
 io.sermant.discovery.service.lb.rule.WeightedResponseTimeLoadbalancer
+io.sermant.discovery.service.lb.rule.NacosWeightRandomRule

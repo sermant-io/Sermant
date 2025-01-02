@@ -16,6 +16,7 @@
 
 package io.sermant.discovery.service.lb.discovery;
 
+import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.service.lb.cache.InstanceCacheManager;
 
 /**
@@ -45,9 +46,9 @@ public interface InstanceListenable {
     void close();
 
     /**
-     * The name of the listener
+     * The RegisterType of the listener
      *
-     * @return Name
+     * @return RegisterType
      */
-    String name();
+    RegisterType registerType();
 }

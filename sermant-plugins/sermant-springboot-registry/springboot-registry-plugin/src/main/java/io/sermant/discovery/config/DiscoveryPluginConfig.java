@@ -42,6 +42,11 @@ public class DiscoveryPluginConfig implements PluginConfig {
      */
     private boolean enableRegistry = true;
 
+    /**
+     * Registry type, currently supports NACOS and ZOOKEEPER;
+     */
+    private RegisterType registerType = RegisterType.ZOOKEEPER;
+
     public boolean isEnableRegistry() {
         return enableRegistry;
     }
@@ -64,5 +69,13 @@ public class DiscoveryPluginConfig implements PluginConfig {
 
     public void setEnableRequestCount(boolean enableRequestCount) {
         this.enableRequestCount = enableRequestCount;
+    }
+
+    public RegisterType getRegisterType() {
+        return registerType;
+    }
+
+    public void setRegisterType(RegisterType registerType) {
+        this.registerType = registerType;
     }
 }

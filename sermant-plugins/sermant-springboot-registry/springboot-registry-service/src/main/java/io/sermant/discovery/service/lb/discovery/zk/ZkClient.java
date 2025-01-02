@@ -20,6 +20,7 @@ import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.plugin.service.PluginService;
 import io.sermant.discovery.config.DiscoveryPluginConfig;
 import io.sermant.discovery.config.LbConfig;
+import io.sermant.discovery.config.RegisterType;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -51,7 +52,8 @@ public class ZkClient implements PluginService {
 
     @Override
     public void start() {
-        if (!PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class).isEnableRegistry()) {
+        DiscoveryPluginConfig pluginConfig = PluginConfigManager.getPluginConfig(DiscoveryPluginConfig.class);
+        if (!pluginConfig.isEnableRegistry() || !RegisterType.ZOOKEEPER.equals(pluginConfig.getRegisterType())) {
             return;
         }
         this.client = this.buildClient();

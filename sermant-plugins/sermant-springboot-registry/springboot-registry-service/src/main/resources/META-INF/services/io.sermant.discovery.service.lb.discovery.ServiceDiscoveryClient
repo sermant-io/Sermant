@@ -15,3 +15,4 @@
 #
 
 io.sermant.discovery.service.lb.discovery.zk.ZkDiscoveryClientProxy
+io.sermant.discovery.service.lb.discovery.nacos.NacosDiscoveryClient
