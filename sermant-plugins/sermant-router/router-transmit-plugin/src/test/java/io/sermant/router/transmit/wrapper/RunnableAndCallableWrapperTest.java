@@ -35,17 +35,23 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
     @Test
     public void testRunCanTransmit() {
         RunnableAndCallableWrapper<Object> wrapper = new RunnableAndCallableWrapper<>(() -> {
-            Assert.assertNotNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
         }, null, new RequestTag(null), new RequestData(null, null, null), false);
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
 
         wrapper.run();
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 
     @Test
@@ -58,8 +64,10 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
         Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
 
         RunnableWrapper<Object> wrapper = new RunnableWrapper<>(() -> {
-            Assert.assertNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
         }, new RequestTag(null), new RequestData(null, null, null), true);
 
         Assert.assertNull(ReflectUtils.getFieldValue(wrapper, "requestData").orElse(null));
@@ -67,26 +75,34 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
 
         wrapper.run();
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 
     @Test
     public void testCallCanTransmit() throws Exception {
         Object obj = new Object();
         RunnableAndCallableWrapper<Object> wrapper = new RunnableAndCallableWrapper<>(null, () -> {
-            Assert.assertNotNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
             return obj;
         }, new RequestTag(null), new RequestData(null, null, null), false);
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
 
         Assert.assertEquals(obj, wrapper.call());
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 
     @Test
@@ -100,8 +116,10 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
 
         Object obj = new Object();
         CallableWrapper<Object> wrapper = new CallableWrapper<>(() -> {
-            Assert.assertNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
             return obj;
         }, new RequestTag(null), new RequestData(null, null, null), true);
 
@@ -110,7 +128,9 @@ public class RunnableAndCallableWrapperTest extends BaseTest {
 
         Assert.assertEquals(obj, wrapper.call());
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 }

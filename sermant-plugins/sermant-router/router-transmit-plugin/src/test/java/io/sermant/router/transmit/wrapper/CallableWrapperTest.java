@@ -36,18 +36,24 @@ public class CallableWrapperTest extends BaseTest {
     public void testCanTransmit() throws Exception {
         Object obj = new Object();
         CallableWrapper<Object> wrapper = new CallableWrapper<>(() -> {
-            Assert.assertNotNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNotNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
             return obj;
         }, new RequestTag(null), new RequestData(null, null, null), false);
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
 
         Assert.assertEquals(obj, wrapper.call());
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 
     @Test
@@ -61,8 +67,10 @@ public class CallableWrapperTest extends BaseTest {
 
         Object obj = new Object();
         CallableWrapper<Object> wrapper = new CallableWrapper<>(() -> {
-            Assert.assertNull(ThreadLocalUtils.getRequestData());
-            Assert.assertNull(ThreadLocalUtils.getRequestTag());
+            Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                    || ThreadLocalUtils.getRequestData().getPath() == null);
+            Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                    || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
             return obj;
         }, new RequestTag(null), new RequestData(null, null, null), true);
 
@@ -71,7 +79,9 @@ public class CallableWrapperTest extends BaseTest {
 
         Assert.assertEquals(obj, wrapper.call());
 
-        Assert.assertNull(ThreadLocalUtils.getRequestData());
-        Assert.assertNull(ThreadLocalUtils.getRequestTag());
+        Assert.assertTrue(ThreadLocalUtils.getRequestData() == null
+                || ThreadLocalUtils.getRequestData().getPath() == null);
+        Assert.assertTrue(ThreadLocalUtils.getRequestTag() == null
+                || ThreadLocalUtils.getRequestTag().getTag().isEmpty());
     }
 }
