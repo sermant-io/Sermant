@@ -27,7 +27,6 @@ import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.common.handler.retry.AbstractRetry;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
-import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.inject.DefaultClientHttpResponse;
 import io.sermant.flowcontrol.inject.RetryClientHttpResponse;
 import io.sermant.flowcontrol.service.InterceptorSupporter;
@@ -99,12 +98,12 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         if (flowControlResult.isSkip()) {
             context.skip(new DefaultClientHttpResponse(flowControlResult));
         } else {
-            tryExeWithRetry(context, httpRequestEntity.get());
+            executeWithRetryPolicy(context, httpRequestEntity.get());
         }
         return context;
     }
 
-    private void tryExeWithRetry(ExecuteContext context, HttpRequestEntity httpRequestEntity) {
+    private void executeWithRetryPolicy(ExecuteContext context, HttpRequestEntity httpRequestEntity) {
         final Object[] allArguments = context.getArguments();
         final HttpRequest request = (HttpRequest) context.getObject();
         Object result;
@@ -143,7 +142,6 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
     @Override
     protected ExecuteContext doThrow(ExecuteContext context) {
         chooseHttpService().onThrow(className, context.getThrowable());
-        XdsThreadLocalUtil.removeSendByteFlag();
         return context;
     }
 
@@ -156,7 +154,6 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
             chooseHttpService().onThrow(className, defaultException);
         }
         chooseHttpService().onAfter(className, context.getResult());
-        XdsThreadLocalUtil.removeSendByteFlag();
         return context;
     }
 
