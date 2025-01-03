@@ -91,7 +91,8 @@ public class XdsRateLimitRequestHandler extends AbstractChainHandler {
         if (!XDS_FLOW_CONTROL_CONFIG.isEnable()) {
             return true;
         }
-        return StringUtils.isEmpty(scenarioInfo.getServiceName()) || StringUtils.isEmpty(scenarioInfo.getRouteName());
+        return scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
+                || StringUtils.isEmpty(scenarioInfo.getRouteName());
     }
 
     @Override

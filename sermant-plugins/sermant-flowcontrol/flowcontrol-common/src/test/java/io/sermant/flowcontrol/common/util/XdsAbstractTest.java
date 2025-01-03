@@ -124,7 +124,7 @@ public abstract class XdsAbstractTest {
         Mockito.when(xdsCoreService.getLoadBalanceService()).thenReturn(xdsLoadBalanceService);
         requestCircuitBreakers.setMaxRequests(1000);
         instanceCircuitBreakers.setInterval(1000);
-        retryPolicy.setRetryOn("503");
+        retryPolicy.setRetryConditions(Collections.singletonList("503"));
         rateLimit.setResponseHeaderOption(Collections.singletonList(new XdsHeaderOption()));
         XdsDelay delay = new XdsDelay();
         delay.setFixedDelay(1000);

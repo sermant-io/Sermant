@@ -19,6 +19,7 @@ package io.sermant.flowcontrol.retry.client;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.ReflectUtils;
@@ -28,6 +29,7 @@ import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
+import io.sermant.flowcontrol.common.handler.retry.AbstractRetry;
 import io.sermant.flowcontrol.common.util.XdsRouterUtils;
 import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 
@@ -58,8 +60,7 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractXdsHttpClientIn
      * Constructor
      */
     public HttpUrlConnectionConnectInterceptor() {
-        super(new HttpUrlConnectionResponseStreamInterceptor.HttpUrlConnectionRetry(),
-                HttpUrlConnectionConnectInterceptor.class.getName());
+        super(new HttpUrlConnectionRetry(), HttpUrlConnectionConnectInterceptor.class.getName());
     }
 
     @Override
@@ -97,6 +98,13 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractXdsHttpClientIn
             context.skip(null);
             return context;
         }
+
+        // Save the identifier for the executed connect method, and enhance the HttpURLConnection's getInputStream only
+        // after the connect method has been executed.
+        XdsThreadLocalUtil.setConnectionStatus(true);
+
+        // Save the HttpURLConnection to facilitate retrieving the response status code during retries
+        XdsThreadLocalUtil.saveHttpUrlConnection(connection);
 
         // Execute service invocation and retry logic
         executeWithRetryPolicy(context);
@@ -209,5 +217,27 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractXdsHttpClientIn
 
     private Proxy createProxy(URL newUrl) {
         return new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(newUrl.getHost(), newUrl.getPort()));
+    }
+
+    /**
+     * Http url connection retry
+     *
+     * @since 2024-12-31
+     */
+    public static class HttpUrlConnectionRetry extends AbstractRetry {
+        @Override
+        public Class<? extends Throwable>[] retryExceptions() {
+            return getRetryExceptions();
+        }
+
+        @Override
+        public RetryFramework retryType() {
+            return RetryFramework.SPRING;
+        }
+
+        @Override
+        public boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy) {
+            return false;
+        }
     }
 }

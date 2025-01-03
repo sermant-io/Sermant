@@ -100,7 +100,7 @@ public class XdsCircuitBreakerManager {
         XdsCircuitBreakerInfo circuitBreakerInfo = getCircuitBreakerInfo(scenarioInfo.getServiceName(),
                 scenarioInfo.getRouteName(), scenarioInfo.getAddress());
         if (!XdsThreadLocalUtil.getSendByteFlag() && circuitBreakers.isSplitExternalLocalOriginErrors()
-                && shouldCircuitBreakerByFailure(circuitBreakerInfo.getGateWayFailure(),
+                && shouldCircuitBreakerByFailure(circuitBreakerInfo.getLocalFailure(),
                 circuitBreakers.getConsecutiveLocalOriginFailure(), circuitBreakers.getInterval())) {
             openCircuitBreaker(circuitBreakerInfo, circuitBreakers.getInterval());
         }
@@ -178,7 +178,7 @@ public class XdsCircuitBreakerManager {
         if (failureRequestThreshold <= 0) {
             return;
         }
-        for (int i = times.size(); i >= failureRequestThreshold - 1 && !times.isEmpty(); i--) {
+        for (int i = times.size(); i >= failureRequestThreshold && !times.isEmpty(); i--) {
             times.removeFirst();
         }
         times.add(currentTime);

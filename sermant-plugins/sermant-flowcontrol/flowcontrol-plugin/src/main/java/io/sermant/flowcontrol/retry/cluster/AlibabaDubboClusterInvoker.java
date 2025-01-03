@@ -211,7 +211,7 @@ public class AlibabaDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
      */
     public static class AlibabaDubboRetry extends AbstractRetry {
         @Override
-        public boolean needRetry(Set<String> statusList, Object result) {
+        public boolean isNeedRetry(Set<String> statusList, Object result) {
             // dubbo does not support status codes
             return false;
         }

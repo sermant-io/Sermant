@@ -89,6 +89,7 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
         if (flowControlResult.isSkip()) {
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(flowControlResult.getResponse().getCode())
+                    .protocol(Protocol.HTTP_1_1)
                     .message(flowControlResult.buildResponseMsg()).request(request).build());
             return context;
         }
@@ -99,6 +100,7 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(CommonConst.INTERVAL_SERVER_ERROR)
                     .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1).build());
+            return context;
         }
 
         // Execute service invocation and retry logic

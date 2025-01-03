@@ -22,7 +22,7 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 import io.sermant.core.service.xds.entity.XdsRetryPolicy;
-import io.sermant.core.utils.StringUtils;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.flowcontrol.common.core.resolver.RetryResolver;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
@@ -55,14 +55,14 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
             return Optional.empty();
         }
         XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
-        if (retryPolicy.getPerTryTimeout() <= 0 || StringUtils.isEmpty(retryPolicy.getRetryOn())
+        if (retryPolicy.getPerTryTimeout() <= 0 || CollectionUtils.isEmpty(retryPolicy.getRetryConditions())
                 || retryPolicy.getMaxAttempts() <= 0) {
             return Optional.empty();
         }
         final RetryConfig retryConfig = RetryConfig.custom()
                 .maxAttempts((int)retryPolicy.getMaxAttempts())
                 .retryOnResult(retryPredicateCreator.createResultPredicate(retry, retryPolicy))
-                .retryOnException(retryPredicateCreator.createExceptionPredicate(retry.retryExceptions(), retryPolicy))
+                .retryOnException(retryPredicateCreator.createExceptionPredicate(retry, retryPolicy))
                 .intervalFunction(IntervalFunction.of(retryPolicy.getPerTryTimeout()))
                 .failAfterMaxAttempts(false)
                 .build();

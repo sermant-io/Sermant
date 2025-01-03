@@ -63,7 +63,7 @@ public class XdsHandlerTest extends XdsAbstractTest {
         final Optional<XdsRetryPolicy> result = XdsHandler.INSTANCE.getRetryPolicy(
                 SERVICE_NAME, ROUTE_NAME);
         Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(retryPolicy.getRetryOn(), result.get().getRetryOn());
+        Assert.assertEquals(retryPolicy.getRetryConditions().get(0), result.get().getRetryConditions().get(0));
     }
 
     @Test

@@ -132,6 +132,12 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
             if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
                 // execute retry logic
                 result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
+                context.skip(result);
+                return;
+            }
+            if (ex != null) {
+                context.setThrowableOut(getRealCause(ex));
+                return;
             }
             context.skip(result);
         } catch (Throwable throwable) {
@@ -211,9 +217,13 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
      */
     protected Optional<ServiceInstance> chooseServiceInstanceForXds() {
         FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
-        if (scenarioInfo == null || io.sermant.core.utils.StringUtils.isBlank(scenarioInfo.getServiceName())
-                || io.sermant.core.utils.StringUtils.isEmpty(scenarioInfo.getClusterName())) {
+        if (scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())) {
             return Optional.empty();
+        }
+        if (StringUtils.isEmpty(scenarioInfo.getClusterName())) {
+            scenarioInfo.setClusterName(StringUtils.EMPTY);
+            return Optional.ofNullable(chooseServiceInstanceByLoadBalancer(
+                    XdsHandler.INSTANCE.getServiceInstanceByServiceName(scenarioInfo.getServiceName()), scenarioInfo));
         }
         Set<ServiceInstance> serviceInstanceSet = XdsHandler.INSTANCE.
                 getMatchedServiceInstance(scenarioInfo.getServiceName(), scenarioInfo.getClusterName());

@@ -38,6 +38,7 @@ import io.envoyproxy.envoy.extensions.filters.http.fault.v3.FaultAbort;
 import io.envoyproxy.envoy.extensions.filters.http.fault.v3.HTTPFault;
 import io.envoyproxy.envoy.type.matcher.v3.StringMatcher;
 import io.envoyproxy.envoy.type.v3.FractionalPercent;
+import io.sermant.core.common.CommonConstant;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.service.xds.entity.XdsAbort;
 import io.sermant.core.service.xds.entity.XdsDelay;
@@ -68,6 +69,7 @@ import io.sermant.implement.service.xds.entity.DenominatorType;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -264,13 +266,12 @@ public class RdsProtocolTransformer {
 
     private static XdsRetryPolicy parseRetryPolicy(RetryPolicy retryPolicy) {
         XdsRetryPolicy xdsRetryPolicy = new XdsRetryPolicy();
-        xdsRetryPolicy.setRetryOn(retryPolicy.getRetryOn());
+        if (!StringUtils.isEmpty(retryPolicy.getRetryOn())) {
+            xdsRetryPolicy.setRetryConditions(Arrays.asList(retryPolicy.getRetryOn().split(CommonConstant.COMMA)));
+        }
         xdsRetryPolicy.setMaxAttempts(retryPolicy.getHostSelectionRetryMaxAttempts());
         long perTryTimeout = Duration.ofSeconds(retryPolicy.getPerTryTimeout().getSeconds()).toMillis();
         xdsRetryPolicy.setPerTryTimeout(perTryTimeout);
-        if (retryPolicy.getRetryHostPredicateCount() != 0) {
-            xdsRetryPolicy.setRetryHostPredicate(retryPolicy.getRetryHostPredicate(0).getName());
-        }
         return xdsRetryPolicy;
     }
 

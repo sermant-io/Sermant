@@ -16,6 +16,8 @@
 
 package io.sermant.core.service.xds.entity;
 
+import java.util.List;
+
 /**
  * Xds Retry Policy information
  *
@@ -37,12 +39,7 @@ public class XdsRetryPolicy {
     /**
      * Specifies the conditions under which retry takes place
      */
-    private String retryOn;
-
-    /**
-     * Specifies the conditions under which retry takes place
-     */
-    private String retryHostPredicate;
+    private List<String> retryConditions;
 
     public long getMaxAttempts() {
         return maxAttempts;
@@ -60,19 +57,11 @@ public class XdsRetryPolicy {
         this.perTryTimeout = perTryTimeout;
     }
 
-    public String getRetryOn() {
-        return retryOn;
+    public List<String> getRetryConditions() {
+        return retryConditions;
     }
 
-    public void setRetryOn(String retryOn) {
-        this.retryOn = retryOn;
-    }
-
-    public String getRetryHostPredicate() {
-        return retryHostPredicate;
-    }
-
-    public void setRetryHostPredicate(String retryHostPredicate) {
-        this.retryHostPredicate = retryHostPredicate;
+    public void setRetryConditions(List<String> retryConditions) {
+        this.retryConditions = retryConditions;
     }
 }
