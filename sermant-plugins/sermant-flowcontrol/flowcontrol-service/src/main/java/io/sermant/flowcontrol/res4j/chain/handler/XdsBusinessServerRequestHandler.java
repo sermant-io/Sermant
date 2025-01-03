@@ -16,9 +16,10 @@
 
 package io.sermant.flowcontrol.res4j.chain.handler;
 
+import io.sermant.core.config.ConfigManager;
+import io.sermant.core.plugin.config.ServiceMeta;
 import io.sermant.flowcontrol.common.core.match.XdsRouteMatchManager;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
-import io.sermant.flowcontrol.common.entity.FlowControlServiceMeta;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
 import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
@@ -32,6 +33,8 @@ import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
  * @since 2024-12-05
  */
 public class XdsBusinessServerRequestHandler extends AbstractChainHandler {
+    private final ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
+
     @Override
     public void onBefore(RequestContext context, FlowControlScenario scenarioInfo) {
         if (XdsThreadLocalUtil.getScenarioInfo() != null) {
@@ -39,7 +42,7 @@ public class XdsBusinessServerRequestHandler extends AbstractChainHandler {
             return;
         }
         FlowControlScenario matchedScenarioEntity = XdsRouteMatchManager.INSTANCE.getMatchedScenarioInfo(
-                context.getRequestEntity(), FlowControlServiceMeta.getInstance().getServiceName());
+                context.getRequestEntity(), serviceMeta.getService());
         context.save(MATCHED_SCENARIO_NAMES, matchedScenarioEntity);
         XdsThreadLocalUtil.setScenarioInfo(matchedScenarioEntity);
         super.onBefore(context, matchedScenarioEntity);

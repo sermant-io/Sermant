@@ -18,6 +18,7 @@
 package io.sermant.flowcontrol.retry.handler;
 
 import feign.Response;
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.core.utils.ReflectUtils;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.exception.InvokerWrapperException;
@@ -58,12 +59,22 @@ public class DefaultRetryPredicateCreatorTest {
     static class TestRetry implements Retry {
 
         @Override
-        public boolean needRetry(Set<String> statusList, Object result) {
+        public boolean isNeedRetry(Set<String> statusList, Object result) {
             final Optional<Object> status = ReflectUtils.invokeMethod(result, "status", null, null);
             if (status.isPresent()) {
                 final Object code = status.get();
                 return statusList.contains(String.valueOf(code));
             }
+            return false;
+        }
+
+        @Override
+        public boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy) {
+            return false;
+        }
+
+        @Override
+        public boolean isNeedRetry(Throwable throwable, XdsRetryPolicy retryPolicy) {
             return false;
         }
 

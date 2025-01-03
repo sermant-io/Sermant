@@ -55,12 +55,13 @@ public class XdsRouterUtils {
      */
     public static Optional<XdsLocality> getLocalityInfoOfSelfService() {
         if (localityObtainedFlag) {
-            return Optional.of(selfServiceLocality);
+            return Optional.ofNullable(selfServiceLocality);
         }
         synchronized (XdsRouterUtils.class) {
             if (localityObtainedFlag) {
-                return Optional.of(selfServiceLocality);
+                return Optional.ofNullable(selfServiceLocality);
             }
+            localityObtainedFlag = true;
             String podIp = NetworkUtils.getKubernetesPodIp();
             if (StringUtils.isEmpty(podIp)) {
                 return Optional.empty();

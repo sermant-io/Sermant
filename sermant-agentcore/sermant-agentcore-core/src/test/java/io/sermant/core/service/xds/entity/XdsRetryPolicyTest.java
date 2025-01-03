@@ -19,6 +19,8 @@ package io.sermant.core.service.xds.entity;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
+
 /**
  * XdsRetryPolicyTest
  *
@@ -29,12 +31,10 @@ public class XdsRetryPolicyTest {
     @Test
     public void testXdsRetryPolicy() {
         XdsRetryPolicy xdsRetryPolicy = new XdsRetryPolicy();
-        xdsRetryPolicy.setRetryHostPredicate("PreviousHostsPredicate");
-        xdsRetryPolicy.setRetryOn("503");
+        xdsRetryPolicy.setRetryConditions(Collections.singletonList("503"));
         xdsRetryPolicy.setMaxAttempts(8);
         xdsRetryPolicy.setPerTryTimeout(2000);
-        Assert.assertEquals("PreviousHostsPredicate", xdsRetryPolicy.getRetryHostPredicate());
-        Assert.assertEquals("503", xdsRetryPolicy.getRetryOn());
+        Assert.assertEquals("503", xdsRetryPolicy.getRetryConditions().get(0));
         Assert.assertEquals(8, xdsRetryPolicy.getMaxAttempts());
         Assert.assertEquals(2000, xdsRetryPolicy.getPerTryTimeout());
     }

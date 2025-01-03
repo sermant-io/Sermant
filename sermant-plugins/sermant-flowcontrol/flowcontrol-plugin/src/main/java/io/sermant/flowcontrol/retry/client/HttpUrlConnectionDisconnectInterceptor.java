@@ -42,9 +42,26 @@ public class HttpUrlConnectionDisconnectInterceptor extends AbstractXdsHttpClien
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        XdsThreadLocalUtil.removeSendByteFlag();
         HttpURLConnection httpUrlConnection = (HttpURLConnection) context.getObject();
         context.setLocalFieldValue(STATUS_CODE, httpUrlConnection.getResponseCode());
+        return context;
+    }
+
+    @Override
+    public ExecuteContext doAfter(ExecuteContext context) {
+        XdsThreadLocalUtil.removeConnectionStatus();
+        XdsThreadLocalUtil.removeHttpUrlConnection();
+        super.doAfter(context);
+        return context;
+    }
+
+    @Override
+    public ExecuteContext doThrow(ExecuteContext context) {
+        if (context.getThrowableOut() != null) {
+            XdsThreadLocalUtil.removeConnectionStatus();
+            XdsThreadLocalUtil.removeHttpUrlConnection();
+        }
+        super.doThrow(context);
         return context;
     }
 
@@ -59,5 +76,10 @@ public class HttpUrlConnectionDisconnectInterceptor extends AbstractXdsHttpClien
 
     @Override
     protected void preRetry(Object obj, Method method, Object[] allArguments, Object result, boolean isFirstInvoke) {
+    }
+
+    @Override
+    protected boolean canInvoke(ExecuteContext context) {
+        return true;
     }
 }

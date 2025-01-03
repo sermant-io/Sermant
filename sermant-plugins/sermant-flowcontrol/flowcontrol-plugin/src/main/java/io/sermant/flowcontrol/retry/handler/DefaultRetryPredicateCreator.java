@@ -18,14 +18,10 @@
 package io.sermant.flowcontrol.retry.handler;
 
 import io.sermant.core.service.xds.entity.XdsRetryPolicy;
-import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.ReflectUtils;
-import io.sermant.core.utils.StringUtils;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.exception.InvokerWrapperException;
 import io.sermant.flowcontrol.common.handler.retry.Retry;
-import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
-import io.sermant.flowcontrol.common.xds.retry.RetryConditionType;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -73,9 +69,8 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
     }
 
     @Override
-    public Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions,
-            XdsRetryPolicy policy) {
-        return (Throwable ex) -> needRetry(ex, policy);
+    public Predicate<Throwable> createExceptionPredicate(Retry retry, XdsRetryPolicy policy) {
+        return (Throwable ex) -> retry.isNeedRetry(ex, policy);
     }
 
     private Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable> retryClass) {
@@ -129,60 +124,11 @@ public class DefaultRetryPredicateCreator implements RetryPredicateCreator {
         if (retryOnResponseStatus.isEmpty()) {
             retryOnResponseStatus.addAll(DEFAULT_RETRY_ON_RESPONSE_STATUS);
         }
-        return result -> retry.needRetry(new HashSet<>(retryOnResponseStatus), result);
+        return result -> retry.isNeedRetry(new HashSet<>(retryOnResponseStatus), result);
     }
 
     @Override
     public Predicate<Object> createResultPredicate(Retry retry, XdsRetryPolicy xdsRetryPolicy) {
-        return result -> needRetry(retry, result, xdsRetryPolicy);
-    }
-
-    private boolean needRetry(Retry retry, Object result, XdsRetryPolicy retryPolicy) {
-        List<String> conditions = getRetryConditions(retryPolicy);
-        if (CollectionUtils.isEmpty(conditions)) {
-            return false;
-        }
-        Optional<String> statusCodeOptional = retry.getCode(result);
-        if (!statusCodeOptional.isPresent()) {
-            return false;
-        }
-        String statusCode = statusCodeOptional.get();
-        if (conditions.contains(statusCode)) {
-            return true;
-        }
-        for (String conditionName : conditions) {
-            Optional<RetryCondition> retryConditionOptional = RetryConditionType.getRetryConditionByName(conditionName);
-            if (!retryConditionOptional.isPresent()) {
-                continue;
-            }
-            boolean needRetry = retryConditionOptional.get().needRetry(retry, null, statusCode, result);
-            if (needRetry) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean needRetry(Throwable ex, XdsRetryPolicy retryPolicy) {
-        List<String> conditions = getRetryConditions(retryPolicy);
-        for (String conditionName : conditions) {
-            Optional<RetryCondition> retryConditionOptional = RetryConditionType.getRetryConditionByName(conditionName);
-            if (!retryConditionOptional.isPresent()) {
-                continue;
-            }
-            boolean needRetry = retryConditionOptional.get().needRetry(null, ex, null, null);
-            if (needRetry) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static List<String> getRetryConditions(XdsRetryPolicy xdsRetryPolicy) {
-        String retryOn = xdsRetryPolicy.getRetryOn();
-        if (StringUtils.isExist(retryOn)) {
-            return Arrays.asList(retryOn.split(","));
-        }
-        return Collections.emptyList();
+        return result -> retry.isNeedRetry(result, xdsRetryPolicy);
     }
 }

@@ -41,11 +41,11 @@ public interface RetryPredicateCreator {
     /**
      * Create exception Predicate
      *
-     * @param retryExceptions retry exception set
+     * @param retry retry
      * @param policy retry rule
      * @return Predicate
      */
-    Predicate<Throwable> createExceptionPredicate(Class<? extends Throwable>[] retryExceptions, XdsRetryPolicy policy);
+    Predicate<Throwable> createExceptionPredicate(Retry retry, XdsRetryPolicy policy);
 
     /**
      * create retry result predicate

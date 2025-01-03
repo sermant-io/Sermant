@@ -93,6 +93,7 @@ public class OkHttpClientInterceptorChainInterceptor extends AbstractXdsHttpClie
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(CommonConst.INTERVAL_SERVER_ERROR)
                     .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1).build());
+            return context;
         }
 
         // Execute service invocation and retry logic

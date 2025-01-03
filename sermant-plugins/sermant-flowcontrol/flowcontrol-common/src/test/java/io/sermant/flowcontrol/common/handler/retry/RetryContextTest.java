@@ -17,6 +17,7 @@
 
 package io.sermant.flowcontrol.common.handler.retry;
 
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
 
 import org.junit.Assert;
@@ -75,7 +76,17 @@ public class RetryContextTest {
     private Retry buildRetry() {
         return new Retry() {
             @Override
-            public boolean needRetry(Set<String> statusList, Object result) {
+            public boolean isNeedRetry(Set<String> statusList, Object result) {
+                return false;
+            }
+
+            @Override
+            public boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy) {
+                return false;
+            }
+
+            @Override
+            public boolean isNeedRetry(Throwable throwable, XdsRetryPolicy retryPolicy) {
                 return false;
             }
 

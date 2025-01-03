@@ -106,6 +106,7 @@ public class HttpClient4xInterceptor extends AbstractXdsHttpClientInterceptor {
         if (isNeedCircuitBreak()) {
             context.skip(new ErrorCloseableHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR, MESSAGE,
                     httpRequest.getProtocolVersion()));
+            return context;
         }
 
         // Execute service invocation and retry logic

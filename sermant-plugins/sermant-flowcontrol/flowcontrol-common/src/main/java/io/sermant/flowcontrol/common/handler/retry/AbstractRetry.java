@@ -19,8 +19,12 @@ package io.sermant.flowcontrol.common.handler.retry;
 
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.config.PluginConfigManager;
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
 import io.sermant.flowcontrol.common.support.ReflectMethodCacheSupport;
+import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
+import io.sermant.flowcontrol.common.xds.retry.RetryConditionType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +67,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
     }
 
     @Override
-    public boolean needRetry(Set<String> statusList, Object result) {
+    public boolean isNeedRetry(Set<String> statusList, Object result) {
         if (result == null) {
             return false;
         }
@@ -71,8 +75,54 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
         return code.filter(statusList::contains).isPresent();
     }
 
+    @Override
+    public boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy) {
+        if (result == null) {
+            return false;
+        }
+        List<String> conditions = retryPolicy.getRetryConditions();
+        if (CollectionUtils.isEmpty(conditions)) {
+            return false;
+        }
+        Optional<String> statusCodeOptional = this.getCode(result);
+        if (!statusCodeOptional.isPresent()) {
+            return false;
+        }
+        String statusCode = statusCodeOptional.get();
+        if (conditions.contains(statusCode)) {
+            return true;
+        }
+        for (String conditionName : conditions) {
+            Optional<RetryCondition> retryConditionOptional = RetryConditionType.getRetryConditionByName(conditionName);
+            if (!retryConditionOptional.isPresent()) {
+                continue;
+            }
+            if (retryConditionOptional.get().needRetry(this, null, statusCode, result)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isNeedRetry(Throwable ex, XdsRetryPolicy retryPolicy) {
+        if (ex == null) {
+            return false;
+        }
+        for (String conditionName : retryPolicy.getRetryConditions()) {
+            Optional<RetryCondition> retryConditionOptional = RetryConditionType.getRetryConditionByName(conditionName);
+            if (!retryConditionOptional.isPresent()) {
+                continue;
+            }
+            if (retryConditionOptional.get().needRetry(null, ex, null, null)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
-     * implemented by subclasses， if subclass implement {@link #needRetry(Set, Object)}, no need to implement the get
+     * implemented by subclasses， if subclass implement {@link #isNeedRetry(Set, Object)}, no need to implement the get
      * code method
      *
      * @param result interface response result

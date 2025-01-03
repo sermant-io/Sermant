@@ -17,6 +17,8 @@
 
 package io.sermant.flowcontrol.common.handler.retry;
 
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,13 +30,33 @@ import java.util.Set;
  */
 public interface Retry {
     /**
-     * needToRetry
+     * Retry based on the request result. Retrying is required if the request status is in the statusList.
      *
      * @param statusList List of status codes, valid only for http applications
      * @param result responseResult
      * @return retryOrNot
      */
-    boolean needRetry(Set<String> statusList, Object result);
+    boolean isNeedRetry(Set<String> statusList, Object result);
+
+    /**
+     * Retry based on the request result. If the request result meets the retry conditions in the retry policy,
+     * a retry will be executed
+     *
+     * @param result responseResult
+     * @param retryPolicy retry policy information
+     * @return retryOrNot
+     */
+    boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy);
+
+    /**
+     * Retry based on the throwable. If the throwable during the execution of the request method meets the retry
+     * conditions in the retry policy, a retry will be executed
+     *
+     * @param throwable Exception thrown during retry
+     * @param retryPolicy Xds Retry Policy information
+     * @return retryOrNot
+     */
+    boolean isNeedRetry(Throwable throwable, XdsRetryPolicy retryPolicy);
 
     /**
      * define which exceptions need to be retried
