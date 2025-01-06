@@ -508,7 +508,7 @@ function hotPlugging(instanceId: string) {
 function viewResult(instanceId: string) {
   const params = {
     instanceId: instanceId,
-    eventName: ['SERMANT_PLUGIN_INSTALL', 'SERMANT_PLUGIN_UNINSTALL', 'SERMANT_PLUGIN_UPDATE']
+    eventName: ['SERMANT_PLUGIN_INSTALL', 'SERMANT_PLUGIN_UNINSTALL', 'SERMANT_PLUGIN_UPDATE', "OTEL_START", "EXTERNAL_AGENT_INSTALL"]
   };
   router.push({name: "events", query: params});
 }
