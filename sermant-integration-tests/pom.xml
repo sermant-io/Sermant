@@ -21,5 +21,6 @@
         <module>mq-consume-prohibition-test</module>
         <module>database-write-prohibition-test</module>
         <module>xds-service-test</module>
+        <module>mq-grayscale-rocketmq-test</module>
     </modules>
 </project>

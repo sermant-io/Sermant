@@ -1,0 +1,59 @@
+name: "Rocketmq Message Gray Common operations"
+description: "Do something common for rocketmq message gray"
+runs:
+  using: "composite"
+  steps:
+    - name: Set up JDK ${{ env.javaVersion }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.javaVersion }}
+        distribution: 'adopt'
+        cache: maven
+    - name: download agent
+      uses: actions/cache@v4
+      with:
+        path: sermant-agent-*/
+        key: ${{ runner.os }}-agent-${{ github.run_id }}
+    - name: get cse from cache
+      uses: actions/cache@v4
+      with:
+        path: Local-CSE-2.1.3-linux-amd64.zip
+        key: ${{ runner.os }}-local-cse
+        restore-keys: |
+          ${{ runner.os }}-local-cse
+    - name: start cse
+      shell: bash
+      run: |
+        export ROOT_PATH=$(pwd)
+        bash ./sermant-integration-tests/scripts/startCse.sh
+    - name: get rocketmq from cache
+      uses: actions/cache@v4
+      with:
+        path: rocketmq-all-5.1.4-bin-release.zip
+        key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
+        restore-keys: |
+          ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
+    - name: start rocketmq server
+      shell: bash
+      run: |
+        unzip rocketmq-all-5.1.4-bin-release.zip
+        sed -i 's/if \[\[ "$JAVA_MAJOR_VERSION" -lt "9" \]\]/if [ "$JAVA_MAJOR_VERSION" -lt "9" ]/g' rocketmq-all-5.1.4-bin-release/bin/runserver.sh
+        sed -i 's/-Xms4g -Xmx4g -Xmn2g/-Xms1g -Xmx1g -Xmn1g/g' rocketmq-all-5.1.4-bin-release/bin/runserver.sh
+        sed -i '22i enablePropertyFilter = true' rocketmq-all-5.1.4-bin-release/conf/broker.conf
+        nohup bash rocketmq-all-5.1.4-bin-release/bin/mqnamesrv &
+    - name: start rocketmq broker
+      shell: bash
+      run: |
+        sed -i 's/-Xms8g -Xmx8g -Xmn4g/-Xms1g -Xmx1g -Xmn1g/g' rocketmq-all-5.1.4-bin-release/bin/runbroker.sh
+        nohup bash rocketmq-all-5.1.4-bin-release/bin/mqbroker -n localhost:9876 -c rocketmq-all-5.1.4-bin-release/conf/broker.conf &
+    - name: cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/rocketmq-grayscale/common

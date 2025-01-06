@@ -495,6 +495,22 @@ runs:
       run: |
         echo "crossthreadTagTransmissionChanged=${{ steps.changed-tag-transmission-crossthread.outputs.changed }}" >> $GITHUB_ENV
     - uses: ktamas77/has-changed-path@v1.0.3
+      id: changed-mq-grayscale-rocketmq
+      with:
+        paths: sermant-plugins/sermant-mq-grayscale/mq-config-common
+          sermant-plugins/sermant-mq-grayscale/mq-config-service
+          sermant-plugins/sermant-mq-grayscale/mq-grayscale-rocketmq-plugin
+          sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-consumer-demo
+          sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-producer-demo
+          sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-integration-test
+          ./.github/workflows/message_gray_integration_test.yml
+          ./.github/actions/common/mq-grayscale/rocketmq
+          ./.github/actions/scenarios/mq-grayscale/rocketmq
+    - name: env mq-grayscale-rocketmq
+      shell: bash
+      run: |
+        echo "mqGrayscaleRocketMqChanged=${{ steps.changed-mq-grayscale-rocketmq.outputs.changed }}" >> $GITHUB_ENV
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-dubbo-router-action
       with:
         paths: ./.github/actions/scenarios/dubbo/router ./.github/actions/common/dubbo ./.github/workflows/dubbo_integration_test.yml
@@ -923,4 +939,11 @@ runs:
         if [ ${{ env.sermantAgentCoreXdsServiceChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableXdsServicAction=true" >> $GITHUB_ENV
+        fi
+
+        # ==========mq grayscale rocketmq is needed to test?==========
+        if [ ${{ env.mqGrayscaleRocketMqChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableMqGrayscaleRocketMqAction=true" >> $GITHUB_ENV
         fi

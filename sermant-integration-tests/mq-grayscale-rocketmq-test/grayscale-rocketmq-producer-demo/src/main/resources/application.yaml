@@ -1,0 +1,10 @@
+server:
+  port: 9030
+rocketmq:
+  address: 127.0.0.1:9876
+  topic: MESSAGE-GRAY
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,86 @@
+name: "RocketMq Grayscale Test"
+description: "Auto test for rocketMq grayscale"
+runs:
+  using: "composite"
+  steps:
+    - name: package rocketmq grayscale tests
+      shell: bash
+      run: mvn package -Drocketmq-client.version=${{ matrix.rocketMqClientVersion }} -DskipTests --file sermant-integration-tests/mq-grayscale-rocketmq-test/pom.xml
+    - name: echo test model
+      shell: bash
+      run: |
+        echo "=======test-model======"-${{ matrix.test-model }}
+    - name: start base producer service
+      shell: bash
+      env:
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=grayscale-rocketmq-producer -jar \
+        sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-producer-demo/target/grayscale-rocketmq-producer-demo.jar > ${{ env.logDir }}/${{ matrix.rocketMqClientVersion }}-rocketmq-producer-base.log 2>&1 &
+    - name: start gray producer service
+      shell: bash
+      env:
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        SERVICE_META_VERSION: 1.0.1
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=grayscale-rocketmq-producer -Dserver.port=9040 -jar \
+        sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-producer-demo/target/grayscale-rocketmq-producer-demo.jar > ${{ env.logDir }}/${{ matrix.rocketMqClientVersion }}-rocketmq-producer-gray.log 2>&1 &
+    - name: start base consumer service
+      shell: bash
+      env:
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=grayscale-rocketmq-consumer -jar \
+        sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-consumer-demo/target/grayscale-rocketmq-consumer-demo.jar > ${{ env.logDir }}/${{ matrix.rocketMqClientVersion }}-rocketmq-consumer-base.log 2>&1 &
+    - name: start gray consumer service
+      shell: bash
+      if: matrix.test-model == 'AUTO_BASE_GRAY_PULL' || matrix.test-model == 'AUTO_BASE_GRAY_LITE_PULL' || matrix.test-model == 'AUTO_BASE_GRAY_PUSH' || matrix.test-model == 'AUTO_EXC_BASE_GRAY' || matrix.test-model == 'BASE_BASE_GRAY' || matrix.test-model == 'BASE_EXC_BASE_GRAY'
+      env:
+        dynamic.config.dynamicConfigType: KIE
+        dynamic.config.serverAddress: 127.0.0.1:30110
+        SERVICE_META_ENVIRONMENT: development
+        SERVICE_META_VERSION: 1.0.1
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=grayscale-rocketmq-consumer -Dserver.port=9010 -jar \
+        sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-consumer-demo/target/grayscale-rocketmq-consumer-demo.jar > ${{ env.logDir }}/${{ matrix.rocketMqClientVersion }}-rocketmq-consumer-gray.log 2>&1 &
+    - name: waiting for service start for only base
+      shell: bash
+      if: matrix.test-model != 'AUTO_BASE_GRAY_PULL' && matrix.test-model != 'AUTO_BASE_GRAY_LITE_PULL' && matrix.test-model != 'AUTO_BASE_GRAY_PUSH' && matrix.test-model != 'AUTO_EXC_BASE_GRAY' && matrix.test-model != 'BASE_BASE_GRAY' && matrix.test-model != 'BASE_EXC_BASE_GRAY'
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9030/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9000/actuator/health 200
+    - name: waiting for service start for base and gray
+      shell: bash
+      if: matrix.test-model == 'AUTO_BASE_GRAY_PULL' || matrix.test-model == 'AUTO_BASE_GRAY_LITE_PULL' || matrix.test-model == 'AUTO_BASE_GRAY_PUSH' || matrix.test-model == 'AUTO_EXC_BASE_GRAY' || matrix.test-model == 'BASE_BASE_GRAY' || matrix.test-model == 'BASE_EXC_BASE_GRAY'
+      run: |
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9030/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9000/actuator/health 200
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9010/actuator/health 200
+    - name: test message grayscale rocketmq
+      shell: bash
+      run: |
+        mvn test -Dgrayscale.rocketmq.integration.test.type=${{ matrix.test-model }} --file \
+        sermant-integration-tests/mq-grayscale-rocketmq-test/grayscale-rocketmq-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: grayscale-rocketmq
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v3
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (test-for-grayscale-rocketmq)-(${{ matrix.test-model }}})-logs
+        path: |
+          ./*.log
+          ./logs/**/*.log
+        if-no-files-found: warn
+        retention-days: 2
