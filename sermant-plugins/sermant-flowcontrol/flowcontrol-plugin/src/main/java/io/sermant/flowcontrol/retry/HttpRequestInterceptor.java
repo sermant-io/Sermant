@@ -123,7 +123,7 @@ public class HttpRequestInterceptor extends InterceptorSupporter {
         try {
             RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity);
             final List<Retry> handlers = getRetryHandler().getHandlers(httpRequestEntity);
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
+            if (!handlers.isEmpty() && isNeedRetry(handlers.get(0), result, ex)) {
                 // retry only one policy
                 request.getHeaders().add(RETRY_KEY, RETRY_VALUE);
                 result = handlers.get(0).executeCheckedSupplier(retryFunc::get);

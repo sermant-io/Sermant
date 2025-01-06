@@ -21,10 +21,14 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.LogUtils;
 import io.sermant.core.utils.ReflectUtils;
+import io.sermant.flowcontrol.common.config.CommonConst;
 import io.sermant.flowcontrol.common.config.ConfigConst;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
+import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
+import io.sermant.flowcontrol.common.entity.RequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
+import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.service.InterceptorSupporter;
 
 import java.io.IOException;
@@ -122,7 +126,15 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
         if (!httpRequestEntity.isPresent()) {
             return context;
         }
-        chooseHttpService().onBefore(className, httpRequestEntity.get(), result);
+        HttpRequestEntity requestEntity = httpRequestEntity.get();
+        if (xdsFlowControlConfig.isEnable()) {
+            getXdsHttpFlowControlService().onBefore(requestEntity, result);
+            context.setLocalFieldValue(CommonConst.SCENARIO_INFO, XdsThreadLocalUtil.getScenarioInfo());
+            context.setLocalFieldValue(CommonConst.REQUEST_INFO, requestEntity);
+            XdsThreadLocalUtil.removeScenarioInfo();
+        } else {
+            chooseHttpService().onBefore(className, requestEntity, result);
+        }
         if (!result.isSkip()) {
             return context;
         }
@@ -144,14 +156,34 @@ public class DispatcherServletInterceptor extends InterceptorSupporter {
 
     @Override
     protected final ExecuteContext doAfter(ExecuteContext context) {
-        chooseHttpService().onAfter(className, context.getResult());
+        if (!xdsFlowControlConfig.isEnable()) {
+            chooseHttpService().onAfter(className, context.getThrowable());
+            LogUtils.printHttpRequestAfterPoint(context);
+            return context;
+        }
+        Object scenarioInfo = context.getLocalFieldValue(CommonConst.SCENARIO_INFO);
+        Object requestEntity = context.getLocalFieldValue(CommonConst.REQUEST_INFO);
+        if (scenarioInfo instanceof FlowControlScenario && requestEntity instanceof HttpRequestEntity) {
+            getXdsHttpFlowControlService().onAfter((RequestEntity) requestEntity, context.getThrowable(),
+                    (FlowControlScenario) scenarioInfo);
+        }
         LogUtils.printHttpRequestAfterPoint(context);
         return context;
     }
 
     @Override
     protected final ExecuteContext doThrow(ExecuteContext context) {
-        chooseHttpService().onThrow(className, context.getThrowable());
+        if (!xdsFlowControlConfig.isEnable()) {
+            chooseHttpService().onThrow(className, context.getThrowable());
+            LogUtils.printHttpRequestOnThrowPoint(context);
+            return context;
+        }
+        Object scenarioInfo = context.getLocalFieldValue(CommonConst.SCENARIO_INFO);
+        Object requestEntity = context.getLocalFieldValue(CommonConst.REQUEST_INFO);
+        if (scenarioInfo instanceof FlowControlScenario && requestEntity instanceof HttpRequestEntity) {
+            getXdsHttpFlowControlService().onThrow((RequestEntity) requestEntity, context.getThrowable(),
+                    (FlowControlScenario) scenarioInfo);
+        }
         LogUtils.printHttpRequestOnThrowPoint(context);
         return context;
     }

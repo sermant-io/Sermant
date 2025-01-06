@@ -24,7 +24,3 @@ io.sermant.flowcontrol.res4j.chain.handler.CircuitBreakerServerReqHandler
 io.sermant.flowcontrol.res4j.chain.handler.InstanceIsolationRequestHandler
 io.sermant.flowcontrol.res4j.chain.handler.FaultRequestHandler
 io.sermant.flowcontrol.res4j.chain.handler.SystemServerReqHandler
-io.sermant.flowcontrol.res4j.chain.handler.XdsRateLimitRequestHandler
-io.sermant.flowcontrol.res4j.chain.handler.XdsBusinessClientRequestHandler
-io.sermant.flowcontrol.res4j.chain.handler.XdsBusinessServerRequestHandler
-io.sermant.flowcontrol.res4j.chain.handler.XdsFaultRequestHandler

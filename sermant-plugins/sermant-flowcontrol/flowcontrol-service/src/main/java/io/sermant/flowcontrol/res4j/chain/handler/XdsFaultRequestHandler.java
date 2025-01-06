@@ -26,11 +26,11 @@ import io.sermant.flowcontrol.common.config.CommonConst;
 import io.sermant.flowcontrol.common.core.rule.fault.FaultException;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
+import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
 import io.sermant.flowcontrol.common.util.RandomUtil;
 import io.sermant.flowcontrol.common.xds.handler.XdsHandler;
-import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
+import io.sermant.flowcontrol.res4j.chain.AbstractXdsChainHandler;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
-import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 
 import java.util.Optional;
 import java.util.logging.Level;
@@ -42,27 +42,27 @@ import java.util.logging.Logger;
  * @author zhp
  * @since 2024-12-05
  */
-public class XdsFaultRequestHandler extends AbstractChainHandler {
+public class XdsFaultRequestHandler extends AbstractXdsChainHandler {
     private static final String MESSAGE = "Request has been aborted by fault-ThrowException";
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
-    public void onBefore(RequestContext context, FlowControlScenario scenarioInfo) {
+    public void onBefore(RequestEntity requestEntity, FlowControlScenario scenarioInfo) {
         Optional<XdsHttpFault> xdsHttpFaultOptional = XdsHandler.INSTANCE.
                 getHttpFault(scenarioInfo.getServiceName(), scenarioInfo.getRouteName());
         if (!xdsHttpFaultOptional.isPresent()) {
-            super.onBefore(context, scenarioInfo);
+            super.onBefore(requestEntity, scenarioInfo);
             return;
         }
         XdsHttpFault xdsHttpFault = xdsHttpFaultOptional.get();
         if (xdsHttpFault.getAbort() == null && xdsHttpFault.getDelay() == null) {
-            super.onBefore(context, scenarioInfo);
+            super.onBefore(requestEntity, scenarioInfo);
             return;
         }
         executeAbort(xdsHttpFault.getAbort());
         executeDelay(xdsHttpFault.getDelay());
-        super.onBefore(context, scenarioInfo);
+        super.onBefore(requestEntity, scenarioInfo);
     }
 
     private void executeAbort(XdsAbort xdsAbort) {
@@ -101,27 +101,24 @@ public class XdsFaultRequestHandler extends AbstractChainHandler {
     }
 
     @Override
-    public void onThrow(RequestContext context, FlowControlScenario scenarioInfo, Throwable throwable) {
-        super.onThrow(context, scenarioInfo, throwable);
+    public void onThrow(RequestEntity requestEntity, FlowControlScenario scenarioInfo, Throwable throwable) {
+        super.onThrow(requestEntity, scenarioInfo, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, FlowControlScenario scenarioInfo, Object result) {
-        super.onResult(context, scenarioInfo, result);
+    public void onAfter(RequestEntity requestEntity, FlowControlScenario scenarioInfo, Object result) {
+        super.onAfter(requestEntity, scenarioInfo, result);
     }
 
     @Override
-    protected boolean isSkip(RequestContext context, FlowControlScenario scenarioInfo) {
-        if (!XDS_FLOW_CONTROL_CONFIG.isEnable()) {
-            return true;
-        }
+    protected boolean isSkip(RequestEntity requestEntity, FlowControlScenario scenarioInfo) {
         return scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
                 || StringUtils.isEmpty(scenarioInfo.getRouteName());
     }
 
     @Override
-    protected RequestEntity.RequestType direct() {
-        return RequestEntity.RequestType.CLIENT;
+    protected RequestType direct() {
+        return RequestType.CLIENT;
     }
 
     @Override

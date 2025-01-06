@@ -17,6 +17,7 @@
 
 package io.sermant.flowcontrol.res4j.chain.handler;
 
+import io.sermant.core.utils.CollectionUtils;
 import io.sermant.flowcontrol.common.core.match.MatchManager;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
@@ -33,31 +34,44 @@ import java.util.Set;
  * @since 2022-07-05
  */
 public class BusinessRequestHandler extends AbstractChainHandler {
+    private static final String MATCHED_SCENARIO_INFO = "__MATCHED_SCENARIO_INFO__";
+
     @Override
-    public void onBefore(RequestContext context, FlowControlScenario scenarioInfo) {
-        final Set<String> matchBusinessNames = MatchManager.INSTANCE.matchWithCache(context.getRequestEntity());
-        if (scenarioInfo != null) {
-            scenarioInfo.setMatchedScenarioNames(matchBusinessNames);
-            super.onBefore(context, scenarioInfo);
-        } else {
-            FlowControlScenario flowControlScenario = new FlowControlScenario();
-            flowControlScenario.setMatchedScenarioNames(matchBusinessNames);
-            super.onBefore(context, flowControlScenario);
+    public void onBefore(RequestContext context, FlowControlScenario flowControlScenario) {
+        final Set<String> matchedBusinessNames = MatchManager.INSTANCE.matchWithCache(context.getRequestEntity());
+        if (CollectionUtils.isEmpty(matchedBusinessNames)) {
+            return;
         }
+        FlowControlScenario scenarioInfo = new FlowControlScenario();
+        scenarioInfo.setMatchedScenarioNames(matchedBusinessNames);
+        context.save(MATCHED_SCENARIO_INFO, scenarioInfo);
+        super.onBefore(context, scenarioInfo);
     }
 
     @Override
-    public void onThrow(RequestContext context, FlowControlScenario scenarioInfo, Throwable throwable) {
+    public void onThrow(RequestContext context, FlowControlScenario flowControlScenario, Throwable throwable) {
+        final FlowControlScenario scenarioInfo = getMatchedScenarioInfo(context);
+        if (scenarioInfo == null || CollectionUtils.isEmpty(scenarioInfo.getMatchedScenarioNames())) {
+            return;
+        }
         super.onThrow(context, scenarioInfo, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, FlowControlScenario scenarioInfo, Object result) {
+    public void onResult(RequestContext context, FlowControlScenario flowControlScenario, Object result) {
+        final FlowControlScenario scenarioInfo = getMatchedScenarioInfo(context);
+        if (scenarioInfo == null || CollectionUtils.isEmpty(scenarioInfo.getMatchedScenarioNames())) {
+            return;
+        }
         try {
             super.onResult(context, scenarioInfo, result);
         } finally {
-            ChainContext.getThreadLocalContext(context.getSourceName()).remove(MATCHED_SCENARIO_NAMES);
+            ChainContext.getThreadLocalContext(context.getSourceName()).remove(MATCHED_SCENARIO_INFO);
         }
+    }
+
+    private FlowControlScenario getMatchedScenarioInfo(RequestContext context) {
+        return context.get(MATCHED_SCENARIO_INFO, FlowControlScenario.class);
     }
 
     @Override

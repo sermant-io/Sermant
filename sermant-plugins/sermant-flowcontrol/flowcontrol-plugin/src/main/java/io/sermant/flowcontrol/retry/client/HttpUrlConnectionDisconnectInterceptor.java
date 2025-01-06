@@ -37,7 +37,7 @@ public class HttpUrlConnectionDisconnectInterceptor extends AbstractXdsHttpClien
      * Constructor
      */
     public HttpUrlConnectionDisconnectInterceptor() {
-        super(null, HttpUrlConnectionDisconnectInterceptor.class.getCanonicalName());
+        super(null);
     }
 
     @Override

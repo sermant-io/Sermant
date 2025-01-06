@@ -65,7 +65,7 @@ public class HttpClient4xInterceptor extends AbstractXdsHttpClientInterceptor {
      * Constructor
      */
     public HttpClient4xInterceptor() {
-        super(new HttpClientRetry(), HttpClient4xInterceptor.class.getName());
+        super(new HttpClientRetry());
     }
 
     /**
@@ -92,7 +92,9 @@ public class HttpClient4xInterceptor extends AbstractXdsHttpClientInterceptor {
         final FlowControlResult flowControlResult = new FlowControlResult();
 
         // Execute the flow control handler chain, with only fault for XDS
-        chooseHttpService().onBefore(className, httpRequestEntity.get(), flowControlResult);
+        HttpRequestEntity requestEntity = httpRequestEntity.get();
+        getXdsHttpFlowControlService().onBefore(httpRequestEntity.get(), flowControlResult);
+        context.setLocalFieldValue(CommonConst.REQUEST_INFO, requestEntity);
 
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {

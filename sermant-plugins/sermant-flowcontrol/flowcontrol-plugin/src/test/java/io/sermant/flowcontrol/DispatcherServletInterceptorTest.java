@@ -22,6 +22,7 @@ import io.sermant.core.plugin.config.PluginConfigManager;
 import io.sermant.core.service.ServiceManager;
 import io.sermant.flowcontrol.common.config.ConfigConst;
 import io.sermant.flowcontrol.common.config.FlowControlConfig;
+import io.sermant.flowcontrol.common.config.XdsFlowControlConfig;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
 import io.sermant.flowcontrol.service.rest4j.HttpRest4jService;
@@ -62,6 +63,8 @@ public class DispatcherServletInterceptorTest {
         pluginConfigManagerMockedStatic = Mockito.mockStatic(PluginConfigManager.class);
         pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(FlowControlConfig.class))
                 .thenReturn(flowControlConfig);
+        pluginConfigManagerMockedStatic.when(() -> PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class))
+                .thenReturn(new XdsFlowControlConfig());
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(HttpRest4jService.class))
                 .thenReturn(createRestService());

@@ -65,13 +65,13 @@ public class XdsCircuitBreakerManager {
     }
 
     /**
-     * decrement Active Request
+     * decrease Active Request
      *
      * @param serviceName service name
      * @param clusterName route name
      * @param address request address
      */
-    public static void decrementActiveRequests(String serviceName, String clusterName, String address) {
+    public static void decreaseActiveRequests(String serviceName, String clusterName, String address) {
         getActiveRequestCount(serviceName, clusterName, address).decrementAndGet();
     }
 

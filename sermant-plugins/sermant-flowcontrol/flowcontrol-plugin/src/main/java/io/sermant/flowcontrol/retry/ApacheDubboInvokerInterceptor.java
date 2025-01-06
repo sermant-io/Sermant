@@ -211,7 +211,7 @@ public class ApacheDubboInvokerInterceptor extends InterceptorSupporter {
             result = invokeRetryMethod(context.getObject(), allArguments, result, false, false);
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                     .getHandlers(convertToApacheDubboEntity(invocation));
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((AsyncRpcResult) result).getException())) {
+            if (!handlers.isEmpty() && isNeedRetry(handlers.get(0), result, ((AsyncRpcResult) result).getException())) {
                 RetryContext.INSTANCE.markRetry(retry);
                 result = handlers.get(0)
                         .executeCheckedSupplier(() -> invokeRetryMethod(context.getObject(), allArguments,

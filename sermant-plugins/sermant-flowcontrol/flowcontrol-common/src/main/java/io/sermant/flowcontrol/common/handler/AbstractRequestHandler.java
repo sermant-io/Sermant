@@ -20,9 +20,7 @@ package io.sermant.flowcontrol.common.handler;
 import io.sermant.flowcontrol.common.core.ResolverManager;
 import io.sermant.flowcontrol.common.core.match.MatchManager;
 import io.sermant.flowcontrol.common.core.resolver.AbstractResolver;
-import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
-import io.sermant.flowcontrol.common.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,17 +70,6 @@ public abstract class AbstractRequestHandler<H, R> {
     }
 
     /**
-     * gets the specified request handler
-     *
-     * @param flowControlScenario matched scenario information
-     * @return handler
-     */
-    public List<H> getXdsHandlers(FlowControlScenario flowControlScenario) {
-        Optional<H> handlerOptions = createHandler(flowControlScenario, StringUtils.EMPTY);
-        return handlerOptions.map(Collections::singletonList).orElse(Collections.emptyList());
-    }
-
-    /**
      * create handler
      *
      * @param businessNames matching service scenarios
@@ -113,17 +100,6 @@ public abstract class AbstractRequestHandler<H, R> {
      * @return handler
      */
     protected abstract Optional<H> createHandler(String businessName, R rule);
-
-    /**
-     * create handler
-     *
-     * @param flowControlScenario matched business information
-     * @param businessName service scenario name
-     * @return handler
-     */
-    public Optional<H> createHandler(FlowControlScenario flowControlScenario, String businessName) {
-        return Optional.empty();
-    }
 
     /**
      * get configuration key

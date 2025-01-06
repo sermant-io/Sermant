@@ -31,8 +31,6 @@ import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
  * @since 2022-07-11
  */
 public abstract class AbstractChainHandler implements RequestHandler, Comparable<AbstractChainHandler> {
-    protected static final String MATCHED_SCENARIO_NAMES = "__MATCHED_SCENARIO_ENTITY__";
-
     protected static final XdsFlowControlConfig XDS_FLOW_CONTROL_CONFIG =
             PluginConfigManager.getPluginConfig(XdsFlowControlConfig.class);
 

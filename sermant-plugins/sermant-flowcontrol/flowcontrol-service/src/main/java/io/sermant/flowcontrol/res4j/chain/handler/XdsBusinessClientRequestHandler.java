@@ -19,10 +19,9 @@ package io.sermant.flowcontrol.res4j.chain.handler;
 import io.sermant.flowcontrol.common.core.match.XdsRouteMatchManager;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
-import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
-import io.sermant.flowcontrol.res4j.chain.AbstractChainHandler;
+import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
+import io.sermant.flowcontrol.res4j.chain.AbstractXdsChainHandler;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
-import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 
 /**
  * Business handler class for client requests, Get the matched scenario information based on the routing match rule
@@ -30,28 +29,22 @@ import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
  * @author zhp
  * @since 2024-12-05
  */
-public class XdsBusinessClientRequestHandler extends AbstractChainHandler {
+public class XdsBusinessClientRequestHandler extends AbstractXdsChainHandler {
     @Override
-    public void onBefore(RequestContext context, FlowControlScenario scenario) {
+    public void onBefore(RequestEntity requestEntity, FlowControlScenario scenario) {
         FlowControlScenario matchedScenario = XdsRouteMatchManager.INSTANCE.getMatchedScenarioInfo(
-                context.getRequestEntity(), context.getRequestEntity().getServiceName());
-        context.save(MATCHED_SCENARIO_NAMES, matchedScenario);
-        XdsThreadLocalUtil.setScenarioInfo(matchedScenario);
-        super.onBefore(context, matchedScenario);
+                requestEntity, requestEntity.getServiceName());
+        super.onBefore(requestEntity, matchedScenario);
     }
 
     @Override
-    public void onThrow(RequestContext context, FlowControlScenario scenario, Throwable throwable) {
-        super.onThrow(context, scenario, throwable);
+    public void onThrow(RequestEntity requestEntity, FlowControlScenario scenario, Throwable throwable) {
+        super.onThrow(requestEntity, scenario, throwable);
     }
 
     @Override
-    public void onResult(RequestContext context, FlowControlScenario scenario, Object result) {
-        try {
-            super.onResult(context, scenario, result);
-        } finally {
-            XdsThreadLocalUtil.removeScenarioInfo();
-        }
+    public void onAfter(RequestEntity requestEntity, FlowControlScenario scenario, Object result) {
+        super.onAfter(requestEntity, scenario, result);
     }
 
     @Override
@@ -60,12 +53,7 @@ public class XdsBusinessClientRequestHandler extends AbstractChainHandler {
     }
 
     @Override
-    protected boolean isSkip(RequestContext context, FlowControlScenario scenario) {
-        return !XDS_FLOW_CONTROL_CONFIG.isEnable();
-    }
-
-    @Override
-    protected RequestEntity.RequestType direct() {
-        return RequestEntity.RequestType.CLIENT;
+    protected RequestType direct() {
+        return RequestType.CLIENT;
     }
 }

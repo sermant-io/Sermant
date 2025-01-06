@@ -55,13 +55,11 @@ import java.util.function.Supplier;
 public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
     private static final String REQUEST_FIELD_NAME = "originalRequest";
 
-    private final String className = HttpClient4xInterceptor.class.getName();
-
     /**
      * Constructor
      */
     public OkHttp3ClientInterceptor() {
-        super(new OkHttp3Retry(), OkHttp3ClientInterceptor.class.getCanonicalName());
+        super(new OkHttp3Retry());
     }
 
     @Override
@@ -83,13 +81,12 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
         final FlowControlResult flowControlResult = new FlowControlResult();
 
         // Execute the flow control handler chain, with only fault for XDS
-        chooseHttpService().onBefore(className, httpRequestEntity.get(), flowControlResult);
+        getXdsHttpFlowControlService().onBefore(httpRequestEntity.get(), flowControlResult);
 
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {
             Response.Builder builder = new Response.Builder();
-            context.skip(builder.code(flowControlResult.getResponse().getCode())
-                    .protocol(Protocol.HTTP_1_1)
+            context.skip(builder.code(flowControlResult.getResponse().getCode()).protocol(Protocol.HTTP_1_1)
                     .message(flowControlResult.buildResponseMsg()).request(request).build());
             return context;
         }
@@ -182,7 +179,7 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
     }
 
     @Override
-    public Supplier<Object> createRetryFunc(ExecuteContext context, Object result) {
+    public Supplier<Object> createRetryFunc(ExecuteContext context) {
         Object obj = context.getObject();
         Method method = context.getMethod();
         Object[] allArguments = context.getArguments();
@@ -191,9 +188,10 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
             method.setAccessible(true);
             try {
                 Request request = (Request) context.getLocalFieldValue(REQUEST_FIELD_NAME);
-                preRetry(obj, method, allArguments, result, isFirstInvoke.get());
                 Object newCall = copyNewCall(obj, request);
+                preRetry(newCall, method, allArguments, context.getResult(), isFirstInvoke.get());
                 Object invokeResult = method.invoke(newCall, allArguments);
+                context.changeResult(invokeResult);
                 isFirstInvoke.compareAndSet(true, false);
                 return invokeResult;
             } catch (IllegalAccessException ignored) {
@@ -201,7 +199,7 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
             } catch (InvocationTargetException ex) {
                 throw new InvokerWrapperException(ex.getTargetException());
             }
-            return result;
+            return context.getResult();
         };
     }
 

@@ -73,7 +73,7 @@ public interface Retry {
     RetryFramework retryType();
 
     /**
-     *  get status code
+     * get status code
      *
      * @param result interface response result
      * @return response status code
@@ -81,7 +81,7 @@ public interface Retry {
     Optional<String> getCode(Object result);
 
     /**
-     *  get header
+     * get header
      *
      * @param result interface response result
      * @return response header names

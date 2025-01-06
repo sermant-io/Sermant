@@ -22,9 +22,11 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.service.xds.entity.XdsInstanceCircuitBreakers;
 import io.sermant.core.service.xds.entity.XdsRequestCircuitBreakers;
+import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.flowcontrol.common.config.CommonConst;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
+import io.sermant.flowcontrol.common.entity.RequestEntity;
 import io.sermant.flowcontrol.common.exception.InvokerWrapperException;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryPolicy;
@@ -69,17 +71,13 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
 
     protected final io.sermant.flowcontrol.common.handler.retry.Retry retry;
 
-    protected final String className;
-
     /**
      * Constructor
      *
      * @param retry Retry instance, used for retry determination
-     * @param className The fully qualified naming of interceptors
      */
-    public AbstractXdsHttpClientInterceptor(io.sermant.flowcontrol.common.handler.retry.Retry retry, String className) {
+    public AbstractXdsHttpClientInterceptor(io.sermant.flowcontrol.common.handler.retry.Retry retry) {
         this.retry = retry;
-        this.className = className;
     }
 
     /**
@@ -115,11 +113,12 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         Throwable ex = context.getThrowable();
 
         // Create logical function for service invocation or retry
-        final Supplier<Object> retryFunc = createRetryFunc(context, result);
+        final Supplier<Object> retryFunc = createRetryFunc(context);
         RetryContext.INSTANCE.markRetry(retry);
         try {
             // first execution taking over the host logic
             result = retryFunc.get();
+            context.changeResult(result);
         } catch (Throwable throwable) {
             ex = throwable;
             log(throwable);
@@ -129,7 +128,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
             final List<Retry> handlers = getRetryHandlers();
 
             // Determine whether retry is necessary
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
+            if (!handlers.isEmpty() && isNeedRetry(handlers.get(0), result, ex)) {
                 // execute retry logic
                 result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
                 context.skip(result);
@@ -152,12 +151,16 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
-        XdsThreadLocalUtil.removeSendByteFlag();
         FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
-        if (context.getThrowable() == null && scenarioInfo != null) {
-            decrementActiveRequestsAndCountFailureRequests(context, scenarioInfo);
+        Object requestEntity = context.getLocalFieldValue(CommonConst.REQUEST_INFO);
+        if (requestEntity instanceof RequestEntity) {
+            getXdsHttpFlowControlService().onAfter((RequestEntity) requestEntity, context.getResult(), scenarioInfo);
         }
-        chooseHttpService().onAfter(className, context);
+        if (context.getThrowableOut() == null) {
+            decreaseActiveRequestsAndCountFailureRequests(context, scenarioInfo);
+        }
+        XdsThreadLocalUtil.removeSendByteFlag();
+        XdsThreadLocalUtil.removeScenarioInfo();
         return context;
     }
 
@@ -165,16 +168,26 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
     public ExecuteContext doThrow(ExecuteContext context) {
         XdsThreadLocalUtil.removeSendByteFlag();
         FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
-        if (scenarioInfo != null) {
-            decrementActiveRequestsAndCountFailureRequests(context, scenarioInfo);
+        Object requestEntity = context.getLocalFieldValue(CommonConst.REQUEST_INFO);
+        if (requestEntity instanceof RequestEntity) {
+            getXdsHttpFlowControlService().onThrow((RequestEntity) requestEntity, context.getThrowable(), scenarioInfo);
         }
-        chooseHttpService().onAfter(className, context);
+        if (context.getThrowableOut() != null) {
+            decreaseActiveRequestsAndCountFailureRequests(context, scenarioInfo);
+            XdsThreadLocalUtil.removeSendByteFlag();
+            XdsThreadLocalUtil.removeScenarioInfo();
+        }
         return context;
     }
 
-    private void decrementActiveRequestsAndCountFailureRequests(ExecuteContext context,
-            FlowControlScenario scenarioInfo) {
-        XdsCircuitBreakerManager.decrementActiveRequests(scenarioInfo.getServiceName(), scenarioInfo.getServiceName(),
+    private void decreaseActiveRequestsAndCountFailureRequests(ExecuteContext context,
+                                                               FlowControlScenario scenarioInfo) {
+        if (scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
+                || StringUtils.isEmpty(scenarioInfo.getClusterName())
+                || StringUtils.isEmpty(scenarioInfo.getAddress())) {
+            return;
+        }
+        XdsCircuitBreakerManager.decreaseActiveRequests(scenarioInfo.getServiceName(), scenarioInfo.getClusterName(),
                 scenarioInfo.getAddress());
         int statusCode = getStatusCode(context);
         if (statusCode >= MIN_SUCCESS_CODE && statusCode <= MAX_SUCCESS_CODE) {
@@ -190,8 +203,6 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
      * @param scenario scenario information
      */
     private void handleFailedRequests(FlowControlScenario scenario, int statusCode) {
-        XdsCircuitBreakerManager.decrementActiveRequests(scenario.getServiceName(), scenario.getClusterName(),
-                scenario.getAddress());
         Optional<XdsInstanceCircuitBreakers> instanceCircuitBreakersOptional = XdsHandler.INSTANCE.
                 getInstanceCircuitBreakers(scenario.getServiceName(), scenario.getClusterName());
         if (!instanceCircuitBreakersOptional.isPresent()) {
@@ -230,8 +241,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         if (serviceInstanceSet.isEmpty()) {
             return Optional.empty();
         }
-        boolean needRetry = RetryContext.INSTANCE.isPolicyNeedRetry();
-        if (needRetry) {
+        if (RetryContext.INSTANCE.isPolicyNeedRetry()) {
             removeRetriedServiceInstance(serviceInstanceSet);
         }
         removeCircuitBreakerInstance(scenarioInfo, serviceInstanceSet);
@@ -275,7 +285,8 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         float maxCircuitBreakerPercent = (float) outlierDetection.getMaxEjectionPercent() / HUNDRED;
         int maxCircuitBreakerInstances = (int) Math.floor(count * maxCircuitBreakerPercent);
         for (ServiceInstance serviceInstance : instanceSet) {
-            if (hasReachedCircuitBreakerThreshold(circuitBreakerInstances, maxCircuitBreakerInstances)) {
+            if (maxCircuitBreakerInstances > 0
+                    && hasReachedCircuitBreakerThreshold(circuitBreakerInstances, maxCircuitBreakerInstances)) {
                 break;
             }
             String address = serviceInstance.getHost() + CommonConst.CONNECT + serviceInstance.getPort();
@@ -308,23 +319,29 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
      * @return Retry Handlers
      */
     protected List<Retry> getRetryHandlers() {
-        if (XdsThreadLocalUtil.getScenarioInfo() != null) {
-            FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
-            RetryContext.INSTANCE.buildXdsRetryPolicy(scenarioInfo);
-            return getRetryHandler().getXdsHandlers(scenarioInfo);
+        FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
+        if (scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
+                || StringUtils.isEmpty(scenarioInfo.getRouteName())) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        Optional<XdsRetryPolicy> retryPolicyOptional = XdsHandler.INSTANCE
+                .getRetryPolicy(scenarioInfo.getServiceName(), scenarioInfo.getRouteName());
+        if (!retryPolicyOptional.isPresent()) {
+            return Collections.emptyList();
+        }
+        XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
+        RetryContext.INSTANCE.buildXdsRetryPolicy(retryPolicy);
+        return getRetryHandler().getXdsRetryHandlers(scenarioInfo, retryPolicy);
     }
 
     /**
      * create retry method
      *
      * @param context The execution context of the Interceptor
-     * @param result The call result of the enhanced method
      * @return Define Supplier for retry calls of service calls
      * @throws InvokerWrapperException InvokerWrapperException
      */
-    protected Supplier<Object> createRetryFunc(ExecuteContext context, Object result) {
+    protected Supplier<Object> createRetryFunc(ExecuteContext context) {
         Object obj = context.getObject();
         Method method = context.getMethod();
         Object[] allArguments = context.getArguments();
@@ -332,9 +349,10 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         return () -> {
             method.setAccessible(true);
             try {
-                preRetry(obj, method, allArguments, result, isFirstInvoke.get());
-                Object invokeResult = method.invoke(obj, allArguments);
+                preRetry(obj, method, allArguments, context.getResult(), isFirstInvoke.get());
                 isFirstInvoke.compareAndSet(true, false);
+                Object invokeResult = method.invoke(obj, allArguments);
+                context.changeResult(invokeResult);
                 return invokeResult;
             } catch (IllegalAccessException ignored) {
                 isFirstInvoke.compareAndSet(true, false);
@@ -342,7 +360,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
                 isFirstInvoke.compareAndSet(true, false);
                 throw new InvokerWrapperException(ex.getTargetException());
             }
-            return result;
+            return context.getResult();
         };
     }
 

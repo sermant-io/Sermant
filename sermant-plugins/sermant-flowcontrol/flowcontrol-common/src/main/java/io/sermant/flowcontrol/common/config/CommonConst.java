@@ -284,6 +284,16 @@ public class CommonConst {
      */
     public static final int DEFAULT_RESPONSE_CODE = -1;
 
+    /**
+     * the key of Scenario information for flow control
+     */
+    public static final String SCENARIO_INFO = "flowControlScenario";
+
+    /**
+     * the key of request-information
+     */
+    public static final String REQUEST_INFO = "REQUEST_INFO";
+
     private CommonConst() {
     }
 }

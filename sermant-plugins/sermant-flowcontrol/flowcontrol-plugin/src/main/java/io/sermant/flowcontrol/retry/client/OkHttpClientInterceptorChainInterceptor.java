@@ -50,13 +50,11 @@ import java.util.logging.Level;
  * @since 2024-12-20
  */
 public class OkHttpClientInterceptorChainInterceptor extends AbstractXdsHttpClientInterceptor {
-    private final String className = HttpClient4xInterceptor.class.getName();
-
     /**
      * Constructor
      */
     public OkHttpClientInterceptorChainInterceptor() {
-        super(new OkHttpRetry(), OkHttpClientInterceptorChainInterceptor.class.getCanonicalName());
+        super(new OkHttpRetry());
     }
 
     @Override
@@ -76,7 +74,7 @@ public class OkHttpClientInterceptorChainInterceptor extends AbstractXdsHttpClie
         final FlowControlResult flowControlResult = new FlowControlResult();
 
         // Execute the flow control handler chain, with only fault for XDS
-        chooseHttpService().onBefore(className, httpRequestEntity.get(), flowControlResult);
+        getXdsHttpFlowControlService().onBefore(httpRequestEntity.get(), flowControlResult);
 
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {

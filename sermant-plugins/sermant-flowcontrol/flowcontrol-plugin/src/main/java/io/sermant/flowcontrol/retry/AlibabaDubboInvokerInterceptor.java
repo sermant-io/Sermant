@@ -188,7 +188,7 @@ public class AlibabaDubboInvokerInterceptor extends InterceptorSupporter {
             if (invocation.getInvoker() != null) {
                 final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                         .getHandlers(convertToAlibabaDubboEntity(invocation));
-                if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
+                if (!handlers.isEmpty() && isNeedRetry(handlers.get(0), result, ((RpcResult) result).getException())) {
                     result = handlers.get(0).executeCheckedSupplier(
                             () -> invokeRetryMethod(context.getObject(), allArguments, context.getResult(), true,
                                     true));

@@ -154,7 +154,7 @@ public class FeignRequestInterceptor extends InterceptorSupporter {
             RetryContext.INSTANCE.buildRetryPolicy(httpRequestEntity.get());
             final List<io.github.resilience4j.retry.Retry> handlers = getRetryHandler()
                     .getHandlers(httpRequestEntity.get());
-            if (!handlers.isEmpty() && needRetry(handlers.get(0), result, ex)) {
+            if (!handlers.isEmpty() && isNeedRetry(handlers.get(0), result, ex)) {
                 result = handlers.get(0).executeCheckedSupplier(retryFunc::get);
             }
         } catch (Throwable throwable) {

@@ -130,7 +130,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
      * @throws UnsupportedOperationException unsupported operation
      */
     public Optional<String> getCode(Object result) {
-        throw new UnsupportedOperationException();
+        return Optional.empty();
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
      * @throws UnsupportedOperationException unsupported operation
      */
     public Optional<Set<String>> getHeaderNames(Object result) {
-        throw new UnsupportedOperationException();
+        return Optional.empty();
     }
 
     /**

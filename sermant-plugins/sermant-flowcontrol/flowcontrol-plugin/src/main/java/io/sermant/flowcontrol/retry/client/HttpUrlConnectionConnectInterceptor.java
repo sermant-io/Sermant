@@ -60,14 +60,11 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractXdsHttpClientIn
      * Constructor
      */
     public HttpUrlConnectionConnectInterceptor() {
-        super(new HttpUrlConnectionRetry(), HttpUrlConnectionConnectInterceptor.class.getName());
+        super(new HttpUrlConnectionRetry());
     }
 
     @Override
     public ExecuteContext doBefore(ExecuteContext context) {
-        if (!(context.getObject() instanceof HttpURLConnection)) {
-            return context;
-        }
         HttpURLConnection connection = (HttpURLConnection) context.getObject();
 
         // Parse the service name, request path, and request header in the request information and convert them into
@@ -79,7 +76,7 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractXdsHttpClientIn
         final FlowControlResult flowControlResult = new FlowControlResult();
 
         // Execute the flow control handler chain, with only fault for XDS
-        chooseHttpService().onBefore(className, httpRequestEntity.get(), flowControlResult);
+        getXdsHttpFlowControlService().onBefore(httpRequestEntity.get(), flowControlResult);
 
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {
