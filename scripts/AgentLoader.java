@@ -41,6 +41,8 @@ public class AgentLoader {
 
     private static final Set<String> PLUGIN_COMMAND = new HashSet<>();
 
+    private static final Set<String> EXTERNAL_AGENT_COMMAND = new HashSet<>();
+
     private static final Set<String> WITH_CONFIG_COMMAND = new HashSet<>();
 
     private static final Map<String, String> COMMAND_DETAILS = new HashMap<>();
@@ -118,6 +120,10 @@ public class AgentLoader {
 
         VirtualMachine vm = VirtualMachine.attach(selectedDescriptor);
 
+        // 获取Sermant Agent目录
+        System.out.print("请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：");
+        String agentPath = userInputReader.readLine();
+
         // 展示目前支持的命令列表
         System.out.println("请选择需要执行的命令：");
         for (int i = 0; i < FULL_COMMAND.size(); i++) {
@@ -154,14 +160,20 @@ public class AgentLoader {
             currentCommand += userInputReader.readLine();
         }
 
-        // 获取Sermant Agent目录
-        System.out.print("请输入Sermant Agent所在目录（默认采用该目录下sermant-agent.jar为入口）：");
-        String agentPath = userInputReader.readLine();
-
         String agentArgs = "agentPath=" + agentPath + ",";
+        if (EXTERNAL_AGENT_COMMAND.contains(currentCommand)) {
+            System.out.print("请输入您要安装的Agent名字：");
+            currentCommand += ":";
+            currentCommand += userInputReader.readLine();
+            System.out.print("请输入您要安装的Agent路径：");
+            agentArgs += "AGENT_FILE=";
+            agentArgs += userInputReader.readLine();
+            agentArgs += ",";
+        }
+
         if (WITH_CONFIG_COMMAND.contains(FULL_COMMAND.get(selectedCommandIndex))) {
             // 获取传入Sermant Agent的参数
-            System.out.print("请输入向Sermant Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：");
+            System.out.print("请输入向Sermant Agent或外部Agent传入的参数(可为空, 示例格式：key1=value1,key2=value2)：");
             if (currentCommand.equals("INSTALL-AGENT")) {
                 agentArgs += userInputReader.readLine();
             } else {
@@ -231,6 +243,11 @@ public class AgentLoader {
 
         VirtualMachine vm = VirtualMachine.attach(selectedDescriptor);
 
+        // get the Sermant Agent directory
+        System.out
+                .print("Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ");
+        String agentPath = userInputReader.readLine();
+
         // display the list of currently supported commands
         System.out.println("Please select the command to execute: ");
         for (int i = 0; i < FULL_COMMAND.size(); i++) {
@@ -268,16 +285,21 @@ public class AgentLoader {
             currentCommand += userInputReader.readLine();
         }
 
-        // get the Sermant Agent directory
-        System.out
-                .print("Please enter the directory where Sermant Agent is located (by default, it uses sermant-agent.jar in this directory as the entry point): ");
-        String agentPath = userInputReader.readLine();
-
         String agentArgs = "agentPath=" + agentPath + ",";
+        if (EXTERNAL_AGENT_COMMAND.contains(currentCommand)) {
+            System.out.print("Please enter the name of the Agent you want to install: ");
+            currentCommand += ":";
+            currentCommand += userInputReader.readLine();
+            System.out.print("Please enter the path of the Agent you want to install: ");
+            agentArgs += "AGENT_FILE=";
+            agentArgs += userInputReader.readLine();
+            agentArgs += ",";
+        }
+
         if (WITH_CONFIG_COMMAND.contains(FULL_COMMAND.get(selectedCommandIndex))) {
             // Get the parameters passed to the Sermant Agent
-            System.out.print("Enter the parameters to pass to the Sermant Agent (optional, example format: "
-                    + "key1=value1,key2=value2): ");
+            System.out.print("Enter the parameters to pass to the Sermant Agent or external Agent "
+                    + "(optional, example format: key1=value1,key2=value2): ");
             if (currentCommand.equals("INSTALL-AGENT")) {
                 agentArgs += userInputReader.readLine();
             } else {
@@ -317,21 +339,22 @@ public class AgentLoader {
         COMMAND_DETAILS.put("CHECK-ENHANCEMENT", "Query the plugins installed in the Sermant Agent and the "
                 + "corresponding enhancement information (including enhanced classes and methods, "
                 + "as well as the corresponding interceptors).");
+        COMMAND_DETAILS.put("INSTALL-EXTERNAL-AGENT", "install external Agent. "
+                + "If the Sermant Agent is not installed, it will be automatically installed (along with all plugins "
+                + "listed under dynamicPlugins.active in the plugins.yaml configuration file).");
     }
 
     private static void initCommandDescriptionOfChinese() {
         // command description
-        COMMAND_DETAILS.put("INSTALL-AGENT", "Install the Sermant Agent and all plugins listed under "
-                + "dynamicPlugins.active in the plugins.yaml configuration file.");
-        COMMAND_DETAILS.put("UNINSTALL-AGENT", "Uninstall the Sermant Agent along with all installed plugins.");
-        COMMAND_DETAILS.put("INSTALL-PLUGINS", "Install plugins into the Sermant Agent. "
-                + "If the Sermant Agent is not installed, it will be automatically installed (along with all plugins "
-                + "listed under dynamicPlugins.active in the plugins.yaml configuration file).");
-        COMMAND_DETAILS.put("UNINSTALL-PLUGINS", "Uninstall plugins installed in the Sermant Agent.");
-        COMMAND_DETAILS.put("UPDATE-PLUGINS", "Update plugins installed in the Sermant Agent.");
-        COMMAND_DETAILS.put("CHECK-ENHANCEMENT", "Query the plugins installed in the Sermant Agent and the "
-                + "corresponding enhancement information (including enhanced classes and methods, "
-                + "as well as the corresponding interceptors).");
+        COMMAND_DETAILS.put("INSTALL-AGENT", "安装Sermant Agent，同时安装plugins.yaml配置文件中dynamicPlugins.active下的所有插件");
+        COMMAND_DETAILS.put("UNINSTALL-AGENT", "卸载Sermant Agent，同时卸载所有已安装插件");
+        COMMAND_DETAILS.put("INSTALL-PLUGINS", "安装插件至Sermant Agent中，Sermant Agent未安装时会自动安装Agent（同时安装plugins"
+                + ".yaml配置文件中dynamicPlugins.active下的所有插件）");
+        COMMAND_DETAILS.put("UNINSTALL-PLUGINS", "卸载Sermant Agent中已安装的插件");
+        COMMAND_DETAILS.put("UPDATE-PLUGINS", "更新Sermant Agent中已安装的插件");
+        COMMAND_DETAILS.put("CHECK-ENHANCEMENT", "查询Sermant Agent已安装插件和相应插件对应的增强信息（包括被增强的类和方法，及对应的拦截器）");
+        COMMAND_DETAILS.put("INSTALL-EXTERNAL-AGENT", "安装外部Agent，Sermant Agent未安装时会自动安装Agent（同时安装plugins"
+                + ".yaml配置文件中dynamicPlugins.active下的所有插件）");
     }
 
     private static void initCommandList() {
@@ -342,15 +365,20 @@ public class AgentLoader {
         FULL_COMMAND.add("UNINSTALL-PLUGINS");
         FULL_COMMAND.add("UPDATE-PLUGINS");
         FULL_COMMAND.add("CHECK-ENHANCEMENT");
+        FULL_COMMAND.add("INSTALL-EXTERNAL-AGENT");
 
         // command for dynamically hot-plugging plugins.
         PLUGIN_COMMAND.add("INSTALL-PLUGINS");
         PLUGIN_COMMAND.add("UNINSTALL-PLUGINS");
         PLUGIN_COMMAND.add("UPDATE-PLUGINS");
 
+        // command for external agent command.
+        EXTERNAL_AGENT_COMMAND.add("INSTALL-EXTERNAL-AGENT");
+
         // commands that require parameters to be passed to the Sermant Agent.
         WITH_CONFIG_COMMAND.add("INSTALL-AGENT");
         WITH_CONFIG_COMMAND.add("INSTALL-PLUGINS");
         WITH_CONFIG_COMMAND.add("UPDATE-PLUGINS");
+        WITH_CONFIG_COMMAND.add("INSTALL-EXTERNAL-AGENT");
     }
 }
