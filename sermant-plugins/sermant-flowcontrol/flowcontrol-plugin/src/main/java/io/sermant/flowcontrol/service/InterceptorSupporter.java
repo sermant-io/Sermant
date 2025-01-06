@@ -32,6 +32,7 @@ import io.sermant.flowcontrol.common.support.ReflectMethodCacheSupport;
 import io.sermant.flowcontrol.retry.handler.RetryHandlerV2;
 import io.sermant.flowcontrol.service.rest4j.DubboRest4jService;
 import io.sermant.flowcontrol.service.rest4j.HttpRest4jService;
+import io.sermant.flowcontrol.service.rest4j.XdsHttpFlowControlService;
 import io.sermant.flowcontrol.service.sen.DubboSenService;
 import io.sermant.flowcontrol.service.sen.HttpSenService;
 
@@ -88,6 +89,8 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     private DubboService dubboService;
 
     private HttpService httpService;
+
+    private XdsHttpFlowControlService xdsHttpFlowControlService;
 
     /**
      * constructor
@@ -157,6 +160,23 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     /**
+     * gets the selected XDS flow control service
+     *
+     * @return HttpService
+     */
+    protected XdsHttpFlowControlService getXdsHttpFlowControlService() {
+        if (xdsHttpFlowControlService == null) {
+            lock.lock();
+            try {
+                xdsHttpFlowControlService = PluginServiceManager.getPluginService(XdsHttpFlowControlService.class);
+            } finally {
+                lock.unlock();
+            }
+        }
+        return xdsHttpFlowControlService;
+    }
+
+    /**
      * create retry method
      *
      * @param obj enhancement class
@@ -189,12 +209,12 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
      * @param throwable Exception information for the first execution
      * @return check through
      */
-    protected final boolean needRetry(io.github.resilience4j.retry.Retry retry, Object result, Throwable throwable) {
-        final long interval = retry.getRetryConfig().getIntervalBiFunction().apply(1, null);
+    protected boolean isNeedRetry(io.github.resilience4j.retry.Retry retry, Object result, Throwable throwable) {
         final RetryConfig retryConfig = retry.getRetryConfig();
         boolean isNeedRetry = isMatchResult(result, retryConfig.getResultPredicate()) || isTargetException(throwable,
                 retryConfig.getExceptionPredicate());
         if (isNeedRetry) {
+            final long interval = retryConfig.getIntervalBiFunction().apply(1, null);
             try {
                 // wait according to the first wait time
                 Thread.sleep(interval);

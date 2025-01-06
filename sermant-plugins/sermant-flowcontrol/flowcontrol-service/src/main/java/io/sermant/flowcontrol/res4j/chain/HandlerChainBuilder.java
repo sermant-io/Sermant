@@ -41,10 +41,16 @@ public enum HandlerChainBuilder {
 
     private static final List<AbstractChainHandler> HANDLERS = new ArrayList<>(HANDLER_SIZE);
 
+    private static final List<AbstractXdsChainHandler> XDS_HANDLERS = new ArrayList<>(HANDLER_SIZE);
+
     static {
-        for (AbstractChainHandler handler : ServiceLoader.load(AbstractChainHandler.class, HandlerChainBuilder.class
-                .getClassLoader())) {
+        ClassLoader classLoader = HandlerChainBuilder.class.getClassLoader();
+        for (AbstractChainHandler handler : ServiceLoader.load(AbstractChainHandler.class, classLoader)) {
             HANDLERS.add(handler);
+        }
+
+        for (AbstractXdsChainHandler handler : ServiceLoader.load(AbstractXdsChainHandler.class, classLoader)) {
+            XDS_HANDLERS.add(handler);
         }
     }
 
@@ -58,6 +64,18 @@ public enum HandlerChainBuilder {
         Collections.sort(HANDLERS);
         HANDLERS.forEach(processorChain::addLastHandler);
         return processorChain;
+    }
+
+    /**
+     * build Xds chain
+     *
+     * @return ProcessorChain execution chain
+     */
+    public XdsHandlerChain buildXdsHandlerChain() {
+        Collections.sort(XDS_HANDLERS);
+        final XdsHandlerChain xdsHandlerChain = new XdsHandlerChain();
+        XDS_HANDLERS.forEach(xdsHandlerChain::addLastHandler);
+        return xdsHandlerChain;
     }
 
     /**

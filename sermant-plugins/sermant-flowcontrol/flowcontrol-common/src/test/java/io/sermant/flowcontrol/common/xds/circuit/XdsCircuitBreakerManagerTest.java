@@ -18,6 +18,7 @@ package io.sermant.flowcontrol.common.xds.circuit;
 
 import io.sermant.core.service.xds.entity.XdsInstanceCircuitBreakers;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
+import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -43,12 +44,12 @@ public class XdsCircuitBreakerManagerTest {
     public void testActiveRequests() {
         assertEquals(1, XdsCircuitBreakerManager.incrementActiveRequests(SERVICE_NAME, CLUSTER_NAME, ADDRESS));
         assertEquals(2, XdsCircuitBreakerManager.incrementActiveRequests(SERVICE_NAME, CLUSTER_NAME, ADDRESS));
-        XdsCircuitBreakerManager.decrementActiveRequests(SERVICE_NAME, CLUSTER_NAME, ADDRESS);
+        XdsCircuitBreakerManager.decreaseActiveRequests(SERVICE_NAME, CLUSTER_NAME, ADDRESS);
         assertEquals(2, XdsCircuitBreakerManager.incrementActiveRequests(SERVICE_NAME, CLUSTER_NAME, ADDRESS));
     }
 
     @Test
-    public void testCircuitBreaker() {
+    public void testCircuitBreaker() throws InterruptedException {
         final FlowControlScenario scenarioInfo = new FlowControlScenario();
         scenarioInfo.setServiceName(SERVICE_NAME);
         scenarioInfo.setClusterName(CLUSTER_NAME);
@@ -56,14 +57,47 @@ public class XdsCircuitBreakerManagerTest {
         scenarioInfo.setAddress(ADDRESS);
         final XdsInstanceCircuitBreakers circuitBreakers = new XdsInstanceCircuitBreakers();
         circuitBreakers.setSplitExternalLocalOriginErrors(false);
-        circuitBreakers.setConsecutiveLocalOriginFailure(1);
-        circuitBreakers.setConsecutiveGatewayFailure(1);
+        circuitBreakers.setConsecutiveLocalOriginFailure(0);
+        circuitBreakers.setConsecutiveGatewayFailure(0);
         circuitBreakers.setConsecutive5xxFailure(1);
         circuitBreakers.setInterval(1000L);
         circuitBreakers.setBaseEjectionTime(10000L);
         boolean result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
         assertFalse(result);
+
+        // Test the number of errors from the server reached the threshold
         XdsCircuitBreakerManager.recordFailureRequest(scenarioInfo, ADDRESS, 500, circuitBreakers);
+        XdsCircuitBreakerManager.setCircuitBeakerStatus(circuitBreakers, scenarioInfo);
+        result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
+        assertTrue(result);
+
+        // Test whether the circuit breaker time has been exceeded and whether it has been restored
+        Thread.sleep(1100L);
+        result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
+        assertFalse(result);
+
+        // Test the number of errors from the local source reached the threshold
+        circuitBreakers.setSplitExternalLocalOriginErrors(true);
+        circuitBreakers.setConsecutiveLocalOriginFailure(1);
+        XdsThreadLocalUtil.setConnectionStatus(false);
+        XdsCircuitBreakerManager.recordFailureRequest(scenarioInfo, ADDRESS, -1, circuitBreakers);
+        XdsCircuitBreakerManager.setCircuitBeakerStatus(circuitBreakers, scenarioInfo);
+        result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
+        assertTrue(result);
+
+        // Test whether the actual circuit breaker time is the product of the number of circuit breakers multiplied
+        // by the configured circuit breaker time
+        Thread.sleep(1100L);
+        result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
+        assertTrue(result);
+        Thread.sleep(1000L);
+        result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
+        assertFalse(result);
+
+        // Test the number of errors from the gateway reached the threshold
+        circuitBreakers.setConsecutive5xxFailure(0);
+        circuitBreakers.setConsecutiveGatewayFailure(1);
+        XdsCircuitBreakerManager.recordFailureRequest(scenarioInfo, ADDRESS, 503, circuitBreakers);
         XdsCircuitBreakerManager.setCircuitBeakerStatus(circuitBreakers, scenarioInfo);
         result = XdsCircuitBreakerManager.needsInstanceCircuitBreaker(scenarioInfo, ADDRESS);
         assertTrue(result);

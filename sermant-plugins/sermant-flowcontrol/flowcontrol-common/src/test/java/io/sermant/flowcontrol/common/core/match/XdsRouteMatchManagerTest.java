@@ -19,7 +19,6 @@ package io.sermant.flowcontrol.common.core.match;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
-
 import io.sermant.flowcontrol.common.util.XdsAbstractTest;
 import org.junit.Assert;
 import org.junit.Test;

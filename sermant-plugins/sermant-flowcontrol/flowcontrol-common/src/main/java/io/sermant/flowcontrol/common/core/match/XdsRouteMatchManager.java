@@ -91,8 +91,12 @@ public enum XdsRouteMatchManager {
     }
 
     private boolean isHeadersMatched(List<XdsHeaderMatcher> matchers, Map<String, String> headers) {
-        return matchers.stream()
-                .allMatch(xdsHeaderMatcher -> xdsHeaderMatcher.isMatch(headers));
+        for (XdsHeaderMatcher xdsHeaderMatcher : matchers) {
+            if (!xdsHeaderMatcher.isMatch(headers)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private String selectClusterByRoute(XdsRoute matchedRoute) {

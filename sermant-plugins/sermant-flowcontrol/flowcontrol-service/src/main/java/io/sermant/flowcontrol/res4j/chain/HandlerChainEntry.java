@@ -20,6 +20,7 @@ package io.sermant.flowcontrol.res4j.chain;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.flowcontrol.common.entity.FlowControlResult;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
+import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.res4j.chain.context.ChainContext;
 import io.sermant.flowcontrol.res4j.chain.context.RequestContext;
 import io.sermant.flowcontrol.res4j.util.FlowControlExceptionUtils;
@@ -99,7 +100,8 @@ public enum HandlerChainEntry {
      */
     public void onResult(String sourceName, Object result) {
         try {
-            chain.onResult(ChainContext.getThreadLocalContext(sourceName), null, result);
+            chain.onResult(ChainContext.getThreadLocalContext(sourceName), XdsThreadLocalUtil.getScenarioInfo(),
+                    result);
         } finally {
             ChainContext.remove(sourceName);
         }
@@ -135,7 +137,7 @@ public enum HandlerChainEntry {
     public void onThrow(String sourceName, Throwable throwable) {
         final RequestContext context = ChainContext.getThreadLocalContext(sourceName);
         context.save(HandlerConstants.OCCURRED_REQUEST_EXCEPTION, throwable);
-        chain.onThrow(context, null, throwable);
+        chain.onThrow(context, XdsThreadLocalUtil.getScenarioInfo(), throwable);
     }
 
     /**

@@ -16,6 +16,7 @@
 
 package io.sermant.flowcontrol.retry.client;
 
+import io.github.resilience4j.retry.RetryConfig;
 import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.service.xds.entity.ServiceInstance;
@@ -38,7 +39,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,12 +59,11 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
      * Constructor
      */
     public HttpUrlConnectionResponseStreamInterceptor() {
-        super(new HttpUrlConnectionRetry(), HttpUrlConnectionResponseStreamInterceptor.class.getCanonicalName());
+        super(new HttpUrlConnectionRetry());
     }
 
     @Override
     protected ExecuteContext doBefore(ExecuteContext context) throws Exception {
-        // Remove the status to prevent multiple executions of the same request due to enhanced logic
         XdsThreadLocalUtil.removeConnectionStatus();
         executeWithRetryPolicy(context);
         return context;
@@ -81,6 +80,11 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
     }
 
     @Override
+    protected boolean canInvoke(ExecuteContext context) {
+        return XdsThreadLocalUtil.isConnected() && XdsThreadLocalUtil.getScenarioInfo() != null;
+    }
+
+    @Override
     protected int getStatusCode(ExecuteContext context) {
         HttpURLConnection connection = (HttpURLConnection) context.getObject();
         try {
@@ -92,8 +96,19 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
     }
 
     @Override
-    protected boolean canInvoke(ExecuteContext context) {
-        return XdsThreadLocalUtil.isConnected() && XdsThreadLocalUtil.getScenarioInfo() != null;
+    protected boolean isNeedRetry(io.github.resilience4j.retry.Retry retry, Object result, Throwable throwable) {
+        final RetryConfig retryConfig = retry.getRetryConfig();
+        boolean isNeedRetry = retryConfig.getExceptionPredicate().test(throwable);
+        if (isNeedRetry) {
+            final long interval = retryConfig.getIntervalBiFunction().apply(1, null);
+            try {
+                // wait according to the first wait time
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "Interruption error:", e);
+            }
+        }
+        return isNeedRetry;
     }
 
     @Override
@@ -180,26 +195,15 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
         @Override
         public Optional<String> getCode(Object result) {
             HttpURLConnection connection = XdsThreadLocalUtil.getHttpUrlConnection();
+            if (connection == null) {
+                return Optional.empty();
+            }
             try {
                 return Optional.of(String.valueOf(connection.getResponseCode()));
             } catch (IOException io) {
                 LOGGER.log(Level.SEVERE, "Failed to get response code.", io);
                 return Optional.empty();
             }
-        }
-
-        @Override
-        public Optional<Set<String>> getHeaderNames(Object result) {
-            HttpURLConnection connection = XdsThreadLocalUtil.getHttpUrlConnection();
-            Set<String> headerNames = new HashSet<>();
-            if (MapUtils.isEmpty(connection.getHeaderFields())) {
-                return Optional.empty();
-            }
-            Set<String> headers = connection.getHeaderFields().keySet();
-            for (Map.Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
-                headers.add(header.getKey());
-            }
-            return Optional.of(headerNames);
         }
 
         @Override
@@ -229,6 +233,19 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
         @Override
         public boolean isNeedRetry(Object result, XdsRetryPolicy retryPolicy) {
             return this.isNeedRetry((Throwable) null, retryPolicy);
+        }
+
+        @Override
+        public Optional<Set<String>> getHeaderNames(Object result) {
+            HttpURLConnection connection = XdsThreadLocalUtil.getHttpUrlConnection();
+            if (connection == null) {
+                return Optional.empty();
+            }
+            Map<String,List<String>> headers = connection.getHeaderFields();
+            if (MapUtils.isEmpty(headers)) {
+                return Optional.empty();
+            }
+            return Optional.of(headers.keySet());
         }
 
         @Override

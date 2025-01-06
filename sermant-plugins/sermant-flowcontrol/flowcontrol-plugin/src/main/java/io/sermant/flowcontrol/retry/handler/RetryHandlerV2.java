@@ -28,11 +28,15 @@ import io.sermant.flowcontrol.common.core.rule.RetryRule;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.handler.AbstractRequestHandler;
 import io.sermant.flowcontrol.common.handler.retry.RetryContext;
-import io.sermant.flowcontrol.common.xds.handler.XdsHandler;
 import io.sermant.flowcontrol.retry.FeignRequestInterceptor.FeignRetry;
 import io.sermant.flowcontrol.retry.HttpRequestInterceptor.HttpRetry;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * based on resilience4j retry
@@ -43,27 +47,48 @@ import java.util.Optional;
 public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     private final RetryPredicateCreator retryPredicateCreator = new DefaultRetryPredicateCreator();
 
-    @Override
-    public Optional<Retry> createHandler(FlowControlScenario flowControlScenario, String businessName) {
+    /**
+     * XDS Handler cache, where the Key of the first level is the service name,
+     * the Key of the second level is the route name, the Key of the three level is the xdsRetryPolicy, value
+     * is Retry instance, The Retry instance is thread-safe can be used to decorate multiple requests
+     */
+    private final Map<String, Map<String, Map<String, Optional<Retry>>>> xdsHandlers = new ConcurrentHashMap<>();
+
+    /**
+     * gets the specified retry handler
+     *
+     * @param scenario Scenario information for flow control
+     * @param xdsRetryPolicy retry policy information
+     * @return handler
+     */
+    public List<Retry> getXdsRetryHandlers(FlowControlScenario scenario, XdsRetryPolicy xdsRetryPolicy) {
+        Map<String, Map<String, Optional<Retry>>> serviceRetryHandlers = xdsHandlers.computeIfAbsent(
+                scenario.getServiceName(), k -> new HashMap<>());
+        Map<String, Optional<Retry>> routeRetryHandlers = serviceRetryHandlers.computeIfAbsent(scenario.getRouteName(),
+                k -> new HashMap<>());
+        String retryName = xdsRetryPolicy.toString();
+        Optional<Retry> retryHandlerOptions = routeRetryHandlers.computeIfAbsent(retryName, s -> {
+            // Clear the original handler to prevent the use of the original handler during configuration refresh
+            routeRetryHandlers.clear();
+            return createHandler(xdsRetryPolicy, retryName);
+        });
+        return retryHandlerOptions.map(Collections::singletonList).orElse(Collections.emptyList());
+    }
+
+    private Optional<Retry> createHandler(XdsRetryPolicy xdsRetryPolicy, String businessName) {
         final io.sermant.flowcontrol.common.handler.retry.Retry retry = RetryContext.INSTANCE.getRetry();
         if (retry == null) {
             return Optional.empty();
         }
-        Optional<XdsRetryPolicy> retryPolicyOptional = XdsHandler.INSTANCE
-                .getRetryPolicy(flowControlScenario.getServiceName(), flowControlScenario.getRouteName());
-        if (!retryPolicyOptional.isPresent()) {
-            return Optional.empty();
-        }
-        XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
-        if (retryPolicy.getPerTryTimeout() <= 0 || CollectionUtils.isEmpty(retryPolicy.getRetryConditions())
-                || retryPolicy.getMaxAttempts() <= 0) {
+        if (xdsRetryPolicy.getPerTryTimeout() <= 0 || CollectionUtils.isEmpty(xdsRetryPolicy.getRetryConditions())
+                || xdsRetryPolicy.getMaxAttempts() <= 0) {
             return Optional.empty();
         }
         final RetryConfig retryConfig = RetryConfig.custom()
-                .maxAttempts((int)retryPolicy.getMaxAttempts())
-                .retryOnResult(retryPredicateCreator.createResultPredicate(retry, retryPolicy))
-                .retryOnException(retryPredicateCreator.createExceptionPredicate(retry, retryPolicy))
-                .intervalFunction(IntervalFunction.of(retryPolicy.getPerTryTimeout()))
+                .maxAttempts((int)xdsRetryPolicy.getMaxAttempts())
+                .retryOnResult(retryPredicateCreator.createResultPredicate(retry, xdsRetryPolicy))
+                .retryOnException(retryPredicateCreator.createExceptionPredicate(retry, xdsRetryPolicy))
+                .intervalFunction(IntervalFunction.of(xdsRetryPolicy.getPerTryTimeout()))
                 .failAfterMaxAttempts(false)
                 .build();
         return Optional.of(RetryRegistry.of(retryConfig).retry(businessName));

@@ -21,15 +21,11 @@ import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.flowcontrol.common.core.RuleUtils;
 import io.sermant.flowcontrol.common.core.resolver.RetryResolver;
 import io.sermant.flowcontrol.common.core.rule.RetryRule;
-import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.HttpRequestEntity;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryOnUntriedPolicy;
 import io.sermant.flowcontrol.common.handler.retry.policy.RetryPolicy;
-import io.sermant.flowcontrol.common.util.StringUtils;
-import io.sermant.flowcontrol.common.xds.handler.XdsHandler;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Retry context, used to manage retry policies based on different host framework types
@@ -141,21 +137,11 @@ public enum RetryContext {
     }
 
     /**
-     * build test strategy
+     * build retry policy
      *
-     * @param scenario scenario information
+     * @param retryPolicy retry policy information
      */
-    public void buildXdsRetryPolicy(FlowControlScenario scenario) {
-        if (StringUtils.isEmpty(scenario.getServiceName())
-                || StringUtils.isEmpty(scenario.getRouteName())) {
-            return;
-        }
-        Optional<XdsRetryPolicy> retryPolicyOptional = XdsHandler.INSTANCE
-                .getRetryPolicy(scenario.getServiceName(), scenario.getRouteName());
-        if (!retryPolicyOptional.isPresent()) {
-            return;
-        }
-        XdsRetryPolicy retryPolicy = retryPolicyOptional.get();
+    public void buildXdsRetryPolicy(XdsRetryPolicy retryPolicy) {
         policyThreadLocal.set(new RetryOnUntriedPolicy((int) retryPolicy.getMaxAttempts()));
     }
 }
