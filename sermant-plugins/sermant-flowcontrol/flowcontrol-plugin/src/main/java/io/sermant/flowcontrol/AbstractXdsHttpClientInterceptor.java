@@ -88,8 +88,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
     public boolean isNeedCircuitBreak() {
         FlowControlScenario scenarioInfo = XdsThreadLocalUtil.getScenarioInfo();
         if (scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
-                || StringUtils.isEmpty(scenarioInfo.getClusterName())
-                || StringUtils.isEmpty(scenarioInfo.getAddress())) {
+                || StringUtils.isEmpty(scenarioInfo.getClusterName())) {
             return false;
         }
         Optional<XdsRequestCircuitBreakers> circuitBreakersOptional = XdsHandler.INSTANCE.
@@ -98,7 +97,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
             return false;
         }
         int activeRequestNum = XdsCircuitBreakerManager.incrementActiveRequests(scenarioInfo.getServiceName(),
-                scenarioInfo.getClusterName(), scenarioInfo.getAddress());
+                scenarioInfo.getClusterName());
         int maxRequest = circuitBreakersOptional.get().getMaxRequests();
         return maxRequest > 0 && activeRequestNum > maxRequest;
     }
@@ -134,11 +133,11 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
                 context.skip(result);
                 return;
             }
-            if (ex != null) {
-                context.setThrowableOut(getRealCause(ex));
+            if (ex == null) {
+                context.skip(result);
                 return;
             }
-            context.skip(result);
+            context.setThrowableOut(getRealCause(ex));
         } catch (Throwable throwable) {
             LOGGER.warning(String.format(Locale.ENGLISH,
                     "Failed to invoke method:%s for few times, reason:%s",
@@ -146,6 +145,9 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
             context.setThrowableOut(getRealCause(throwable));
         } finally {
             RetryContext.INSTANCE.remove();
+        }
+        if (context.getThrowableOut() != null) {
+            onThrow(context);
         }
     }
 
@@ -183,12 +185,10 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
     private void decreaseActiveRequestsAndCountFailureRequests(ExecuteContext context,
                                                                FlowControlScenario scenarioInfo) {
         if (scenarioInfo == null || StringUtils.isEmpty(scenarioInfo.getServiceName())
-                || StringUtils.isEmpty(scenarioInfo.getClusterName())
-                || StringUtils.isEmpty(scenarioInfo.getAddress())) {
+                || StringUtils.isEmpty(scenarioInfo.getClusterName())) {
             return;
         }
-        XdsCircuitBreakerManager.decreaseActiveRequests(scenarioInfo.getServiceName(), scenarioInfo.getClusterName(),
-                scenarioInfo.getAddress());
+        XdsCircuitBreakerManager.decreaseActiveRequests(scenarioInfo.getServiceName(), scenarioInfo.getClusterName());
         int statusCode = getStatusCode(context);
         if (statusCode >= MIN_SUCCESS_CODE && statusCode <= MAX_SUCCESS_CODE) {
             return;
@@ -233,12 +233,16 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         }
         if (StringUtils.isEmpty(scenarioInfo.getClusterName())) {
             scenarioInfo.setClusterName(StringUtils.EMPTY);
-            return Optional.ofNullable(chooseServiceInstanceByLoadBalancer(
-                    XdsHandler.INSTANCE.getServiceInstanceByServiceName(scenarioInfo.getServiceName()), scenarioInfo));
+            Set<ServiceInstance> serviceInstanceSet = XdsHandler.INSTANCE.
+                    getServiceInstanceByServiceName(scenarioInfo.getServiceName());
+            if (CollectionUtils.isEmpty(serviceInstanceSet)) {
+                return Optional.empty();
+            }
+            return Optional.ofNullable(chooseServiceInstanceByLoadBalancer(serviceInstanceSet, scenarioInfo));
         }
         Set<ServiceInstance> serviceInstanceSet = XdsHandler.INSTANCE.
                 getMatchedServiceInstance(scenarioInfo.getServiceName(), scenarioInfo.getClusterName());
-        if (serviceInstanceSet.isEmpty()) {
+        if (CollectionUtils.isEmpty(serviceInstanceSet)) {
             return Optional.empty();
         }
         if (RetryContext.INSTANCE.isPolicyNeedRetry()) {
@@ -285,7 +289,7 @@ public abstract class AbstractXdsHttpClientInterceptor extends InterceptorSuppor
         float maxCircuitBreakerPercent = (float) outlierDetection.getMaxEjectionPercent() / HUNDRED;
         int maxCircuitBreakerInstances = (int) Math.floor(count * maxCircuitBreakerPercent);
         for (ServiceInstance serviceInstance : instanceSet) {
-            if (maxCircuitBreakerInstances > 0
+            if (maxCircuitBreakerPercent > 0
                     && hasReachedCircuitBreakerThreshold(circuitBreakerInstances, maxCircuitBreakerInstances)) {
                 break;
             }

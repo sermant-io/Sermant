@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  * @since 2024-12-05
  */
 public class XdsFaultRequestHandler extends AbstractXdsChainHandler {
-    private static final String MESSAGE = "Request has been aborted by fault-ThrowException";
+    private static final String MESSAGE = "The request has been aborted due to triggering fault injection";
 
     private static final Logger LOGGER = LoggerFactory.getLogger();
 

@@ -18,9 +18,11 @@ package io.sermant.flowcontrol.retry.client;
 
 import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.ResponseBody;
 
 import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.service.xds.entity.ServiceInstance;
@@ -79,8 +81,10 @@ public class OkHttpClientInterceptorChainInterceptor extends AbstractXdsHttpClie
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {
             Response.Builder builder = new Response.Builder();
+            String msg = flowControlResult.buildResponseMsg();
             context.skip(builder.code(flowControlResult.getResponse().getCode())
-                    .message(flowControlResult.buildResponseMsg()).request(request)
+                    .message(msg).request(request)
+                    .body(ResponseBody.create(MediaType.parse(CommonConst.DEFAULT_CONTENT_TYPE), msg))
                     .protocol(Protocol.HTTP_1_1).build());
             return context;
         }
@@ -90,7 +94,8 @@ public class OkHttpClientInterceptorChainInterceptor extends AbstractXdsHttpClie
         if (isNeedCircuitBreak()) {
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(CommonConst.INTERVAL_SERVER_ERROR)
-                    .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1).build());
+                    .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1)
+                    .body(ResponseBody.create(MediaType.parse(CommonConst.DEFAULT_CONTENT_TYPE), MESSAGE)).build());
             return context;
         }
 
