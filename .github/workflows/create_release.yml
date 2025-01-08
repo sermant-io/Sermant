@@ -50,7 +50,7 @@ jobs:
         run: |
           mvn package -P package -DskipTests
           mkdir ${{ github.workspace }}/package
-          cp ${{ github.workspace }}/sermant-agent-*.tar.gz ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
+          cp ${{ github.workspace }}/sermant-*.tar.gz ${{ github.workspace }}/package/sermant-${{ env.version }}.tar.gz
           ls ${{ github.workspace }}/package
       - name: Create Release # automatically release new version
         id: create_release
