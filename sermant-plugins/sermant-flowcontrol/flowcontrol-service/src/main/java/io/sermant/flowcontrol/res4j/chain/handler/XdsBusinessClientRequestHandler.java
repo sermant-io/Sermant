@@ -20,6 +20,7 @@ import io.sermant.flowcontrol.common.core.match.XdsRouteMatchManager;
 import io.sermant.flowcontrol.common.entity.FlowControlScenario;
 import io.sermant.flowcontrol.common.entity.RequestEntity;
 import io.sermant.flowcontrol.common.entity.RequestEntity.RequestType;
+import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import io.sermant.flowcontrol.res4j.chain.AbstractXdsChainHandler;
 import io.sermant.flowcontrol.res4j.chain.HandlerConstants;
 
@@ -34,6 +35,7 @@ public class XdsBusinessClientRequestHandler extends AbstractXdsChainHandler {
     public void onBefore(RequestEntity requestEntity, FlowControlScenario scenario) {
         FlowControlScenario matchedScenario = XdsRouteMatchManager.INSTANCE.getMatchedScenarioInfo(
                 requestEntity, requestEntity.getServiceName());
+        XdsThreadLocalUtil.setScenarioInfo(matchedScenario);
         super.onBefore(requestEntity, matchedScenario);
     }
 

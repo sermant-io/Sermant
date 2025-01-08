@@ -32,10 +32,12 @@ import io.sermant.flowcontrol.common.util.XdsRouterUtils;
 import io.sermant.flowcontrol.common.util.XdsThreadLocalUtil;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -85,9 +87,11 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
 
         // When triggering some flow control rules, it is necessary to skip execution and return the result directly
         if (flowControlResult.isSkip()) {
+            String msg = flowControlResult.buildResponseMsg();
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(flowControlResult.getResponse().getCode()).protocol(Protocol.HTTP_1_1)
-                    .message(flowControlResult.buildResponseMsg()).request(request).build());
+                    .message(msg).body(ResponseBody.create(MediaType.parse(CommonConst.DEFAULT_CONTENT_TYPE), msg))
+                    .request(request).build());
             return context;
         }
 
@@ -96,7 +100,8 @@ public class OkHttp3ClientInterceptor extends AbstractXdsHttpClientInterceptor {
         if (isNeedCircuitBreak()) {
             Response.Builder builder = new Response.Builder();
             context.skip(builder.code(CommonConst.INTERVAL_SERVER_ERROR)
-                    .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1).build());
+                    .message(MESSAGE).request(request).protocol(Protocol.HTTP_1_1)
+                    .body(ResponseBody.create(MediaType.parse(CommonConst.DEFAULT_CONTENT_TYPE), MESSAGE)).build());
             return context;
         }
 

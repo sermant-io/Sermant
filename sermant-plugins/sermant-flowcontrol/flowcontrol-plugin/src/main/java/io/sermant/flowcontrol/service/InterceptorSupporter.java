@@ -261,7 +261,7 @@ public abstract class InterceptorSupporter extends ReflectMethodCacheSupport imp
     }
 
     @Override
-    public ExecuteContext onThrow(ExecuteContext context) throws Exception {
+    public ExecuteContext onThrow(ExecuteContext context) {
         if (canInvoke(context)) {
             return doThrow(context);
         }

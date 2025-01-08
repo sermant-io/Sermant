@@ -24,6 +24,7 @@ import io.sermant.core.service.xds.entity.XdsRetryPolicy;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.ReflectUtils;
+import io.sermant.core.utils.StringUtils;
 import io.sermant.flowcontrol.AbstractXdsHttpClientInterceptor;
 import io.sermant.flowcontrol.common.config.CommonConst;
 import io.sermant.flowcontrol.common.handler.retry.AbstractRetry;
@@ -213,17 +214,14 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
                 return false;
             }
             Optional<String> statusCodeOptional = this.getCode(null);
-            if (!statusCodeOptional.isPresent()) {
-                return false;
-            }
-            String statusCode = statusCodeOptional.get();
+            String statusCode = statusCodeOptional.orElse(StringUtils.EMPTY);
             for (String conditionName : conditions) {
                 Optional<RetryCondition> retryConditionOptional = RetryConditionType.
                         getRetryConditionByName(conditionName);
                 if (!retryConditionOptional.isPresent()) {
                     continue;
                 }
-                if (retryConditionOptional.get().needRetry(null, throwable, statusCode, null)) {
+                if (retryConditionOptional.get().needRetry(this, throwable, statusCode, null)) {
                     return true;
                 }
             }

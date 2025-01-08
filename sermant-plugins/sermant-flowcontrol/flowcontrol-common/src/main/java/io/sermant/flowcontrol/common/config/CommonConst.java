@@ -294,6 +294,11 @@ public class CommonConst {
      */
     public static final String REQUEST_INFO = "REQUEST_INFO";
 
+    /**
+     * the default contentType
+     */
+    public static final String DEFAULT_CONTENT_TYPE = "text/plain";
+
     private CommonConst() {
     }
 }

@@ -269,7 +269,7 @@ public class RdsProtocolTransformer {
         if (!StringUtils.isEmpty(retryPolicy.getRetryOn())) {
             xdsRetryPolicy.setRetryConditions(Arrays.asList(retryPolicy.getRetryOn().split(CommonConstant.COMMA)));
         }
-        xdsRetryPolicy.setMaxAttempts(retryPolicy.getHostSelectionRetryMaxAttempts());
+        xdsRetryPolicy.setMaxAttempts(retryPolicy.getNumRetries().getValue());
         long perTryTimeout = Duration.ofSeconds(retryPolicy.getPerTryTimeout().getSeconds()).toMillis();
         xdsRetryPolicy.setPerTryTimeout(perTryTimeout);
         return xdsRetryPolicy;

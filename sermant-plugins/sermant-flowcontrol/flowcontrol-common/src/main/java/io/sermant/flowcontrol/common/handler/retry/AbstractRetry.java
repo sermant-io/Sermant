@@ -114,7 +114,7 @@ public abstract class AbstractRetry extends ReflectMethodCacheSupport implements
             if (!retryConditionOptional.isPresent()) {
                 continue;
             }
-            if (retryConditionOptional.get().needRetry(null, ex, null, null)) {
+            if (retryConditionOptional.get().needRetry(this, ex, null, null)) {
                 return true;
             }
         }

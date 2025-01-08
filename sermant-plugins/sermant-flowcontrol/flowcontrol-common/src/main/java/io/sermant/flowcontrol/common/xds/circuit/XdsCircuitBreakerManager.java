@@ -42,9 +42,9 @@ public class XdsCircuitBreakerManager {
 
     /**
      * The map that stores the count of active requests, where the Key of the first level is the service name,
-     * the Key of the second level is the cluster name, the Key of the three level is the server address
+     * the Key of the second level is the cluster name
      */
-    private static final Map<String, Map<String, Map<String, AtomicInteger>>> REQUEST_CIRCUIT_BREAKER_MAP =
+    private static final Map<String, Map<String, AtomicInteger>> REQUEST_CIRCUIT_BREAKER_MAP =
             new ConcurrentHashMap<>();
 
     private static final String GATE_WAY_FAILURE = "502,503,504";
@@ -57,11 +57,10 @@ public class XdsCircuitBreakerManager {
      *
      * @param serviceName service name
      * @param clusterName route name
-     * @param address request address
      * @return active request num
      */
-    public static int incrementActiveRequests(String serviceName, String clusterName, String address) {
-        return getActiveRequestCount(serviceName, clusterName, address).incrementAndGet();
+    public static int incrementActiveRequests(String serviceName, String clusterName) {
+        return getActiveRequestCount(serviceName, clusterName).incrementAndGet();
     }
 
     /**
@@ -69,10 +68,9 @@ public class XdsCircuitBreakerManager {
      *
      * @param serviceName service name
      * @param clusterName route name
-     * @param address request address
      */
-    public static void decreaseActiveRequests(String serviceName, String clusterName, String address) {
-        getActiveRequestCount(serviceName, clusterName, address).decrementAndGet();
+    public static void decreaseActiveRequests(String serviceName, String clusterName) {
+        getActiveRequestCount(serviceName, clusterName).decrementAndGet();
     }
 
     /**
@@ -193,11 +191,9 @@ public class XdsCircuitBreakerManager {
         return instanceCircuitBreakerMap.computeIfAbsent(address, key -> new XdsCircuitBreakerInfo());
     }
 
-    private static AtomicInteger getActiveRequestCount(String serviceName, String clusterName, String address) {
-        Map<String, Map<String, AtomicInteger>> clusterCircuitBreakerMap = REQUEST_CIRCUIT_BREAKER_MAP.
+    private static AtomicInteger getActiveRequestCount(String serviceName, String clusterName) {
+        Map<String, AtomicInteger> clusterCircuitBreakerMap = REQUEST_CIRCUIT_BREAKER_MAP.
                 computeIfAbsent(serviceName, key -> new ConcurrentHashMap<>());
-        Map<String, AtomicInteger> requestCircuitBreakerMap = clusterCircuitBreakerMap.
-                computeIfAbsent(clusterName, key -> new ConcurrentHashMap<>());
-        return requestCircuitBreakerMap.computeIfAbsent(address, key -> new AtomicInteger());
+        return clusterCircuitBreakerMap.computeIfAbsent(clusterName, key -> new AtomicInteger());
     }
 }
