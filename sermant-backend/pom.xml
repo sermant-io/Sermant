@@ -30,7 +30,7 @@
         <expiringmap.version>0.5.8</expiringmap.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
         <aspectjweaver.version>1.8.4</aspectjweaver.version>
-        <tomcat-embed.version>9.0.95</tomcat-embed.version>
+        <tomcat-embed.version>9.0.98</tomcat-embed.version>
         <spring-framework.version>5.3.39</spring-framework.version>
         <nacos-client-version>2.3.3</nacos-client-version>
         <webapp.path>${project.basedir}/src/main/webapp/frontend</webapp.path>
