@@ -270,7 +270,13 @@ public class RdsProtocolTransformer {
             xdsRetryPolicy.setRetryConditions(Arrays.asList(retryPolicy.getRetryOn().split(CommonConstant.COMMA)));
         }
         xdsRetryPolicy.setMaxAttempts(retryPolicy.getNumRetries().getValue());
-        long perTryTimeout = Duration.ofSeconds(retryPolicy.getPerTryTimeout().getSeconds()).toMillis();
+        long perTryTimeout = retryPolicy.getPerTryTimeout().getSeconds();
+        if (perTryTimeout != 0) {
+            xdsRetryPolicy.setPerTryTimeout(Duration.ofSeconds(perTryTimeout).toMillis());
+        } else {
+            perTryTimeout = Duration.ofNanos(retryPolicy.getPerTryTimeout().getNanos()).toMillis();
+            xdsRetryPolicy.setPerTryTimeout(perTryTimeout);
+        }
         xdsRetryPolicy.setPerTryTimeout(perTryTimeout);
         return xdsRetryPolicy;
     }
@@ -307,8 +313,13 @@ public class RdsProtocolTransformer {
 
     private static XdsDelay parseDelay(FaultDelay faultDelay) {
         XdsDelay xdsDelay = new XdsDelay();
-        long fixedDelay = Duration.ofSeconds(faultDelay.getFixedDelay().getSeconds()).toMillis();
-        xdsDelay.setFixedDelay(fixedDelay);
+        long fixedDelay = faultDelay.getFixedDelay().getSeconds();
+        if (fixedDelay != 0) {
+            xdsDelay.setFixedDelay(Duration.ofSeconds(fixedDelay).toMillis());
+        } else {
+            fixedDelay = Duration.ofNanos(faultDelay.getFixedDelay().getNanos()).toMillis();
+            xdsDelay.setFixedDelay(fixedDelay);
+        }
         io.sermant.core.service.xds.entity.FractionalPercent fractionalPercent =
                 new io.sermant.core.service.xds.entity.FractionalPercent();
         fractionalPercent.setNumerator(faultDelay.getPercentage().getNumerator());

@@ -28,6 +28,7 @@ import io.sermant.core.service.xds.entity.XdsServiceCluster;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.StringUtils;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,11 +140,20 @@ public class CdsProtocolTransformer {
         xdsInstanceCircuitBreakers.setConsecutiveGatewayFailure(outlierDetection.getConsecutiveGatewayFailure()
                 .getValue());
         xdsInstanceCircuitBreakers.setConsecutive5xxFailure(outlierDetection.getConsecutive5Xx().getValue());
-        long interval = java.time.Duration.ofSeconds(outlierDetection.getInterval().getSeconds()).toMillis();
-        xdsInstanceCircuitBreakers.setInterval(interval);
-        long ejectionTime = java.time.Duration.ofSeconds(outlierDetection.getBaseEjectionTime().getSeconds())
-                .toMillis();
-        xdsInstanceCircuitBreakers.setBaseEjectionTime(ejectionTime);
+        long interval = outlierDetection.getInterval().getSeconds();
+        if (interval != 0) {
+            xdsInstanceCircuitBreakers.setInterval(Duration.ofSeconds(interval).toMillis());
+        } else {
+            interval = Duration.ofNanos(outlierDetection.getInterval().getNanos()).toMillis();
+            xdsInstanceCircuitBreakers.setInterval(interval);
+        }
+        long ejectionTime = outlierDetection.getBaseEjectionTime().getSeconds();
+        if (ejectionTime == 0) {
+            xdsInstanceCircuitBreakers.setBaseEjectionTime(Duration.ofSeconds(ejectionTime).toMillis());
+        } else {
+            ejectionTime = Duration.ofNanos(outlierDetection.getBaseEjectionTime().getNanos()).toMillis();
+            xdsInstanceCircuitBreakers.setBaseEjectionTime(ejectionTime);
+        }
         xdsInstanceCircuitBreakers.setMaxEjectionPercent(outlierDetection.getMaxEjectionPercent().getValue());
         xdsInstanceCircuitBreakers.setFailurePercentageMinimumHosts(outlierDetection.getFailurePercentageMinimumHosts()
                 .getValue());

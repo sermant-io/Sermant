@@ -21,7 +21,6 @@ import io.sermant.flowcontrol.common.handler.retry.Retry;
 import io.sermant.flowcontrol.common.util.StringUtils;
 import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
 
-import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
@@ -51,8 +50,9 @@ public class ConnectErrorRetryCondition implements RetryCondition {
     }
 
     private boolean isConnectErrorException(Throwable ex) {
-        if (ex instanceof InterruptedIOException && StringUtils.contains(ex.getMessage(), "timeout")) {
-            return true;
+        if ((ex instanceof SocketTimeoutException || ex instanceof TimeoutException)
+                && !StringUtils.isEmpty(ex.getMessage()) && ex.getMessage().contains("Read timed out")) {
+            return false;
         }
         return ex instanceof SocketTimeoutException || ex instanceof ConnectException || ex instanceof TimeoutException
                 || ex instanceof NoRouteToHostException;
