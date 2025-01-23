@@ -21,8 +21,10 @@ import io.sermant.flowcontrol.common.exception.InvokerWrapperException;
 import io.sermant.flowcontrol.common.handler.retry.Retry;
 import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
 
-import java.net.SocketException;
+import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Locale;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Retry condition check, determine if the current error is a connect reset error, and trigger a retry if
@@ -34,6 +36,9 @@ import java.net.SocketTimeoutException;
 public class ResetErrorCondition implements RetryCondition {
     @Override
     public boolean needRetry(Retry retry, Throwable ex, String statusCode, Object result) {
+        if (ex == null) {
+            return false;
+        }
         Throwable realException = ex;
         if (ex instanceof InvokerWrapperException) {
             InvokerWrapperException invokerWrapperException = (InvokerWrapperException) ex;
@@ -41,11 +46,15 @@ public class ResetErrorCondition implements RetryCondition {
                 realException = invokerWrapperException.getRealException();
             }
         }
-        if (realException instanceof SocketTimeoutException && !StringUtils.isEmpty(ex.getMessage())
-                && realException.getMessage().contains("Read timed out")) {
+        String message = realException.getMessage();
+        if (StringUtils.isEmpty(message)) {
+            return false;
+        }
+        if ((ex instanceof SocketTimeoutException || ex instanceof TimeoutException)
+                && message.contains("Read timed out")) {
             return true;
         }
-        return realException instanceof SocketException && !StringUtils.isEmpty(realException.getMessage())
-                && (realException.getMessage().contains("reset") || ex.getMessage().contains("disconnection"));
+        return realException instanceof IOException
+                && (message.contains("Connection reset") || message.toLowerCase(Locale.ROOT).contains("broken pipe"));
     }
 }

@@ -19,6 +19,7 @@ package io.sermant.flowcontrol.common.xds.retry.condition;
 import io.sermant.flowcontrol.common.handler.retry.Retry;
 import io.sermant.flowcontrol.common.util.StringUtils;
 import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
+import io.sermant.flowcontrol.common.xds.retry.RetryConditionType;
 
 /**
  * Retry condition check, determine if the current error is a server error, and trigger a retry if it is.
@@ -33,10 +34,16 @@ public class ServerErrorCondition implements RetryCondition {
 
     @Override
     public boolean needRetry(Retry retry, Throwable ex, String statusCode, Object result) {
-        if (StringUtils.isEmpty(statusCode)) {
+        if (StringUtils.isEmpty(statusCode) && ex == null) {
             return true;
         }
-        int code = Integer.parseInt(statusCode);
-        return code >= MIN_5XX_FAILURE && code <= MAX_5XX_FAILURE;
+        if (ex == null) {
+            int code = Integer.parseInt(statusCode);
+            return code >= MIN_5XX_FAILURE && code <= MAX_5XX_FAILURE;
+        }
+        RetryCondition connectFailure = RetryConditionType.CONNECT_ERROR.getRetryCondition();
+        RetryCondition resetErrorCondition = RetryConditionType.RESET_ERROR.getRetryCondition();
+        return resetErrorCondition.needRetry(retry, ex, statusCode, result)
+                || connectFailure.needRetry(retry, ex, statusCode, result);
     }
 }
