@@ -22,7 +22,9 @@ import io.sermant.router.common.request.RequestTag;
 import io.sermant.router.common.utils.ThreadLocalUtils;
 import io.sermant.router.transmit.BaseTest;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,6 +34,18 @@ import org.junit.Test;
  * @since 2024-01-16
  */
 public class RunnableAndCallableWrapperTest extends BaseTest {
+    @Before
+    public void startUp() {
+        ThreadLocalUtils.removeRequestData();
+        ThreadLocalUtils.removeRequestTag();
+    }
+
+    @After
+    public void clear() {
+        ThreadLocalUtils.removeRequestData();
+        ThreadLocalUtils.removeRequestTag();
+    }
+
     @Test
     public void testRunCanTransmit() {
         RunnableAndCallableWrapper<Object> wrapper = new RunnableAndCallableWrapper<>(() -> {

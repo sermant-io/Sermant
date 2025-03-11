@@ -26,6 +26,7 @@ import io.sermant.router.transmit.wrapper.RunnableWrapper;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -90,6 +91,12 @@ public class ScheduledExecutorServiceInterceptorTest extends BaseTest {
         arguments[0] = callable;
         interceptor.before(context);
         Assert.assertTrue(context.getArguments()[0] instanceof CallableWrapper);
+    }
+
+    @Before
+    public void startUp() {
+        ThreadLocalUtils.removeRequestData();
+        ThreadLocalUtils.removeRequestTag();
     }
 
     @After
