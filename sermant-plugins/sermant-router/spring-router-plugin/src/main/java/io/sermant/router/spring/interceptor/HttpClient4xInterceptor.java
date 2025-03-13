@@ -71,11 +71,11 @@ public class HttpClient4xInterceptor extends MarkInterceptor {
         if (!(httpRequestObject instanceof HttpRequestBase)) {
             return context;
         }
+        MetricThreadLocal.setFlag(true);
         final HttpRequestBase httpRequest = (HttpRequestBase) httpRequestObject;
         if (handleXdsRouterAndUpdateHttpRequest(arguments)) {
             return context;
         }
-        MetricThreadLocal.setFlag(true);
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
         }
