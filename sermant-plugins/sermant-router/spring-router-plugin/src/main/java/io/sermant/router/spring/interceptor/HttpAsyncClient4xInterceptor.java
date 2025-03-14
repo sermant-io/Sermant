@@ -79,6 +79,7 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
         if (!(httpAsyncRequestProducerArgument instanceof HttpAsyncRequestProducer)) {
             return context;
         }
+        MetricThreadLocal.setFlag(true);
         HttpAsyncRequestProducer httpAsyncRequestProducer
                 = (HttpAsyncRequestProducer) httpAsyncRequestProducerArgument;
         HttpRequestBase httpRequest = (HttpRequestBase) httpAsyncRequestProducer.generateRequest();
@@ -89,7 +90,6 @@ public class HttpAsyncClient4xInterceptor extends MarkInterceptor {
         if (!(argument instanceof HttpContext)) {
             return context;
         }
-        MetricThreadLocal.setFlag(true);
         HttpContext httpContext = (HttpContext) argument;
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;

@@ -64,6 +64,7 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
         if (!rawRequest.isPresent()) {
             return context;
         }
+        MetricThreadLocal.setFlag(true);
         Request request = rawRequest.get();
         if (handleXdsRouterAndUpdateHttpRequest(context.getObject(), request)) {
             return context;
@@ -71,7 +72,6 @@ public class OkHttp3ClientInterceptor extends MarkInterceptor {
 
         URI uri = request.url().uri();
         Headers headers = request.headers();
-        MetricThreadLocal.setFlag(true);
         if (StringUtils.isBlank(FlowContextUtils.getTagName())) {
             return context;
         }
