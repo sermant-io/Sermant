@@ -29,8 +29,8 @@ public class KeyGenerateUtils {
     /**
      * Use Class to generate keys that carry classloader information
      *
-     * @param cls 类
-     * @return 键
+     * @param cls class
+     * @return key
      */
     public static String generateClassKeyWithClassLoader(Class<?> cls) {
         return cls.getName() + "@" + System.identityHashCode(cls.getClassLoader());

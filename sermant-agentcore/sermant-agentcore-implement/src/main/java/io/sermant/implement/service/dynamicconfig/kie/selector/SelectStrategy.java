@@ -22,7 +22,7 @@ import java.util.Random;
 /**
  * Selection strategy
  *
- * @param <R> 泛型
+ * @param <R> generics
  * @author zhouss
  * @since 2021-11-17
  */

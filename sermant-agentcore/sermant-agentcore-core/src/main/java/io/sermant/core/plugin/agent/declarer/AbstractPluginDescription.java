@@ -23,7 +23,6 @@ import net.bytebuddy.utility.JavaModule;
 import java.security.ProtectionDomain;
 
 /**
- * 抽象的插件描述器，简化类的匹配方法，仅使用类的描述器匹配
  * AbstractPluginDescription, simplifies the matching method of the class, only using the class description matching
  *
  * @author HapThorin

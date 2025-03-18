@@ -64,7 +64,7 @@ public class PluginSchemaValidator {
     /**
      * Remove plugin version cache
      *
-     * @param pluginName 插件名
+     * @param pluginName plugin name
      */
     public static void removePluginVersionCache(String pluginName) {
         PLUGIN_VERSION_MAP.remove(pluginName);

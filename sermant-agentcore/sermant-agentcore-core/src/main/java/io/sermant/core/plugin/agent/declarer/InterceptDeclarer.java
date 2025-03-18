@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public abstract class InterceptDeclarer {
     /**
-     * 日志
+     * Logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
