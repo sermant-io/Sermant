@@ -199,7 +199,7 @@ public class ReflectUtilsTest {
     }
 
     /**
-     * 测试对象静态属性获取
+     * Test static field access
      */
     @Test
     public void testGetStaticField() {

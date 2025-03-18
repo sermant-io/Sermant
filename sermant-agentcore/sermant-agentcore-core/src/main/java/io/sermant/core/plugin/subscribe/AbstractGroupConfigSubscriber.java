@@ -142,7 +142,7 @@ public abstract class AbstractGroupConfigSubscriber implements ConfigSubscriber 
     /**
      * Build group subscribers
      *
-     * @return 订阅全集
+     * @return All of subscriptions
      */
     protected abstract Map<String, DynamicConfigListener> buildGroupSubscribers();
 

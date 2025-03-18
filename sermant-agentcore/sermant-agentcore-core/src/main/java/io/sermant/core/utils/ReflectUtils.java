@@ -77,7 +77,7 @@ public class ReflectUtils {
      *
      * @param target Target method
      * @param methodName Method name
-     * @return 结果
+     * @return invoke result
      */
     public static Optional<Object> invokeMethodWithNoneParameter(Object target, String methodName) {
         return invokeMethod(target, methodName, null, null);
