@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * 响应数据
+ * Response data
  *
  * @author provenceee
  * @since 2022-07-29

@@ -36,7 +36,7 @@ runs:
         SERVER_PORT: 28050
         DUBBO_PROTOCOL_PORT: 28850
         MONITOR_CONFIG_ENABLE_START_SERVICE: true
-        FLOW_CONTROL_PLUGIN_ENABLE_START_MONITOR: true # 是否启动指标监控
+        FLOW_CONTROL_PLUGIN_ENABLE_START_MONITOR: true # Whether to start the metric monitoring
       run: |
         nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=dubbo-integration-consumer -jar \
         sermant-integration-tests/dubbo-test/dubbo-${{ env.projectPath }}-integration-consumer/target/dubbo-integration-consumer.jar > ${{ env.logDir }}/monitor-consumer.log 2>&1 &

@@ -24,7 +24,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
- * 系统消息监听器
+ * System availability event listener
  *
  * @since 2022-07-29
  */
@@ -33,10 +33,10 @@ public class AvailabilityListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvailabilityListener.class);
 
     /**
-     * 监控系统消息
-     * AvailabilityChangeEvent 类型的消息都会触发此方法被回调
+     * Monitors system availability events
+     * All AvailabilityChangeEvent type messages will trigger this method callback
      *
-     * @param event 事件
+     * @param event Availability change event
      */
     @EventListener
     public void onStateChange(AvailabilityChangeEvent<? extends AvailabilityState> event) {
