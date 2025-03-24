@@ -20,7 +20,7 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * 测试skip功能
+ * Test skip functionality
  *
  * @author tangle
  * @since 2023-09-07

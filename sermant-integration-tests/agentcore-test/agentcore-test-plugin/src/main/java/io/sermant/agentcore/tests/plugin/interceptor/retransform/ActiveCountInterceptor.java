@@ -20,7 +20,7 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * 测试静态方法的skip
+ * Test skip static method
  *
  * @author tangle
  * @since 2023-09-07

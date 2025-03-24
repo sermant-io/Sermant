@@ -21,7 +21,7 @@ import com.example.sermant.agentcore.test.application.results.ReTransformResults
 import java.util.Map;
 
 /**
- * 测试类的重转换能力
+ * Test class retransformation capabilities
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -36,27 +36,27 @@ public class ReTransformTest {
     private static boolean constructorFlag;
 
     /**
-     * 测试类的重转换能力
+     * Test class retransformation capabilities
      */
     public void testReTransform() {
         staticFlag = false;
         constructorFlag = false;
 
-        // 测试拦截Thread类的无参构造函数
+        // Test intercept Thread class no-argument constructor
         Thread thread = new Thread();
         ReTransformResults.ENHANCE_NO_ARGUMENT_CONSTRUCTOR.setResult(constructorFlag);
 
-        // 测试静态方法
+        // Test static method
         Map<Thread, StackTraceElement[]> stackTraces = Thread.getAllStackTraces();
         ReTransformResults.ENHANCE_STATIC_FUNCTION.setResult(staticFlag);
 
-        // 测试实例方法参数修改
+        // Test instance method parameter modification
         thread.setName("thread1");
         if (thread.getName().equals(NAME)) {
             ReTransformResults.ENHANCE_INSTANCE_FUNCTION.setResult(true);
         }
 
-        // 测试静态方法skip
+        // Test skip static method
         if (Thread.activeCount() == COUNT) {
             ReTransformResults.ENHANCE_STATIC_FUNCTION_SKIP.setResult(true);
         }

@@ -17,46 +17,46 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 类的重转换能力测试用例结果
+ * Test results for class re-transformation capabilities
  *
  * @author tangle
  * @since 2023-10-18
  */
 public enum ReTransformResults {
     /**
-     * 无参构造方法增强
+     * Enhance no-argument constructor
      */
     ENHANCE_NO_ARGUMENT_CONSTRUCTOR("Test enhance system class no-argument constructor."),
 
     /**
-     * 静态方法增强
+     * Enhance static function
      */
     ENHANCE_STATIC_FUNCTION("Test enhance system class static function."),
 
     /**
-     * 实例方法增强
+     * Enhance instance function
      */
     ENHANCE_INSTANCE_FUNCTION("Test enhance system class instance function."),
 
     /**
-     * 静态方法跳过
+     * Skip static function
      */
     ENHANCE_STATIC_FUNCTION_SKIP("Test skip system class static function.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     ReTransformResults(String description) {
         this.description = description;

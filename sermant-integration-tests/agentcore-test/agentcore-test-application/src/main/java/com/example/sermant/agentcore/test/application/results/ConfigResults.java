@@ -17,36 +17,36 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 核心配置和插件配置加载测试用例结果
+ * Test results for core and plugin configuration loading
  *
  * @author tangle
  * @since 2023-10-09
  */
 public enum ConfigResults {
     /**
-     * 插件配置加载
+     * Plugin configuration loaded successfully
      */
     PLUGIN_CONFIG_LOADED_SUCCESS("Test load plugin config."),
 
     /**
-     * 核心配置加载
+     * Core configuration loaded successfully
      */
     CORE_CONFIG_LOADED_SUCCESS("Test load core config.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     ConfigResults(String description) {
         this.description = description;

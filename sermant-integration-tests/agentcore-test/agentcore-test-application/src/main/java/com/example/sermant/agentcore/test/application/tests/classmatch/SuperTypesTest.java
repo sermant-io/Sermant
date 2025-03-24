@@ -21,7 +21,7 @@ import com.example.sermant.agentcore.test.application.common.TestSuperTypeB;
 import com.example.sermant.agentcore.test.application.results.ClassMatchResults;
 
 /**
- * 用于测试超类匹配模式
+ * Test superclass matching pattern
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -31,9 +31,9 @@ public class SuperTypesTest implements TestSuperTypeA, TestSuperTypeB {
     }
 
     /**
-     * 测试超类匹配
+     * Test superclass matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag Enhance result
      */
     public static void staticFunction(boolean enhanceFlag) {
         if (enhanceFlag) {

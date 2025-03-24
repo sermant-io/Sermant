@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 添加单一配置监听拦截器
+ * Add single configuration listener interceptor
  *
  * @author tangle
  * @since 2023-08-30

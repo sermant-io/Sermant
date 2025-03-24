@@ -19,7 +19,7 @@ package com.example.sermant.agentcore.test.application.tests.enhancement;
 import com.example.sermant.agentcore.test.application.results.EnhanceResults;
 
 /**
- * 测试增强能力
+ * Test enhancement capabilities
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -30,7 +30,7 @@ public class EnhancementTest {
     private String memberField = "memberField";
 
     /**
-     * 测试增强能力
+     * Test enhancement capabilities
      */
     public void testEnhancement() {
         EnhanceResults.SKIP_METHOD.setResult(true);
@@ -42,7 +42,7 @@ public class EnhancementTest {
     }
 
     /**
-     * 测试方法跳过
+     * Test method skip
      */
     private boolean testSkipFunction() {
         EnhanceResults.SKIP_METHOD.setResult(false);
@@ -50,7 +50,7 @@ public class EnhancementTest {
     }
 
     /**
-     * 测试设置属性值
+     * Test set property value
      */
     private void testSetFiledFunction() {
         if ("staticFieldSetBySermant".equals(staticField)) {
@@ -62,7 +62,7 @@ public class EnhancementTest {
     }
 
     /**
-     * 测试设置入参
+     * Test set arguments
      */
     private void testSetArguments(String arg) {
         if ("argSetBySermant".equals(arg)) {

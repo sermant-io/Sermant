@@ -30,7 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 配置获取拦截器
+ * Get configuration interceptor
  *
  * @author tangle
  * @since 2023-10-09

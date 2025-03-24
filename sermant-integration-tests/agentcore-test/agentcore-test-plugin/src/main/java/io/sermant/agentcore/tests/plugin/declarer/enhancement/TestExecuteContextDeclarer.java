@@ -25,7 +25,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试ExecuteContext增强能力
+ * Test ExecuteContext enhancement capabilities
  *
  * @author luanwenfei
  * @since 2023-09-07

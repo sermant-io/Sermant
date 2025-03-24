@@ -35,25 +35,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * http接口方法
+ * HTTP API endpoints
  *
  * @author tangle
  * @since 2023-09-08
  */
 public class TestController {
     /**
-     * 作为服务运行成功的请求判断接口
+     * Service health check endpoint
      *
-     * @return “OK”
+     * @return "OK"
      */
     public String ping() {
         return "OK";
     }
 
     /**
-     * 测试动态配置
+     * Tests dynamic configuration
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testDynamicConfig() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -70,9 +70,9 @@ public class TestController {
     }
 
     /**
-     * 测试动态安装插件
+     * Tests dynamic plugin installation
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testInstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -84,9 +84,9 @@ public class TestController {
     }
 
     /**
-     * Test dynamic installation plugins
+     * Tests dynamic plugin update
      *
-     * @return test result
+     * @return test results
      */
     public Map<String, Object> testUpdatePlugin() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -97,9 +97,9 @@ public class TestController {
     }
 
     /**
-     * 测试动态卸载插件
+     * Tests dynamic plugin uninstallation
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testUninstallPlugin() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -113,9 +113,9 @@ public class TestController {
     }
 
     /**
-     * 测试动态卸载agent
+     * Tests agent uninstallation
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testUninstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -127,9 +127,9 @@ public class TestController {
     }
 
     /**
-     * 测试动态重装agent
+     * Tests agent re-installation
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testReInstallAgent() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -141,9 +141,9 @@ public class TestController {
     }
 
     /**
-     * 测试premain启动
+     * Tests premain startup
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testPremainStartup() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -157,9 +157,9 @@ public class TestController {
     }
 
     /**
-     * 测试agentmain启动
+     * Tests agentmain startup
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testAgentmainStartup() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -175,9 +175,9 @@ public class TestController {
     }
 
     /**
-     * 测试配置加载功能
+     * Tests configuration loading
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testCoreAndPluginConfigLoad() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -191,9 +191,9 @@ public class TestController {
     }
 
     /**
-     * 测试类匹配
+     * Tests class matching
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testClassMatch() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -206,9 +206,9 @@ public class TestController {
     }
 
     /**
-     * 测试方法匹配
+     * Tests method matching
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testMethodMatch() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -221,9 +221,9 @@ public class TestController {
     }
 
     /**
-     * 测试方法增强
+     * Tests method enhancement
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testEnhancement() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -236,9 +236,9 @@ public class TestController {
     }
 
     /**
-     * 测试类的重转换能力
+     * Tests class retransformation
      *
-     * @return 测试结果
+     * @return test results
      */
     public Map<String, Object> testReTransform() {
         Map<String, Object> resultMap = new HashMap<>();

@@ -23,14 +23,14 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试方法匹配
+ * Test method matching
  *
  * @author luanwenfei
  * @since 2023-09-07
  */
 public class TestMethodMatcherDeclarer extends AbstractPluginDeclarer {
     /**
-     * 测试方法参数个数为3时
+     * Test method parameter count is 3
      */
     private static final int TEST_METHOD_PARAMS_COUNT = 3;
 

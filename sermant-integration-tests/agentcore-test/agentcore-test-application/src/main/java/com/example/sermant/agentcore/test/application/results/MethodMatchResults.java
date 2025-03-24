@@ -17,86 +17,86 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 方法匹配测试用例结果
+ * Method matching test case results
  *
  * @author tangle
  * @since 2023-10-18
  */
 public enum MethodMatchResults {
     /**
-     * 精确类名匹配
+     * Exact class name matching
      */
     MATCHER_CLASS_BY_CLASS_NAME_EXACTLY("Test matcher class by the exact class-name."),
 
     /**
-     * 单一注解方法匹配
+     * Single annotation method matching
      */
     MATCHER_METHOD_BY_ANNOTATION("Test matcher method by single-annotation."),
 
     /**
-     * 多注解方法匹配
+     * Multi-annotation method matching
      */
     MATCHER_METHOD_BY_ANNOTATIONS("Test matcher method by multi-annotation."),
 
     /**
-     * 精确方法名匹配
+     * Exact method name matching
      */
     MATCHER_METHOD_BY_METHOD_NAME_EXACTLY("Test matcher method by the exact method-name."),
 
     /**
-     * 方法名前缀匹配
+     * Method name prefix matching
      */
     MATCHER_METHOD_BY_METHOD_NAME_PREFIX("Test matcher method by the method-name's prefix."),
 
     /**
-     * 方法名中缀匹配
+     * Method name infix matching
      */
     MATCHER_METHOD_BY_METHOD_NAME_INFIX("Test matcher method by the method-name's infix."),
 
     /**
-     * 方法名后缀匹配
+     * Method name suffix matching
      */
     MATCHER_METHOD_BY_METHOD_NAME_SUFFIX("Test matcher method by the method-name's suffix."),
 
     /**
-     * 构造方法匹配
+     * Constructor matching
      */
     MATCHER_CONSTRUCTOR("Test matcher constructor of class."),
 
     /**
-     * 静态方法匹配
+     * Static method matching
      */
     MATCHER_STATIC_METHODS("Test matcher static methods of class."),
 
     /**
-     * 方法类型匹配
+     * Method type matching
      */
     MATCHER_METHOD_BY_RETURN_TYPE("Test matcher method by return type."),
 
     /**
-     * 方法入参数量匹配
+     * Method argument count matching
      */
     MATCHER_METHOD_BY_ARGUMENTS_COUNT("Test matcher method by the count of arguments."),
 
     /**
-     * 方法入参类型匹配
+     * Method argument type matching
      */
     MATCHER_METHOD_BY_ARGUMENTS_TYPE("Test matcher method by the type of arguments.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     MethodMatchResults(String description) {
         this.description = description;

@@ -22,7 +22,7 @@ import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import java.lang.reflect.Method;
 
 /**
- * 测试无参构造函数的拦截
+ * Test interceptor for no-parameter constructor
  *
  * @author tangle
  * @since 2023-09-07

@@ -20,7 +20,7 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * 测试设置属性值功能
+ * Test setting field value
  *
  * @author tangle
  * @since 2023-09-07

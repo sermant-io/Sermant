@@ -21,7 +21,7 @@ import io.sermant.core.config.common.ConfigTypeKey;
 import io.sermant.core.plugin.config.PluginConfig;
 
 /**
- * 测试配置
+ * Test configuration
  *
  * @author tangle
  * @since 2023-10-09

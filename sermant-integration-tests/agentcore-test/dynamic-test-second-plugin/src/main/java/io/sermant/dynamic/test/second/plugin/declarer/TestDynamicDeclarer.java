@@ -23,7 +23,7 @@ import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 import io.sermant.dynamic.test.second.plugin.interceptor.RepeatEnhanceInterceptor;
 
 /**
- * 动态安装卸载测试second插件的增强类
+ * Dynamic installation and uninstallation test second plugin enhancement class
  *
  * @author tangle
  * @since 2023-09-26

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 测试监听器类
+ * Test listener class
  *
  * @author tangle
  * @since 2023-09-11
@@ -36,12 +36,12 @@ public class TestListener implements DynamicConfigListener {
 
     @Override
     public void process(DynamicConfigEvent event) {
-        // 监听成功回执
+        // Listener success receipt
         setListenerReceipt();
     }
 
     /**
-     * 反射调用测试应用的监听成功标识变量
+     * Reflection invoke the test application's listener success flag variable
      */
     private void setListenerReceipt() {
         try {

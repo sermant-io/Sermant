@@ -20,7 +20,7 @@ import com.example.sermant.agentcore.test.application.common.TestAnnotationA;
 import com.example.sermant.agentcore.test.application.results.ClassMatchResults;
 
 /**
- * 测试通过单个注解匹配类
+ * Test single annotation matching intercept
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -31,9 +31,9 @@ public class AnnotationTest {
     }
 
     /**
-     * 测试单个注解匹配拦截
+     * Test single annotation matching intercept
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag Enhance result
      */
     public static void staticFunction(boolean enhanceFlag) {
         if (enhanceFlag) {

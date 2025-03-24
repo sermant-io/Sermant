@@ -17,29 +17,29 @@
 package io.sermant.agentcore.tests.plugin.constants;
 
 /**
- * 测试静态类
+ * Test static class
  *
  * @author tangle
  * @since 2023-09-18
  */
 public class TestConstants {
     /**
-     * 参数下标；0，因测试插件，不进行具体定义
+     * Parameter index; 0, not defined for test plugin
      */
     public static final int PARAM_INDEX_0 = 0;
 
     /**
-     * 参数下标；1，因测试插件，不进行具体定义
+     * Parameter index; 1, not defined for test plugin
      */
     public static final int PARAM_INDEX_1 = 1;
 
     /**
-     * 参数下标；2，因测试插件，不进行具体定义
+     * Parameter index; 2, not defined for test plugin
      */
     public static final int PARAM_INDEX_2 = 2;
 
     /**
-     * 参数下标；3，因测试插件，不进行具体定义
+     * Parameter index; 3, not defined for test plugin
      */
     public static final int PARAM_INDEX_3 = 3;
 

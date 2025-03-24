@@ -23,7 +23,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试核心配置和插件配置加载
+ * Test core configuration and plugin configuration loading
  *
  * @author tangle
  * @since 2023-10-09

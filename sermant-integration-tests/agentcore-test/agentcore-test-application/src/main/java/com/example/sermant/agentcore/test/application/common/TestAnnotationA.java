@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 示例注解，用于作为注解拦截的示例
+ * Test annotation for interceptors (demo purpose)
  *
  * @author luanwenfei
  * @since 2023-09-08

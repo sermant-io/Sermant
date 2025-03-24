@@ -26,7 +26,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试对类的重转换能力
+ * Test class retransformation capabilities
  *
  * @author luanwenfei
  * @since 2023-09-07
@@ -40,15 +40,15 @@ public class TestReTransformDeclarer extends AbstractPluginDeclarer {
     @Override
     public InterceptDeclarer[] getInterceptDeclarers(ClassLoader classLoader) {
         return new InterceptDeclarer[]{
-                // 测试静态方法
+                // Test static method
                 InterceptDeclarer.build(MethodMatcher.nameEquals("getAllStackTraces"),
                         new GetAllStackTracesInterceptor()),
-                // 测试无参构造方法
+                // Test no-argument constructor
                 InterceptDeclarer.build(MethodMatcher.isConstructor().and(MethodMatcher.paramCountEquals(0)),
                         new NoParamsConstructorInterceptor()),
-                // 测试实例方法
+                // Test instance method
                 InterceptDeclarer.build(MethodMatcher.nameEquals("setName"), new SetNameInterceptor()),
-                // 测试静态方法skip
+                // Test skip static method
                 InterceptDeclarer.build(MethodMatcher.nameEquals("activeCount"), new ActiveCountInterceptor()),
         };
     }

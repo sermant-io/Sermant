@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * http请求工具类
+ * HTTP request util class
  *
  * @author tangle
  * @since 2023-09-26
@@ -45,9 +45,9 @@ public class RequestUtils {
     }
 
     /**
-     * 对测试请求结果进行断言判断
+     * Asserts test request results
      *
-     * @param url 测试请求接口的url
+     * @param url Test api url
      */
     public static void testRequest(String url) throws IOException {
         Map<String, Object> resultMap = convertHttpEntityToMap(getResponse(url));
@@ -57,9 +57,9 @@ public class RequestUtils {
     }
 
     /**
-     * 对于backend的reponse解析
+     * Parses backend service response
      *
-     * @param url 测试请求接口的url
+     * @param url Test api url
      */
     public static Map<String, Object> analyzingRequestBackend(String url) throws IOException {
         String resultStr = getResponse(url);
@@ -68,10 +68,10 @@ public class RequestUtils {
     }
 
     /**
-     * 获取请求结果
+     * Get HTTP response
      *
-     * @param url 测试请求接口的url
-     * @return 请求结果Map
+     * @param url Test api url
+     * @return Response content
      */
     public static String getResponse(String url) throws IOException {
         String response = doGet(url);
@@ -80,10 +80,10 @@ public class RequestUtils {
     }
 
     /**
-     * http的get请求
+     * Send HTTP GET request
      *
-     * @param url http请求url
-     * @return 响应体body
+     * @param url Target URL
+     * @return Response body
      */
     private static String doGet(String url) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -106,10 +106,10 @@ public class RequestUtils {
     }
 
     /**
-     * JSON数据转换为Map
+     * Converts JSON data to Map
      *
-     * @param response JSON数据
-     * @return map数据
+     * @param response JSON string
+     * @return Converted Map
      */
     private static Map<String, Object> convertHttpEntityToMap(String response) throws IOException {
         Map<String, Object> result = new HashMap<>();

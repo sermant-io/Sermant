@@ -19,14 +19,14 @@ package com.example.sermant.agentcore.test.application.tests.configload;
 import com.example.sermant.agentcore.test.application.results.ConfigResults;
 
 /**
- * 核心配置和插件配置加载测试类
+ * Test class for core and plugin configuration loading
  *
  * @author tangle
  * @since 2023-10-09
  */
 public class CoreAndPluginConfigLoadTest {
     /**
-     * 测试配置加载功能
+     * Test configuration loading
      */
     public void testCoreAndPluginConfigLoad() {
         boolean[] result = checkConfig(false, false);
@@ -35,11 +35,11 @@ public class CoreAndPluginConfigLoadTest {
     }
 
     /**
-     * 测试插件的增强拦截方法
+     * Test plugin enhancement intercept method
      *
-     * @param pluginConfigFlag 插件配置增强flag
-     * @param coreConfigFlag 核心配置增强flag
-     * @return 增强结果数组
+     * @param pluginConfigFlag Plugin configuration enhancement flag
+     * @param coreConfigFlag Core configuration enhancement flag
+     * @return Enhance result array
      */
     private boolean[] checkConfig(boolean pluginConfigFlag, boolean coreConfigFlag) {
         return new boolean[]{pluginConfigFlag, coreConfigFlag};

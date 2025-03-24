@@ -1,4 +1,4 @@
-# 测试插件的config
+# Test plugin configuration
 configload.config:
-  # 测试配置值
+  # Test configuration value
   test-config-value: "test-config-value"

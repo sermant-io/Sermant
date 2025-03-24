@@ -17,64 +17,64 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 动态安装卸载测试用例结果
+ * Test results for dynamic plugin management
  *
  * @author tangle
  * @since 2023-09-08
  */
 public enum DynamicResults {
     /**
-     * 动态安装插件重复增强不干扰
+     * Non-interference during repeated enhancements with plugin dynamic installation
      */
     DYNAMIC_INSTALL_PLUGIN_REPEAT_ENHANCE("Test dynamic install plugin repetitive enhancement."),
 
     /**
-     * 动态卸载插件，拦截点失效
+     * Interceptor invalid after plugin dynamic uninstallation
      */
     DYNAMIC_UNINSTALL_PLUGIN_INTERCEPTOR_FAILURE("Test dynamic uninstall plugin, plugin failure."),
 
     /**
-     * 动态卸载插件，服务关闭
+     * Service close after plugin dynamic uninstallation
      */
     DYNAMIC_UNINSTALL_SERVICE_CLOSE("Test dynamic uninstall plugin service close."),
 
     /**
-     * 动态卸载插件，对已有拦截点不影响
+     * Existing interceptors unaffected during plugin uninstallation
      */
     DYNAMIC_UNINSTALL_REPEAT_ENHANCE("Test dynamic uninstall plugin not effect other interceptor."),
 
     /**
-     * 动态卸载AGENT，插件失效
+     * Plugin invalid after agent uninstallation
      */
     DYNAMIC_UNINSTALL_AGENT_PLUGIN_FAILURE("Test dynamic uninstall, plugin failure."),
 
     /**
-     * 再次安装AGENT，插件生效
+     * Dynamic plugin are activated after agent re-installation
      */
     DYNAMIC_REINSTALL_AGENT_PLUGIN_SUCCESS("Test dynamic reinstall agent, plugin success."),
 
     /**
-     * premain启动，静态插件生效
+     * Static plugins are activated via premain startup
      */
     PREMAIN_STATIC_PLUGIN_INTERCEPTOR_SUCCESS("Test premain startup, static plugin success."),
 
     /**
-     * premain启动，动态插件失效
+     * Dynamic plugin are invalid via premain startup
      */
     PREMAIN_DYNAMIC_PLUGIN_INTERCEPTOR_FAILURE("Test premain startup, dynamic plugin failure."),
 
     /**
-     * agentmain启动，静态插件失效
+     * Static plugin are invalid via agentmain startup
      */
     AGENTMAIN_STATIC_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, static plugin failure."),
 
     /**
-     * agentmain启动，active插件生效
+     * Active plugins are activated via agentmain startup
      */
     AGENTMAIN_ACTIVE_PLUGIN_INTERCEPTOR_SUCCESS("Test agentmain startup, active plugin success."),
 
     /**
-     * agentmain启动，passive插件失效
+     * Passive plugins are invalid via agentmain startup
      */
     AGENTMAIN_PASSIVE_PLUGIN_INTERCEPTOR_FAILURE("Test agentmain startup, passive plugin failure."),
 
@@ -84,19 +84,19 @@ public enum DynamicResults {
     DYNAMIC_UPDATE_PLUGIN("Test dynamic update plugin.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     DynamicResults(String description) {
         this.description = description;

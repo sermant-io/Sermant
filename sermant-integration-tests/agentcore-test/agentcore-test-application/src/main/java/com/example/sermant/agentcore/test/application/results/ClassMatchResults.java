@@ -17,61 +17,61 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 类匹配测试用例结果
+ * Test results for class matching
  *
  * @author tangle
  * @since 2023-10-18
  */
 public enum ClassMatchResults {
     /**
-     * 单一注解匹配
+     * Single annotation matching
      */
     MATCHER_CLASS_BY_ANNOTATION("Test matcher class by single-annotation."),
 
     /**
-     * 多注解匹配
+     * Multi annotations matching
      */
     MATCHER_CLASS_BY_ANNOTATIONS("Test matcher class by multi-annotation."),
 
     /**
-     * 类名前缀匹配
+     * Class name prefix matching
      */
     MATCHER_CLASS_BY_CLASS_NAME_PREFIX("Test matcher class by the class-name's prefix."),
 
     /**
-     * 类名中缀匹配
+     * Class name infix matching
      */
     MATCHER_CLASS_BY_CLASS_NAME_INFIX("Test matcher class by the class-name's infix."),
 
     /**
-     * 类名后缀匹配
+     * Class name suffix matching
      */
     MATCHER_CLASS_BY_CLASS_NAME_SUFFIX("Test matcher class by the class-name's suffix."),
 
     /**
-     * 单一父类匹配
+     * Single super type matching
      */
     MATCHER_CLASS_BY_SUPER_TYPE("Test matcher class by single-superType."),
 
     /**
-     * 超类匹配
+     * Multiple super types matching
      */
     MATCHER_CLASS_BY_SUPER_TYPES("Test matcher class by multi-superType.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     ClassMatchResults(String description) {
         this.description = description;

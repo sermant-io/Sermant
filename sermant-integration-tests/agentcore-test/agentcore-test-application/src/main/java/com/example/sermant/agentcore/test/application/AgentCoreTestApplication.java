@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 
 /**
- * 测试应用启动类
+ * Test application launcher class
  *
  * @author tangle
  * @since 2023-09-08
@@ -34,7 +34,7 @@ public class AgentCoreTestApplication {
     private static final int SERVER_PORT = 8915;
 
     /**
-     * 启动main方法
+     * Start main method
      *
      * @param args
      * @throws IOException
@@ -50,12 +50,12 @@ public class AgentCoreTestApplication {
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(actualPort), 0);
 
-        // 添加URL路由
+        // Add URL Route
         for (Field field : RouterPath.class.getDeclaredFields()) {
             server.createContext(String.valueOf(field.get(null)), new ControllerHandler());
         }
 
-        // 启动服务器
+        // Start the server
         server.start();
     }
 }

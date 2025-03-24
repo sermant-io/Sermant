@@ -17,14 +17,14 @@
 package com.example.sermant.agentcore.test.application.tests.classmatch;
 
 /**
- * 测试类匹配相关功能
+ * Test class matching
  *
  * @author luanwenfei
  * @since 2023-10-18
  */
 public class ClassMatchersTest {
     /**
-     * 测试测试类匹配相关功能
+     * Test class matching
      */
     public void testClassMatchers() {
         AnnotationTest.staticFunction(false);

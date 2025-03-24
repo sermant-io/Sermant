@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 动态安装卸载测试first插件的拦截器
+ * Dynamic installation and uninstallation test first plugin interceptor
  *
  * @author tangle
  * @since 2023-09-26
