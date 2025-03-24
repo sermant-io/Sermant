@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Kie result handler
  *
- * @param <R> handle泛型
+ * @param <R> handle generics
  * @author zhouss
  * @since 2021-11-17
  */

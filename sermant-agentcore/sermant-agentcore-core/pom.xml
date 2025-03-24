@@ -104,7 +104,7 @@
             <version>${byte.buddy.version}</version>
         </dependency>
 
-        <!--    测试阶段使用的依赖，不会产生类冲突    -->
+        <!-- Dependencies used in the test scope that will not cause class conflicts -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

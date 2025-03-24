@@ -500,8 +500,8 @@ public class ExecuteContext {
     /**
      * Set local field value
      *
-     * @param fieldName 属性名
-     * @param value 属性值
+     * @param fieldName field name
+     * @param value value
      */
     public void setLocalFieldValue(String fieldName, Object value) {
         if (localFields == null) {
