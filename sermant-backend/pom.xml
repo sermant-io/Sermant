@@ -15,7 +15,7 @@
         <jdk.version>1.8</jdk.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <io.netty.version>4.1.115.Final</io.netty.version>
+        <io.netty.version>4.1.118.Final</io.netty.version>
         <protobuf-java.version>3.25.5</protobuf-java.version>
         <lombok.version>1.18.22</lombok.version>
         <fastjson.version>1.2.83</fastjson.version>
