@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025 Sermant Authors. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 
 package io.sermant.flowcontrol.retry.cluster;
@@ -63,6 +62,10 @@ import java.util.logging.Logger;
 public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private static final String METADATA_TYPE = "metadata-type";
+
+    private static final String METADATA_TYPE_VALUE = "remote";
+
     private final Retry retry = new ApacheDubboRetry();
 
     private final RetryHandlerV2 retryHandler = new RetryHandlerV2();
@@ -89,7 +92,6 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         this.delegate = delegate;
     }
 
-    @Override
     protected Result doInvoke(Invocation invocation, List<Invoker<T>> invokers, LoadBalance loadbalance)
             throws RpcException {
         RetryContext.INSTANCE.markRetry(retry);
@@ -98,7 +100,7 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 .getHandlers(convertToApacheDubboEntity(invocation, invokers.get(0)));
         final List<Invoker<T>> selected = new ArrayList<>();
         DecorateCheckedSupplier<Result> dcs = Decorators.ofCheckedSupplier(buildFunc(invocation, invokers,
-                loadbalance, selected));
+                loadbalance, selected, handlers.size()));
         io.github.resilience4j.retry.Retry retryRule = null;
         if (!handlers.isEmpty()) {
             // only one policy is supported for retry
@@ -144,22 +146,37 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
     }
 
     private CheckedFunction0<Result> buildFunc(Invocation invocation, List<Invoker<T>> invokers,
-            LoadBalance loadbalance, List<Invoker<T>> selected) {
-        if (this.delegate == null) {
-            return () -> {
-                checkInvokers(invokers, invocation);
-                Invoker<T> invoker = select(loadbalance, invocation, invokers, selected);
-                selected.add(invoker);
-                Result result = invoker.invoke(invocation);
-                checkThrowEx(result);
-                return result;
-            };
+            LoadBalance loadbalance, List<Invoker<T>> selected, int retryHandlerSize) {
+        if (this.delegate == null || isDubbo3RemoteRetry(invocation, retryHandlerSize)) {
+            return invokeBySelectedInvoker(invocation, invokers, loadbalance, selected);
         }
+        return invokeByDelegatedInvoker(invocation);
+    }
+
+    private CheckedFunction0<Result> invokeByDelegatedInvoker(Invocation invocation) {
         return () -> {
             Result result = delegate.invoke(invocation);
             checkThrowEx(result);
             return result;
         };
+    }
+
+    private CheckedFunction0<Result> invokeBySelectedInvoker(Invocation invocation, List<Invoker<T>> invokers,
+            LoadBalance loadbalance, List<Invoker<T>> selected) {
+        return () -> {
+            checkInvokers(invokers, invocation);
+            Invoker<T> invoker = select(loadbalance, invocation, invokers, selected);
+            selected.add(invoker);
+            Result result = invoker.invoke(invocation);
+            checkThrowEx(result);
+            return result;
+        };
+    }
+
+    private boolean isDubbo3RemoteRetry(Invocation invocation, int retryHandlerSize) {
+        return DubboAttachmentsHelper.isDubbo3(invocation.getClass())
+                && retryHandlerSize > 0
+                && METADATA_TYPE_VALUE.equals(delegate.getUrl().getParameter(METADATA_TYPE));
     }
 
     private void checkThrowEx(Result result) throws Throwable {
@@ -199,7 +216,8 @@ public class ApacheDubboClusterInvoker<T> extends AbstractClusterInvoker<T> {
         // High version using API invocation.getTargetServiceUniqueName access path，
         // versions and interfaces are used here to achieve the same end result
         String apiPath = ConvertUtils.buildApiPath(interfaceName, version, methodName);
-        return new DubboRequestEntity(apiPath, DubboAttachmentsHelper.resolveAttachments(invocation, true),
+        return new DubboRequestEntity(apiPath,
+                DubboAttachmentsHelper.resolveAttachments(invocation, true, false),
                 RequestType.CLIENT, getRemoteApplication(url, interfaceName), isGeneric);
     }
 

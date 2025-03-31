@@ -70,7 +70,7 @@ public class ConfigValueUtilTest {
     }
 
     /**
-     * 设置环境变量(win/linux/macos)
+     * Set environment variables(win/linux/macos)
      *
      * @param envMap
      * @throws Exception

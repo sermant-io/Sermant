@@ -24,7 +24,7 @@ import io.sermant.flowcontrol.common.xds.retry.RetryCondition;
 import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
-import java.net.SocketTimeoutException;
+import java.util.Locale;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -34,9 +34,9 @@ import java.util.concurrent.TimeoutException;
  * @author zhp
  * @since 2024-11-29
  */
-public class ConnectErrorRetryCondition implements RetryCondition {
+public class ConnectFailureRetryCondition implements RetryCondition {
     @Override
-    public boolean needRetry(Retry retry, Throwable ex, String statusCode, Object result) {
+    public boolean isNeedRetry(Retry retry, Throwable ex, String statusCode, Object result) {
         if (ex == null) {
             return false;
         }
@@ -51,10 +51,20 @@ public class ConnectErrorRetryCondition implements RetryCondition {
     }
 
     private boolean isConnectErrorException(Throwable ex) {
-        if (ex instanceof InterruptedIOException && StringUtils.contains(ex.getMessage(), "timeout")) {
-            return true;
+        if (isRequestTimeoutException(ex)) {
+            return false;
         }
-        return ex instanceof SocketTimeoutException || ex instanceof ConnectException || ex instanceof TimeoutException
+        return ex instanceof InterruptedIOException || ex instanceof ConnectException || ex instanceof TimeoutException
                 || ex instanceof NoRouteToHostException;
+    }
+
+    private boolean isRequestTimeoutException(Throwable ex) {
+        String message = ex.getMessage();
+        if (StringUtils.isEmpty(message)) {
+            return false;
+        }
+        message = message.toLowerCase(Locale.ROOT);
+        return (ex instanceof InterruptedIOException || ex instanceof TimeoutException)
+                && (message.contains("read timed out") || message.contains("timeout"));
     }
 }

@@ -80,7 +80,7 @@ public class ZooKeeperBufferedClient implements Closeable {
         zkClient = new ZooKeeperClient(connectString, sessionTimeout, new Watcher() {
             @Override
             public void process(WatchedEvent event) {
-                // 连接过期重连
+                // Reconnect on session expiration
                 if (event.getState() == Event.KeeperState.Expired) {
                     zkClient = new ZooKeeperClient(connectString, sessionTimeout, this);
                 }

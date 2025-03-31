@@ -16,8 +16,9 @@
 #
 
 io.sermant.flowcontrol.DispatcherServletDeclarer
-io.sermant.flowcontrol.AlibabaDubboDeclarer
-io.sermant.flowcontrol.ApacheDubboDeclarer
+io.sermant.flowcontrol.AlibabaDubboMonitorFilterDeclarer
+io.sermant.flowcontrol.ApacheDubboMonitorFilterDeclarer
+io.sermant.flowcontrol.ApacheDubboConsumerContextFilterDeclarer
 io.sermant.flowcontrol.config.DubboServiceNameDeclarer
 io.sermant.flowcontrol.config.ApacheDubboConfigDeclarer
 io.sermant.flowcontrol.config.AlibabaDubboConfigDeclarer
@@ -31,6 +32,7 @@ io.sermant.flowcontrol.retry.HttpRequestDeclarer
 io.sermant.flowcontrol.retry.SpringRibbonLbDeclarer
 io.sermant.flowcontrol.retry.SpringLbDeclarer
 io.sermant.flowcontrol.ClusterDeclarer
+io.sermant.flowcontrol.ApacheDubboRegistryDirectoryDeclarer
 io.sermant.flowcontrol.retry.OkHttpSendHeaderDeclarer
 io.sermant.flowcontrol.retry.HttpClientConnectionSendHeaderDeclarer
 #HttpClient

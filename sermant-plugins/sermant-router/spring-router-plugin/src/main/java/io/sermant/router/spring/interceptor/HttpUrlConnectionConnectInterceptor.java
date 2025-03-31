@@ -60,13 +60,13 @@ public class HttpUrlConnectionConnectInterceptor extends AbstractInterceptor {
         if (!(context.getObject() instanceof HttpURLConnection)) {
             return context;
         }
+        MetricThreadLocal.setFlag(true);
         HttpURLConnection connection = (HttpURLConnection) context.getObject();
         if (handleXdsRouterAndUpdateHttpRequest(connection)) {
             return context;
         }
 
         Map<String, List<String>> headers = connection.getRequestProperties();
-        MetricThreadLocal.setFlag(true);
         String method = connection.getRequestMethod();
         if (StringUtils.isBlank(FlowContextUtils.getTagName()) || CollectionUtils
                 .isEmpty(headers.get(FlowContextUtils.getTagName()))) {

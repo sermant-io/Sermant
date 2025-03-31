@@ -93,7 +93,7 @@ public class LoadPropertiesStrategy implements LoadConfigStrategy<Properties> {
      *
      * @param config configuration file
      * @param bootArgsMap parameters set at startup
-     * @return 配置信息承载对象
+     * @return Holder of configuration information
      */
     @Override
     public Properties getConfigHolder(File config, Map<String, Object> bootArgsMap) {

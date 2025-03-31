@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025 Sermant Authors. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 
 package io.sermant.flowcontrol.common.util;
@@ -33,9 +33,9 @@ import java.util.Map;
 public class DubboAttachmentsHelperTest {
     @Test
     public void testNull() {
-        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(null, false);
+        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(null, false, true);
         Assert.assertEquals(map, Collections.emptyMap());
-        final Map<String, String> map2 = DubboAttachmentsHelper.resolveAttachments(null, true);
+        final Map<String, String> map2 = DubboAttachmentsHelper.resolveAttachments(null, true, true);
         Assert.assertEquals(map2, Collections.emptyMap());
     }
 
@@ -45,7 +45,7 @@ public class DubboAttachmentsHelperTest {
         String key = "a";
         String value = "c";
         com.alibaba.dubbo.rpc.RpcContext.getContext().getAttachments().put(key, value);
-        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(testStringInvocation, false);
+        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(testStringInvocation, false, false);
         Assert.assertEquals(map.get(key), value);
         com.alibaba.dubbo.rpc.RpcContext.getContext().getAttachments().clear();
     }
@@ -56,7 +56,7 @@ public class DubboAttachmentsHelperTest {
         String key = "a";
         String value = "apache";
         RpcContext.getContext().getAttachments().put(key, value);
-        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(testObjectInvocation, true);
+        final Map<String, String> map = DubboAttachmentsHelper.resolveAttachments(testObjectInvocation, true, false);
         Assert.assertEquals(map.get(key), value);
         RpcContext.getContext().getAttachments().clear();
     }
@@ -65,10 +65,10 @@ public class DubboAttachmentsHelperTest {
     public void testStringAttachments() {
         final TestStringInvocation testStringInvocation = new TestStringInvocation(buildAttachments());
         final Map<String, String> attachmentsByString = DubboAttachmentsHelper
-                .resolveAttachments(testStringInvocation, false);
+                .resolveAttachments(testStringInvocation, false, false);
         Assert.assertEquals(attachmentsByString, testStringInvocation.attachments);
         final Map<String, String> attachmentsByString2 = DubboAttachmentsHelper
-                .resolveAttachments(testStringInvocation, true);
+                .resolveAttachments(testStringInvocation, true, false);
         Assert.assertEquals(attachmentsByString2, testStringInvocation.attachments);
     }
 
@@ -90,10 +90,10 @@ public class DubboAttachmentsHelperTest {
     public void testObjectAttachments() {
         final TestObjectInvocation testObjectInvocation = new TestObjectInvocation(buildObjectAttachments());
         final Map<String, String> attachmentsByObject = DubboAttachmentsHelper
-                .resolveAttachments(testObjectInvocation, false);
+                .resolveAttachments(testObjectInvocation, false, false);
         Assert.assertEquals(attachmentsByObject, testObjectInvocation.attachments);
         final Map<String, String> attachmentsByObject2 = DubboAttachmentsHelper
-                .resolveAttachments(testObjectInvocation, true);
+                .resolveAttachments(testObjectInvocation, true, false);
         Assert.assertEquals(attachmentsByObject2, testObjectInvocation.attachments);
     }
 

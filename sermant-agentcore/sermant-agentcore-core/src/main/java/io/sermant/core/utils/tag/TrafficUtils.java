@@ -106,7 +106,7 @@ public class TrafficUtils {
     /**
      * set traffic data
      *
-     * @param value 线程变量
+     * @param value TrafficData
      */
     public static void setTrafficData(TrafficData value) {
         data.set(value);

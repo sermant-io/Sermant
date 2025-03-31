@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2022-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025 Sermant Authors. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 
 package io.sermant.flowcontrol.retry.cluster;
@@ -35,9 +34,21 @@ import java.util.Optional;
  * @since 2022-03-04
  */
 public class ApacheDubboCluster implements Cluster {
-    @Override
     public <T> Invoker<T> join(Directory<T> directory) throws RpcException {
-        return this.join(directory, false);
+        return this.joinRetry(directory, false);
+    }
+
+    /**
+     * adapter dubbo3 method
+     *
+     * @param directory directory
+     * @param buildFilterChain buildFilterChain
+     * @param <T> response type
+     * @return Invoker
+     * @throws RpcException exception
+     */
+    public <T> Invoker<T> join(Directory<T> directory, boolean buildFilterChain) throws RpcException {
+        return this.joinRetry(directory, buildFilterChain);
     }
 
     /**
@@ -49,11 +60,7 @@ public class ApacheDubboCluster implements Cluster {
      * @return Invoker
      * @throws RpcException call exception throwing
      */
-    public <T> Invoker<T> join(Directory<T> directory, boolean buildFilterChain) throws RpcException {
-        final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
-        if (!pluginConfig.isUseOriginInvoker()) {
-            return new ApacheDubboClusterInvoker<>(directory);
-        }
+    public <T> Invoker<T> joinRetry(Directory<T> directory, boolean buildFilterChain) throws RpcException {
         Invoker<T> delegate = null;
         Object curCluster = ClusterInvokerCreator.INSTANCE.buildInvoker();
         if (curCluster instanceof Cluster) {
@@ -65,13 +72,13 @@ public class ApacheDubboCluster implements Cluster {
                     delegate = (Invoker<T>) join.get();
                 }
             } else {
-                delegate = ((Cluster) curCluster).join(directory);
+                final FlowControlConfig pluginConfig = PluginConfigManager.getPluginConfig(FlowControlConfig.class);
+                if (pluginConfig.isUseOriginInvoker()) {
+                    delegate = ((Cluster) curCluster).join(directory);
+                }
             }
         }
-        if (delegate != null) {
-            return new ApacheDubboClusterInvoker<>(directory, delegate);
-        }
-        return new ApacheDubboClusterInvoker<>(directory);
+        return new ApacheDubboClusterInvoker<>(directory, delegate);
     }
 
     private boolean isDubbo3x(Object curCluster) {

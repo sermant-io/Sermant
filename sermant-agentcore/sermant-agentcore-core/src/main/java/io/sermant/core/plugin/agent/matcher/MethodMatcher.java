@@ -53,8 +53,8 @@ public abstract class MethodMatcher implements ElementMatcher<MethodDescription>
     /**
      * Match methods with exact name
      *
-     * @param methodName 方法名称
-     * @return 方法匹配器对象
+     * @param methodName method name
+     * @return method matcher
      */
     public static MethodMatcher nameEquals(String methodName) {
         return new MethodMatcher() {

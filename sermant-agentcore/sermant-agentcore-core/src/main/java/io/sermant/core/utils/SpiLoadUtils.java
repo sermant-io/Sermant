@@ -37,12 +37,12 @@ public class SpiLoadUtils {
     }
 
     /**
-     * 从指定类加载起载入所有的服务
+     * Loads all services from the specified class loader
      *
-     * @param serviceClass SPI接口类
-     * @param classLoader 类加载器，从指定的类加载加载服务
-     * @param <T> 服务的具体类型
-     * @return 服务列表
+     * @param serviceClass SPI interface class
+     * @param classLoader class loader that loads services from the specified class loader
+     * @param <T> specific type of the service
+     * @return service list
      */
     public static <T> List<T> loadAll(Class<T> serviceClass, ClassLoader classLoader) {
         ServiceLoader<T> services = ServiceLoader.load(serviceClass, classLoader);

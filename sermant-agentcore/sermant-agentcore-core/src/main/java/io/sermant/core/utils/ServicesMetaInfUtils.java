@@ -44,7 +44,8 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
 /**
- * 添加@HttpRouteMapping注解的类，在编译时自动生成io.sermant.core.service.httpserver.api.HttpRouteHandler的SPI
+ * Classes annotated with @HttpRouteMapping will automatically generate SPI configuration for
+ * io.sermant.core.service.httpserver.api.HttpRouteHandler during compile
  *
  * @author zwmagic
  * @since 2024-02-03
