@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 配置移除拦截器
+ * Remove configuration interceptor
  *
  * @author tangle
  * @since 2023-08-30

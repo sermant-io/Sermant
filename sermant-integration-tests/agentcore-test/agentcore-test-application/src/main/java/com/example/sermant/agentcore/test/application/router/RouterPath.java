@@ -17,74 +17,74 @@
 package com.example.sermant.agentcore.test.application.router;
 
 /**
- * http请求路由地址
+ * HTTP request routing paths
  *
  * @author tangle
  * @since 2023-09-26
  */
 public class RouterPath {
     /**
-     * 验证服务启动成功的地址
+     * Path for service startup test
      */
     public static final String REQUEST_PATH_PING = "/ping";
 
     /**
-     * 测试动态配置请求地址
+     * Path for dynamic configuration test
      */
     public static final String REQUEST_PATH_DYNAMIC_CONFIG = "/testDynamicConfig";
 
     /**
-     * 测试动态安装插件请求地址
+     * Path for dynamic plugin installation test
      */
     public static final String REQUEST_PATH_INSTALL_PLUGIN = "/testInstallPlugin";
 
     /**
-     * 测试动态卸载插件请求地址
+     * Path for dynamic plugin uninstallation test
      */
     public static final String REQUEST_PATH_UNINSTALL_PLUGIN = "/testUninstallPlugin";
 
     /**
-     * 测试动态卸载Agent请求地址
+     * Path for agent uninstallation test
      */
     public static final String REQUEST_PATH_UNINSTALL_AGENT = "/testUninstallAgent";
 
     /**
-     * 测试动态重装Agent请求地址
+     * Path for agent re-installation test
      */
     public static final String REQUEST_PATH_REINSTALL_AGENT = "/testReInstallAgent";
 
     /**
-     * 测试premain启动请求地址
+     * Path for premain initialization test
      */
     public static final String REQUEST_PATH_PREMAIN_STARTUP = "/testPremainStartup";
 
     /**
-     * 测试agentmain启动请求地址
+     * Path for agentmain initialization test
      */
     public static final String REQUEST_PATH_AGENTMAIN_STARTUP = "/testAgentmainStartup";
 
     /**
-     * 测试配置加载功能
+     * Path for configuration loading test
      */
     public static final String REQUEST_PATH_CORE_AND_PLUGIN_CONFIG_LOAD = "/testCoreAndPluginConfigLoad";
 
     /**
-     * 测试类匹配
+     * Path for class matching test
      */
     public static final String REQUEST_PATH_CLASS_MATCH = "/testClassMatch";
 
     /**
-     * 测试方法匹配
+     * Path for method matching test
      */
     public static final String REQUEST_PATH_METHOD_MATCH = "/testMethodMatch";
 
     /**
-     * 测试增强功能
+     * Path for bytecode enhancement test
      */
     public static final String REQUEST_PATH_ENHANCEMENT = "/testEnhancement";
 
     /**
-     * 测试对类的重转换能力
+     * Path for class retransformation test
      */
     public static final String REQUEST_PATH_RE_TRANSFORM = "/testReTransform";
 

@@ -20,7 +20,7 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * 告知应用被成功增强
+ * Notifies application of successful bytecode enhancement
  *
  * @author luanwenfei
  * @since 2023-09-07

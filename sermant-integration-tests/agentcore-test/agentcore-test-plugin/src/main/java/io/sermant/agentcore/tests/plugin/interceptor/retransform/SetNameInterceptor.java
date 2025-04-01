@@ -20,14 +20,14 @@ import io.sermant.core.plugin.agent.entity.ExecuteContext;
 import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 
 /**
- * 测试实例方法的拦截
+ * Test intercept instance method
  *
  * @author tangle
  * @since 2023-09-07
  */
 public class SetNameInterceptor extends AbstractInterceptor {
     /**
-     * 修改Thread.setName()的入参为“modifyName”
+     * Modify the input parameter of Thread.setName() to "modifyName"
      */
     private static final String NAME = "modifyName";
 

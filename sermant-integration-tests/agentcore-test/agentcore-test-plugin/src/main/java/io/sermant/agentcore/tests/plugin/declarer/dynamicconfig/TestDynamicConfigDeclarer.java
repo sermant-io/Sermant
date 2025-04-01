@@ -29,7 +29,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试动态配置核心
+ * Test dynamic configuration core
  *
  * @author tangle
  * @since 2023-09-07

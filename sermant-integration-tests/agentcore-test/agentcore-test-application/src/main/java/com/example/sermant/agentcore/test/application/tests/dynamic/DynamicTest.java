@@ -19,21 +19,21 @@ package com.example.sermant.agentcore.test.application.tests.dynamic;
 import com.example.sermant.agentcore.test.application.results.DynamicResults;
 
 /**
- * 动态安装卸载测试类
+ * Test class for dynamic installation and uninstallation
  *
  * @author tangle
  * @since 2023-09-08
  */
 public class DynamicTest {
     /**
-     * 测试的boolean数组下标,对应着三个插件的拦截修改变量
+     * Index of the boolean array, corresponding to the interceptor variables of the three plugins
      */
     private static final int FIRST_PLUGIN_ENHANCE_INDEX = 0;
     private static final int SECOND_PLUGIN_ENHANCE_INDEX = 1;
     private static final int THIRD_PLUGIN_ENHANCE_INDEX = 2;
     private static final int FIRST_PLUGIN_V2_ENHANCE_INDEX = 3;
     /**
-     * 用于测试插件反射修改的回执结果：监听成功
+     * Result of the boolean array for testing plugin reflection result: listener success
      */
     private static boolean serviceCloseSuccess;
 
@@ -42,7 +42,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试动态安装插件
+     * Test dynamic installation plugin
      */
     public void testInstallPlugin() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -62,7 +62,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试动态卸载插件
+     * Test dynamic uninstall plugin
      */
     public void testUninstallPlugin() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -75,7 +75,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试动态卸载Agent
+     * Test dynamic uninstall Agent
      */
     public void testUninstallAgent() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -85,7 +85,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试动态重装Agent
+     * Test dynamic reinstall Agent
      */
     public void testReInstallAgent() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -95,7 +95,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试premain启动
+     * Test premain startup
      */
     public void testPremainStartup() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -108,7 +108,7 @@ public class DynamicTest {
     }
 
     /**
-     * 测试agentmain启动
+     * Test agentmain startup
      */
     public void testAgentmainStartup() {
         boolean[] result = repeatEnhance(false, false, false);
@@ -124,12 +124,12 @@ public class DynamicTest {
     }
 
     /**
-     * 测试插件的增强拦截方法
+     * Test plugin enhancement intercept method
      *
-     * @param firstEnhanceFlag first-plugin的增强flag
-     * @param secondEnhanceFlag second-plugin的增强flag
-     * @param thirdEnhanceFlag second-plugin的增强flag
-     * @return 增强结果数组
+     * @param firstEnhanceFlag first-plugin enhance flag
+     * @param secondEnhanceFlag second-plugin enhance flag
+     * @param thirdEnhanceFlag second-plugin enhance flag
+     * @return Enhance result array
      */
     private boolean[] repeatEnhance(boolean firstEnhanceFlag, boolean secondEnhanceFlag, boolean thirdEnhanceFlag) {
         return new boolean[]{firstEnhanceFlag, secondEnhanceFlag, thirdEnhanceFlag};

@@ -21,16 +21,16 @@ import com.example.sermant.agentcore.test.application.common.TestAnnotationB;
 import com.example.sermant.agentcore.test.application.results.MethodMatchResults;
 
 /**
- * 测试方法匹配相关功能
+ * Test method matching functions
  *
  * @author luanwenfei
  * @since 2023-10-18
  */
 public class MethodMatchersTest {
     /**
-     * 测试构造方法
+     * Test constructor
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     public MethodMatchersTest(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -40,7 +40,7 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试方法匹配功能
+     * Test method matching functions
      */
     public void testMethodMatchers() {
         MethodMatchersTest.staticMethod(false);
@@ -56,9 +56,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试静态方法
+     * Test static method matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     public static void staticMethod(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -67,9 +67,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试精确方法名匹配
+     * Test exact method name matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     private void exactNameMethod(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -78,9 +78,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试前缀方法名匹配
+     * Test prefix method name matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     private void prefixNameMethod(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -89,9 +89,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试中缀方法名匹配
+     * Test infix method name matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     private void nameInfixMethod(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -100,9 +100,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试后缀方法名匹配
+     * Test suffix method name matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     private void methodNameSuffix(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -111,9 +111,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试方法返回类型匹配
+     * Test method return type matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     private boolean returnType(boolean enhanceFlag) {
         if (enhanceFlag) {
@@ -123,11 +123,11 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试方法入参数量匹配
+     * Test method argument count matching
      *
-     * @param enhanceFlag 增强回执
-     * @param argA 测试入参A
-     * @param argB 测试入参B
+     * @param enhanceFlag enhance result
+     * @param argA test argument A
+     * @param argB test argument B
      */
     private void argumentsCount(boolean enhanceFlag, int argA, String argB) {
         if (enhanceFlag) {
@@ -136,10 +136,10 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试方法入参类型匹配
+     * Test method argument type matching
      *
-     * @param enhanceFlag 增强回执
-     * @param arg 测试入参
+     * @param enhanceFlag enhance result
+     * @param arg test argument
      */
     private void argumentsType(boolean enhanceFlag, boolean arg) {
         if (enhanceFlag) {
@@ -148,9 +148,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试单一注解方法
+     * Test single annotation method
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     @TestAnnotationA
     private void byAnnotation(boolean enhanceFlag) {
@@ -160,9 +160,9 @@ public class MethodMatchersTest {
     }
 
     /**
-     * 测试多注解方法
+     * Test multiple annotation method
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag enhance result
      */
     @TestAnnotationA
     @TestAnnotationB

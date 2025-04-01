@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * 请求测试类，采用http请求调用方式测试
+ * HTTP request test class using HTTP calls for test
  *
  * @author tangle
  * @since 2023-09-07
  */
 public class RequestTest {
     /**
-     * 动态配置测试方法
+     * Dynamic configuration test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "DYNAMIC_CONFIG")
@@ -40,7 +40,7 @@ public class RequestTest {
     }
 
     /**
-     * 动态卸载插件测试方法
+     * Dynamic plugin uninstallation test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "UNINSTALL_PLUGIN")
@@ -49,7 +49,7 @@ public class RequestTest {
     }
 
     /**
-     * 动态卸载Agent测试方法
+     * Dynamic agent uninstallation test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "UNINSTALL_AGENT")
@@ -58,7 +58,7 @@ public class RequestTest {
     }
 
     /**
-     * 动态重装Agent测试方法
+     * Dynamic agent re-installation test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "REINSTALL_AGENT")
@@ -67,7 +67,7 @@ public class RequestTest {
     }
 
     /**
-     * 动态安装插件测试方法
+     * Dynamic plugin installation test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "INSTALL_PLUGIN")
@@ -76,7 +76,7 @@ public class RequestTest {
     }
 
     /**
-     * agentmain启动测试方法
+     * Agentmain startup test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "AGENTMAIN_STARTUP")
@@ -85,7 +85,7 @@ public class RequestTest {
     }
 
     /**
-     * premain启动测试方法
+     * Premain startup test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "PREMAIN_STARTUP")
@@ -94,7 +94,7 @@ public class RequestTest {
     }
 
     /**
-     * 启动后backend的appType和service字段设置测试方法
+     * Validates appType and service field in backend post-initialization
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "PREMAIN_STARTUP|AGENTMAIN_STARTUP")
@@ -109,7 +109,7 @@ public class RequestTest {
     }
 
     /**
-     * 配置加载测试方法
+     * Configuration loading test
      */
     @Test
     @EnabledIfSystemProperty(named = "agentcore.test.type", matches = "CONFIG_LOAD")

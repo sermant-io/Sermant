@@ -23,7 +23,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试通过中缀匹配类
+ * Test class matching by infix
  *
  * @author luanwenfei
  * @since 2023-09-07

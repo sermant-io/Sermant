@@ -23,7 +23,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试通过前缀匹配类
+ * Test class matching by prefix
  *
  * @author luanwenfei
  * @since 2023-09-07

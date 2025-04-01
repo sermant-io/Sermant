@@ -21,7 +21,7 @@ import com.example.sermant.agentcore.test.application.common.TestAnnotationB;
 import com.example.sermant.agentcore.test.application.results.ClassMatchResults;
 
 /**
- * 用于测试多注解匹配拦截
+ * Test multi-annotation matching intercept
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -33,9 +33,9 @@ public class AnnotationsTest {
     }
 
     /**
-     * 测试多注解匹配拦截
+     * Test multi-annotation matching intercept
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag Enhance result
      */
     public static void staticFunction(boolean enhanceFlag) {
         if (enhanceFlag) {

@@ -17,56 +17,56 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 动态配置测试用例结果
+ * Test results for dynamic configuration
  *
  * @author tangle
  * @since 2023-09-08
  */
 public enum DynamicConfigResults {
     /**
-     * 动态配置发布配置
+     * Publishes dynamic configuration
      */
     DYNAMIC_PUBLISH_CONFIG("Test publish dynamic config."),
 
     /**
-     * 动态配置移除配置
+     * Removes dynamic configuration
      */
     DYNAMIC_REMOVE_CONFIG("Test remove dynamic config."),
 
     /**
-     * 动态配置添加单一配置监听
+     * Adds single dynamic configuration listener
      */
     DYNAMIC_ADD_CONFIG_LISTENER("Test add dynamic config listener."),
 
     /**
-     * 动态配置移除单一配置监听
+     * Removes single dynamic configuration listener
      */
     DYNAMIC_REMOVE_CONFIG_LISTENER("Test remove dynamic config listener."),
 
     /**
-     * 动态配置添加组配置监听
+     * Adds group dynamic configuration listener
      */
     DYNAMIC_ADD_GROUP_CONFIG_LISTENER("Test add group dynamic config listener."),
 
     /**
-     * 动态配置移除组配置监听
+     * Removes group dynamic configuration listener
      */
     DYNAMIC_REMOVE_GROUP_CONFIG_LISTENER("Test remove group dynamic config listener.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     DynamicConfigResults(String description) {
         this.description = description;

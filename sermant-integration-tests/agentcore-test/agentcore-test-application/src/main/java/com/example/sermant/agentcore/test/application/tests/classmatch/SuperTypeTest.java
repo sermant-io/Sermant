@@ -20,7 +20,7 @@ import com.example.sermant.agentcore.test.application.common.TestSuperTypeA;
 import com.example.sermant.agentcore.test.application.results.ClassMatchResults;
 
 /**
- * 测试根据单个父类匹配
+ * Test single superclass matching
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -30,9 +30,9 @@ public class SuperTypeTest implements TestSuperTypeA {
     }
 
     /**
-     * 测试单个父类匹配
+     * Test single superclass matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag Enhance result
      */
     public static void staticFunction(boolean enhanceFlag) {
         if (enhanceFlag) {

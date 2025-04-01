@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 封装的http服务端
+ * HTTP server handler
  *
  * @author tangle
  * @since 2023-09-08
@@ -45,7 +45,7 @@ public class ControllerHandler implements HttpHandler {
     private final TestController testController;
 
     /**
-     * 构造函数
+     * constructor
      */
     public ControllerHandler() {
         this.testController = new TestController();
@@ -68,17 +68,17 @@ public class ControllerHandler implements HttpHandler {
             response = JSONObject.toJSONString(responseObject);
         }
 
-        // 构建响应消息
+        // build response
         exchange.sendResponseHeaders(responseCode, response.length());
 
-        // 发送响应消息
+        // send response
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes(StandardCharsets.UTF_8));
         os.close();
     }
 
     /**
-     * 根据请求url分配执行方法
+     * Route request based on url
      *
      * @param exchange
      * @return

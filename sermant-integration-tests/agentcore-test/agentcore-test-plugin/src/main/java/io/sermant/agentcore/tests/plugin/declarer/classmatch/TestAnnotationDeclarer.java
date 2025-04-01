@@ -23,7 +23,7 @@ import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 
 /**
- * 测试通过单个注解匹配类
+ * Test single annotation matching class
  *
  * @author luanwenfei
  * @since 2023-09-07

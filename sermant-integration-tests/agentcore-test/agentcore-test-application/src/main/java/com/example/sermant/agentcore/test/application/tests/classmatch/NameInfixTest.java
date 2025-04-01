@@ -19,7 +19,7 @@ package com.example.sermant.agentcore.test.application.tests.classmatch;
 import com.example.sermant.agentcore.test.application.results.ClassMatchResults;
 
 /**
- * 测试通过中缀匹配类
+ * Test class name infix matching
  *
  * @author luanwenfei
  * @since 2023-10-18
@@ -29,9 +29,9 @@ public class NameInfixTest {
     }
 
     /**
-     * 测试类名中缀匹配
+     * Test class name infix matching
      *
-     * @param enhanceFlag 增强回执
+     * @param enhanceFlag Enhance result
      */
     public static void staticFunction(boolean enhanceFlag) {
         if (enhanceFlag) {

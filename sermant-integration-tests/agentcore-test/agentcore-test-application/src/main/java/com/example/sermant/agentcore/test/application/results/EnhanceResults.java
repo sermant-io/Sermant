@@ -17,51 +17,51 @@
 package com.example.sermant.agentcore.test.application.results;
 
 /**
- * 方法增强用例结果
+ * Method enhancement test case results
  *
  * @author tangle
  * @since 2023-10-18
  */
 public enum EnhanceResults {
     /**
-     * 修改成员属性
+     * Modify member fields
      */
     MODIFY_MEMBER_FIELDS("Test modify the member fields of object."),
 
     /**
-     * 修改静态属性
+     * Modify static fields
      */
     MODIFY_STATIC_FIELDS("Test modify the static fields of object."),
 
     /**
-     * 修改入参
+     * Modify arguments
      */
     MODIFY_ARGUMENTS("Test modify the arguments of method."),
 
     /**
-     * 修改返回值
+     * Modify return value
      */
     MODIFY_RESULT("Test modify the result of method."),
 
     /**
-     * 测试方法跳过
+     * Skip method
      */
     SKIP_METHOD("Test skip the method.");
 
     /**
-     * 用例描述
+     * Test case description
      */
     private String description;
 
     /**
-     * 测试结果标识
+     * Test result flag
      */
     private boolean result;
 
     /**
-     * 构造函数
+     * Constructor
      *
-     * @param description 用例描述
+     * @param description Test case description
      */
     EnhanceResults(String description) {
         this.description = description;

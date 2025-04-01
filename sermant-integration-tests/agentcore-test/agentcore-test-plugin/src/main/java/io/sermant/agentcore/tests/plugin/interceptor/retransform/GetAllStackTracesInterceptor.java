@@ -22,7 +22,7 @@ import io.sermant.core.plugin.agent.interceptor.AbstractInterceptor;
 import java.lang.reflect.Method;
 
 /**
- * 测试静态方法的拦截
+ * Test intercept static method
  *
  * @author tangle
  * @since 2023-09-07
