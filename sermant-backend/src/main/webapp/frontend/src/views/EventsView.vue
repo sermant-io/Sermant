@@ -291,7 +291,7 @@ onBeforeMount(() => {
 
 const eventNameFilterValue = ref<string[]>([]);
 
-// 路由
+// Router
 const router = useRouter();
 
 const params: LocationQuery = router.currentRoute.value.query;
@@ -300,7 +300,7 @@ const goBack = () => {
   router.push("/");
 };
 
-// 格式转换
+// Format conversion
 const time = (value) => {
   return moment(value).format("YYYY-MM-DD HH:mm:ss");
 };
@@ -311,12 +311,12 @@ const logScope = (classNmae, method) => {
   return lastElement + "::" + method;
 };
 
-// 处理筛选标签
+// Handle filter tags
 const searchOption = ref([i18n.global.t('eventViews.service'), "IP", i18n.global.t('eventViews.instanceId')]);
 const currentOption = ref(0);
 const inputValue = ref("");
 
-// 过滤参数
+// Filter parameters
 const handleCloseServiceTag = (tag: string) => {
   requestParam.service.splice(requestParam.service.indexOf(tag), 1);
   getEvents();
@@ -389,7 +389,7 @@ function addLogQueryConditionForCaseSensitivity(requestParam) {
   }
 }
 
-// 时间选择快照
+// Time selection shortcuts
 const shortcuts = ref([
   {
     text: i18n.global.t('eventViews.lastHalfHour'),
@@ -438,7 +438,7 @@ const shortcuts = ref([
   },
 ]);
 
-// 自动刷新事件列表
+// Auto-refresh event list
 const autoRefresh = ref(false);
 
 const autoLoadingState = ref(false);
@@ -467,7 +467,7 @@ const createAutoRefreshTimer = () => {
   autoRefreshTimer.value = window.setInterval(function autoRefresh() {
     autoLoadingState.value = true;
 
-    // 默认刷新当前半小时
+    // Refresh last 30 minutes by default
     const time = new Date().getTime();
     const range = [time - 3600 * 1000 * 0.5, time];
     timeRange.timeRange = range;
@@ -487,7 +487,7 @@ const closeAutoRefresh = () => {
   }
 };
 
-// 请求数据
+// Request data
 const eventCount: {
   emergency: number;
   important: number;
@@ -530,9 +530,9 @@ interface eventsResponse {
 
 const events = reactive({events: []});
 
-// 在此处添加事件
+// Add events here
 const eventName = reactive({
-  // Framework事件
+  // Framework events
   SERMANT_START: i18n.global.t('eventViews.agentStartup'),
   SERMANT_STOP: i18n.global.t('eventViews.agentShutdown'),
   SERMANT_TRANSFORM_SUCCESS: i18n.global.t('eventViews.enhanceSuccess'),
@@ -545,19 +545,19 @@ const eventName = reactive({
   SERMANT_PLUGIN_UPDATE: i18n.global.t('eventViews.pluginUpdate'),
   EXTERNAL_AGENT_INSTALL: i18n.global.t('eventViews.externalAgentInstall'),
   OTEL_START: i18n.global.t('eventViews.otelStart'),
-  // 日志事件
+  // Log events
   WARNING: i18n.global.t('eventViews.warningLog'),
   SEVERE: i18n.global.t('eventViews.errorLog'),
-  // Flowcontrol事件
+  // Flowcontrol events
   TRAFFIC_LIMITING: i18n.global.t('eventViews.rateLimiting'),
   CIRCUIT_BREAKER: i18n.global.t('eventViews.circuitBreaker'),
   ADAPTIVE_OVERLOAD_PROTECTION: i18n.global.t('eventViews.adaptiveOverloadProtection'),
-  // ServiceRegistry事件
+  // ServiceRegistry events
   GRACEFUL_ONLINE_BEGIN: i18n.global.t('eventViews.gracefulOnlineBegin'),
   GRACEFUL_ONLINE_END: i18n.global.t('eventViews.gracefulOnlineEnd'),
   GRACEFUL_OFFLINE_BEGIN: i18n.global.t('eventViews.gracefulOfflineBegin'),
   GRACEFUL_OFFLINE_END: i18n.global.t('eventViews.gracefulOfflineEnd'),
-  // 路由插件事件
+  // Router plugin events
   ROUTER_RULE_REFRESH: i18n.global.t('eventViews.routerRuleRefresh'),
   SAME_TAG_RULE_MATCH: i18n.global.t('eventViews.sameTagRuleMatch'),
   SAME_TAG_RULE_MISMATCH: i18n.global.t('eventViews.sameTagRuleMismatch'),
@@ -622,7 +622,7 @@ const getEvents = () => {
       })
       .then(function (response) {
         const data = response.data;
-        // 更新统计总数
+        // Update the total statistics
         eventCount.emergency = data.eventCount.emergency;
         eventCount.important = data.eventCount.important;
         eventCount.normal = data.eventCount.normal;

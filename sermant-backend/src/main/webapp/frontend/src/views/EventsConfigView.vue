@@ -60,7 +60,7 @@ const webhooks = reactive([
     enable: false,
     canEdit: false,
   },
-  // 暂不支持welink
+  // not supported welink
   // {
   //   id: 2,
   //   name: "welink",

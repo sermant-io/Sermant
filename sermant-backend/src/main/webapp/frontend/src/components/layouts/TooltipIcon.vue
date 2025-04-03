@@ -11,7 +11,7 @@ import { defineProps } from 'vue';
 import { ElTooltip, ElIcon } from 'element-plus';
 import {QuestionFilled} from '@element-plus/icons-vue';
 
-// 定义组件属性
+// Define component props
 const props = defineProps({
   content: {
     type: String,
