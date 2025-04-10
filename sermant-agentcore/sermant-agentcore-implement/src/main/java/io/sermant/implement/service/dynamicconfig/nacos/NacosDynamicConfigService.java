@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -83,7 +84,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
      * Constructor: Compile the regular expression and initialize the List
      */
     public NacosDynamicConfigService() {
-        listeners = new ArrayList<>();
+        listeners = new CopyOnWriteArrayList<>();
         serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
     }
 
@@ -97,7 +98,7 @@ public class NacosDynamicConfigService extends DynamicConfigService {
                     serviceMeta.getProject());
         }
         scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::updateConfigListener, UPDATE_TIME_INTERVAL,
+        scheduledThreadPoolExecutor.scheduleWithFixedDelay(this::updateConfigListenerWithCatch, UPDATE_TIME_INTERVAL,
                 UPDATE_TIME_INTERVAL,
                 TimeUnit.MILLISECONDS);
     }
@@ -338,6 +339,17 @@ public class NacosDynamicConfigService extends DynamicConfigService {
             list.add(nacosListener);
         }
         return list;
+    }
+
+    /**
+     * Update group listeners periodically
+     */
+    private void updateConfigListenerWithCatch() {
+        try {
+            updateConfigListener();
+        } catch (Throwable th) {
+            LOGGER.log(Level.SEVERE, "Nacos add listener failed.", th);
+        }
     }
 
     /**
