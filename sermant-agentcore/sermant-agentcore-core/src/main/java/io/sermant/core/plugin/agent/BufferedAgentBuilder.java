@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -301,8 +301,8 @@ public class BufferedAgentBuilder {
     }
 
     /**
-     * Build {@link AgentBuilder}，execute all {@link BuilderAction} and execute {@link
-     * AgentBuilder#installOn(Instrumentation)}
+     * Build {@link AgentBuilder}，execute all {@link BuilderAction} and execute
+     * {@link AgentBuilder#installOn(Instrumentation)}
      *
      * @param instrumentation Instrumentation
      * @return Install result, ResettableClassFileTransformer. If the class metadata is not changed, call the reset
@@ -329,6 +329,8 @@ public class BufferedAgentBuilder {
 
         private final Set<String> ignoredInterfaces;
 
+        private final Set<String> ignoredClassLoaders;
+
         /**
          * unMatched Class Cache
          */
@@ -338,6 +340,7 @@ public class BufferedAgentBuilder {
             ignoredPrefixes = config.getIgnoredPrefixes();
             serviceInjectList = config.getServiceInjectList();
             ignoredInterfaces = config.getIgnoredInterfaces();
+            ignoredClassLoaders = config.getIgnoredClassLoaders();
         }
 
         @Override
@@ -355,7 +358,7 @@ public class BufferedAgentBuilder {
                 return false;
             }
 
-            return isArrayOrPrimitive(typeDesc) || checkClassLoader(typeDesc, classLoader)
+            return isArrayOrPrimitive(typeDesc) || checkClassLoader(classLoader)
                     || isIgnoredPrefixes(typeDesc) || isIgnoredInterfaces(typeDesc);
         }
 
@@ -370,7 +373,7 @@ public class BufferedAgentBuilder {
             return true;
         }
 
-        private boolean checkClassLoader(TypeDescription typeDesc, ClassLoader classLoader) {
+        private boolean checkClassLoader(ClassLoader classLoader) {
             if (classLoader instanceof SermantClassLoader) {
                 return true;
             }
@@ -380,7 +383,10 @@ public class BufferedAgentBuilder {
             if (classLoader instanceof PluginClassLoader) {
                 return true;
             }
-            return false;
+
+            // "null" means bootstrap classloader
+            String classLoaderName = classLoader == null ? "null" : classLoader.getClass().getCanonicalName();
+            return ignoredClassLoaders.contains(classLoaderName);
         }
 
         private boolean isIgnoredPrefixes(TypeDescription typeDesc) {
