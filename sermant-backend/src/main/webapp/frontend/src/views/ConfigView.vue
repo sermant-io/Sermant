@@ -301,7 +301,7 @@ onBeforeMount(async () => {
   await getTemplate();
   getConfigurationCenter();
 });
-// 路由
+// Router
 const router = useRouter();
 
 const goBack = () => {
@@ -470,7 +470,7 @@ const fetchData = () => {
 };
 const handleSizeChange = (newSize: number) => {
   pageInfo.pageSize = newSize;
-  pageInfo.currentPage = 1; // 回到第一页
+  pageInfo.currentPage = 1; // Back to first page
   fetchData();
 };
 

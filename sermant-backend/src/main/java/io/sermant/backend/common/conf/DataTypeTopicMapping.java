@@ -37,9 +37,9 @@ public class DataTypeTopicMapping {
     private final Map<Integer, String> mapping = new HashMap<>();
 
     /**
-     * 获取topic类型
+     * Get topic type
      *
-     * @param type 类型
+     * @param type type
      * @return topic
      */
     public String getTopicOfType(Integer type) {

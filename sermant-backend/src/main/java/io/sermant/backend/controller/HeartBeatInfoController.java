@@ -45,7 +45,7 @@ public class HeartBeatInfoController {
     /**
      * Get plugin information
      *
-     * @return 插件信息
+     * @return plugin information
      */
     @GetMapping("/getPluginsInfo")
     public String getPluginsInfo() {

@@ -54,12 +54,12 @@ public class InstanceMeta {
     private ClusterEntity cluster;
 
     /**
-     * 环境
+     * Environment
      */
     private EnvironmentEntity environment;
 
     /**
-     * 可用区
+     * Availability zone
      */
     private String az;
 }
