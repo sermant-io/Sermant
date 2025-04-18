@@ -158,7 +158,7 @@ static int __start_attach(int pid, int nspid) {
     do {
         nanosleep(&ts, NULL);
         result = __check_attach_listener(nspid);
-    } while (result != 0 && (ts.tv_nsec += TIME_20MS) < TIME_50MS); // 20000000 ns 检查一次直至 5000000000 ns
+    } while (result != 0 && (ts.tv_nsec += TIME_20MS) < TIME_50MS); // Check every 20000000ns until 5000000000 ns
 
     unlink(path);
     return result;
