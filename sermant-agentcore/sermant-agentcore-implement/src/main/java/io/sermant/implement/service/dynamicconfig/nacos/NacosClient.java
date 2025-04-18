@@ -27,6 +27,7 @@ import com.alibaba.nacos.client.auth.impl.process.HttpLoginProcessor;
 import com.alibaba.nacos.client.naming.remote.http.NamingHttpClientManager;
 import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 
+import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
 
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +82,8 @@ public class NacosClient implements ConfigClient {
     private static final long TOKEN_REFRESH_WINDOW = 3000L;
 
     private static final String URL = "/nacos/v1/cs/configs?appName=&config_tags=&pageNo=1&pageSize=";
+
+    private static final String URL_WITHOUT_CONTENT = "/nacos/v1/cs/history/configs?tenant=";
 
     private final Properties properties;
 
@@ -227,6 +231,35 @@ public class NacosClient implements ConfigClient {
     }
 
     /**
+     * Get all keys for all Nacos groups without content
+     *
+     * @param namespace configuration namespace
+     * @return A Map of the groups and all its keys
+     * @throws IOException IO exception during service invocation process
+     */
+    public Map<String, List<String>> getGroupKeysWithoutContent(String namespace) throws IOException {
+        final String httpResult = doRequest(buildUrlWithoutContent(namespace), false);
+        if ("".equals(httpResult)) {
+            return Collections.emptyMap();
+        }
+        JSONArray data = JSONArray.parseArray(httpResult);
+        return getGroupKeys(data);
+    }
+
+    /**
+     * whether the /nacos/v1/cs/history/configs interface exists.
+     * This API will return the dataId and group of all configurations in the current namespace, but not the content.
+     * since nacos 2.0.4
+     *
+     * @return exists
+     * @throws IOException IO exception during service invocation process
+     */
+    public boolean hasHistoryConfigApi() throws IOException {
+        final String httpResult = doRequest(buildUrlWithoutContent(StringUtils.EMPTY), true);
+        return !String.valueOf(HttpStatus.SC_NOT_FOUND).equals(httpResult);
+    }
+
+    /**
      * Get all keys for all Nacos groups
      *
      * @param key configuration key
@@ -238,16 +271,19 @@ public class NacosClient implements ConfigClient {
      */
     public Map<String, List<String>> getGroupKeys(String key, String group, String namespace, boolean exactMatchFlag)
             throws IOException {
-        final String httpResult = doRequest(buildUrl(key, group, namespace, exactMatchFlag));
+        final String httpResult = doRequest(buildUrl(key, group, namespace, exactMatchFlag), false);
         if ("".equals(httpResult)) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
-        Map<String, List<String>> groupKeys = new HashMap<>();
         JSONObject jsonObject = JSONObject.parseObject(httpResult);
         JSONArray pageItems = jsonObject.getJSONArray(KEY_PAGE_ITEMS);
+        return getGroupKeys(pageItems);
+    }
 
-        for (int i = 0; i < pageItems.size(); i++) {
-            JSONObject itemObject = pageItems.getJSONObject(i);
+    private Map<String, List<String>> getGroupKeys(JSONArray dataArr) {
+        Map<String, List<String>> groupKeys = new HashMap<>();
+        for (int i = 0; i < dataArr.size(); i++) {
+            JSONObject itemObject = dataArr.getJSONObject(i);
             String dataId = itemObject.getString(KEY_DATA_ID);
             String dataGroup = itemObject.getString(KEY_GROUP);
             List<String> dataIdList = groupKeys.getOrDefault(dataGroup, new ArrayList<>());
@@ -255,6 +291,26 @@ public class NacosClient implements ConfigClient {
             groupKeys.put(dataGroup, dataIdList);
         }
         return groupKeys;
+    }
+
+    /**
+     * Build urls for Nacos http request to query all groups and keys without content
+     * This API will return the dataId and group of all configurations in the current namespace, but not the content.
+     * since nacos 2.0.4
+     *
+     * @param namespace configuration namespace
+     * @return url
+     */
+    private String buildUrlWithoutContent(String namespace) {
+        final StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL);
+        requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR)).append(URL_WITHOUT_CONTENT)
+                .append(namespace);
+        if (properties.get(PropertyKeyConst.USERNAME) != null && properties.get(PropertyKeyConst.PASSWORD) != null) {
+            String accessToken = getToken();
+            requestUrl.append("&accessToken=").append(accessToken).append("&username=")
+                    .append(properties.get(PropertyKeyConst.USERNAME));
+        }
+        return requestUrl.toString();
     }
 
     /**
@@ -313,7 +369,7 @@ public class NacosClient implements ConfigClient {
      * @return response body
      * @throws IOException IO exception during service invocation process
      */
-    private String doRequest(String url) throws IOException {
+    private String doRequest(String url, boolean returnStatusWhenHasError) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             int timeOut = Integer.parseInt(properties.getProperty(PropertyKeyConst.CONFIG_LONG_POLL_TIMEOUT));
             RequestConfig requestConfig = RequestConfig.custom()
@@ -324,12 +380,13 @@ public class NacosClient implements ConfigClient {
             HttpGet httpGet = new HttpGet(url);
             httpGet.setConfig(requestConfig);
             try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.SC_OK) {
                     return EntityUtils.toString(response.getEntity());
                 }
                 LOGGER.error("Http request for getting all nacos keys error, the message is: {}",
                         EntityUtils.toString(response.getEntity()));
-                return "";
+                return returnStatusWhenHasError ? String.valueOf(statusCode) : "";
             }
         }
     }

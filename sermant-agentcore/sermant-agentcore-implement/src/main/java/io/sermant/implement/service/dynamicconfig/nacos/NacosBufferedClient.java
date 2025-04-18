@@ -31,11 +31,12 @@ import io.sermant.core.utils.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +47,6 @@ import java.util.logging.Logger;
  * @since 2023-08-17
  */
 public class NacosBufferedClient implements Closeable {
-
     /**
      * logger
      */
@@ -59,7 +59,9 @@ public class NacosBufferedClient implements Closeable {
 
     private NacosClient nacosClient;
 
-    private final String namepase;
+    private Function<String, Map<String, List<String>>> groupKeysFunction;
+
+    private final String namespace;
 
     /**
      * Create a NacosBufferedClient and initialize the Nacos client
@@ -71,9 +73,10 @@ public class NacosBufferedClient implements Closeable {
      *                            Sermant needs to be interrupted
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace) {
-        Properties properties = createProperties(connectString, sessionTimeout, namespace);
-        this.namepase = namespace;
+        this.namespace = namespace;
+        Properties properties = createProperties(connectString, sessionTimeout);
         createNacosClient(connectString, properties);
+        getGroupKeysFunction();
     }
 
     /**
@@ -89,9 +92,10 @@ public class NacosBufferedClient implements Closeable {
      */
     public NacosBufferedClient(String connectString, int sessionTimeout, String namespace, String userName,
                                String password) {
-        Properties properties = createProperties(connectString, sessionTimeout, namespace, userName, password);
-        this.namepase = namespace;
+        this.namespace = namespace;
+        Properties properties = createProperties(connectString, sessionTimeout, userName, password);
         createNacosClient(connectString, properties);
+        getGroupKeysFunction();
     }
 
     /**
@@ -100,12 +104,7 @@ public class NacosBufferedClient implements Closeable {
      * @return A Map of the groups and all its keys
      */
     public Map<String, List<String>> getGroupKeys() {
-        try {
-            return this.nacosClient.getGroupKeys(null, null, this.namepase, true);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Nacos http request exception.");
-            return new HashMap<>();
-        }
+        return groupKeysFunction.apply(this.namespace);
     }
 
     /**
@@ -182,10 +181,9 @@ public class NacosBufferedClient implements Closeable {
      *
      * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
      * @param sessionTimeout session timeout
-     * @param namespace namespace
      * @return Properties
      */
-    private Properties createProperties(String connectString, int sessionTimeout, String namespace) {
+    private Properties createProperties(String connectString, int sessionTimeout) {
         Properties properties = new Properties();
         properties.setProperty(NacosAuthLoginConstant.SERVER, connectString);
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, connectString);
@@ -199,14 +197,12 @@ public class NacosBufferedClient implements Closeable {
      *
      * @param connectString connect string, must be in the following format: {@code host:port[(,host:port)...]}
      * @param sessionTimeout session timeout
-     * @param namespace namespace
      * @param userName username
      * @param password encrypted password
      * @return Properties
      */
-    private Properties createProperties(String connectString, int sessionTimeout, String namespace, String userName,
-            String password) {
-        Properties properties = this.createProperties(connectString, sessionTimeout, namespace);
+    private Properties createProperties(String connectString, int sessionTimeout, String userName, String password) {
+        Properties properties = this.createProperties(connectString, sessionTimeout);
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password) || StringUtils.isEmpty(
                 CONFIG.getPrivateKey())) {
             LOGGER.log(Level.SEVERE, "Nacos username, password or privateKey is Empty");
@@ -240,6 +236,32 @@ public class NacosBufferedClient implements Closeable {
         } finally {
             Thread.currentThread().setContextClassLoader(tempClassLoader);
         }
+    }
+
+    private void getGroupKeysFunction() {
+        try {
+            if (nacosClient.hasHistoryConfigApi()) {
+                groupKeysFunction = ns -> {
+                    try {
+                        return nacosClient.getGroupKeysWithoutContent(ns);
+                    } catch (IOException e) {
+                        LOGGER.log(Level.SEVERE, "Nacos http request exception.");
+                        return Collections.emptyMap();
+                    }
+                };
+                return;
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "get group keys function has error.", ex);
+        }
+        groupKeysFunction = ns -> {
+            try {
+                return nacosClient.getGroupKeys(null, null, ns, true);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Nacos http request exception.");
+                return Collections.emptyMap();
+            }
+        };
     }
 
     @Override
