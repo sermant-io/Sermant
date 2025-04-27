@@ -44,6 +44,7 @@
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
                 <module>sermant-mq-grayscale</module>
+                <module>sermant-xds</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -78,6 +79,7 @@
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
                 <module>sermant-mq-grayscale</module>
+                <module>sermant-xds</module>
             </modules>
             <build>
                 <pluginManagement>
@@ -112,6 +114,7 @@
                 <module>sermant-tag-transmission</module>
                 <module>sermant-database-write-prohibition</module>
                 <module>sermant-mq-grayscale</module>
+                <module>sermant-xds</module>
             </modules>
         </profile>
     </profiles>

@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -292,17 +293,22 @@ public class XdsFlowControlTest {
     private static void testFaultProbability(String url, int minFailureCount, int maxFailureCount, int sleepTime)
             throws InterruptedException {
         final AtomicInteger faultCount = new AtomicInteger();
+        CountDownLatch countDownLatch = new CountDownLatch(50);
         for (int i = 0; i < 50; i++) {
             EXECUTOR_SERVICE.execute(() -> {
-                long start = System.currentTimeMillis();
-                Result result = doGet(url);
-                long elapsed = System.currentTimeMillis() - start;
-                if (result.getCode() != HttpStatus.SC_OK || elapsed > 5000) {
-                    faultCount.incrementAndGet();
+                try {
+                    long start = System.currentTimeMillis();
+                    Result result = doGet(url);
+                    long elapsed = System.currentTimeMillis() - start;
+                    if (result.getCode() != HttpStatus.SC_OK || elapsed > 5000) {
+                        faultCount.incrementAndGet();
+                    }
+                } finally {
+                    countDownLatch.countDown();
                 }
             });
         }
-        Thread.sleep(sleepTime);
+        countDownLatch.await();
         int count = faultCount.get();
         Assertions.assertTrue(count >= minFailureCount && count <= maxFailureCount);
     }

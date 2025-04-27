@@ -165,6 +165,16 @@ public class StringUtils {
     }
 
     /**
+     * remove the spaces before and after the string
+     *
+     * @param target target string
+     * @return String
+     */
+    public static String trim(String target) {
+        return target == null ? "" : target.trim();
+    }
+
+    /**
      * Get the object's toString information
      *
      * @param object object
