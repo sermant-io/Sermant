@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2024 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2025 Huawei Technologies Co., Ltd. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,12 @@ public class AgentConfig implements BaseConfig {
      * otherwise it will cause spring dynamic proxy conflict, throws java.lang.VerifyError
      */
     private Set<String> ignoredInterfaces = Collections.singleton("org.springframework.cglib.proxy.Factory");
+
+    /**
+     * Ignored ClassLoaders, used to ignore the classes loaded by specific ClassLoaders. This can resolve some issues
+     * caused by multiple JavaAgents
+     */
+    private Set<String> ignoredClassLoaders = Collections.singleton("");
 
     /**
      * Whether to output a search log during the enhancement process
@@ -204,5 +210,13 @@ public class AgentConfig implements BaseConfig {
 
     public void setExternalAgentFile(String externalAgentFile) {
         this.externalAgentFile = externalAgentFile;
+    }
+
+    public Set<String> getIgnoredClassLoaders() {
+        return ignoredClassLoaders;
+    }
+
+    public void setIgnoredClassLoaders(Set<String> ignoredClassLoaders) {
+        this.ignoredClassLoaders = ignoredClassLoaders;
     }
 }
