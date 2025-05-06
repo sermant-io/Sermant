@@ -119,8 +119,8 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
             return;
         }
         HttpURLConnection connection = (HttpURLConnection) obj;
-        ReflectUtils.setFieldValue(connection,"inputStream", null);
-        ReflectUtils.setFieldValue(connection,"cachedInputStream", null);
+        ReflectUtils.setFieldValue(connection, "inputStream", null);
+        ReflectUtils.setFieldValue(connection, "cachedInputStream", null);
         ReflectUtils.setFieldValue(connection, "cachedHeaders", null);
         ReflectUtils.setFieldValue(connection, "filteredHeaders", null);
         Optional<ServiceInstance> serviceInstanceOptional = chooseServiceInstanceForXds();
@@ -244,7 +244,7 @@ public class HttpUrlConnectionResponseStreamInterceptor extends AbstractXdsHttpC
             if (connection == null) {
                 return Optional.empty();
             }
-            Map<String,List<String>> headers = connection.getHeaderFields();
+            Map<String, List<String>> headers = connection.getHeaderFields();
             if (MapUtils.isEmpty(headers)) {
                 return Optional.empty();
             }

@@ -26,6 +26,7 @@ import com.alibaba.nacos.common.notify.NotifyCenter;
 import com.alibaba.nacos.common.notify.listener.Subscriber;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.exception.SermantRuntimeException;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.discovery.config.RegisterType;
 import io.sermant.discovery.entity.ServiceInstance;
@@ -105,7 +106,7 @@ public class NacosInstanceListenable extends Subscriber<InstancesChangeEvent> im
             });
             listenerCache.put(serviceName, listener);
         } catch (NacosException e) {
-            throw new RuntimeException(e);
+            throw new SermantRuntimeException(e);
         }
     }
 

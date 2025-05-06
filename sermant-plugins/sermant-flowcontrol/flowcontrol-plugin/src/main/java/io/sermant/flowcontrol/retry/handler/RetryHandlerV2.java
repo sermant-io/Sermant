@@ -48,9 +48,9 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
     private final RetryPredicateCreator retryPredicateCreator = new DefaultRetryPredicateCreator();
 
     /**
-     * XDS Handler cache, where the Key of the first level is the service name,
-     * the Key of the second level is the route name, the Key of the three level is the xdsRetryPolicy, value
-     * is Retry instance, The Retry instance is thread-safe can be used to decorate multiple requests
+     * XDS Handler cache, where the Key of the first level is the service name, the Key of the second level is the route
+     * name, the Key of the three level is the xdsRetryPolicy, value is Retry instance, The Retry instance is
+     * thread-safe can be used to decorate multiple requests
      */
     private final Map<String, Map<String, Map<String, Optional<Retry>>>> xdsHandlers = new ConcurrentHashMap<>();
 
@@ -85,7 +85,7 @@ public class RetryHandlerV2 extends AbstractRequestHandler<Retry, RetryRule> {
             return Optional.empty();
         }
         final RetryConfig retryConfig = RetryConfig.custom()
-                .maxAttempts((int)xdsRetryPolicy.getMaxAttempts())
+                .maxAttempts((int) xdsRetryPolicy.getMaxAttempts())
                 .retryOnResult(retryPredicateCreator.createResultPredicate(retry, xdsRetryPolicy))
                 .retryOnException(retryPredicateCreator.createExceptionPredicate(retry, xdsRetryPolicy))
                 .intervalFunction(IntervalFunction.of(xdsRetryPolicy.getPerTryTimeout()))

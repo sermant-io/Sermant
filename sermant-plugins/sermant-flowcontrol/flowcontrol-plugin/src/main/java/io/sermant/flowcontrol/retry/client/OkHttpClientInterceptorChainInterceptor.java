@@ -17,7 +17,6 @@
 package io.sermant.flowcontrol.retry.client;
 
 import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.Request;
