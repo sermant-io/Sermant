@@ -17,6 +17,9 @@
 package io.sermant.mq.grayscale.rocketmq.utils;
 
 import io.sermant.mq.grayscale.config.ConsumeModeEnum;
+import io.sermant.mq.grayscale.config.GrayTagItem;
+import io.sermant.mq.grayscale.config.MqGrayConfigCache;
+import io.sermant.mq.grayscale.config.MqGrayscaleConfig;
 import io.sermant.mq.grayscale.rocketmq.RocketMqTestAbstract;
 
 import org.apache.rocketmq.common.message.Message;
@@ -36,6 +39,15 @@ public class RocketMqGrayscaleConfigUtilsTest extends RocketMqTestAbstract {
     }
 
     @Test
+    public void testGetGrayGroupTagError() {
+        MqGrayscaleConfig config = MqGrayConfigCache.getCacheConfig();
+        for (GrayTagItem item : config.getGrayscale()) {
+            item.setConsumerGroupTag("%gray&");
+        }
+        Assert.assertEquals("", RocketMqGrayscaleConfigUtils.getGrayGroupTag());
+    }
+
+    @Test
     public void testGetConsumeType() {
         Assert.assertSame(RocketMqGrayscaleConfigUtils.getConsumeType(), ConsumeModeEnum.AUTO);
     }
@@ -43,11 +55,6 @@ public class RocketMqGrayscaleConfigUtilsTest extends RocketMqTestAbstract {
     @Test
     public void testGetAutoCheckDelayTime() {
         Assert.assertSame(RocketMqGrayscaleConfigUtils.getAutoCheckDelayTime(), 15L);
-    }
-
-    @Test
-    public void testStandardFormatGroupTag() {
-        Assert.assertEquals("gray-group", RocketMqGrayscaleConfigUtils.standardFormatGroupTag("grAY.Group"));
     }
 
     @Test

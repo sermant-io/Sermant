@@ -16,6 +16,7 @@
 
 package io.sermant.mq.grayscale.rocketmq.utils;
 
+import io.sermant.core.common.LoggerFactory;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.plugin.config.ServiceMeta;
 import io.sermant.mq.grayscale.config.ConsumeModeEnum;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -46,9 +48,11 @@ public class RocketMqGrayscaleConfigUtils {
     private static final Map<String, String> MICRO_SERVICE_PROPERTIES = new HashMap<>();
 
     /**
-     * consumerGroup name rule: ^[%|a-zA-Z0-9_-]+$
+     * consumerGroup name rule: ^[a-zA-Z0-9_-]+$
      */
-    private static final Pattern PATTERN = Pattern.compile("[^%|a-zA-Z0-9_-]");
+    private static final Pattern PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+$");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     static {
         ServiceMeta serviceMeta = ConfigManager.getConfig(ServiceMeta.class);
@@ -72,7 +76,18 @@ public class RocketMqGrayscaleConfigUtils {
         }
         Optional<GrayTagItem> itemOptional
                 = MqGrayConfigCache.getCacheConfig().getMatchedGrayTagByServiceMeta(MICRO_SERVICE_PROPERTIES);
-        return itemOptional.map(grayTagItem -> standardFormatGroupTag(grayTagItem.getConsumerGroupTag())).orElse("");
+        if (itemOptional.isPresent()) {
+            GrayTagItem grayTagItem = itemOptional.get();
+            String consumerGroup = grayTagItem.getConsumerGroupTag();
+            if (PATTERN.matcher(consumerGroup).matches()) {
+                return consumerGroup;
+            } else {
+                LOGGER.warning(String.format(Locale.ENGLISH, "current consumerGroup tag [%s] not matches pattern "
+                        + "[a-zA-Z0-9_-], Please modify it to conform to this pattern and restart the service.",
+                        consumerGroup));
+            }
+        }
+        return "";
     }
 
     /**
@@ -91,16 +106,6 @@ public class RocketMqGrayscaleConfigUtils {
      */
     public static long getAutoCheckDelayTime() {
         return MqGrayConfigCache.getCacheConfig().getBase().getAutoCheckDelayTime();
-    }
-
-    /**
-     * format grayGroupTag
-     *
-     * @param grayGroupTag grayGroupTag
-     * @return standard grayGroupTag
-     */
-    public static String standardFormatGroupTag(String grayGroupTag) {
-        return PATTERN.matcher(grayGroupTag.toLowerCase(Locale.ROOT)).replaceAll("-");
     }
 
     /**
