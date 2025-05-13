@@ -18,6 +18,7 @@ package io.sermant.mq.grayscale.config;
 
 import io.sermant.core.config.common.ConfigTypeKey;
 import io.sermant.core.plugin.config.PluginConfig;
+import io.sermant.core.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,9 @@ public class MqGrayscaleConfig implements PluginConfig {
      * @return gray tag item
      */
     public Optional<GrayTagItem> getGrayTagByGroupTag(String grayGroupTag) {
+        if (StringUtils.isEmpty(grayGroupTag)) {
+            return Optional.empty();
+        }
         for (GrayTagItem item : grayscale) {
             if (grayGroupTag.equals(item.getConsumerGroupTag())) {
                 return Optional.of(item);
