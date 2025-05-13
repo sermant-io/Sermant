@@ -48,18 +48,13 @@ public class MqGrayConfigCache {
      * @param eventType eventType
      */
     public static void setCacheConfig(MqGrayscaleConfig config, DynamicConfigEventType eventType) {
-        if (eventType == DynamicConfigEventType.CREATE) {
+        RocketMqConfigUtils.recordTrafficTagsSet(config);
+        RocketMqConfigUtils.updateChangeFlag();
+        if (eventType == DynamicConfigEventType.CREATE || eventType == DynamicConfigEventType.INIT) {
             cacheConfig = config;
-            RocketMqConfigUtils.updateChangeFlag();
-            RocketMqConfigUtils.recordTrafficTagsSet(config);
             return;
         }
-        boolean isAllowRefresh = isAllowRefreshChangeFlag(cacheConfig, config);
-        if (isAllowRefresh) {
-            cacheConfig.updateGrayscaleConfig(config);
-            RocketMqConfigUtils.updateChangeFlag();
-            RocketMqConfigUtils.recordTrafficTagsSet(config);
-        }
+        cacheConfig.updateGrayscaleConfig(config);
     }
 
     /**
@@ -68,27 +63,5 @@ public class MqGrayConfigCache {
     public static void clearCacheConfig() {
         cacheConfig = new MqGrayscaleConfig();
         RocketMqConfigUtils.updateChangeFlag();
-    }
-
-    /**
-     * only traffic label changes allow refresh tag change map to rebuild SQL92 query statement,
-     * because if the serviceMeta changed, the gray consumer cannot be matched and becomes a base consumer
-     * so, if you need to change the env tag, restart all services.
-     *
-     * @param resource cache config
-     * @param target cache config
-     * @return boolean
-     */
-    private static boolean isAllowRefreshChangeFlag(MqGrayscaleConfig resource, MqGrayscaleConfig target) {
-        if (resource.isEnabled() != target.isEnabled()) {
-            return true;
-        }
-        if (resource.isBaseExcludeGroupTagsChanged(target)) {
-            return true;
-        }
-        if (resource.isConsumerModeChanged(target)) {
-            return true;
-        }
-        return !resource.buildAllTrafficTagInfoToStr().equals(target.buildAllTrafficTagInfoToStr());
     }
 }

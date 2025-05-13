@@ -42,15 +42,15 @@ public class MqGrayConfigCacheTest {
         MqGrayConfigCache.setCacheConfig(config, DynamicConfigEventType.MODIFY);
         Assert.assertSame(ConsumeModeEnum.BASE, MqGrayConfigCache.getCacheConfig().getBase().getConsumeMode());
 
-        // serviceMeta changed will not update config
+        // serviceMeta changed update config
         GrayTagItem item = CommonConfigUtils.getGrayTagItem();
         item.getServiceMeta().put("x_lane_tag", "red" );
         MqGrayscaleConfig config1 = getMqGrayscaleConfig(item);
         MqGrayConfigCache.setCacheConfig(config1, DynamicConfigEventType.MODIFY);
-        Assert.assertEquals("gray",
+        Assert.assertEquals("red",
                 MqGrayConfigCache.getCacheConfig().getGrayscale().get(0).getServiceMeta().get("x_lane_tag"));
 
-        // trafficTag changed will not update config
+        // trafficTag changed update config
         GrayTagItem item1 = CommonConfigUtils.getGrayTagItem();
         item1.getTrafficTag().put("x_lane_canary", "red");
         item1.getServiceMeta().put("x_lane_tag", "red" );
