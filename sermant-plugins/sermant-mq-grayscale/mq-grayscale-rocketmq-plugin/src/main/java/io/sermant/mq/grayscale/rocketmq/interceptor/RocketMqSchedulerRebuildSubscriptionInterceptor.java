@@ -47,35 +47,37 @@ public class RocketMqSchedulerRebuildSubscriptionInterceptor extends RocketMqAbs
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) throws Exception {
-        ConcurrentMap<String, Object> subscriptionInner = (ConcurrentMap<String, Object>) context.getResult();
-        RebalanceImpl balance = (RebalanceImpl) context.getObject();
-        if (balance.getConsumerGroup() == null) {
+        synchronized (RocketMqSchedulerRebuildSubscriptionInterceptor.class) {
+            ConcurrentMap<String, Object> subscriptionInner = (ConcurrentMap<String, Object>) context.getResult();
+            RebalanceImpl rebalance = (RebalanceImpl) context.getObject();
+            if (rebalance.getConsumerGroup() == null) {
+                return context;
+            }
+            List<Object> retryTopicSubscriptions = new ArrayList<>();
+            List<Object> originTopicSubscriptions = new ArrayList<>();
+            buildTopicSubscriptions(subscriptionInner, retryTopicSubscriptions, originTopicSubscriptions);
+            Object changedOriginSubscription = null;
+            for (Object subscriptionData : originTopicSubscriptions) {
+                if (RocketMqSubscriptionDataUtils
+                    .isExpressionTypeInaccurate(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
+                    continue;
+                }
+                String topic = RocketMqReflectUtils.getTopic(subscriptionData);
+                if (!RocketMqSubscriptionDataUtils.getGrayTagChangeFlag(topic, rebalance)) {
+                    continue;
+                }
+                buildSql92SubscriptionData(subscriptionData, rebalance, topic);
+
+                // sql92 expression is associated only with the consumer group. Therefore,
+                // using any of the changed subscription build retry-topic sql92 expression.
+                changedOriginSubscription = subscriptionData;
+            }
+            if (changedOriginSubscription != null) {
+                // update %RETRY%+GROUP substring with sql92
+                updateRetrySubscriptionData(changedOriginSubscription, retryTopicSubscriptions);
+            }
             return context;
         }
-        List<Object> retryTopicSubscriptions = new ArrayList<>();
-        List<Object> originTopicSubscriptions = new ArrayList<>();
-        buildTopicSubscriptions(subscriptionInner, retryTopicSubscriptions, originTopicSubscriptions);
-        Object changedOriginSubscription = null;
-        for (Object subscriptionData : originTopicSubscriptions) {
-            if (RocketMqSubscriptionDataUtils
-                    .isExpressionTypeInaccurate(RocketMqReflectUtils.getExpressionType(subscriptionData))) {
-                continue;
-            }
-            String topic = RocketMqReflectUtils.getTopic(subscriptionData);
-            if (!RocketMqSubscriptionDataUtils.getGrayTagChangeFlag(topic, balance)) {
-                continue;
-            }
-            buildSql92SubscriptionData(subscriptionData, balance, topic);
-
-            // sql92 expression is associated only with the consumer group. Therefore,
-            // using any of the changed subscription build retry-topic sql92 expression.
-            changedOriginSubscription = subscriptionData;
-        }
-        if (changedOriginSubscription != null) {
-            // update %RETRY%+GROUP substring with sql92
-            updateRetrySubscriptionData(changedOriginSubscription, retryTopicSubscriptions);
-        }
-        return context;
     }
 
     private void buildTopicSubscriptions(ConcurrentMap<String, Object> subscriptionInner,
@@ -115,15 +117,15 @@ public class RocketMqSchedulerRebuildSubscriptionInterceptor extends RocketMqAbs
         }
     }
 
-    private void buildSql92SubscriptionData(Object subscriptionData, RebalanceImpl balance, String topic) {
-        String consumerGroup = balance.getConsumerGroup();
-        MQClientInstance instance = balance.getmQClientFactory();
+    private void buildSql92SubscriptionData(Object subscriptionData, RebalanceImpl rebalance, String topic) {
+        String consumerGroup = rebalance.getConsumerGroup();
+        MQClientInstance instance = rebalance.getmQClientFactory();
         if (StringUtils.isEmpty(RocketMqGrayscaleConfigUtils.getGrayGroupTag())) {
             RocketMqConsumerGroupAutoCheck.setMqClientInstance(topic, consumerGroup, instance);
             RocketMqConsumerGroupAutoCheck.syncUpdateCacheGrayTags();
             RocketMqConsumerGroupAutoCheck.startSchedulerCheckGroupTask();
         }
-        String namesrvAddr = balance.getmQClientFactory().getClientConfig().getNamesrvAddr();
+        String namesrvAddr = rebalance.getmQClientFactory().getClientConfig().getNamesrvAddr();
         resetsSql92SubscriptionData(topic, consumerGroup, subscriptionData, namesrvAddr);
 
         // update change flag when finished build substr
