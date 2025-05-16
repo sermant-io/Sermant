@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
  * @since 2024-11-16
  */
 public class NacosWeightRandomRule extends AbstractLoadbalancer {
+    private final Random random = new Random();
+
     @Override
     protected ServiceInstance doChoose(String serviceName, List<ServiceInstance> instances) {
         List<InstanceWithWeight> withWeights = instances.stream()
@@ -54,6 +56,7 @@ public class NacosWeightRandomRule extends AbstractLoadbalancer {
      */
     public static class InstanceWithWeight {
         private ServiceInstance server;
+
         private Integer weight;
 
         /**
@@ -85,7 +88,7 @@ public class NacosWeightRandomRule extends AbstractLoadbalancer {
      */
     public ServiceInstance weightRandom(List<InstanceWithWeight> list) {
         int totalWeight = list.stream().mapToInt(InstanceWithWeight::getWeight).sum();
-        int randomWeight = new Random().nextInt(totalWeight);
+        int randomWeight = random.nextInt(totalWeight);
         int currentWeight = 0;
         for (InstanceWithWeight instanceWithWeight : list) {
             currentWeight += instanceWithWeight.getWeight();

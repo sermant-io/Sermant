@@ -35,14 +35,13 @@ public interface InstanceChangeListener {
      */
     void notify(EventType eventType, ServiceInstance serviceInstance);
 
-
     /**
      * Notice
      *
      * @param serviceName Service name
      * @param serviceInstances All instances
      */
-    void notify(String serviceName,List<ServiceInstance> serviceInstances);
+    void notify(String serviceName, List<ServiceInstance> serviceInstances);
 
     /**
      * The type of event
