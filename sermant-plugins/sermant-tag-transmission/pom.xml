@@ -54,6 +54,7 @@
                 <module>tag-transmission-dubbo3.x-plugin</module>
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
+                <module>tag-transmission-servlet56-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -77,6 +78,7 @@
                 <module>tag-transmission-dubbo3.x-plugin</module>
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
+                <module>tag-transmission-servlet56-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -100,6 +102,7 @@
                 <module>tag-transmission-dubbo3.x-plugin</module>
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
+                <module>tag-transmission-servlet56-plugin</module>
             </modules>
         </profile>
     </profiles>
