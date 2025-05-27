@@ -259,21 +259,21 @@ public class TagTransmissionTest {
     }
 
     /**
-     * test servlet5.x tag transmission
+     * test jakarta-servlet5.x tag transmission
      */
     @Test
-    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "SERVLET5")
-    public void testServlet5() {
-        checkTagTransmission("http://127.0.0.1:9050/servlet5/httpServer", EXACT_TAG_MAP, "servlet5");
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET5")
+    public void testJakartaServlet5() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet5/httpServer", EXACT_TAG_MAP, "servlet5");
     }
 
     /**
-     * test servlet6.x tag transmission
+     * test jakarta-servlet6.x tag transmission
      */
     @Test
-    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "SERVLET6")
-    public void testServlet6() {
-        checkTagTransmission("http://127.0.0.1:9050/servlet6/httpServer", EXACT_TAG_MAP, "servlet6");
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET6")
+    public void testJakartaServlet6() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet6/httpServer", EXACT_TAG_MAP, "servlet6");
     }
 
     private void checkTagTransmission(String url, Map<String, String> tagMap, String message, String tagKey) {

@@ -47,7 +47,7 @@ jobs:
           echo "enableRocketmqTagTransmissionAction=${{env.enableRocketmqTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableJettyTagTransmissionAction=${{env.enableJettyTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableTomcatTagTransmissionAction=${{env.enableTomcatTagTransmissionAction}}" >> $GITHUB_OUTPUT
-          echo "enableServlet56TagTransmissionAction=${{env.enableServlet56TagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableJakartaServlet56TagTransmissionAction=${{env.enableJakartaServlet56TagTransmissionAction}}" >> $GITHUB_OUTPUT
     outputs:
       enableHttpclientV3TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV3TagTransmissionAction }}
       enableHttpclientV4TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV4TagTransmissionAction }}
@@ -63,7 +63,7 @@ jobs:
       enableRocketmqTagTransmissionAction: ${{ steps.set-outputs.outputs.enableRocketmqTagTransmissionAction }}
       enableJettyTagTransmissionAction: ${{ steps.set-outputs.outputs.enableJettyTagTransmissionAction }}
       enableTomcatTagTransmissionAction: ${{ steps.set-outputs.outputs.enableTomcatTagTransmissionAction }}
-      enableServlet56TagTransmissionAction: ${{ steps.set-outputs.outputs.enableServlet56TagTransmissionAction }}
+      enableJakartaServlet56TagTransmissionAction: ${{ steps.set-outputs.outputs.enableJakartaServlet56TagTransmissionAction }}
   download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
@@ -491,10 +491,10 @@ jobs:
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for springBootVersion=${{ matrix.springBootVersion }}
         uses: ./.github/actions/scenarios/tag-transmission/jdkhttp-tomcat
-  test-for-tag-transmission-servlet5:
-    name: Test for tag transmission servlet5
+  test-for-tag-transmission-jakarta-servlet5:
+    name: Test for tag transmission jakarta servlet5
     runs-on: ubuntu-latest
-    if: needs.set-execution-conditions.outputs.enableServlet56TagTransmissionAction=='true'
+    if: needs.set-execution-conditions.outputs.enableJakartaServlet56TagTransmissionAction=='true'
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
@@ -513,11 +513,11 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for okHttpVersion=${{ matrix.tomcatVersion }}
-        uses: ./.github/actions/scenarios/tag-transmission/servlet5
-  test-for-tag-transmission-servlet6:
-    name: Test for tag transmission servlet6
+        uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet5
+  test-for-tag-transmission-jakarta-servlet6:
+    name: Test for tag transmission jakarta servlet6
     runs-on: ubuntu-latest
-    if: needs.set-execution-conditions.outputs.enableServlet56TagTransmissionAction=='true'
+    if: needs.set-execution-conditions.outputs.enableJakartaServlet56TagTransmissionAction=='true'
     needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
     strategy:
       matrix:
@@ -535,4 +535,4 @@ jobs:
       - name: common operations
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for okHttpVersion=${{ matrix.tomcatVersion }}
-        uses: ./.github/actions/scenarios/tag-transmission/servlet6
+        uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet6

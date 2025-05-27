@@ -1,0 +1,45 @@
+name: "Tag Transmission Plugin servlet6 Test"
+description: "Auto test for tag transmission by servlet6"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/jakarta-servlet6
+    - name: package demos
+      shell: bash
+      run: |
+          mvn package -Dtomcat.version=${{ matrix.tomcatVersion }} -DskipTests \
+          --file sermant-integration-tests/tag-transmission-test/jakarta-servlet6-demo/pom.xml
+    - name: start servlet6 demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/sermant \
+        sermant-integration-tests/tag-transmission-test/jakarta-servlet6-demo/target/jakarta-servlet6-demo.jar > ${{ env.logDir }}/servlet6.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9050/servlet6/httpServer 120
+    - name: test servlet6
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=JAKARTA-SERVLET6 --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: servlet6
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v4
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-servlet6-(${{ matrix.tomcatVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2
