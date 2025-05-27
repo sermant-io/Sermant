@@ -175,5 +175,12 @@
                 <module>tag-transmission-util-demo</module>
             </modules>
         </profile>
+        <profile>
+            <id>jakarta-servlet-test</id>
+            <modules>
+                <module>jakarta-servlet5-demo</module>
+                <module>jakarta-servlet6-demo</module>
+            </modules>
+        </profile>
     </profiles>
 </project>
