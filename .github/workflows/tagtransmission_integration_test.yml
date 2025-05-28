@@ -512,7 +512,7 @@ jobs:
           echo "javaVersion=17" >> $GITHUB_ENV
       - name: common operations
         uses: ./.github/actions/common/tag-transmission
-      - name: tag transmission test for okHttpVersion=${{ matrix.tomcatVersion }}
+      - name: tag transmission test for tomcatVersion=${{ matrix.tomcatVersion }}
         uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet5
   test-for-tag-transmission-jakarta-servlet6:
     name: Test for tag transmission jakarta servlet6
@@ -534,5 +534,21 @@ jobs:
           echo "javaVersion=17" >> $GITHUB_ENV
       - name: common operations
         uses: ./.github/actions/common/tag-transmission
-      - name: tag transmission test for okHttpVersion=${{ matrix.tomcatVersion }}
+      - name: tag transmission test for tomcatVersion=${{ matrix.tomcatVersion }}
         uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet6
+  test-for-tag-transmission-jakarta-servlet-java8:
+    name: Test for tag transmission jakarta servlet java8
+    runs-on: ubuntu-latest
+    if: needs.set-execution-conditions.outputs.enableJakartaServlet56TagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/tag-transmission
+      - name: tag transmission test for jakarta-servlet-java8
+        uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet-java8

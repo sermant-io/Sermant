@@ -276,6 +276,15 @@ public class TagTransmissionTest {
         checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet6/httpServer", EXACT_TAG_MAP, "servlet6");
     }
 
+    /**
+     * test jakarta-servlet-run-on-java8 tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET-RUN-ON-JAVA8")
+    public void testJakartaServletRunOnJava8() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet/httpServer", EXACT_TAG_MAP, "jakarta-servlet-run-on-java8");
+    }
+
     private void checkTagTransmission(String url, Map<String, String> tagMap, String message, String tagKey) {
         Map<String, String> returnTagMap = convertJson2Map(RequestUtils.get(url,
                 tagMap));

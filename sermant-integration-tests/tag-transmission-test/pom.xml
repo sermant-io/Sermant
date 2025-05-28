@@ -180,6 +180,7 @@
             <modules>
                 <module>jakarta-servlet5-demo</module>
                 <module>jakarta-servlet6-demo</module>
+                <module>jakarta-servlet-java8-demo</module>
             </modules>
         </profile>
     </profiles>

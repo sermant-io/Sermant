@@ -506,10 +506,12 @@ runs:
           sermant-integration-tests/tag-transmission-test/tag-transmission-util-demo
           sermant-integration-tests/tag-transmission-test/jakarta-servlet5-demo
           sermant-integration-tests/tag-transmission-test/jakarta-servlet6-demo
+          sermant-integration-tests/tag-transmission-test/jakarta-servlet-java8-demo
           ./.github/workflows/tagtransmission_integration_test.yml
           ./.github/actions/common/tag-transmission
           .github/actions/scenarios/tag-transmission/jakarta-servlet5
           .github/actions/scenarios/tag-transmission/jakarta-servlet6
+          .github/actions/scenarios/tag-transmission/jakarta-servlet-java8
     - name: env tag-transmission-servlet56
       shell: bash
       run: |

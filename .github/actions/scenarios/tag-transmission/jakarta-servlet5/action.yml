@@ -22,7 +22,7 @@ runs:
       shell: bash
       run: |
         ps -ef | grep java
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9050/servlet5/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9050/jakarta-servlet5/httpServer 120
     - name: test servlet5
       shell: bash
       run: |
