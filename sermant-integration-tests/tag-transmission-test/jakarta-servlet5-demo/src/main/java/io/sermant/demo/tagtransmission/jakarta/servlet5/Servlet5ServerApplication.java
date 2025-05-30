@@ -42,6 +42,7 @@ public class Servlet5ServerApplication {
      *
      * @param args boot args
      */
+    @SuppressWarnings("uncommentedmain")
     public static void main(String[] args) {
         SpringApplication.run(Servlet5ServerApplication.class, args);
     }

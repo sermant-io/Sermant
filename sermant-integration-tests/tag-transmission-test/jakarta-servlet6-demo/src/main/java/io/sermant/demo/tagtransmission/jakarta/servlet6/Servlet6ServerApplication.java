@@ -42,6 +42,7 @@ public class Servlet6ServerApplication {
      *
      * @param args boot args
      */
+    @SuppressWarnings("uncommentedmain")
     public static void main(String[] args) {
         SpringApplication.run(Servlet6ServerApplication.class, args);
     }
