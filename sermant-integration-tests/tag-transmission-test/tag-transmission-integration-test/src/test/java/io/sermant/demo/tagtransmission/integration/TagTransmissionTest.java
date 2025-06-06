@@ -258,6 +258,33 @@ public class TagTransmissionTest {
                 "dynamic config transmit traffic tag failed");
     }
 
+    /**
+     * test jakarta-servlet5.x tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET5")
+    public void testJakartaServlet5() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet5/httpServer", EXACT_TAG_MAP, "servlet5");
+    }
+
+    /**
+     * test jakarta-servlet6.x tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET6")
+    public void testJakartaServlet6() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet6/httpServer", EXACT_TAG_MAP, "servlet6");
+    }
+
+    /**
+     * test jakarta-servlet-run-on-java8 tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "JAKARTA-SERVLET-RUN-ON-JAVA8")
+    public void testJakartaServletRunOnJava8() {
+        checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet/httpServer", EXACT_TAG_MAP, "jakarta-servlet-run-on-java8");
+    }
+
     private void checkTagTransmission(String url, Map<String, String> tagMap, String message, String tagKey) {
         Map<String, String> returnTagMap = convertJson2Map(RequestUtils.get(url,
                 tagMap));

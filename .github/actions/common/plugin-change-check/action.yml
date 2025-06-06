@@ -495,6 +495,28 @@ runs:
       run: |
         echo "crossthreadTagTransmissionChanged=${{ steps.changed-tag-transmission-crossthread.outputs.changed }}" >> $GITHUB_ENV
     - uses: ktamas77/has-changed-path@v1.0.3
+      id: changed-tag-transmission-jakarta-servlet
+      with:
+        paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
+          sermant-plugins/sermant-tag-transmission/tag-transmission-crossthread-plugin
+          sermant-plugins/sermant-tag-transmission/tag-transmission-service
+          sermant-plugins/sermant-tag-transmission/tag-transmission-servlet56-plugin
+          sermant-plugins/sermant-tag-transmission/config
+          sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test
+          sermant-integration-tests/tag-transmission-test/tag-transmission-util-demo
+          sermant-integration-tests/tag-transmission-test/jakarta-servlet5-demo
+          sermant-integration-tests/tag-transmission-test/jakarta-servlet6-demo
+          sermant-integration-tests/tag-transmission-test/jakarta-servlet-java8-demo
+          ./.github/workflows/tagtransmission_integration_test.yml
+          ./.github/actions/common/tag-transmission
+          .github/actions/scenarios/tag-transmission/jakarta-servlet5
+          .github/actions/scenarios/tag-transmission/jakarta-servlet6
+          .github/actions/scenarios/tag-transmission/jakarta-servlet-java8
+    - name: env tag-transmission-servlet56
+      shell: bash
+      run: |
+        echo "jakartaServletTagTransmissionChanged=${{ steps.changed-tag-transmission-jakarta-servlet.outputs.changed }}" >> $GITHUB_ENV
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-mq-grayscale-rocketmq
       with:
         paths: sermant-plugins/sermant-mq-grayscale/mq-config-common
@@ -942,6 +964,13 @@ runs:
             ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableCrossthreadTagTransmissionAction=true" >> $GITHUB_ENV
+        fi
+
+        # ==========jakarta-servlet Tag Transmission is needed to test?==========
+        if [ ${{ env.jakartaServletTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableJakartaServlet56TagTransmissionAction=true" >> $GITHUB_ENV
         fi
 
         # ==========dynamic config service is needed to test?==========
