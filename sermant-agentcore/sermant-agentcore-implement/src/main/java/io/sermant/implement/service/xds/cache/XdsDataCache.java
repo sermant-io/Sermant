@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2024 Sermant Authors. All rights reserved.
+ * Copyright (C) 2024-2025 Sermant Authors. All rights reserved.
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package io.sermant.implement.service.xds.cache;
 
 import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.grpc.stub.StreamObserver;
+import io.sermant.core.service.xds.entity.IstiodCertificate;
 import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsHttpConnectionManager;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
+import io.sermant.core.service.xds.entity.XdsPeerAuthenticationPolicy;
 import io.sermant.core.service.xds.entity.XdsRoute;
 import io.sermant.core.service.xds.entity.XdsRouteConfiguration;
 import io.sermant.core.service.xds.entity.XdsServiceCluster;
@@ -78,6 +80,26 @@ public class XdsDataCache {
      * XdsRouteConfiguration
      */
     private static List<XdsRouteConfiguration> routeConfigurations = new ArrayList<>();
+
+    /**
+     * Certificate from istiod
+     */
+    private static IstiodCertificate istiodCertificate;
+
+    /**
+     * Current namespace name
+     */
+    private static String currentNameSpace;
+
+    /**
+     * Current serviceaccount name
+     */
+    private static String currentServiceAccount;
+
+    /**
+     * Current Peer Authentication Policy
+     */
+    private static XdsPeerAuthenticationPolicy peerAuthenticationPolicy;
 
     private XdsDataCache() {
     }
@@ -347,5 +369,63 @@ public class XdsDataCache {
      */
     public static List<XdsRouteConfiguration> getRouteConfigurations() {
         return routeConfigurations;
+    }
+
+    public static IstiodCertificate getIstiodCertificate() {
+        return istiodCertificate;
+    }
+
+    public static void setIstiodCertificate(IstiodCertificate certificate) {
+        istiodCertificate = certificate;
+    }
+
+    public static String getCurrentNameSpace() {
+        return currentNameSpace;
+    }
+
+    public static void setCurrentNameSpace(String nameSpace) {
+        currentNameSpace = nameSpace;
+    }
+
+    public static String getCurrentServiceAccount() {
+        return currentServiceAccount;
+    }
+
+    public static void setCurrentServiceAccount(String serviceAccount) {
+        currentServiceAccount = serviceAccount;
+    }
+
+    /**
+     * update PeerAuthenticationPolicy
+     *
+     * @param policy PeerAuthenticationPolicy
+     */
+    public static void updatePeerAuthenticationPolicy(XdsPeerAuthenticationPolicy policy) {
+        peerAuthenticationPolicy = policy;
+    }
+
+    public static XdsPeerAuthenticationPolicy getPeerAuthenticationPolicy() {
+        return peerAuthenticationPolicy;
+    }
+
+    /**
+     * Determines whether SSL is enabled based on the current peer authentication policy.
+     *
+     * @return boolean - true if SSL should be enabled, false otherwise
+     */
+    public static boolean isSslEnabled() {
+        if (peerAuthenticationPolicy == XdsPeerAuthenticationPolicy.STRICT) {
+            return true;
+        }
+
+        if (peerAuthenticationPolicy == XdsPeerAuthenticationPolicy.PERMISSIVE) {
+            return true;
+        }
+
+        if (peerAuthenticationPolicy == XdsPeerAuthenticationPolicy.DISABLE) {
+            return false;
+        }
+
+        return false;
     }
 }

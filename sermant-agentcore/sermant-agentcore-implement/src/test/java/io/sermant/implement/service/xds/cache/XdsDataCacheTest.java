@@ -22,13 +22,16 @@ import io.sermant.core.service.xds.entity.ServiceInstance;
 import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
 import io.sermant.core.service.xds.entity.XdsLocality;
+import io.sermant.core.service.xds.entity.XdsPeerAuthenticationPolicy;
 import io.sermant.core.service.xds.listener.XdsServiceDiscoveryListener;
 import io.sermant.implement.service.xds.CommonDataGenerator;
 import io.sermant.implement.service.xds.entity.XdsServiceInstance;
 import io.sermant.implement.service.xds.handler.StreamObserverRequestImpl;
 import io.sermant.implement.service.xds.handler.XdsServiceDiscoveryListenerImpl;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -165,5 +168,58 @@ public class XdsDataCacheTest {
 
         // clear data
         XdsDataCache.updateRouteConfigurations(new ArrayList<>());
+    }
+
+    /**
+     * Set up the test environment to ensure the initial state before testing
+     */
+    @Before
+    public void setUp() {
+        XdsDataCache.updatePeerAuthenticationPolicy(null);
+    }
+
+    /**
+     * Clean up after testing to make sure it doesn't affect other tests
+     */
+    @After
+    public void tearDown() {
+        // Restore to the original state
+        XdsDataCache.updatePeerAuthenticationPolicy(null);
+    }
+
+    /**
+     * TC01: Test SSL Enabled under STRICT authentication policy
+     */
+    @Test
+    public void testIsSslEnabledWithStrictPolicy() {
+        XdsDataCache.updatePeerAuthenticationPolicy(XdsPeerAuthenticationPolicy.STRICT);
+        Assert.assertTrue(XdsDataCache.isSslEnabled());
+    }
+
+    /**
+     * TC02: Test SSL Enabled under PERMISSIVE authentication policy
+     */
+    @Test
+    public void testIsSslEnabledWithPermissivePolicy() {
+        XdsDataCache.updatePeerAuthenticationPolicy(XdsPeerAuthenticationPolicy.PERMISSIVE);
+        Assert.assertTrue(XdsDataCache.isSslEnabled());
+    }
+
+    /**
+     * TC03: Test SSL Enabled under DISABLE authentication policy
+     */
+    @Test
+    public void testIsSslEnabledWithDisablePolicy() {
+        XdsDataCache.updatePeerAuthenticationPolicy(XdsPeerAuthenticationPolicy.DISABLE);
+        Assert.assertFalse(XdsDataCache.isSslEnabled());
+    }
+
+    /**
+     * TC04: Test SSL Enabled under UNSET Authentication Policy
+     */
+    @Test
+    public void testIsSslEnabledWithUnsetPolicy() {
+        XdsDataCache.updatePeerAuthenticationPolicy(XdsPeerAuthenticationPolicy.UNSET);
+        Assert.assertFalse(XdsDataCache.isSslEnabled());
     }
 }

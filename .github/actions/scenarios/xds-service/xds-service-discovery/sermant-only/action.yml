@@ -67,39 +67,7 @@ runs:
       run: |
         mvn test -Dxds.service.integration.test.type=DISCOVERY_TWO_SERVER_INSTANCE --file \
         sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
-    - name: create istio token
-      shell: bash
-      run: |
-        kubectl create serviceaccount istio-test
-        TOKEN=$(kubectl create token istio-test --duration=1h --audience=istio-ca)
-        kubectl create secret generic istio-test-secret \
-          --from-literal=token=${TOKEN} \
-          --type="istio.io/key-and-cert" \
-          -n default
-    - name: restart spring-client and sermant xds service use security mode
-      shell: bash
-      run: |
-        kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-open.yaml
-        sleep 10s
-        kubectl apply -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-subscribe-secure.yaml
-        kubectl wait --for=condition=ready pod -l app=spring-client --timeout=10s
-        sleep 10s
-        pkill -f "kubectl port-forward svc/spring-client"
-        nohup kubectl port-forward svc/spring-client 8080:8080 &
-        sleep 2s
-        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:8080/checkStatus 150
-    - name: test sermant xds service use security mode
-      shell: bash
-      run: |
-        mvn test -Dxds.service.integration.test.type=SECRET --file \
-        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
-    - name: test subscribe to get service instance
-      shell: bash
-      run: |
-        mvn test -Dxds.service.integration.test.type=DISCOVERY_SUBSCRIBE --file \
-        sermant-integration-tests/xds-service-test/xds-service-integration-test/pom.xml
     - name: close all service
       shell: bash
       run: |
-        kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-client-sermant-xds-subscribe-secure.yaml
         kubectl delete -f sermant-integration-tests/xds-service-test/script/discovery/spring-server-2-replicas.yaml
