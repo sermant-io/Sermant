@@ -21,3 +21,9 @@ io.sermant.xds.traffic.management.declarer.HttpUrlConnectionResponseStreamDeclar
 io.sermant.xds.traffic.management.declarer.OkHttp3ClientDeclarer
 io.sermant.xds.traffic.management.declarer.OkHttpClientInterceptorChainDeclarer
 io.sermant.xds.traffic.management.declarer.OkHttpSendHeaderDeclarer
+
+#ssl
+io.sermant.xds.traffic.management.declarer.ssl.HttpClientBuilder4xDeclarer
+io.sermant.xds.traffic.management.declarer.ssl.OkHttpBuilder2Declarer
+io.sermant.xds.traffic.management.declarer.ssl.OkHttpBuilder3Declarer
+io.sermant.xds.traffic.management.declarer.SpringFactoriesDeclarer

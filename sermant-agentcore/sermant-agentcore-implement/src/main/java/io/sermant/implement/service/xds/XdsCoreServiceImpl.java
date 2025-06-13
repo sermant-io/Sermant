@@ -21,17 +21,20 @@ import io.sermant.core.service.xds.XdsCoreService;
 import io.sermant.core.service.xds.XdsFlowControlService;
 import io.sermant.core.service.xds.XdsLoadBalanceService;
 import io.sermant.core.service.xds.XdsRouteService;
+import io.sermant.core.service.xds.XdsSecurityService;
 import io.sermant.core.service.xds.XdsServiceDiscovery;
 import io.sermant.implement.service.xds.client.XdsClient;
 import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.discovery.XdsServiceDiscoveryImpl;
 import io.sermant.implement.service.xds.flowcontrol.XdsFlowControlServiceImpl;
 import io.sermant.implement.service.xds.handler.CdsHandler;
+import io.sermant.implement.service.xds.handler.CertificateManager;
 import io.sermant.implement.service.xds.handler.EdsHandler;
 import io.sermant.implement.service.xds.handler.LdsHandler;
 import io.sermant.implement.service.xds.handler.RdsHandler;
 import io.sermant.implement.service.xds.loadbalance.XdsLoadBalanceServiceImpl;
 import io.sermant.implement.service.xds.route.XdsRouteServiceImpl;
+import io.sermant.implement.service.xds.security.XdsSecurityServiceImpl;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -53,6 +56,8 @@ public class XdsCoreServiceImpl implements XdsCoreService {
     private XdsLoadBalanceService xdsLoadBalanceService;
 
     private XdsFlowControlService xdsFlowControlService;
+
+    private XdsSecurityService xdsSecurityService;
 
     private XdsClient client;
 
@@ -76,6 +81,10 @@ public class XdsCoreServiceImpl implements XdsCoreService {
         xdsRouteService = new XdsRouteServiceImpl();
         xdsLoadBalanceService = new XdsLoadBalanceServiceImpl();
         xdsFlowControlService = new XdsFlowControlServiceImpl();
+        xdsSecurityService = new XdsSecurityServiceImpl();
+
+        CertificateManager certificateManager = new CertificateManager();
+        certificateManager.generateCertificatePair();
     }
 
     @Override
@@ -105,5 +114,10 @@ public class XdsCoreServiceImpl implements XdsCoreService {
     @Override
     public XdsFlowControlService getXdsFlowControlService() {
         return xdsFlowControlService;
+    }
+
+    @Override
+    public XdsSecurityService getXdsSecurityService() {
+        return xdsSecurityService;
     }
 }

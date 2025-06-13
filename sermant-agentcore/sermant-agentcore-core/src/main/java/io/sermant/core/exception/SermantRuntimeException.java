@@ -40,4 +40,14 @@ public class SermantRuntimeException extends RuntimeException {
     public SermantRuntimeException(Throwable cause) {
         super(cause);
     }
+
+    /**
+     * Constructor
+     *
+     * @param message message
+     * @param cause The cause of the exception
+     */
+    public SermantRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

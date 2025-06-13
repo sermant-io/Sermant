@@ -52,4 +52,11 @@ public interface XdsCoreService extends BaseService {
      * @return XdsFlowControlService
      */
     XdsFlowControlService getXdsFlowControlService();
+
+    /**
+     * get XdsSecurityService
+     *
+     * @return XdsSecurityService
+     */
+    XdsSecurityService getXdsSecurityService();
 }

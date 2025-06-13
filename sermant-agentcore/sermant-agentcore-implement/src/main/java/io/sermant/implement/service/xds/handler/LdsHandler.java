@@ -32,6 +32,7 @@ import io.sermant.implement.service.xds.constants.XdsEnvConstant;
 import io.sermant.implement.service.xds.utils.LdsProtocolTransformer;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -55,8 +56,10 @@ public class LdsHandler extends XdsHandler<Listener> {
     @Override
     protected void handleResponse(String requestKey, DiscoveryResponse response) {
         Set<String> oldRouteResources = XdsDataCache.getRouteResources();
+        List<Listener> listeners = decodeResources(response, Listener.class);
+        XdsDataCache.updatePeerAuthenticationPolicy(LdsProtocolTransformer.updatePeerAuthenticationPolicy(listeners));
         XdsDataCache.updateHttpConnectionManagers(LdsProtocolTransformer
-                .getHttpConnectionManager(decodeResources(response, Listener.class)));
+                .getHttpConnectionManager(listeners));
 
         // send ack
         StreamObserver<DiscoveryRequest> requestObserver = XdsDataCache.getRequestObserver(requestKey);

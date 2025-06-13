@@ -24,6 +24,7 @@
         <okhttp.version>4.9.3</okhttp.version>
         <okhttp.sq.version>2.7.5</okhttp.sq.version>
         <jakarta.annotation-api.version>1.3.5</jakarta.annotation-api.version>
+        <bouncycastle.version>1.80</bouncycastle.version>
     </properties>
 
     <dependencies>
@@ -54,6 +55,11 @@
             <groupId>io.sermant</groupId>
             <artifactId>xds-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
         <!--Provided-->
         <dependency>
@@ -132,6 +138,18 @@
             </plugin>
             <plugin>
                 <artifactId>maven-shade-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
             </plugin>
         </plugins>
     </build>

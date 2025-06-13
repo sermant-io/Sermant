@@ -162,6 +162,11 @@ public interface ClassInjectDefine {
         LOAD_BALANCER_PLUGIN,
 
         /**
+         * XDS_PLUGIN
+         */
+        XDS_PLUGIN,
+
+        /**
          * ALL
          */
         ALL
