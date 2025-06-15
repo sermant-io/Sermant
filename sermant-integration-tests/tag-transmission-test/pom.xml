@@ -150,6 +150,7 @@
             <id>okhttp-test</id>
             <modules>
                 <module>okhttp-demo</module>
+                <module>okhttp34-demo</module>
             </modules>
         </profile>
         <profile>

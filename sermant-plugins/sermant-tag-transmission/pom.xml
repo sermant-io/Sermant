@@ -55,6 +55,7 @@
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
+                <module>tag-transmission-okhttp34-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -79,6 +80,7 @@
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
+                <module>tag-transmission-okhttp34-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -103,6 +105,7 @@
                 <module>tag-transmission-service</module>
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
+                <module>tag-transmission-okhttp34-plugin</module>
             </modules>
         </profile>
     </profiles>
