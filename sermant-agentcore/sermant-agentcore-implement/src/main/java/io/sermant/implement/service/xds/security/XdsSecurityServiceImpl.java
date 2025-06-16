@@ -18,6 +18,7 @@ package io.sermant.implement.service.xds.security;
 
 import io.sermant.core.service.xds.XdsSecurityService;
 import io.sermant.core.service.xds.entity.IstiodCertificate;
+import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
 import io.sermant.implement.service.xds.cache.XdsDataCache;
 
 /**
@@ -35,5 +36,10 @@ public class XdsSecurityServiceImpl implements XdsSecurityService {
     @Override
     public IstiodCertificate getIstiodCertificate() {
         return XdsDataCache.getIstiodCertificate();
+    }
+
+    @Override
+    public XdsAuthorizationRule getXdsAuthorizationRule() {
+        return XdsDataCache.getXdsAuthorizationRule();
     }
 }

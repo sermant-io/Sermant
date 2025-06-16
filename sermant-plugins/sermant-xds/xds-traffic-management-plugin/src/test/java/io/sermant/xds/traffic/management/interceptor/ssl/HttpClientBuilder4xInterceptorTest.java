@@ -64,14 +64,13 @@ public class HttpClientBuilder4xInterceptorTest {
     void setUp() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         xdsCoreService = mock(XdsCoreService.class);
         xdsSecurityService = mock(XdsSecurityService.class);
-        interceptor = new HttpClientBuilder4xInterceptor();
-
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(XdsCoreService.class))
                 .thenReturn(xdsCoreService);
         when(xdsCoreService.getXdsSecurityService()).thenReturn(xdsSecurityService);
         executeContext = mock(ExecuteContext.class);
         httpClientBuilder = mock(HttpClientBuilder.class);
+        interceptor = new HttpClientBuilder4xInterceptor();
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
         CertStoreCache.INSTANCE.updateTrustStore(keyStore);

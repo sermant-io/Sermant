@@ -45,6 +45,7 @@ import java.security.cert.CertificateException;
 
 import javax.net.ssl.SSLSocketFactory;
 
+
 public class OkHttpBuilder2InterceptorTest {
     private OkHttpBuilder2Interceptor interceptor;
 
@@ -62,13 +63,13 @@ public class OkHttpBuilder2InterceptorTest {
     void setUp() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         xdsCoreService = mock(XdsCoreService.class);
         xdsSecurityService = mock(XdsSecurityService.class);
-        interceptor = new OkHttpBuilder2Interceptor();
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(XdsCoreService.class))
                 .thenReturn(xdsCoreService);
         when(xdsCoreService.getXdsSecurityService()).thenReturn(xdsSecurityService);
         executeContext = mock(ExecuteContext.class);
         okHttpClient = mock(OkHttpClient.class);
+        interceptor = new OkHttpBuilder2Interceptor();
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
         CertStoreCache.INSTANCE.updateTrustStore(keyStore);

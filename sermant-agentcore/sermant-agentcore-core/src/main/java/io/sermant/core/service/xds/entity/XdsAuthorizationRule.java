@@ -14,36 +14,24 @@
  *   limitations under the License.
  */
 
-package io.sermant.core.service.xds;
+package io.sermant.core.service.xds.entity;
 
-import io.sermant.core.service.xds.entity.IstiodCertificate;
-import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
+import java.util.Map;
 
 /**
- * xds security service interface
+ * xDS Authorization Rule
  *
  * @author lilai
- * @since 2025-06-03
+ * @since 2025-06-14
  */
-public interface XdsSecurityService {
-    /**
-     * is Ssl Enabled
-     *
-     * @return result
-     */
-    boolean isSslEnabled();
+public class XdsAuthorizationRule {
+    private Map<String, XdsJwtRule> jwtRules;
 
-    /**
-     * get certificate from istiod
-     *
-     * @return IstiodCertificate
-     */
-    IstiodCertificate getIstiodCertificate();
+    public Map<String, XdsJwtRule> getJwtRules() {
+        return jwtRules;
+    }
 
-    /**
-     * get authorization rule
-     *
-     * @return XdsAuthorizationRule
-     */
-    XdsAuthorizationRule getXdsAuthorizationRule();
+    public void setJwtRules(Map<String, XdsJwtRule> jwtRules) {
+        this.jwtRules = jwtRules;
+    }
 }

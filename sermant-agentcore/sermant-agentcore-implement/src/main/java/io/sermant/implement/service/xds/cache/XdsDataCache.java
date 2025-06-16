@@ -20,6 +20,7 @@ import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.grpc.stub.StreamObserver;
 import io.sermant.core.service.xds.entity.IstiodCertificate;
 import io.sermant.core.service.xds.entity.ServiceInstance;
+import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
 import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsHttpConnectionManager;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
@@ -52,8 +53,7 @@ public class XdsDataCache {
     /**
      * key:service name value:instances
      */
-    private static final Map<String, XdsServiceClusterLoadAssigment> SERVICE_INSTANCES =
-            new ConcurrentHashMap<>();
+    private static final Map<String, XdsServiceClusterLoadAssigment> SERVICE_INSTANCES = new ConcurrentHashMap<>();
 
     /**
      * key:service name value:listener list
@@ -101,6 +101,8 @@ public class XdsDataCache {
      */
     private static XdsPeerAuthenticationPolicy peerAuthenticationPolicy;
 
+    private static XdsAuthorizationRule xdsAuthorizationRule;
+
     private XdsDataCache() {
     }
 
@@ -136,8 +138,7 @@ public class XdsDataCache {
      * @param clusterName cluster name
      * @return ServiceInstance
      */
-    public static Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String serviceName,
-            String clusterName) {
+    public static Optional<XdsClusterLoadAssigment> getClusterServiceInstance(String serviceName, String clusterName) {
         XdsServiceClusterLoadAssigment serviceClusterInstance = SERVICE_INSTANCES.get(serviceName);
         if (serviceClusterInstance == null) {
             return Optional.empty();
@@ -161,8 +162,7 @@ public class XdsDataCache {
      * @param listener listener
      */
     public static void addServiceDiscoveryListener(String serviceName, XdsServiceDiscoveryListener listener) {
-        SERVICE_DISCOVER_LISTENER.computeIfAbsent(serviceName, value -> new ArrayList<>())
-                .add(listener);
+        SERVICE_DISCOVER_LISTENER.computeIfAbsent(serviceName, value -> new ArrayList<>()).add(listener);
     }
 
     /**
@@ -287,8 +287,7 @@ public class XdsDataCache {
      * @return RouteConfig names
      */
     public static Set<String> getRouteResources() {
-        return httpConnectionManagers.stream()
-                .map(XdsHttpConnectionManager::getRouteConfigName)
+        return httpConnectionManagers.stream().map(XdsHttpConnectionManager::getRouteConfigName)
                 .collect(Collectors.toSet());
     }
 
@@ -427,5 +426,18 @@ public class XdsDataCache {
         }
 
         return false;
+    }
+
+    public static XdsAuthorizationRule getXdsAuthorizationRule() {
+        return xdsAuthorizationRule;
+    }
+
+    /**
+     * update xDS authorization rule
+     *
+     * @param rule
+     */
+    public static void updateXdsAuthorizationRule(XdsAuthorizationRule rule) {
+        xdsAuthorizationRule = rule;
     }
 }
