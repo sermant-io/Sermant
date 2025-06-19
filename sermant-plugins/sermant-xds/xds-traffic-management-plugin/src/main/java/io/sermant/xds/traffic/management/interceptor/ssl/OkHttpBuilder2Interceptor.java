@@ -42,6 +42,9 @@ import javax.net.ssl.TrustManagerFactory;
 public class OkHttpBuilder2Interceptor extends AbstractInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
+    private XdsSecurityService xdsSecurityService = ServiceManager.getService(XdsCoreService.class)
+            .getXdsSecurityService();
+
     @Override
     public ExecuteContext before(ExecuteContext context) throws Exception {
         return context;
@@ -50,7 +53,7 @@ public class OkHttpBuilder2Interceptor extends AbstractInterceptor {
     @Override
     public ExecuteContext after(ExecuteContext context)
             throws Exception {
-        XdsSecurityService xdsSecurityService = ServiceManager.getService(XdsCoreService.class).getXdsSecurityService();
+
         if (!xdsSecurityService.isSslEnabled()) {
             return context;
         }

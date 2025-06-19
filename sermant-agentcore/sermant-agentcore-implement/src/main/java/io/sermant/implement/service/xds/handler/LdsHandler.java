@@ -57,7 +57,8 @@ public class LdsHandler extends XdsHandler<Listener> {
     protected void handleResponse(String requestKey, DiscoveryResponse response) {
         Set<String> oldRouteResources = XdsDataCache.getRouteResources();
         List<Listener> listeners = decodeResources(response, Listener.class);
-        XdsDataCache.updatePeerAuthenticationPolicy(LdsProtocolTransformer.updatePeerAuthenticationPolicy(listeners));
+        LdsProtocolTransformer.resolvePeerAuthenticationPolicy(listeners);
+        LdsProtocolTransformer.resolveAuthorizationRule(listeners);
         XdsDataCache.updateHttpConnectionManagers(LdsProtocolTransformer
                 .getHttpConnectionManager(listeners));
 

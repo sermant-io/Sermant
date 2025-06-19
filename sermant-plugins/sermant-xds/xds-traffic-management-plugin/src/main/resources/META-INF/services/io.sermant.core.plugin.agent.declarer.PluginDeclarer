@@ -27,3 +27,5 @@ io.sermant.xds.traffic.management.declarer.ssl.HttpClientBuilder4xDeclarer
 io.sermant.xds.traffic.management.declarer.ssl.OkHttpBuilder2Declarer
 io.sermant.xds.traffic.management.declarer.ssl.OkHttpBuilder3Declarer
 io.sermant.xds.traffic.management.declarer.SpringFactoriesDeclarer
+
+io.sermant.xds.traffic.management.declarer.HandlerExecutionChainDeclarer

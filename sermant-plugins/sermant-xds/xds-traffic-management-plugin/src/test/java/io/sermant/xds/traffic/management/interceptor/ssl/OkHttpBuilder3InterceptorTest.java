@@ -61,13 +61,13 @@ public class OkHttpBuilder3InterceptorTest {
     void setUp() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
         xdsCoreService = mock(XdsCoreService.class);
         xdsSecurityService = mock(XdsSecurityService.class);
-        interceptor = new OkHttpBuilder3Interceptor();
         serviceManagerMockedStatic = Mockito.mockStatic(ServiceManager.class);
         serviceManagerMockedStatic.when(() -> ServiceManager.getService(XdsCoreService.class))
                 .thenReturn(xdsCoreService);
         when(xdsCoreService.getXdsSecurityService()).thenReturn(xdsSecurityService);
         executeContext = mock(ExecuteContext.class);
         builder = mock(okhttp3.OkHttpClient.Builder.class);
+        interceptor = new OkHttpBuilder3Interceptor();
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
         keyStore.load(null, null);
         CertStoreCache.INSTANCE.updateTrustStore(keyStore);
