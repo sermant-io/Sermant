@@ -312,6 +312,25 @@ runs:
       run: |
         echo "httpclientV4TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV4.outputs.changed }}" >> $GITHUB_ENV
     - uses: ktamas77/has-changed-path@v1.0.3
+      id: changed-tag-transmission-httpclientV5
+      with:
+        paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
+          sermant-plugins/sermant-tag-transmission/tag-transmission-crossthread-plugin
+          sermant-plugins/sermant-tag-transmission/tag-transmission-service
+          sermant-plugins/sermant-tag-transmission/tag-transmission-httpclient5.x-plugin
+          sermant-plugins/sermant-tag-transmission/config
+          sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test
+          sermant-integration-tests/tag-transmission-test/tag-transmission-util-demo
+          sermant-integration-tests/tag-transmission-test/httpclientv5-demo
+          sermant-integration-tests/tag-transmission-test/httpserver-common-demo
+          ./.github/workflows/tagtransmission_integration_test.yml
+          ./.github/actions/common/tag-transmission
+          ./.github/actions/scenarios/tag-transmission/httpclientv5
+    - name: env tag-transmission-httpclientV5
+      shell: bash
+      run: |
+        echo "httpclientV4TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV5.outputs.changed }}" >> $GITHUB_ENV
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-jdkhttp-tomcat
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -904,6 +923,13 @@ runs:
             ${{ env.sermantAgentCoreChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
          echo "enableHttpclientV4TagTransmissionAction=true" >> $GITHUB_ENV
+        fi
+
+        # ==========httpclientV5 Tag Transmission is needed to test?==========
+        if [ ${{ env.httpclientV5TagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableHttpclientV5TagTransmissionAction=true" >> $GITHUB_ENV
         fi
 
         # ==========tomcat Tag Transmission is needed to test?==========

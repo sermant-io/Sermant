@@ -35,6 +35,7 @@ jobs:
         run: |
           echo "enableHttpclientV3TagTransmissionAction=${{env.enableHttpclientV3TagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableHttpclientV4TagTransmissionAction=${{env.enableHttpclientV4TagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableHttpclientV5TagTransmissionAction=${{env.enableHttpclientV5TagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableOkhttpTagTransmissionAction=${{env.enableOkhttpTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableGrpcTagTransmissionAction=${{env.enableGrpcTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableSofarpcTagTransmissionAction=${{env.enableSofarpcTagTransmissionAction}}" >> $GITHUB_OUTPUT
@@ -192,6 +193,30 @@ jobs:
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for httpClientVersion=${{ matrix.httpClientVersion }}
         uses: ./.github/actions/scenarios/tag-transmission/httpclientv4
+  test-for-tag-transmission-httpclientv5:
+    name: Test for tag transmission httpclientv5
+    runs-on: ubuntu-latest
+    if: needs.set-execution-conditions.outputs.enableHttpclientV4TagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - httpClientVersion: "5.2.1"
+          - httpClientVersion: "5.3.1"
+          - httpClientVersion: "5.4.4"
+          - httpClientVersion: "5.5"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/tag-transmission
+      - name: tag transmission test for httpClientVersion=${{ matrix.httpClientVersion }}
+        uses: ./.github/actions/scenarios/tag-transmission/httpclientv5
   test-for-tag-transmission-okhttp:
     name: Test for tag transmission okhttp
     runs-on: ubuntu-latest

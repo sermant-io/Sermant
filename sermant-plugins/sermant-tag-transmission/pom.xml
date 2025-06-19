@@ -38,6 +38,7 @@
             <modules>
                 <module>tag-transmission-rocketmq5.x-plugin</module>
                 <module>tag-transmission-common</module>
+                <module>tag-transmission-httpclient5.x-plugin</module>
                 <module>tag-transmission-httpclient4.x-plugin</module>
                 <module>tag-transmission-httpclient3.x-plugin</module>
                 <module>tag-transmission-crossthread-plugin</module>
@@ -63,6 +64,7 @@
             <modules>
                 <module>tag-transmission-rocketmq5.x-plugin</module>
                 <module>tag-transmission-common</module>
+                <module>tag-transmission-httpclient5.x-plugin</module>
                 <module>tag-transmission-httpclient4.x-plugin</module>
                 <module>tag-transmission-httpclient3.x-plugin</module>
                 <module>tag-transmission-crossthread-plugin</module>
@@ -88,6 +90,7 @@
             <modules>
                 <module>tag-transmission-rocketmq5.x-plugin</module>
                 <module>tag-transmission-common</module>
+                <module>tag-transmission-httpclient5.x-plugin</module>
                 <module>tag-transmission-httpclient4.x-plugin</module>
                 <module>tag-transmission-httpclient3.x-plugin</module>
                 <module>tag-transmission-crossthread-plugin</module>

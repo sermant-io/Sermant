@@ -8,8 +8,9 @@
 logs
 
 # build artifacts
-sermant-agent-*
+sermant-agent*
 target/
 node_modules/
 node/
 sermant-integration-tests/tag-transmission-test/grpc-api-demo/src/main/java/io/sermant/demo/tagtransmission/grpc/api
+sermant-*.tar.gz
