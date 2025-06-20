@@ -105,14 +105,14 @@ jobs:
       - name: cache rocketmq
         uses: actions/cache@v4
         with:
-          path: rocketmq-all-4.8.0-bin-release.zip
-          key: ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+          path: rocketmq-all-5.1.4-bin-release.zip
+          key: ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
           restore-keys: |
-            ${{ runner.os }}-rocketmq-all-4.8.0-bin-release
+            ${{ runner.os }}-rocketmq-all-5.1.4-bin-release
       - name: download rocketmq
         run: |
           export ROOT_PATH=$(pwd)
-          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq
+          bash ./sermant-integration-tests/scripts/tryDownloadMidware.sh rocketmq514
       - name: cache kafka
         uses: actions/cache@v4
         with:

@@ -27,6 +27,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,26 @@ public class NetworkUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger();
 
     private static final String LOCAL_HOST_IP = "127.0.0.1";
+
+    private static final int IP_OCTET_COUNT = 4;
+
+    private static final int MAX_OCTET_VALUE = 255;
+
+    private static final int MIN_OCTET_VALUE = 0;
+
+    private static final int OCTET_SHIFT_24 = 24;
+
+    private static final int OCTET_SHIFT_16 = 16;
+
+    private static final int OCTET_SHIFT_8 = 8;
+
+    private static final int PART_0 = 0;
+
+    private static final int PART_1 = 1;
+
+    private static final int PART_2 = 2;
+
+    private static final int PART_3 = 3;
 
     private NetworkUtils() {
     }
@@ -164,5 +185,42 @@ public class NetworkUtils {
             }
         }
         return StringUtils.EMPTY;
+    }
+
+    /**
+     * Convert dotted decimal IP address to 32-bit binary string
+     *
+     * @param ipAddress Dotted decimal IP address
+     * @return 32-bit binary IP string, returns empty string for invalid IP
+     */
+    public static String convertIpToBinaryString(String ipAddress) {
+        if (StringUtils.isEmpty(ipAddress)) {
+            LOGGER.warning("Input IP address is empty");
+            return "";
+        }
+
+        try {
+            String[] octets = ipAddress.split("\\.");
+            if (octets.length != IP_OCTET_COUNT) {
+                LOGGER.warning("Invalid IP address format: " + ipAddress);
+                return "";
+            }
+
+            long[] ipParts = new long[IP_OCTET_COUNT];
+            for (int i = 0; i < IP_OCTET_COUNT; ++i) {
+                ipParts[i] = Long.parseLong(octets[i]);
+                if (ipParts[i] < MIN_OCTET_VALUE || ipParts[i] > MAX_OCTET_VALUE) {
+                    LOGGER.warning("Invalid IP octet value: " + ipAddress);
+                    return "";
+                }
+            }
+
+            long ipLongValue = (ipParts[PART_0] << OCTET_SHIFT_24) + (ipParts[PART_1] << OCTET_SHIFT_16)
+                    + (ipParts[PART_2] << OCTET_SHIFT_8) + ipParts[PART_3];
+            return String.format(Locale.ENGLISH, "%32s", Long.toBinaryString(ipLongValue)).replace(" ", "0");
+        } catch (NumberFormatException e) {
+            LOGGER.warning("Invalid IP address format: " + ipAddress);
+            return "";
+        }
     }
 }

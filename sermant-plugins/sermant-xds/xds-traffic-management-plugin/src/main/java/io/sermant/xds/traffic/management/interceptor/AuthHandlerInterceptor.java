@@ -19,7 +19,7 @@ package io.sermant.xds.traffic.management.interceptor;
 import io.sermant.core.service.ServiceManager;
 import io.sermant.core.service.xds.XdsCoreService;
 import io.sermant.core.service.xds.XdsSecurityService;
-import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
+import io.sermant.core.service.xds.entity.XdsSecurityRule;
 import io.sermant.xds.traffic.management.authorization.AuthorizationValidator;
 import io.sermant.xds.traffic.management.entity.HttpRequestEntity;
 
@@ -53,7 +53,7 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
         entity.setRemoteIp(AuthorizationValidator.getRemoteIpAddress(request));
         entity.setSourceIp(request.getRemoteAddr());
 
-        XdsAuthorizationRule rule = xdsSecurityService.getXdsAuthorizationRule();
+        XdsSecurityRule rule = xdsSecurityService.getXdsSecurityRule();
 
         boolean idForbidden = AuthorizationValidator.validate(entity, rule);
         if (!idForbidden) {
