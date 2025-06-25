@@ -23,11 +23,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import io.sermant.core.service.xds.entity.XdsJwtRule;
+import io.sermant.core.service.xds.entity.match.XdsAuthorizationMatcher;
 
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.NumericDate;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +36,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -56,10 +57,8 @@ public class AuthorizationValidatorTest {
     @Mock
     private HttpServletRequest request;
 
-    @Before
-    public void setUp() {
-
-    }
+    @Mock
+    private XdsAuthorizationMatcher<String> matcher;
 
     /**
      * Test validate JwtRule with null jwtClaims.
@@ -334,7 +333,7 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试null请求情况
+     * Test the null request situation
      */
     @Test
     public void testGetParamsWithNullRequest() {
@@ -343,11 +342,10 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试无参数请求情况
+     * Test the case where there are no parameter requests
      */
     @Test
     public void testGetParamsWithNoParameters() {
-        // 模拟无参数情况
         when(request.getParameterNames()).thenReturn(new Vector<String>().elements());
 
         Map<String, List<String>> result = AuthorizationValidator.getParams(request);
@@ -355,16 +353,14 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试单参数单值情况
+     * Test the single-parameter single-value situation
      */
     @Test
     public void testGetParamsWithSingleParameterSingleValue() {
-        // 模拟参数名枚举
         Vector<String> paramNames = new Vector<>();
         paramNames.add("param1");
         Enumeration<String> enumeration = paramNames.elements();
 
-        // 模拟请求行为
         when(request.getParameterNames()).thenReturn(enumeration);
         when(request.getParameterValues("param1")).thenReturn(new String[]{"value1"});
 
@@ -375,16 +371,14 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试单参数多值情况
+     * Test the multi-value case of a single parameter
      */
     @Test
     public void testGetParamsWithSingleParameterMultipleValues() {
-        // 模拟参数名枚举
         Vector<String> paramNames = new Vector<>();
         paramNames.add("param1");
         Enumeration<String> enumeration = paramNames.elements();
 
-        // 模拟请求行为
         when(request.getParameterNames()).thenReturn(enumeration);
         when(request.getParameterValues("param1")).thenReturn(new String[]{"value1", "value2"});
 
@@ -395,17 +389,15 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试多参数情况
+     * Test multi-parameter cases
      */
     @Test
     public void testGetParamsWithMultipleParameters() {
-        // 模拟参数名枚举
         Vector<String> paramNames = new Vector<>();
         paramNames.add("param1");
         paramNames.add("param2");
         Enumeration<String> enumeration = paramNames.elements();
 
-        // 模拟请求行为
         when(request.getParameterNames()).thenReturn(enumeration);
         when(request.getParameterValues("param1")).thenReturn(new String[]{"value1"});
         when(request.getParameterValues("param2")).thenReturn(new String[]{"value2", "value3"});
@@ -418,16 +410,14 @@ public class AuthorizationValidatorTest {
     }
 
     /**
-     * 测试参数值为null的情况
+     * Test parameter value is null
      */
     @Test
     public void testGetParamsWithNullParameterValues() {
-        // 模拟参数名枚举
         Vector<String> paramNames = new Vector<>();
         paramNames.add("param1");
         Enumeration<String> enumeration = paramNames.elements();
 
-        // 模拟请求行为
         when(request.getParameterNames()).thenReturn(enumeration);
         when(request.getParameterValues("param1")).thenReturn(null);
 
@@ -435,5 +425,107 @@ public class AuthorizationValidatorTest {
 
         assertEquals(0, result.size());
         assertNull(result.get("param1"));
+    }
+
+    /**
+     * Test the matchHeaders method - if the headers are null
+     */
+    @Test
+    public void testMatchHeadersWithNullHeaders() {
+        assertFalse(AuthorizationValidator.matchHeaders(matcher, "testKey", null));
+    }
+
+    /**
+     * Test the matchHeaders method - headers do not contain keys
+     */
+    @Test
+    public void testMatchHeadersWithKeyNotExist() {
+        Map<String, List<String>> headers = new HashMap<>();
+        headers.put("otherKey", Collections.singletonList("value"));
+        assertFalse(AuthorizationValidator.matchHeaders(matcher, "testKey", headers));
+    }
+
+    /**
+     * Test the matchHeaders method - If the headers contain a key but the value is null
+     */
+    @Test
+    public void testMatchHeadersWithNullValueList() {
+        Map<String, List<String>> headers = new HashMap<>();
+        headers.put("testKey", null);
+        assertFalse(AuthorizationValidator.matchHeaders(matcher, "testKey", headers));
+    }
+
+    /**
+     * Test the matchHeaders method - headers contain a key and the value list is not empty, but there are no matches
+     */
+    @Test
+    public void testMatchHeadersWithNoMatch() {
+        Map<String, List<String>> headers = new HashMap<>();
+        headers.put("testKey", Arrays.asList("value1", "value2"));
+        when(matcher.match("value1")).thenReturn(false);
+        when(matcher.match("value2")).thenReturn(false);
+        assertFalse(AuthorizationValidator.matchHeaders(matcher, "testKey", headers));
+    }
+
+    /**
+     * Test the matchHeaders method - headers contain a key and the value list is not empty, if there are matches
+     */
+    @Test
+    public void testMatchHeadersWithMatch() {
+        Map<String, List<String>> headers = new HashMap<>();
+        headers.put("testKey", Arrays.asList("value1", "value2"));
+        when(matcher.match("value1")).thenReturn(false);
+        when(matcher.match("value2")).thenReturn(true);
+        assertTrue(AuthorizationValidator.matchHeaders(matcher, "testKey", headers));
+    }
+
+    /**
+     * Test the matchClaimValue method - If the claim value is a list of strings and there are matches
+     */
+    @Test
+    public void testMatchClaimValueWithListAndMatch() throws MalformedClaimException {
+        String key = "testKey";
+        when(jwtClaims.getClaimValue(key)).thenReturn(Arrays.asList("value1", "value2"));
+        when(jwtClaims.getStringListClaimValue(key)).thenReturn(Arrays.asList("value1", "value2"));
+        when(matcher.match("value1")).thenReturn(false);
+        when(matcher.match("value2")).thenReturn(true);
+        assertTrue(AuthorizationValidator.matchClaimValue(matcher, key, jwtClaims));
+    }
+
+    /**
+     * Test the matchClaimValue method - If the claim value is a list of strings and there is no match
+     */
+    @Test
+    public void testMatchClaimValueWithListAndNoMatch() throws MalformedClaimException {
+        String key = "testKey";
+        when(jwtClaims.getClaimValue(key)).thenReturn(Arrays.asList("value1", "value2"));
+        when(jwtClaims.getStringListClaimValue(key)).thenReturn(Arrays.asList("value1", "value2"));
+        when(matcher.match("value1")).thenReturn(false);
+        when(matcher.match("value2")).thenReturn(false);
+        assertFalse(AuthorizationValidator.matchClaimValue(matcher, key, jwtClaims));
+    }
+
+    /**
+     * Test the matchClaimValue method - If the claim value is a single string and matches
+     */
+    @Test
+    public void testMatchClaimValueWithSingleStringAndMatch() throws MalformedClaimException {
+        String key = "testKey";
+        when(jwtClaims.getClaimValue(key)).thenReturn("value");
+        when(jwtClaims.getStringClaimValue(key)).thenReturn("value");
+        when(matcher.match("value")).thenReturn(true);
+        assertTrue(AuthorizationValidator.matchClaimValue(matcher, key, jwtClaims));
+    }
+
+    /**
+     * Test the matchClaimValue method - where the claim value is a single string and does not match
+     */
+    @Test
+    public void testMatchClaimValueWithSingleStringAndNoMatch() throws MalformedClaimException {
+        String key = "testKey";
+        when(jwtClaims.getClaimValue(key)).thenReturn("value");
+        when(jwtClaims.getStringClaimValue(key)).thenReturn("value");
+        when(matcher.match("value")).thenReturn(false);
+        assertFalse(AuthorizationValidator.matchClaimValue(matcher, key, jwtClaims));
     }
 }

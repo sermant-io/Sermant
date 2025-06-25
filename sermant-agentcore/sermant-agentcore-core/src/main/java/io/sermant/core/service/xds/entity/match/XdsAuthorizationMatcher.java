@@ -14,36 +14,21 @@
  *   limitations under the License.
  */
 
-package io.sermant.core.service.xds;
-
-import io.sermant.core.service.xds.entity.IstiodCertificate;
-import io.sermant.core.service.xds.entity.XdsSecurityRule;
+package io.sermant.core.service.xds.entity.match;
 
 /**
- * xds security service interface
+ * Generic interface for XDS authorization matchers. Defines the contract for matching objects of type T against
+ * authorization criteria.
  *
- * @author lilai
- * @since 2025-06-03
+ * @param <T> the type of objects this matcher can match against
+ * @since 2025-06-17
  */
-public interface XdsSecurityService {
+public interface XdsAuthorizationMatcher<T> {
     /**
-     * is Ssl Enabled
+     * Matches the given object against the authorization criteria.
      *
-     * @return result
+     * @param obj the object to be matched
+     * @return true if the object matches the criteria, false otherwise
      */
-    boolean isSslEnabled();
-
-    /**
-     * get certificate from istiod
-     *
-     * @return IstiodCertificate
-     */
-    IstiodCertificate getIstiodCertificate();
-
-    /**
-     * get authorization rule
-     *
-     * @return XdsAuthorizationRule
-     */
-    XdsSecurityRule getXdsSecurityRule();
+    boolean match(T obj);
 }

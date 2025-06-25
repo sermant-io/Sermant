@@ -19,6 +19,7 @@ package io.sermant.flowcontrol.common.config;
 
 import io.sermant.core.config.common.ConfigFieldKey;
 import io.sermant.core.config.common.ConfigTypeKey;
+import io.sermant.core.plugin.PluginManager;
 import io.sermant.core.plugin.config.PluginConfig;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class XdsFlowControlConfig implements PluginConfig {
     }
 
     public boolean isEnable() {
-        return enable;
+        return enable && (PluginManager.getPluginMap().get("xds") == null);
     }
 
     public void setEnable(boolean enable) {

@@ -20,13 +20,13 @@ import io.envoyproxy.envoy.service.discovery.v3.DiscoveryRequest;
 import io.grpc.stub.StreamObserver;
 import io.sermant.core.service.xds.entity.IstiodCertificate;
 import io.sermant.core.service.xds.entity.ServiceInstance;
-import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
 import io.sermant.core.service.xds.entity.XdsClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsHttpConnectionManager;
 import io.sermant.core.service.xds.entity.XdsLbPolicy;
 import io.sermant.core.service.xds.entity.XdsPeerAuthenticationPolicy;
 import io.sermant.core.service.xds.entity.XdsRoute;
 import io.sermant.core.service.xds.entity.XdsRouteConfiguration;
+import io.sermant.core.service.xds.entity.XdsSecurityRule;
 import io.sermant.core.service.xds.entity.XdsServiceCluster;
 import io.sermant.core.service.xds.entity.XdsServiceClusterLoadAssigment;
 import io.sermant.core.service.xds.entity.XdsVirtualHost;
@@ -101,7 +101,7 @@ public class XdsDataCache {
      */
     private static XdsPeerAuthenticationPolicy peerAuthenticationPolicy;
 
-    private static XdsAuthorizationRule xdsAuthorizationRule;
+    private static XdsSecurityRule xdsSecurityRule;
 
     private XdsDataCache() {
     }
@@ -428,8 +428,8 @@ public class XdsDataCache {
         return false;
     }
 
-    public static XdsAuthorizationRule getXdsAuthorizationRule() {
-        return xdsAuthorizationRule;
+    public static XdsSecurityRule getXdsSecurityRule() {
+        return xdsSecurityRule;
     }
 
     /**
@@ -437,7 +437,7 @@ public class XdsDataCache {
      *
      * @param rule
      */
-    public static void updateXdsAuthorizationRule(XdsAuthorizationRule rule) {
-        xdsAuthorizationRule = rule;
+    public static void updateXdsSecurityRule(XdsSecurityRule rule) {
+        xdsSecurityRule = rule;
     }
 }

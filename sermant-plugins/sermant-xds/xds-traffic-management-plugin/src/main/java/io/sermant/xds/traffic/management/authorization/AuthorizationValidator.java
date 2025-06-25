@@ -22,8 +22,11 @@
 package io.sermant.xds.traffic.management.authorization;
 
 import io.sermant.core.common.LoggerFactory;
+import io.sermant.core.service.xds.entity.XdsAuthCondition;
 import io.sermant.core.service.xds.entity.XdsAuthorizationRule;
 import io.sermant.core.service.xds.entity.XdsJwtRule;
+import io.sermant.core.service.xds.entity.XdsSecurityRule;
+import io.sermant.core.service.xds.entity.match.XdsAuthorizationMatcher;
 import io.sermant.core.utils.CollectionUtils;
 import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.StringUtils;
@@ -57,7 +60,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Authorization validator, used to validate authorization for http request and jwt token.
  *
- * @author lilai
  * @since 2025-06-14
  */
 public class AuthorizationValidator {
@@ -81,7 +83,7 @@ public class AuthorizationValidator {
      * @param rule XdsAuthorizationRule
      * @return validate result
      */
-    public static boolean validate(HttpRequestEntity request, XdsAuthorizationRule rule) {
+    public static boolean validate(HttpRequestEntity request, XdsSecurityRule rule) {
         if (request == null) {
             return false;
         }
@@ -90,25 +92,48 @@ public class AuthorizationValidator {
         }
 
         Map<String, XdsJwtRule> jwtRules = rule.getJwtRules();
-        if (jwtRules == null || jwtRules.isEmpty()) {
+
+        if (!MapUtils.isEmpty(jwtRules)) {
+            boolean hasNoToken = true;
+            for (XdsJwtRule jwtRule : jwtRules.values()) {
+                String token = getTokenFromJwtRule(request.getParams(), request.getHeaders(), jwtRule);
+                if (!StringUtils.isEmpty(token)) {
+                    hasNoToken = false;
+                    Optional<JwtClaims> jwtClaims = extractJwtClaims(jwtRule.getJwks(), token);
+                    if (!jwtClaims.isPresent()) {
+                        return false;
+                    }
+                    if (!validateJwtRule(jwtRule, jwtClaims.get())) {
+                        return false;
+                    }
+                    request.setJwtClaims(jwtClaims.get());
+                    break;
+                }
+            }
+            if (hasNoToken) {
+                return false;
+            }
+        }
+
+        Map<String, XdsAuthorizationRule> denyRules = rule.getDenyRules();
+        for (XdsAuthorizationRule denyRule : denyRules.values()) {
+            if (validateAuthRule(denyRule, request)) {
+                return false;
+            }
+        }
+
+        Map<String, XdsAuthorizationRule> allowRules = rule.getAllowRules();
+
+        if (MapUtils.isEmpty(allowRules)) {
             return true;
         }
 
-        for (XdsJwtRule jwtRule : jwtRules.values()) {
-            String token = getTokenFromJwtRule(request.getParams(), request.getHeaders(), jwtRule);
-            if (!StringUtils.isEmpty(token)) {
-                Optional<JwtClaims> jwtClaims = extractJwtClaims(jwtRule.getJwks(), token);
-                if (!jwtClaims.isPresent()) {
-                    return false;
-                }
-                if (!validateJwtRule(jwtRule, jwtClaims.get())) {
-                    return false;
-                }
-                request.setJwtClaims(jwtClaims.get());
-                break;
+        for (XdsAuthorizationRule allowRule : allowRules.values()) {
+            if (validateAuthRule(allowRule, request)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -343,5 +368,90 @@ public class AuthorizationValidator {
                 jsonWebKeySet.getJsonWebKeys());
         jwtConsumerBuilder.setVerificationKeyResolver(jwksResolver);
         return jwtConsumerBuilder.build();
+    }
+
+    private static boolean validateAuthRule(XdsAuthorizationRule authRule, HttpRequestEntity request) {
+        if (authRule.isLeaf()) {
+            return validateLeafAuthRule(authRule, request);
+        }
+        List<XdsAuthorizationRule> ruleChildren = authRule.getChildren();
+        boolean res = authRule.getChildChainType() == XdsAuthorizationRule.ChildChainType.AND;
+        for (XdsAuthorizationRule ruleChild : ruleChildren) {
+            boolean childRes = validateAuthRule(ruleChild, request);
+            if (!childRes && authRule.getChildChainType() == XdsAuthorizationRule.ChildChainType.AND) {
+                res = false;
+                break;
+            }
+            if (childRes && authRule.getChildChainType() == XdsAuthorizationRule.ChildChainType.OR) {
+                res = true;
+                break;
+            }
+        }
+        return authRule.isNot() ? !res : res;
+    }
+
+    private static boolean validateLeafAuthRule(XdsAuthorizationRule rule, HttpRequestEntity request) {
+        XdsAuthCondition condition = rule.getCondition();
+        XdsAuthorizationMatcher matcher = condition.getMatcher();
+        String key = condition.getKey();
+        if (matcher == null) {
+            return false;
+        }
+
+        JwtClaims claims = request.getJwtClaims();
+        try {
+            switch (condition.getAuthType()) {
+                case SOURCE_IP:
+                    return matcher.match(request.getSourceIp());
+                case REMOTE_IP:
+                    return matcher.match(request.getRemoteIp());
+                case DESTINATION_IP:
+                    return matcher.match(request.getDestIp());
+                case HOSTS:
+                    return matcher.match(request.getHost());
+                case METHODS:
+                    return matcher.match(request.getMethod());
+                case URL_PATH:
+                    return matcher.match(request.getPath());
+                case DESTINATION_PORT:
+                    return matcher.match(request.getPort());
+                case REQUEST_HEADERS:
+                    return matchHeaders(matcher, key, request.getHeaders());
+                case CONNECTION_SNI:
+                    return matcher.match(request.getSni());
+                case REQUEST_AUTH_PRINCIPAL:
+                    return claims != null && matcher.match(claims.getIssuer() + "/" + claims.getSubject());
+                case REQUEST_AUTH_AUDIENCES:
+                    return claims != null && claims.getAudience().stream().anyMatch(matcher::match);
+                case REQUEST_AUTH_PRESENTERS:
+                    return claims != null && matcher.match(
+                            Optional.ofNullable(claims.getClaimValueAsString("azp")).orElse(""));
+                case REQUEST_AUTH_CLAIMS:
+                    return claims != null && matchClaimValue(matcher, key, claims);
+                default:
+                    return false;
+            }
+        } catch (MalformedClaimException e) {
+            LOGGER.warning("Parse JWT Claim failed : " + e.getMessage());
+        }
+        return false;
+    }
+
+    static boolean matchHeaders(XdsAuthorizationMatcher matcher, String key,
+            Map<String, List<String>> headers) {
+        if (headers == null || !headers.containsKey(key)) {
+            return false;
+        }
+        List<String> headerList = headers.get(key);
+        return headerList != null && headerList.stream().anyMatch(matcher::match);
+    }
+
+    static boolean matchClaimValue(XdsAuthorizationMatcher matcher, String key, JwtClaims claims)
+            throws MalformedClaimException {
+        Object claimValue = claims.getClaimValue(key);
+        if (claimValue instanceof List) {
+            return claims.getStringListClaimValue(key).stream().anyMatch(matcher::match);
+        }
+        return matcher.match(claims.getStringClaimValue(key));
     }
 }

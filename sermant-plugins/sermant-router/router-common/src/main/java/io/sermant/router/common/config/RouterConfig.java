@@ -19,6 +19,7 @@ package io.sermant.router.common.config;
 import io.sermant.core.config.ConfigManager;
 import io.sermant.core.config.common.ConfigFieldKey;
 import io.sermant.core.config.common.ConfigTypeKey;
+import io.sermant.core.plugin.PluginManager;
 import io.sermant.core.plugin.config.PluginConfig;
 import io.sermant.core.plugin.config.ServiceMeta;
 import io.sermant.router.common.constants.RouterConstant;
@@ -217,7 +218,7 @@ public class RouterConfig implements PluginConfig {
     }
 
     public boolean isEnabledXdsRoute() {
-        return enabledXdsRoute;
+        return enabledXdsRoute && (PluginManager.getPluginMap().get("xds") == null);
     }
 
     public void setEnabledXdsRoute(boolean enabledXdsRoute) {
