@@ -32,7 +32,6 @@ import java.util.Map;
 /**
  * traffic label transparent ut basic test class
  *
- * @author tangle
  * @since 2025-05-30
  */
 public class BaseInterceptorTest {
