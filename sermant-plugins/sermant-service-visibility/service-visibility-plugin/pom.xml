@@ -20,7 +20,7 @@
         <spring-boot.version>2.3.4.RELEASE</spring-boot.version>
         <spring-cloud.version>2.2.1.RELEASE</spring-cloud.version>
         <ribbon.version>2.3.0</ribbon.version>
-        <dubbo.version>2.7.15</dubbo.version>
+        <dubbo.version>2.7.23</dubbo.version>
         <reactor.version>3.4.22</reactor.version>
         <alibaba.dubbo.version>2.5.7</alibaba.dubbo.version>
         <apache.dubbo.version>2.7.3</apache.dubbo.version>

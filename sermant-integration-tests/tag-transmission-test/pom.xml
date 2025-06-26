@@ -25,10 +25,10 @@
         <httpclient3x.version>3.1</httpclient3x.version>
         <httpclient4x.version>4.5.13</httpclient4x.version>
         <okhttpv2.version>2.7.5</okhttpv2.version>
-        <apache.dubbo.version>2.7.15</apache.dubbo.version>
+        <apache.dubbo.version>2.7.23</apache.dubbo.version>
         <sofarpc.version>5.10.0</sofarpc.version>
         <rocketmq-client.version>5.1.0</rocketmq-client.version>
-        <kafka-client.version>3.4.0</kafka-client.version>
+        <kafka-client.version>3.9.1</kafka-client.version>
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <grpc.version>1.52.1</grpc.version>
         <protobuf.version>3.21.7</protobuf.version>

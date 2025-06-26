@@ -28,7 +28,6 @@ import io.sermant.router.config.cache.ConfigCache;
 import io.sermant.router.dubbo.ApacheInvoker;
 import io.sermant.router.dubbo.RuleInitializationUtils;
 
-import org.apache.dubbo.common.utils.MapUtils;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
 import org.junit.AfterClass;
@@ -314,7 +313,7 @@ public class AbstractDirectoryServiceTest {
 
         @Override
         public Map<String, String> getAttachments() {
-            return MapUtils.objectToStringMap(attachments);
+            return objectToStringMap(attachments);
         }
 
         @Override
@@ -396,6 +395,31 @@ public class AbstractDirectoryServiceTest {
         @Override
         public Map<Object, Object> getAttributes() {
             return Collections.emptyMap();
+        }
+    }
+
+    public static Map<String, String> objectToStringMap(Map<String, Object> originMap) {
+        Map<String, String> newStrMap = new HashMap<>();
+
+        if (originMap == null) {
+            return newStrMap;
+        }
+
+        for (Map.Entry<String, Object> entry : originMap.entrySet()) {
+            String stringValue = convertToString(entry.getValue());
+            if (stringValue != null) {
+                newStrMap.put(entry.getKey(), stringValue);
+            }
+        }
+
+        return newStrMap;
+    }
+
+    private static String convertToString(Object obj) {
+        if (obj == null) {
+            return null;
+        } else {
+            return obj.toString();
         }
     }
 }
