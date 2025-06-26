@@ -382,13 +382,16 @@ runs:
           sermant-plugins/sermant-tag-transmission/tag-transmission-service
           sermant-plugins/sermant-tag-transmission/tag-transmission-okhttp2.x-plugin
           sermant-plugins/sermant-tag-transmission/config
+          sermant-plugins/sermant-tag-transmission/tag-transmission-okhttp34-plugin
           sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test
           sermant-integration-tests/tag-transmission-test/tag-transmission-util-demo
           sermant-integration-tests/tag-transmission-test/okhttp-demo
           sermant-integration-tests/tag-transmission-test/httpserver-common-demo
+          sermant-integration-tests/tag-transmission-test/okhttp34-demo
           ./.github/workflows/tagtransmission_integration_test.yml
           ./.github/actions/common/tag-transmission
           ./.github/actions/scenarios/tag-transmission/okhttp
+          ./.github/actions/scenarios/tag-transmission/okhttp34
     - name: env tag-transmission-okhttp
       shell: bash
       run: |

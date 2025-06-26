@@ -220,6 +220,40 @@ jobs:
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for okHttpVersion=${{ matrix.okHttpVersion }}
         uses: ./.github/actions/scenarios/tag-transmission/okhttp
+  test-for-tag-transmission-okhttp34:
+    name: Test for tag transmission okhttp34
+    runs-on: ubuntu-latest
+    if: needs.set-execution-conditions.outputs.enableOkhttpTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - okHttpVersion: "4.12.0"
+          - okHttpVersion: "4.11.0"
+          - okHttpVersion: "4.10.0"
+          - okHttpVersion: "4.9.3"
+          - okHttpVersion: "4.8.1"
+          - okHttpVersion: "4.7.2"
+          - okHttpVersion: "4.2.2"
+          - okHttpVersion: "3.14.9"
+          - okHttpVersion: "3.13.1"
+          - okHttpVersion: "3.12.13"
+          - okHttpVersion: "3.11.0"
+          - okHttpVersion: "3.9.1"
+          - okHttpVersion: "3.8.1"
+          - okHttpVersion: "3.6.0"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/tag-transmission
+      - name: tag transmission test for okHttpVersion=${{ matrix.okHttpVersion }}
+        uses: ./.github/actions/scenarios/tag-transmission/okhttp34
   test-for-tag-transmission-grpc:
     name: Test for tag transmission grpc
     runs-on: ubuntu-latest

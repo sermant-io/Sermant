@@ -285,6 +285,15 @@ public class TagTransmissionTest {
         checkTagTransmission("http://127.0.0.1:9050/jakarta-servlet/httpServer", EXACT_TAG_MAP, "jakarta-servlet-run-on-java8");
     }
 
+    /**
+     * test okhttp3.x,4.x tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "OKHTTP34")
+    public void testOkHttp34() {
+        checkTagTransmission("http://127.0.0.1:9055/okHttp/testOkHttp", EXACT_TAG_MAP, "okhttp");
+    }
+
     private void checkTagTransmission(String url, Map<String, String> tagMap, String message, String tagKey) {
         Map<String, String> returnTagMap = convertJson2Map(RequestUtils.get(url,
                 tagMap));
