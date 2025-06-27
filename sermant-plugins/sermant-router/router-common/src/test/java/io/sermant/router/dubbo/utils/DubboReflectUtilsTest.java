@@ -29,7 +29,6 @@ import io.sermant.core.utils.StringUtils;
 import io.sermant.router.common.utils.DubboReflectUtils;
 import io.sermant.router.common.utils.ReflectUtils;
 
-import org.apache.dubbo.common.utils.MapUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -427,7 +426,7 @@ public class DubboReflectUtilsTest {
 
         @Override
         public Map<String, String> getAttachments() {
-            return MapUtils.objectToStringMap(attachments);
+            return objectToStringMap(attachments);
         }
 
         @Override
@@ -509,6 +508,37 @@ public class DubboReflectUtilsTest {
         @Override
         public Map<Object, Object> getAttributes() {
             return Collections.emptyMap();
+        }
+    }
+
+    public static Map<String, String> objectToStringMap(Map<String, Object> originMap) {
+        Map<String, String> newStrMap = new HashMap<>();
+
+        if (originMap == null) {
+            return newStrMap;
+        }
+
+        for (Map.Entry<String, Object> entry : originMap.entrySet()) {
+            String stringValue = convertToString(entry.getValue());
+            if (stringValue != null) {
+                newStrMap.put(entry.getKey(), stringValue);
+            }
+        }
+
+        return newStrMap;
+    }
+
+    /**
+     * use {@link Object#toString()} switch Obj to String
+     *
+     * @param obj
+     * @return
+     */
+    private static String convertToString(Object obj) {
+        if (obj == null) {
+            return null;
+        } else {
+            return obj.toString();
         }
     }
 }

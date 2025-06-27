@@ -68,16 +68,14 @@ public class ApacheDubboConsumerInterceptorTest extends AbstractRpcInterceptorTe
         expectAttachments = buildExpectAttachments("id", "name");
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
-        Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(),
-                expectAttachments);
+        Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(), expectAttachments);
 
         // traffic tag contains partial traffic tags
         TrafficUtils.getTrafficTag().getTag().remove("id");
         expectAttachments = buildExpectAttachments("name");
         context = buildContext(new RpcInvocation());
         returnContext = interceptor.before(context);
-        Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(),
-                expectAttachments);
+        Assert.assertEquals(((RpcInvocation) returnContext.getArguments()[1]).getAttachments(), expectAttachments);
 
         // traffic tag there is no traffic tag
         TrafficUtils.removeTrafficTag();
@@ -96,6 +94,9 @@ public class ApacheDubboConsumerInterceptorTest extends AbstractRpcInterceptorTe
     }
 
     private ExecuteContext buildContext(RpcInvocation rpcInvocation) {
+        if (rpcInvocation != null) {
+            rpcInvocation.setAttachment(null, null);
+        }
         Object[] arguments = new Object[]{null, rpcInvocation};
         return ExecuteContext.forMemberMethod(new Object(), null, arguments, null, null);
     }
