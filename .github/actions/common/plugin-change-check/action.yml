@@ -438,6 +438,27 @@ runs:
       run: |
         echo "rocketmqTagTransmissionChanged=${{ steps.changed-tag-transmission-rocketmq.outputs.changed }}" >> $GITHUB_ENV
     - uses: ktamas77/has-changed-path@v1.0.3
+      id: changed-tag-transmission-rabbitmq
+      with:
+        paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
+          sermant-plugins/sermant-tag-transmission/tag-transmission-crossthread-plugin
+          sermant-plugins/sermant-tag-transmission/tag-transmission-service
+          sermant-plugins/sermant-tag-transmission/tag-transmission-rabbitmq5.x-plugin
+          sermant-plugins/sermant-tag-transmission/config
+          sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test
+          sermant-integration-tests/tag-transmission-test/tag-transmission-util-demo
+          sermant-integration-tests/tag-transmission-test/rabbitmq-consumer-demo
+          sermant-integration-tests/tag-transmission-test/rabbitmq-producer-demo
+          sermant-integration-tests/tag-transmission-test/midware-common-demo
+          sermant-integration-tests/tag-transmission-test/httpserver-common-demo
+          ./.github/workflows/tagtransmission_integration_test.yml
+          ./.github/actions/common/tag-transmission
+          ./.github/actions/scenarios/tag-transmission/rabbitmq
+    - name: env tag-transmission-rabbitmq
+      shell: bash
+      run: |
+        echo "rabbitMqTagTransmissionChanged=${{ steps.changed-tag-transmission-rabbitmq.outputs.changed }}" >> $GITHUB_ENV
+    - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-servicecomb
       with:
         paths: sermant-plugins/sermant-tag-transmission/tag-transmission-common
@@ -1026,4 +1047,11 @@ runs:
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' -o \
             ${{ env.sermantFlowcontrolChanged }} == 'true'];then
          echo "enableXdsFlowControl=true" >> $GITHUB_ENV
+        fi
+
+        # ==========rabbit mq Tag Transmission is needed to test?==========
+        if [ ${{ env.rabbitMqTagTransmissionChanged }} == 'true' -o \
+            ${{ env.sermantAgentCoreChanged }} == 'true' -o \
+            ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' ];then
+         echo "enableRabbitMqTagTransmissionAction=true" >> $GITHUB_ENV
         fi

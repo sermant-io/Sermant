@@ -183,4 +183,15 @@ public class StringUtils {
     public static String getString(Object object) {
         return object == null ? "" : object.toString();
     }
+
+    /**
+     * Get the object's toString information
+     *
+     * @param object object
+     * @param defaultValue default value
+     * @return string if object is null, default value otherwise
+     */
+    public static String getString(Object object, String defaultValue) {
+        return object == null ? defaultValue : object.toString();
+    }
 }

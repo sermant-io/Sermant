@@ -73,6 +73,11 @@ public class MessageConstant {
      */
     public static final int KAFKA_CONSUMER_TIMEOUT = 100;
 
+    /**
+     * rabbitmq message body
+     */
+    public static final String MESSAGE_BODY_RABBITMQ = "hello inner rabbitmq:";
+
     private MessageConstant() {
     }
 }
