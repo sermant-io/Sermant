@@ -1,21 +1,31 @@
 # RoadMap
+**v2.4.0 (2025.12)**
+
+- [ ] Supports Apollo dynamic configuration center
+- [ ] Supports user authentication for Sermant Backend
+
+**v2.3.0 (2025.06)**
+
+- [x] Supports xDS protocol for security
+- [x] Support more tag transmisson components
 
 **v2.2.0 (2024.12)**
 
-- [ ] Supports xDS protocol for specific plugins
-- [ ] Compatible with OpenTelemetry
+- [x] Supports xDS protocol for traffic management
+- [x] Supports xDS protocol for specific plugins
+- [x] Compatible with OpenTelemetry
+- [x] Support MQ grayscale 
 
 **v2.1.0 (2024.09)**
 
-- [ ] Supports xDS protocol for routing and load balancing
-- [ ] Supports adaptive expansion for sermant injector
-- [ ] Compatible with monitor system
+- [x] Supports xDS protocol for routing and load balancing
+- [x] Compatible with monitor system
 
 **v2.0.0 (2024.06)**
 
-- [ ] Supports xDS protocol for service discovery
-- [ ] Supports dynamic configuration dashboard in Backend
-- [ ] Optimize startup time of Sermant Agent
+- [x] Supports xDS protocol for service discovery
+- [x] Supports dynamic configuration dashboard in Backend
+- [x] Optimize startup time of Sermant Agent
 
 **v1.4.0 (2024.03)**
 
