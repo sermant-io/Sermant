@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>sermant-agentcore-god</artifactId>
+    <name>sermant-agentcore-god</name>
 
     <description>The core interface package of Sermant.</description>
     <url>https://github.com/sermant-io/Sermant</url>

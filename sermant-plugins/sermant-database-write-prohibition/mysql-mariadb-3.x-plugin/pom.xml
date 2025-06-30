@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mysql-mariadb-3.x-plugin</artifactId>
+    <name>mysql-mariadb-3.x-plugin</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

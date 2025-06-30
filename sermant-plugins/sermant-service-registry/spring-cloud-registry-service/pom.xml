@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>spring-cloud-registry-service</artifactId>
+    <name>spring-cloud-registry-service</name>
 
     <properties>
         <package.plugin.type>service</package.plugin.type>

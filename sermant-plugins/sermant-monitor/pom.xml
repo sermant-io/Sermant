@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-monitor</artifactId>
+    <name>sermant-monitor</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>

@@ -16,6 +16,7 @@
     </modules>
 
     <artifactId>sermant-xds</artifactId>
+    <name>sermant-xds</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

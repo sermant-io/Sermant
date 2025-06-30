@@ -8,6 +8,7 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>sermant-backend</artifactId>
+    <name>sermant-backend</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/..</sermant.basedir>

@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>sermant-spring-beans-deal</artifactId>
+    <name>sermant-spring-beans-deal</name>
     <packaging>pom</packaging>
 
     <properties>

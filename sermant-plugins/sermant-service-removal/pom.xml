@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>sermant-service-removal</artifactId>
+    <name>sermant-service-removal</name>
     <packaging>pom</packaging>
     <modules>
         <module>removal-plugin</module>

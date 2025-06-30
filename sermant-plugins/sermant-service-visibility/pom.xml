@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>sermant-service-visibility</artifactId>
+    <name>sermant-service-visibility</name>
     <packaging>pom</packaging>
     <modules>
         <module>service-visibility-plugin</module>

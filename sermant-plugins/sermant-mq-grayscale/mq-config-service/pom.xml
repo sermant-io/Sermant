@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>mq-config-service</artifactId>
+    <name>mq-config-service</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

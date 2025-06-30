@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>mq-config-common</artifactId>
+    <name>mq-config-common</name>
     <packaging>jar</packaging>
 
     <properties>

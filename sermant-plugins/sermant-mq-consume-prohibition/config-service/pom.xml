@@ -18,6 +18,7 @@
     </properties>
 
     <artifactId>config-service</artifactId>
+    <name>config-service</name>
     <dependencies>
         <dependency>
             <groupId>io.sermant</groupId>

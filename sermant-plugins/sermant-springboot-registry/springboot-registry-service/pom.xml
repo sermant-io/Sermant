@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>springboot-registry-service</artifactId>
+    <name>springboot-registry-service</name>
     <packaging>jar</packaging>
 
     <properties>
