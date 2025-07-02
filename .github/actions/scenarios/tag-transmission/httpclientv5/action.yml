@@ -10,7 +10,7 @@ runs:
     - name: package demos
       shell: bash
       run: |
-        mvn package -Dhttpclient4x.version=${{ matrix.httpclientVersion }} -DskipTests -Phttpclientv5-test --file \
+        mvn package -Dhttpclient5x.version=${{ matrix.httpclientVersion }} -DskipTests -Phttpclientv5-test --file \
         sermant-integration-tests/tag-transmission-test/pom.xml
     - name: start httpclientv5 demo
       shell: bash

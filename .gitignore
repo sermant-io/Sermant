@@ -8,7 +8,7 @@
 logs
 
 # build artifacts
-sermant-agent*
+sermant-agent-*
 target/
 node_modules/
 node/

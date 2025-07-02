@@ -329,7 +329,7 @@ runs:
     - name: env tag-transmission-httpclientV5
       shell: bash
       run: |
-        echo "httpclientV4TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV5.outputs.changed }}" >> $GITHUB_ENV
+        echo "httpclientV5TagTransmissionChanged=${{ steps.changed-tag-transmission-httpclientV5.outputs.changed }}" >> $GITHUB_ENV
     - uses: ktamas77/has-changed-path@v1.0.3
       id: changed-tag-transmission-jdkhttp-tomcat
       with:
