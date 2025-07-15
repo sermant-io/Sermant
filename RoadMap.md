@@ -14,7 +14,7 @@
 - [x] Supports xDS protocol for traffic management
 - [x] Supports xDS protocol for specific plugins
 - [x] Compatible with OpenTelemetry
-- [x] Support MQ grayscale 
+- [x] Support MQ grayscale
 
 **v2.1.0 (2024.09)**
 
