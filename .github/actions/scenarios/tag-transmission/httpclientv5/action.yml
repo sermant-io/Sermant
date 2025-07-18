@@ -1,0 +1,46 @@
+name: "Tag Transmission Plugin HttpClientV5 Test"
+description: "Auto test for tag transmission by httpclientv5"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/httpclientv5
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Dhttpclient5x.version=${{ matrix.httpclientVersion }} -DskipTests -Phttpclientv5-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start httpclientv5 demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/sermant \
+        sermant-integration-tests/tag-transmission-test/httpclientv5-demo/target/httpclientv5-demo.jar > ${{ env.logDir }}/httpclientv5.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9049/httpClientV5/testHttpClientV5 120
+    - name: test httpclientv5
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=HTTPCLIENTV5 --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common|httpclientv5
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v4
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-httpclientv5-(${{ matrix.httpClientVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

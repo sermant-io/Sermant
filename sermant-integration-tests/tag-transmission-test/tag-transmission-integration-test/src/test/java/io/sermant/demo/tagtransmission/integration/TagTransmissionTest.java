@@ -68,6 +68,15 @@ public class TagTransmissionTest {
     }
 
     /**
+     * test httpclient5.x tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "HTTPCLIENTV5")
+    public void testHttpClientV5() {
+        checkTagTransmission("http://127.0.0.1:9049/httpClientV5/testHttpClientV5", EXACT_TAG_MAP, "httpclientv5");
+    }
+
+    /**
      * 测试okhttp透传流量标签
      */
     @Test
