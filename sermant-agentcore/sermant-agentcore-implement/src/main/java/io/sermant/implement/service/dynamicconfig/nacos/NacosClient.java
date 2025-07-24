@@ -23,20 +23,21 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.client.auth.impl.process.HttpLoginProcessor;
-import com.alibaba.nacos.client.naming.remote.http.NamingHttpClientManager;
-import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 
 import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,8 @@ public class NacosClient implements ConfigClient {
     private static final String URL = "/nacos/v1/cs/configs?appName=&config_tags=&pageNo=1&pageSize=";
 
     private static final String URL_WITHOUT_CONTENT = "/nacos/v1/cs/history/configs?tenant=";
+
+    private static final String LOGIN_URL = "/nacos/v1/auth/users/login";
 
     private final Properties properties;
 
@@ -352,12 +355,24 @@ public class NacosClient implements ConfigClient {
     private String getToken() {
         if ((System.currentTimeMillis() - lastRefreshTime) >= TimeUnit.SECONDS
                 .toMillis(tokenTtl - TOKEN_REFRESH_WINDOW)) {
-            lastRefreshTime = System.currentTimeMillis();
-            HttpLoginProcessor httpLoginProcessor = new HttpLoginProcessor(
-                    NamingHttpClientManager.getInstance().getNacosRestTemplate());
-            LoginIdentityContext loginIdentityContext = httpLoginProcessor.getResponse(properties);
-            lastToken = loginIdentityContext.getParameter(KEY_ACCESS_TOKEN);
-            tokenTtl = Long.parseLong(loginIdentityContext.getParameter(KEY_TOKEN_TTL));
+            final StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL);
+            requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR))
+                    .append(LOGIN_URL);
+            Map<String, String> formParams = new HashMap<>();
+            formParams.put(PropertyKeyConst.USERNAME, properties.getProperty(PropertyKeyConst.USERNAME));
+            formParams.put(PropertyKeyConst.PASSWORD, properties.getProperty(PropertyKeyConst.PASSWORD));
+            try {
+                String result = doPost(requestUrl.toString(), formParams, false);
+                if (StringUtils.isBlank(result)) {
+                    throw new RuntimeException("Nacos http request getToken exception, response is blank.");
+                }
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                lastToken = jsonObject.getString(KEY_ACCESS_TOKEN);
+                tokenTtl = jsonObject.getLong(KEY_TOKEN_TTL);
+                lastRefreshTime = System.currentTimeMillis();
+            } catch (IOException e) {
+                throw new RuntimeException("Nacos http request getToken exception.", e);
+            }
         }
         return lastToken;
     }
@@ -385,6 +400,45 @@ public class NacosClient implements ConfigClient {
                     return EntityUtils.toString(response.getEntity());
                 }
                 LOGGER.error("Http request for getting all nacos keys error, the message is: {}",
+                        EntityUtils.toString(response.getEntity()));
+                return returnStatusWhenHasError ? String.valueOf(statusCode) : "";
+            }
+        }
+    }
+
+    /**
+     * HTTP post request
+     *
+     * @param url HTTP request url
+     * @param formParams form params
+     * @param returnStatusWhenHasError return status when has error
+     * @return response body
+     * @throws IOException IO exception during service invocation process
+     */
+    private String doPost(String url, Map<String, String> formParams, boolean returnStatusWhenHasError)
+            throws IOException {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            int timeOut = Integer.parseInt(properties.getProperty(PropertyKeyConst.CONFIG_LONG_POLL_TIMEOUT));
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(timeOut) // Timeout for connecting to the host
+                    .setConnectionRequestTimeout(timeOut) // Request timeout
+                    .setSocketTimeout(timeOut) // Read timeout
+                    .build();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setConfig(requestConfig);
+            if (formParams != null && !formParams.isEmpty()) {
+                List<NameValuePair> parameters = new ArrayList<>();
+                for (Map.Entry<String, String> entry : formParams.entrySet()) {
+                    parameters.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                }
+                httpPost.setEntity(new UrlEncodedFormEntity(parameters));
+            }
+            try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == HttpStatus.SC_OK) {
+                    return EntityUtils.toString(response.getEntity());
+                }
+                LOGGER.error("Http post request for getting all nacos keys error, the message is: {}",
                         EntityUtils.toString(response.getEntity()));
                 return returnStatusWhenHasError ? String.valueOf(statusCode) : "";
             }
