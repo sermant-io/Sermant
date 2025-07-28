@@ -24,6 +24,7 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 
+import io.sermant.core.utils.MapUtils;
 import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
@@ -355,13 +356,13 @@ public class NacosClient implements ConfigClient {
     private String getToken() {
         if ((System.currentTimeMillis() - lastRefreshTime) >= TimeUnit.SECONDS
                 .toMillis(tokenTtl - TOKEN_REFRESH_WINDOW)) {
-            final StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL);
-            requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR))
+            StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL).append(properties.getProperty(PropertyKeyConst.SERVER_ADDR))
                     .append(LOGIN_URL);
             Map<String, String> formParams = new HashMap<>();
             formParams.put(PropertyKeyConst.USERNAME, properties.getProperty(PropertyKeyConst.USERNAME));
             formParams.put(PropertyKeyConst.PASSWORD, properties.getProperty(PropertyKeyConst.PASSWORD));
             try {
+                lastRefreshTime = System.currentTimeMillis();
                 String result = doPost(requestUrl.toString(), formParams, false);
                 if (StringUtils.isBlank(result)) {
                     throw new RuntimeException("Nacos http request getToken exception, response is blank.");
@@ -369,7 +370,6 @@ public class NacosClient implements ConfigClient {
                 JSONObject jsonObject = JSONObject.parseObject(result);
                 lastToken = jsonObject.getString(KEY_ACCESS_TOKEN);
                 tokenTtl = jsonObject.getLong(KEY_TOKEN_TTL);
-                lastRefreshTime = System.currentTimeMillis();
             } catch (IOException e) {
                 throw new RuntimeException("Nacos http request getToken exception.", e);
             }
@@ -426,7 +426,7 @@ public class NacosClient implements ConfigClient {
                     .build();
             HttpPost httpPost = new HttpPost(url);
             httpPost.setConfig(requestConfig);
-            if (formParams != null && !formParams.isEmpty()) {
+            if (!MapUtils.isEmpty(formParams)) {
                 List<NameValuePair> parameters = new ArrayList<>();
                 for (Map.Entry<String, String> entry : formParams.entrySet()) {
                     parameters.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
@@ -439,7 +439,7 @@ public class NacosClient implements ConfigClient {
                     return EntityUtils.toString(response.getEntity());
                 }
                 LOGGER.error("Http post request for getting all nacos keys error, the message is: {}",
-                        EntityUtils.toString(response.getEntity()));
+                        null!=response.getEntity()?EntityUtils.toString(response.getEntity()):"entity is null");
                 return returnStatusWhenHasError ? String.valueOf(statusCode) : "";
             }
         }
