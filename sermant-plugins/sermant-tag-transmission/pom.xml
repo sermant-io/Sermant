@@ -57,6 +57,7 @@
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
                 <module>tag-transmission-okhttp34-plugin</module>
+                <module>tag-transmission-rabbitmq5.x-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -83,6 +84,7 @@
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
                 <module>tag-transmission-okhttp34-plugin</module>
+                <module>tag-transmission-rabbitmq5.x-plugin</module>
             </modules>
         </profile>
         <profile>
@@ -109,6 +111,7 @@
                 <module>tag-transmission-feign11.x-plugin</module>
                 <module>tag-transmission-jakarta-servlet-plugin</module>
                 <module>tag-transmission-okhttp34-plugin</module>
+                <module>tag-transmission-rabbitmq5.x-plugin</module>
             </modules>
         </profile>
     </profiles>

@@ -49,6 +49,7 @@ jobs:
           echo "enableJettyTagTransmissionAction=${{env.enableJettyTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableTomcatTagTransmissionAction=${{env.enableTomcatTagTransmissionAction}}" >> $GITHUB_OUTPUT
           echo "enableJakartaServlet56TagTransmissionAction=${{env.enableJakartaServlet56TagTransmissionAction}}" >> $GITHUB_OUTPUT
+          echo "enableRabbitMqTagTransmissionAction=${{env.enableRabbitMqTagTransmissionAction}}" >> $GITHUB_OUTPUT
     outputs:
       enableHttpclientV3TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV3TagTransmissionAction }}
       enableHttpclientV4TagTransmissionAction: ${{ steps.set-outputs.outputs.enableHttpclientV4TagTransmissionAction }}
@@ -65,6 +66,7 @@ jobs:
       enableJettyTagTransmissionAction: ${{ steps.set-outputs.outputs.enableJettyTagTransmissionAction }}
       enableTomcatTagTransmissionAction: ${{ steps.set-outputs.outputs.enableTomcatTagTransmissionAction }}
       enableJakartaServlet56TagTransmissionAction: ${{ steps.set-outputs.outputs.enableJakartaServlet56TagTransmissionAction }}
+      enableRabbitMqTagTransmissionAction: ${{ steps.set-outputs.outputs.enableRabbitMqTagTransmissionAction }}
   download-midwares-and-cache:
     name: download midwares and cache
     runs-on: ubuntu-latest
@@ -611,3 +613,28 @@ jobs:
         uses: ./.github/actions/common/tag-transmission
       - name: tag transmission test for jakarta-servlet-java8
         uses: ./.github/actions/scenarios/tag-transmission/jakarta-servlet-java8
+  test-for-tag-transmission-rabbitmq:
+    name: Test for tag transmission rabbitmq
+    runs-on: ubuntu-latest
+    if: needs.set-execution-conditions.outputs.enableRabbitMqTagTransmissionAction=='true'
+    needs: [set-execution-conditions, build-agent-and-cache, download-midwares-and-cache]
+    strategy:
+      matrix:
+        include:
+          - rabbitMqVersion: "5.25.0"
+          - rabbitMqVersion: "5.21.0"
+          - rabbitMqVersion: "5.16.0"
+          - rabbitMqVersion: "5.9.0"
+          - rabbitMqVersion: "5.0.0"
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 100
+      - name: set java version to environment
+        run: |
+          echo "javaVersion=8" >> $GITHUB_ENV
+      - name: common operations
+        uses: ./.github/actions/common/tag-transmission
+      - name: tag transmission test for rabbitMqVersion=${{ matrix.rabbitMqVersion }}
+        uses: ./.github/actions/scenarios/tag-transmission/rabbitmq

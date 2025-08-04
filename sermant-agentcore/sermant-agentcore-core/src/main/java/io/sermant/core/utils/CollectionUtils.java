@@ -37,4 +37,16 @@ public class CollectionUtils {
     public static boolean isEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
+
+    /**
+     * Get the first element of the collection
+     *
+     * @param collection collection
+     * @param <T>  type
+     * @param orElse when the collection is null or empty, return this
+     * @return first element of the collection, or orElse if the collection is null or empty
+     */
+    public static <T> T getFirst(Collection<T> collection, T orElse) {
+        return isEmpty(collection) ? orElse : collection.iterator().next();
+    }
 }

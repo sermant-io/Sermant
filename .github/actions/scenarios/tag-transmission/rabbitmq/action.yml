@@ -1,0 +1,70 @@
+name: "Tag Transmission Plugin RabbitMQ Test"
+description: "Auto test for tag transmission by rabbit mq"
+runs:
+  using: composite
+  steps:
+    - name: entry
+      uses: ./.github/actions/common/entry
+      with:
+        log-dir: ./logs/tag-transmission/rabbitmq
+    - name: install rabbit mq
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+        sudo apt-get update
+        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+        docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management
+    - name: package demos
+      shell: bash
+      run: |
+        mvn package -Drabbitmq-client.version=${{ matrix.rabbitmqVersion }} -DskipTests -Prabbitmq-test --file \
+        sermant-integration-tests/tag-transmission-test/pom.xml
+    - name: start rabbitmq producer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/sermant \
+        sermant-integration-tests/tag-transmission-test/rabbitmq-producer-demo/target/rabbitmq-producer-demo.jar > ${{ env.logDir }}/rabbitmq-producer.log 2>&1 &
+    - name: start rabbitmq consumer demo
+      shell: bash
+      run: |
+        nohup java -javaagent:sermant-agent-${{ env.sermantVersion }}/agent/sermant-agent.jar=appName=default -jar \
+        -Dsermant_log_dir=${{ env.logDir }}/sermant \
+        sermant-integration-tests/tag-transmission-test/rabbitmq-consumer-demo/target/rabbitmq-consumer-demo.jar > ${{ env.logDir }}/rabbitmq-consumer.log 2>&1 &
+    - name: waiting for services start
+      shell: bash
+      run: |
+        docker ps | grep rabbit
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:15672 120
+        ps -ef | grep java
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9040/common/httpServer 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9057/rabbitMqProducer/checkRabbitMqProducerStatus 120
+        bash ./sermant-integration-tests/scripts/checkService.sh http://127.0.0.1:9056/rabbitMqConsumer/queryRabbitMqTag 120
+    - name: test rabbitmq
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=RABBITMQ --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: test rabbitmq consecutive messages
+      shell: bash
+      run: |
+        mvn test -Dtag.transmission.integration.test.type=RABBITMQ-CONSECUTIVE-MESSAGE --file \
+        sermant-integration-tests/tag-transmission-test/tag-transmission-integration-test/pom.xml
+    - name: exit
+      if: always()
+      uses: ./.github/actions/common/exit
+      with:
+        processor-keyword: httpserver-common
+    - name: if failure then upload error log
+      uses: actions/upload-artifact@v4
+      if: ${{ failure() || cancelled() }}
+      with:
+        name: (${{ github.job }})-tag-transmission-rabbitmq-(${{ matrix.rabbitMqVersion }}-logs
+        path: |
+          ./*.log
+          ./logs/**
+        if-no-files-found: warn
+        retention-days: 2

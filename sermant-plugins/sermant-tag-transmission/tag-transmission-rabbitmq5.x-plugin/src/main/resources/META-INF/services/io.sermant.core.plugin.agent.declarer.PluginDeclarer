@@ -1,0 +1,2 @@
+io.sermant.tag.transmission.rabbitmqv5.declarers.RabbitmqConsumerDeclarer
+io.sermant.tag.transmission.rabbitmqv5.declarers.RabbitmqProducerSendDeclarer

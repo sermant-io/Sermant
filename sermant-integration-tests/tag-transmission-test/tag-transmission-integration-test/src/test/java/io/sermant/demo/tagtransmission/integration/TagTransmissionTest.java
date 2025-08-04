@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -211,6 +212,50 @@ public class TagTransmissionTest {
         // sleep五秒，等待消费者消费
         Thread.sleep(5000);
         checkTagTransmission("http://127.0.0.1:9053/kafkaConsumer/queryKafkaTag", EXACT_TAG_MAP, "kafka", "id");
+    }
+
+    /**
+     * Test RabbitMQ traffic tag transmission
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "RABBITMQ")
+    public void testRabbitmq() throws InterruptedException {
+        // Check before sending message to prevent misuse of previous traffic tags
+        Optional<String> checkTagOptional = RequestUtils.get("http://127.0.0.1:9056/rabbitMqConsumer/queryRabbitMqTag", EXACT_TAG_MAP);
+        if (checkTagOptional.isPresent() && !checkTagOptional.get().equals("")) {
+            Assertions.assertTrue(false, "invalid tag for rabbitmq");
+        }
+
+        // Produce message
+        RequestUtils.get("http://127.0.0.1:9057/rabbitMqProducer/testRabbitMqProducer", EXACT_TAG_MAP);
+
+        // Sleep 5 seconds, wait for consumer to consume
+        Thread.sleep(5000);
+        checkTagTransmission("http://127.0.0.1:9056/rabbitMqConsumer/queryRabbitMqTag", EXACT_TAG_MAP, "rabbitmq");
+    }
+
+    /**
+     * Test RabbitMQ traffic tag transmission with consecutive messages
+     */
+    @Test
+    @EnabledIfSystemProperty(named = "tag.transmission.integration.test.type", matches = "RABBITMQ-CONSECUTIVE-MESSAGE")
+    public void testRabbitmqConsecutiveMessages() throws InterruptedException {
+        // Check before sending message to prevent misuse of previous traffic tags
+        Optional<String> checkTagOptional = RequestUtils.get("http://127.0.0.1:9056/rabbitMqConsumer/queryRabbitMqTag", EXACT_TAG_MAP);
+        if (checkTagOptional.isPresent() && !checkTagOptional.get().equals("")) {
+            Assertions.assertTrue(false, "invalid tag for rabbitmq");
+        }
+
+        for (int i = 0; i < 10; i++) {
+            Map<String, String> tagMap = Collections.singletonMap("id", String.valueOf(i));
+
+            // Produce message
+            RequestUtils.get("http://127.0.0.1:9057/rabbitMqProducer/testRabbitMqProducer", tagMap);
+
+            // Sleep 5 seconds, wait for consumer to consume
+            Thread.sleep(5000);
+            checkTagTransmission("http://127.0.0.1:9056/rabbitMqConsumer/queryRabbitMqTag", tagMap, "rabbitmq");
+        }
     }
 
     /**

@@ -33,6 +33,7 @@
         <alibaba.dubbo.version>2.6.12</alibaba.dubbo.version>
         <grpc.version>1.52.1</grpc.version>
         <protobuf.version>3.21.7</protobuf.version>
+        <rabbitmq-client.version>5.20.0</rabbitmq-client.version>
     </properties>
 
     <dependencyManagement>
@@ -115,6 +116,15 @@
             <modules>
                 <module>rocketmq-consumer-demo</module>
                 <module>rocketmq-producer-demo</module>
+                <module>midware-common-demo</module>
+                <module>tag-transmission-util-demo</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>rabbitmq-test</id>
+            <modules>
+                <module>rabbitmq-consumer-demo</module>
+                <module>rabbitmq-producer-demo</module>
                 <module>midware-common-demo</module>
                 <module>tag-transmission-util-demo</module>
             </modules>
