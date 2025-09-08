@@ -23,6 +23,11 @@ package io.sermant.core.service.dynamicconfig.common;
  * @since 2021-12-27
  */
 public enum DynamicConfigServiceType {
+
+    /**
+     * apollo configuration center
+     */
+    APOLLO,
     /**
      * zookeeper configuration center
      */

@@ -30,6 +30,8 @@ import io.sermant.backend.entity.config.ResultCodeType;
 import io.sermant.backend.entity.template.PageTemplateInfo;
 import io.sermant.backend.util.AesUtil;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
+import io.sermant.implement.service.dynamicconfig.apollo.ApolloClient;
+import io.sermant.implement.service.dynamicconfig.apollo.ApolloUtils;
 import io.sermant.implement.service.dynamicconfig.kie.client.ClientUrlManager;
 import io.sermant.implement.service.dynamicconfig.kie.client.kie.KieClient;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosClient;
@@ -138,6 +140,8 @@ public class ConfigService {
         Set<ConfigInfo> configInfoSet = new HashSet<>();
         groupRules.forEach(groupRule -> {
             String groupPattern = client instanceof NacosClient
+                    ? rebuildGroup(replaceVariableWithWildcard(groupRule, CommonConst.QUERY_WILDCARD))
+                    : client instanceof ApolloClient
                     ? rebuildGroup(replaceVariableWithWildcard(groupRule, CommonConst.QUERY_WILDCARD))
                     : replaceVariableWithWildcard(groupRule, CommonConst.PATTERN_WILDCARD);
             Map<String, List<String>> configMap = client.getConfigList(StringUtils.EMPTY, groupPattern,
@@ -354,6 +358,9 @@ public class ConfigService {
         if (configClient instanceof NacosClient) {
             return NacosUtils.rebuildGroup(group);
         }
+        if (configClient instanceof ApolloClient) {
+            return ApolloUtils.rebuildGroup(group);
+        }
         return group;
     }
 
@@ -366,6 +373,9 @@ public class ConfigService {
     public String convertGroup(String group) {
         if (configClient instanceof NacosClient) {
             return NacosUtils.convertGroup(group);
+        }
+        if (configClient instanceof ApolloClient) {
+            return ApolloUtils.convertGroup(group);
         }
         return group;
     }
