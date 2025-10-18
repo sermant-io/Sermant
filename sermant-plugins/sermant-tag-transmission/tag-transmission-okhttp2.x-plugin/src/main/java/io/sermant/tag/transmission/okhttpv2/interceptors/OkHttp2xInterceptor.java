@@ -63,6 +63,13 @@ public class OkHttp2xInterceptor extends AbstractClientInterceptor<Builder> {
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
+        LOCK_MARK.remove();
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context){
+        LOCK_MARK.remove();
         return context;
     }
 
