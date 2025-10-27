@@ -18,6 +18,7 @@ package io.sermant.implement.service.dynamicconfig;
 
 import io.sermant.core.service.dynamicconfig.DynamicConfigService;
 import io.sermant.core.service.dynamicconfig.common.DynamicConfigListener;
+import io.sermant.implement.service.dynamicconfig.apollo.ApolloDynamicConfigService;
 import io.sermant.implement.service.dynamicconfig.kie.KieDynamicConfigService;
 import io.sermant.implement.service.dynamicconfig.nacos.NacosDynamicConfigService;
 import io.sermant.implement.service.dynamicconfig.zookeeper.ZooKeeperDynamicConfigService;
@@ -49,6 +50,9 @@ public class BufferedDynamicConfigService extends DynamicConfigService {
                 break;
             case NACOS:
                 service = new NacosDynamicConfigService();
+                break;
+            case APOLLO:
+                service = new ApolloDynamicConfigService();
                 break;
             default:
                 service = new ZooKeeperDynamicConfigService();

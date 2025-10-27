@@ -85,6 +85,7 @@
         <nexus.staging.plugin.version>1.6.7</nexus.staging.plugin.version>
         <central.publishing.maven.plugin.version>0.5.0</central.publishing.maven.plugin.version>
         <frontend.plugin.version>1.12.1</frontend.plugin.version>
+        <apollo.version>2.4.0</apollo.version>
 
         <sermant.name>sermant-agent</sermant.name>
         <sermant.basedir>${pom.basedir}</sermant.basedir>
