@@ -40,6 +40,7 @@ import io.sermant.core.plugin.agent.info.EnhancementManager;
 import io.sermant.core.plugin.agent.template.DefaultAdviser;
 import io.sermant.core.service.ServiceManager;
 import io.sermant.core.utils.FileUtils;
+import io.sermant.core.utils.ModuleOpener;
 import io.sermant.god.common.SermantManager;
 
 import java.lang.instrument.Instrumentation;
@@ -115,6 +116,10 @@ public class AgentCoreEntrance {
 
         // Start core services
         ServiceManager.initServices();
+
+        // Open necessary JDK modules for Java 9+ compatibility (especially for Spring Boot 3)
+        // This must be done before ByteEnhanceManager initialization to ensure plugins can use reflection
+        ModuleOpener.openModules(instrumentation);
 
         // Initialize the event system
         EventManager.init();
