@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM eclipse-temurin:8-jre
 WORKDIR /home
 COPY agent/ /home/agent
 COPY spring-cloud-client.jar /home/spring-cloud-client.jar

@@ -30,7 +30,8 @@ import io.sermant.core.plugin.agent.matcher.MethodMatcher;
 public class ClassLoaderDeclarer extends AbstractPluginDeclarer {
     @Override
     public ClassMatcher getClassMatcher() {
-        return ClassMatcher.nameEquals("org.springframework.boot.loader.LaunchedURLClassLoader");
+        return ClassMatcher.nameContains("org.springframework.boot.loader.LaunchedURLClassLoader",
+                "org.springframework.boot.loader.launch.LaunchedClassLoader");
     }
 
     @Override
