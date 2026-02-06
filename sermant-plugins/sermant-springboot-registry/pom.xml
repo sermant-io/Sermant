@@ -12,6 +12,7 @@
 
     <packaging>pom</packaging>
     <artifactId>sermant-springboot-registry</artifactId>
+    <name>sermant-springboot-registry</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>

@@ -60,6 +60,13 @@ public class OkHttp34Interceptor extends AbstractClientInterceptor<Request.Build
 
     @Override
     public ExecuteContext doAfter(ExecuteContext context) {
+        LOCK_MARK.remove();
+        return context;
+    }
+
+    @Override
+    public ExecuteContext onThrow(ExecuteContext context){
+        LOCK_MARK.remove();
         return context;
     }
 

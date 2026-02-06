@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tag-transmission-servicecomb-plugin</artifactId>
+    <name>tag-transmission-servicecomb-plugin</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

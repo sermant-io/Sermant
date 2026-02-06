@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>removal-service</artifactId>
+    <name>removal-service</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

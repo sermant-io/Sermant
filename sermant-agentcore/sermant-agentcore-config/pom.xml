@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-agentcore-config</artifactId>
-
+    <name>sermant-agentcore-config</name>
     <profiles>
         <profile>
             <id>test</id>

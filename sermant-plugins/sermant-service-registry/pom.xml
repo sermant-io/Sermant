@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-service-registry</artifactId>
+    <name>sermant-service-registry</name>
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
         <package.plugin.name>service-registry</package.plugin.name>

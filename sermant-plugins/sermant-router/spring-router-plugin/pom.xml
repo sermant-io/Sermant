@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>spring-router-plugin</artifactId>
+    <name>spring-router-plugin</name>
 
     <properties>
         <package.plugin.type>plugin</package.plugin.type>

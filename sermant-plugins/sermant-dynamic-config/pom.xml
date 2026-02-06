@@ -28,6 +28,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-dynamic-config</artifactId>
+    <name>sermant-dynamic-config</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>

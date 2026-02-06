@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sermant-tag-transmission</artifactId>
+    <name>sermant-tag-transmission</name>
     <packaging>pom</packaging>
 
     <dependencyManagement>

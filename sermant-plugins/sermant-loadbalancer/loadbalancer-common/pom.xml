@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>loadbalancer-common</artifactId>
+    <name>loadbalancer-common</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

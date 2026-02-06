@@ -7,6 +7,7 @@
         <version>1.0.0</version>
     </parent>
     <artifactId>sermant-package</artifactId>
+    <name>sermant-package</name>
     <profiles>
         <profile>
             <id>windows</id>

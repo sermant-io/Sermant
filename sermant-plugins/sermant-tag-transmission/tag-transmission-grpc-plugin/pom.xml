@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tag-transmission-grpc-plugin</artifactId>
+    <name>tag-transmission-grpc-plugin</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

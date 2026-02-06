@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tag-transmission-rocketmq4.x-plugin</artifactId>
+    <name>tag-transmission-rocketmq4.x-plugin</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

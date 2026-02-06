@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>spring-beans-deal-plugin</artifactId>
+    <name>spring-beans-deal-plugin</name>
 
     <properties>
         <config.skip.flag>false</config.skip.flag>

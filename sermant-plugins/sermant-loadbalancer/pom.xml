@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-loadbalancer</artifactId>
+    <name>sermant-loadbalancer</name>
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>
         <package.plugin.name>loadbalancer</package.plugin.name>

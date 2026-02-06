@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>opengauss-3.0.x-plugin</artifactId>
+    <name>opengauss-3.0.x-plugin</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

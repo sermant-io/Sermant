@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>spring-router-service</artifactId>
+    <name>spring-router-service</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

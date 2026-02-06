@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-router</artifactId>
+    <name>sermant-router</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>

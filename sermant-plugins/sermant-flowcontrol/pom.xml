@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <artifactId>sermant-flowcontrol</artifactId>
+    <name>sermant-flowcontrol</name>
 
     <properties>
         <sermant.basedir>${pom.basedir}/../../..</sermant.basedir>

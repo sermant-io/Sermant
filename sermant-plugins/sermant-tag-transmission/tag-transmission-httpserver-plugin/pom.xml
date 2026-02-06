@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tag-transmission-httpserver-plugin</artifactId>
+    <name>tag-transmission-httpserver-plugin</name>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

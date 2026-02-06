@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>database-config-service</artifactId>
+    <name>database-config-service</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

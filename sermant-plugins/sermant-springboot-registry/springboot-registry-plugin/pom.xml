@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>springboot-registry-plugin</artifactId>
+    <name>springboot-registry-plugin</name>
 
     <description>The plugin module of registry from springboot</description>
 
