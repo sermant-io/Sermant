@@ -298,8 +298,8 @@ const configCenterInfo = reactive({
 });
 
 onBeforeMount(async () => {
-  await getTemplate();
-  getConfigurationCenter();
+  await getConfigurationCenter();
+  getTemplate();
 });
 // Router
 const router = useRouter();
@@ -358,10 +358,10 @@ const getConfigList = () => {
     namespace: requestParam.value.namespace
   }
   if (params.groupRule && exactMatchFlag) {
-    params.group = replaceTemplate(params.groupRule, requestParam.value)
+    params.groupRule = replaceTemplate(params.groupRule, requestParam.value)
   }
   if (params.keyRule && exactMatchFlag) {
-    params.key = replaceTemplate(params.keyRule, requestParam.value)
+    params.keyRule = replaceTemplate(params.keyRule, requestParam.value)
   }
   if (pluginType == 'common') {
     params.groupRule = params.group
@@ -458,8 +458,10 @@ const getConfigurationCenter = () => {
 };
 
 const handlerChangePluginType = (value: string) => {
+  const namespace = requestParam.value.namespace;
   requestParam.value = {};
   requestParam.value.pluginType = value
+  requestParam.value.namespace = namespace;
   currentTemplate.value = getCurrentTemplate(requestParam.value.pluginType);
 }
 
@@ -512,7 +514,8 @@ const deleteConfig = (row: stringMap, index: number) => {
 const toAddConfig = () => {
   const params = {
     type: "add",
-    configType: configCenterInfo.dynamicConfigType
+    configType: configCenterInfo.dynamicConfigType,
+    namespace: configCenterInfo.namespace,
   };
   router.push({name: "configInfo", query: params});
 };

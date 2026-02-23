@@ -152,6 +152,8 @@ const configInfo = ref<stringMap>({
   configType: ''
 });
 
+let currentTemplateKey='';
+
 const options = ref<option[]>([]);
 
 interface pluginTemplate {
@@ -296,6 +298,8 @@ getTemplate();
 
 function initPageTemplate() {
   const param: LocationQuery = router.currentRoute.value.query;
+  configInfo.value.configType = <string>param.configType;
+  configInfo.value.namespace = <string>param.namespace;
   if (<string>param.type != "modify") {
     return;
   }
@@ -303,8 +307,6 @@ function initPageTemplate() {
   configInfo.value.pluginType = <string>param.pluginType;
   configInfo.value.group = <string>param.group;
   configInfo.value.key = <string>param.key;
-  configInfo.value.namespace = <string>param.namespace;
-  configInfo.value.configType = <string>param.configType;
   configInfo.value.keyRule = <string>param.keyRule;
   configInfo.value.groupRule = <string>param.groupRule;
   console.log(param)
@@ -352,9 +354,11 @@ function changeElement(template: pluginTemplate) {
   }
   configInfo.value.group = replaceTemplate(configInfo.value.groupRule, configInfo.value);
   configInfo.value.key = replaceTemplate(configInfo.value.keyRule, configInfo.value);
+  console.log(template.configTemplates)
   template.configTemplates.forEach(configTemplate => {
     const pattern = new RegExp(configTemplate.key.replace("*", ".*"));
-    if (pattern.test(configInfo.value.key)) {
+    if (pattern.test(configInfo.value.key) && currentTemplateKey != configTemplate.key) {
+      currentTemplateKey=configTemplate.key
       configInfo.value.content = configTemplate.value
     }
   })
@@ -376,7 +380,8 @@ function changePluginType() {
     namespace: configInfo.value.namespace,
     pluginType: configInfo.value.pluginType,
     keyRule: template.keyRule[0],
-    groupRule: template.groupRule[0]
+    groupRule: template.groupRule[0],
+    configType: configInfo.value.configType
   };
   changeRule(template);
   changeElement(template);
@@ -388,6 +393,8 @@ function initCheckRule(template: pluginTemplate) {
     if ((containsPlaceholder(element.name, configInfo.value.keyRule)
         || containsPlaceholder(element.name, configInfo.value.groupRule)) && element.required) {
       checkRule.value[element.name] = [{required: true, message: message, trigger: 'change'}];
+    } else {
+      checkRule.value[element.name] = [{required: false, message: message, trigger: 'change'}];
     }
   })
 }
