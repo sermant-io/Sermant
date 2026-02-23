@@ -16,10 +16,10 @@
 
 package io.sermant.flowcontrol.retry.client;
 
-import io.sermant.core.plugin.agent.declarer.AbstractPluginDeclarer;
 import io.sermant.core.plugin.agent.declarer.InterceptDeclarer;
 import io.sermant.core.plugin.agent.matcher.ClassMatcher;
 import io.sermant.core.plugin.agent.matcher.MethodMatcher;
+import io.sermant.flowcontrol.AbstractXdsDeclarer;
 
 /**
  * For OKHTTP requests, modify the URL of request
@@ -27,7 +27,7 @@ import io.sermant.core.plugin.agent.matcher.MethodMatcher;
  * @author zhp
  * @since 2024-12-20
  */
-public class OkHttpClientInterceptorChainDeclarer extends AbstractPluginDeclarer {
+public class OkHttpClientInterceptorChainDeclarer extends AbstractXdsDeclarer {
     private static final String ENHANCE_CLASSES =
             "com.squareup.okhttp.Call$ApplicationInterceptorChain";
 

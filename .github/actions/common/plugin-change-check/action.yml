@@ -1045,7 +1045,7 @@ runs:
         # ==========xds service is needed to test?==========
         if [ ${{ env.sermantAgentCoreXdsServiceChanged }} == 'true' -o \
             ${{ steps.changed-common-action.outputs.changed }} == 'true' -o ${{ env.triggerPushEvent }} == 'true' -o \
-            ${{ env.sermantFlowcontrolChanged }} == 'true'];then
+            ${{ env.sermantFlowcontrolChanged }} == 'true' ];then
          echo "enableXdsFlowControl=true" >> $GITHUB_ENV
         fi
 
