@@ -23,31 +23,26 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.client.auth.impl.process.HttpLoginProcessor;
-import com.alibaba.nacos.client.naming.remote.http.NamingHttpClientManager;
-import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
-
 import io.sermant.core.utils.StringUtils;
 import io.sermant.implement.service.dynamicconfig.ConfigClient;
 import io.sermant.implement.service.dynamicconfig.common.DynamicConstants;
-
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,6 +79,8 @@ public class NacosClient implements ConfigClient {
     private static final String URL = "/nacos/v1/cs/configs?appName=&config_tags=&pageNo=1&pageSize=";
 
     private static final String URL_WITHOUT_CONTENT = "/nacos/v1/cs/history/configs?tenant=";
+
+    private static final String LOGIN_URL_V1 = "/nacos/v1/auth/users/login";
 
     private final Properties properties;
 
@@ -352,12 +349,29 @@ public class NacosClient implements ConfigClient {
     private String getToken() {
         if ((System.currentTimeMillis() - lastRefreshTime) >= TimeUnit.SECONDS
                 .toMillis(tokenTtl - TOKEN_REFRESH_WINDOW)) {
+            final StringBuilder requestUrl = new StringBuilder().append(HTTP_PROTOCOL);
+            requestUrl.append(properties.getProperty(PropertyKeyConst.SERVER_ADDR)).append(LOGIN_URL_V1);
+            String result = "";
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpPost httpPost = new HttpPost(requestUrl.toString());
+                List<NameValuePair> params = new ArrayList<>();
+                params.add(new BasicNameValuePair("username", properties.getProperty(PropertyKeyConst.USERNAME)));
+                params.add(new BasicNameValuePair("password", properties.getProperty(PropertyKeyConst.PASSWORD)));
+                httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+                try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+                    HttpEntity entity = response.getEntity();
+                    result = EntityUtils.toString(entity);
+                }
+            } catch (IOException e) {
+                LOGGER.error("Nacos http request exception.",e);
+            }
+            if(StringUtils.isBlank(result)){
+                throw new RuntimeException("Nacos http request getToken exception.");
+            }
+            JSONObject jsonObject = JSONObject.parseObject(result);
             lastRefreshTime = System.currentTimeMillis();
-            HttpLoginProcessor httpLoginProcessor = new HttpLoginProcessor(
-                    NamingHttpClientManager.getInstance().getNacosRestTemplate());
-            LoginIdentityContext loginIdentityContext = httpLoginProcessor.getResponse(properties);
-            lastToken = loginIdentityContext.getParameter(KEY_ACCESS_TOKEN);
-            tokenTtl = Long.parseLong(loginIdentityContext.getParameter(KEY_TOKEN_TTL));
+            lastToken = jsonObject.getString(KEY_ACCESS_TOKEN);
+            tokenTtl = jsonObject.getLong(KEY_TOKEN_TTL);
         }
         return lastToken;
     }
